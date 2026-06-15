@@ -6,6 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:sports": "playwright test tests/e2e/sports-ui.spec.ts --headed",
+    "e2e:sports:watch": "powershell -ExecutionPolicy Bypass -File scripts/e2e/watch-visible-sports-smoke.ps1",
+    "e2e:auth:setup": "playwright test tests/e2e/auth.setup.ts",
+    "e2e:admin": "playwright test tests/e2e/admin-smoke.spec.ts --headed",
+    "e2e:sports:auth": "playwright test tests/e2e/sports-authenticated-order.spec.ts --headed",
+    "e2e:all:headed": "playwright test --headed",
+    "e2e:debug": "playwright test --debug",
     "soak:prod-server": "npm run build && next start -p 3000",
     "soak:run": "tsx scripts/soak_orderbook_bots.ts",
     "lint": "eslint",
@@ -70,6 +79,7 @@
     "recharts": "^2.12.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -178,6 +178,31 @@ const run = async () => {
     create: { username: "admin", email: "admin@example.com", isAdmin: true },
   });
 
+  const playwrightAdminEmail = process.env.PLAYWRIGHT_ADMIN_EMAIL?.trim() || "admin.test@poly.local";
+  const playwrightAdmin = await prisma.user.upsert({
+    where: { email: playwrightAdminEmail },
+    update: {
+      username: "playwright_admin",
+      displayName: "Playwright Admin",
+      isAdmin: true,
+    },
+    create: {
+      email: playwrightAdminEmail,
+      username: "playwright_admin",
+      displayName: "Playwright Admin",
+      isAdmin: true,
+    },
+  });
+  await prisma.userBalance.upsert({
+    where: { userId: playwrightAdmin.id },
+    update: { availableUSDC: new Prisma.Decimal(1000), lockedUSDC: new Prisma.Decimal(0) },
+    create: {
+      userId: playwrightAdmin.id,
+      availableUSDC: new Prisma.Decimal(1000),
+      lockedUSDC: new Prisma.Decimal(0),
+    },
+  });
+
   const categories = {
     sports: await ensureCategory({ name: "Sports", slug: "sports", order: 1 }),
     crypto: await ensureCategory({ name: "Crypto", slug: "crypto", order: 2 }),
@@ -338,30 +363,40 @@ const run = async () => {
 
     for (let index = 0; index < params.outcomes.length; index += 1) {
       const outcome = params.outcomes[index];
-      await prisma.outcome.upsert({
-        where: { marketId_code: { marketId: market.id, code: outcome.code } },
-        update: {
-          name: outcome.name,
-          label: outcome.name,
-          displayOrder: index,
-          isActive: true,
-          isTradable: true,
-          status: "active",
-          metadata: outcome.metadata ?? {},
-        },
-        create: {
-          marketId: market.id,
-          name: outcome.name,
-          label: outcome.name,
-          code: outcome.code,
-          slug: `${market.slug}-${slugify(outcome.code)}`,
-          displayOrder: index,
-          isActive: true,
-          isTradable: true,
-          status: "active",
-          metadata: outcome.metadata ?? {},
-        },
+      const existingOutcome = await prisma.outcome.findFirst({
+        where: { marketId: market.id, code: outcome.code },
+        select: { id: true },
       });
+
+      if (existingOutcome) {
+        await prisma.outcome.update({
+          where: { id: existingOutcome.id },
+          data: {
+            name: outcome.name,
+            label: outcome.name,
+            displayOrder: index,
+            isActive: true,
+            isTradable: true,
+            status: "active",
+            metadata: outcome.metadata ?? {},
+          },
+        });
+      } else {
+        await prisma.outcome.create({
+          data: {
+            marketId: market.id,
+            name: outcome.name,
+            label: outcome.name,
+            code: outcome.code,
+            slug: `${market.slug}-${slugify(outcome.code)}`,
+            displayOrder: index,
+            isActive: true,
+            isTradable: true,
+            status: "active",
+            metadata: outcome.metadata ?? {},
+          },
+        });
+      }
     }
 
     for (const tagSlug of ["sports", "soccer", "world-cup"]) {
