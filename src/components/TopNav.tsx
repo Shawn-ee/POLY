@@ -38,7 +38,9 @@ export default function TopNav() {
   };
 
   useEffect(() => {
-    loadUser();
+    queueMicrotask(() => {
+      void loadUser();
+    });
     const onWalletUpdated = () => {
       void loadUser();
     };
@@ -90,12 +92,6 @@ export default function TopNav() {
     window.location.href = "/";
   };
 
-  const handleWithdraw = async () => {
-    window.location.href = "/wallet";
-    setToast("Open wallet to request a withdrawal.");
-    setMenuOpen(false);
-  };
-
   const openMenuByHover = () => {
     if (!isDesktop) return;
     clearTimers();
@@ -134,6 +130,7 @@ export default function TopNav() {
           </Link>
           <nav className="flex items-center gap-4 text-sm text-neutral-700">
             <Link href="/markets">Markets</Link>
+            <Link href="/sports">Sports</Link>
             <Link href="/create">Create your own market</Link>
             {user?.isAdmin ? (
               <>

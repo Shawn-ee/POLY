@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import MarketCard from "@/components/MarketCard";
 import GroupedTradeTicket, { type SelectedTrade } from "@/components/GroupedTradeTicket";
+import { formatDateTime, formatLeague, formatSport, formatStatus } from "@/components/sports/SportsEventCard";
 
 type EventSummary = {
   id: string;
@@ -12,6 +13,12 @@ type EventSummary = {
   title: string;
   description: string | null;
   category: string | null;
+  sportKey: string | null;
+  leagueKey: string | null;
+  eventType: string | null;
+  homeTeamName: string | null;
+  awayTeamName: string | null;
+  startTime: string | null;
   status: string | null;
   source: string | null;
   externalEventId: string | null;
@@ -32,12 +39,22 @@ type EventMarket = {
   title: string;
   description: string;
   status: string;
+  marketType?: string | null;
   visibility: "PUBLIC" | "PRIVATE";
   mechanism: "ORDERBOOK" | "POOL";
   prices: { YES: number; NO: number } | null;
+  pricesByOutcome?: Record<string, number>;
   referenceOnly?: boolean | null;
   tradable?: boolean | null;
-  outcomes: { id: string; name: string }[];
+  outcomes: {
+    id: string;
+    name: string;
+    label?: string | null;
+    code?: string | null;
+    price?: number | null;
+    bestBid?: number | null;
+    bestAsk?: number | null;
+  }[];
   resolveTime: string | null;
   referenceSummary?: {
     source: string;
@@ -110,8 +127,10 @@ export default function EventPage() {
   const [grouped, setGrouped] = useState<GroupedEventResponse | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<string>("");
   const [selectedTrade, setSelectedTrade] = useState<SelectedTrade | null>(null);
+  const [marketGroup, setMarketGroup] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasGroupedEvent = grouped !== null;
 
   useEffect(() => {
     if (!slug) return;
@@ -161,7 +180,7 @@ export default function EventPage() {
 
   // Auto-refresh grouped data every 10s while viewing a grouped event
   useEffect(() => {
-    if (!slug || !grouped) return;
+    if (!slug || !hasGroupedEvent) return;
     const timer = setInterval(async () => {
       const groupedRes = await fetch(`/api/events/${encodeURIComponent(slug)}/grouped-markets`);
       const groupedData = await groupedRes.json().catch(() => null);
@@ -170,7 +189,7 @@ export default function EventPage() {
       }
     }, 10_000);
     return () => clearInterval(timer);
-  }, [slug, grouped !== null]);
+  }, [slug, hasGroupedEvent]);
 
   const [binaryMarkets, nonBinaryMarkets] = useMemo(() => {
     const binary: EventMarket[] = [];
@@ -218,6 +237,17 @@ export default function EventPage() {
           }}
         />
       </main>
+    );
+  }
+
+  if (event.category === "sports") {
+    return (
+      <SportsEventView
+        event={event}
+        markets={markets}
+        marketGroup={marketGroup}
+        onMarketGroupChange={setMarketGroup}
+      />
     );
   }
 
@@ -473,6 +503,233 @@ function GroupedEventView({
       </div>
     </>
   );
+}
+
+function SportsEventView({
+  event,
+  markets,
+  marketGroup,
+  onMarketGroupChange,
+}: {
+  event: EventSummary;
+  markets: EventMarket[];
+  marketGroup: string;
+  onMarketGroupChange: (group: string) => void;
+}) {
+  const filteredMarkets = useMemo(() => {
+    if (marketGroup === "all") return markets;
+    return markets.filter((market) => getSportsMarketGroup(market.marketType) === marketGroup);
+  }, [marketGroup, markets]);
+
+  const groupCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const market of markets) {
+      const group = getSportsMarketGroup(market.marketType);
+      counts.set(group, (counts.get(group) ?? 0) + 1);
+    }
+    return counts;
+  }, [markets]);
+
+  return (
+    <main className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mb-6 text-sm text-neutral-500">
+        <Link href="/sports" className="hover:text-neutral-700 hover:underline">
+          Sports
+        </Link>
+        <span className="mx-2">/</span>
+        <Link href="/sports/soccer" className="hover:text-neutral-700 hover:underline">
+          Soccer
+        </Link>
+      </div>
+
+      <section className="mb-8 border-b border-neutral-200 pb-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="text-xs font-semibold uppercase text-neutral-500">
+              {formatSport(event.sportKey) || "Sports"}
+              {event.leagueKey ? ` / ${formatLeague(event.leagueKey)}` : ""}
+            </div>
+            <h1 className="mt-3 text-4xl font-semibold tracking-normal text-neutral-950">
+              {event.title}
+            </h1>
+            {event.description ? (
+              <p className="mt-3 text-base text-neutral-600">{event.description}</p>
+            ) : null}
+          </div>
+          <div className="grid gap-2 text-sm text-neutral-700 sm:grid-cols-2 lg:min-w-80">
+            <div className="rounded-lg border border-neutral-200 bg-white p-3">
+              <div className="text-xs uppercase text-neutral-500">Status</div>
+              <div className="mt-1 font-medium capitalize">{formatStatus(event.status)}</div>
+            </div>
+            <div className="rounded-lg border border-neutral-200 bg-white p-3">
+              <div className="text-xs uppercase text-neutral-500">Start</div>
+              <div className="mt-1 font-medium">{formatDateTime(event.startTime)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+          <TeamPanel label="Home" name={event.homeTeamName ?? "Home team"} />
+          <div className="hidden text-center text-xs font-semibold uppercase text-neutral-400 sm:block">
+            vs
+          </div>
+          <TeamPanel label="Away" name={event.awayTeamName ?? "Away team"} alignRight />
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-neutral-950">Event Markets</h2>
+            <p className="mt-1 text-sm text-neutral-600">
+              Multiple orderbook markets grouped under one sports event.
+            </p>
+          </div>
+          <Link href="/markets" className="text-sm text-neutral-600 hover:text-neutral-950">
+            General markets
+          </Link>
+        </div>
+
+        <div className="mb-6 flex flex-wrap gap-2">
+          {[
+            { key: "all", label: "All", count: markets.length },
+            { key: "match", label: "Match", count: groupCounts.get("match") ?? 0 },
+            { key: "goals", label: "Goals", count: groupCounts.get("goals") ?? 0 },
+            { key: "qualify", label: "Qualify", count: groupCounts.get("qualify") ?? 0 },
+            { key: "score", label: "Score", count: groupCounts.get("score") ?? 0 },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => onMarketGroupChange(tab.key)}
+              className={`rounded-full border px-3 py-1 text-sm ${
+                marketGroup === tab.key
+                  ? "border-black bg-black text-white"
+                  : "border-neutral-300 bg-white text-neutral-700"
+              }`}
+            >
+              {tab.label} {tab.count}
+            </button>
+          ))}
+        </div>
+
+        {filteredMarkets.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-6 text-sm text-neutral-600">
+            No markets in this group.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredMarkets.map((market) => (
+              <SportsMarketPanel key={market.id} market={market} />
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
+
+function TeamPanel({
+  label,
+  name,
+  alignRight,
+}: {
+  label: string;
+  name: string;
+  alignRight?: boolean;
+}) {
+  return (
+    <div className={`rounded-lg border border-neutral-200 bg-white p-4 ${alignRight ? "sm:text-right" : ""}`}>
+      <div className="text-xs font-medium uppercase text-neutral-500">{label}</div>
+      <div className="mt-1 text-2xl font-semibold text-neutral-950">{name}</div>
+    </div>
+  );
+}
+
+function SportsMarketPanel({ market }: { market: EventMarket }) {
+  return (
+    <div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-lg font-semibold text-neutral-950">{market.title}</h3>
+          {market.description ? (
+            <p className="mt-1 text-sm text-neutral-600">{market.description}</p>
+          ) : null}
+        </div>
+        <div className="flex flex-wrap gap-2 text-xs text-neutral-600">
+          <span className="rounded-full border border-neutral-200 px-2 py-1">
+            {formatMarketType(market.marketType)}
+          </span>
+          <span className="rounded-full border border-neutral-200 px-2 py-1">
+            {formatStatus(market.status)}
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {market.outcomes.map((outcome) => {
+          const price = outcome.price ?? market.pricesByOutcome?.[outcome.id] ?? null;
+          return (
+            <Link
+              key={outcome.id}
+              href={`/markets/${market.id}?outcomeId=${outcome.id}`}
+              className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 transition hover:border-neutral-300 hover:bg-white"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-neutral-950">
+                    {outcome.label ?? outcome.name}
+                  </div>
+                  {outcome.code ? (
+                    <div className="mt-1 text-xs uppercase text-neutral-500">{outcome.code}</div>
+                  ) : null}
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-neutral-950">{formatProbability(price)}</div>
+                  <div className="mt-1 text-xs text-neutral-500">
+                    {formatBidAsk(outcome.bestBid, outcome.bestAsk)}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function getSportsMarketGroup(marketType: string | null | undefined) {
+  switch (marketType) {
+    case "match_winner_1x2":
+    case "both_teams_to_score":
+    case "yes_no":
+    case "generic":
+      return "match";
+    case "total_goals":
+      return "goals";
+    case "team_to_qualify":
+      return "qualify";
+    case "correct_score":
+      return "score";
+    default:
+      return "match";
+  }
+}
+
+function formatMarketType(value: string | null | undefined) {
+  if (!value) return "Market";
+  return value.replaceAll("_", " ");
+}
+
+function formatProbability(value: number | null) {
+  return typeof value === "number" && Number.isFinite(value) ? `${(value * 100).toFixed(0)}%` : "--";
+}
+
+function formatBidAsk(bid: number | null | undefined, ask: number | null | undefined) {
+  const left = typeof bid === "number" && Number.isFinite(bid) ? bid.toFixed(2) : "--";
+  const right = typeof ask === "number" && Number.isFinite(ask) ? ask.toFixed(2) : "--";
+  return `${left} / ${right}`;
 }
 
 function formatPct(value: number | null) {
