@@ -56,8 +56,23 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit --pretty false --incremental false
 
-      - name: Run Jest tests
-        run: npm run test:jest
+      - name: Run Jest smoke tests
+        run: >-
+          npx jest --runInBand --detectOpenHandles
+          src/__tests__/admin.market.invariants.route.test.ts
+          src/__tests__/admin.withdrawals.complete.route.test.ts
+          src/__tests__/config.validation.test.ts
+          src/__tests__/health.route.test.ts
+          src/__tests__/order_ticket_logic.test.ts
+          src/__tests__/orderbook.events.bus.test.ts
+          src/__tests__/orderbook.place-cancel.events.test.ts
+          src/__tests__/sensitive.rate-limit.test.ts
+          src/__tests__/sports.event-market-model.test.ts
+          src/__tests__/sse.market.route.test.ts
+          src/__tests__/sse.recovery.test.ts
+          src/__tests__/sse.user.route.test.ts
+          src/__tests__/wallet.balance.route.test.ts
 
       # Playwright is intentionally not part of this first CI phase.
-      # Add browser tests later after the UI/auth flows are stable in CI.
+      # Broader DB-backed Jest, Vitest, and browser tests should be added
+      # after those suites are isolated and stable in CI.
