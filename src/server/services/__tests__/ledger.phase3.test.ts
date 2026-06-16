@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { vi } from "vitest";
 import { prisma } from "@/lib/db";
 import {
   __setLedgerTestHook,
@@ -47,7 +48,7 @@ describe("Phase 3 ledger invariants", () => {
   });
 
   test("hook export is undefined when module is loaded with NODE_ENV=production", async () => {
-    jest.resetModules();
+    vi.resetModules();
     const previousNodeEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "production";
     const prodModule = await import("../ledger");
