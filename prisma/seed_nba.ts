@@ -75,6 +75,60 @@ const removeExistingNBA = async () => {
   await prisma.marketOutcomeSnapshot.deleteMany({ where: { marketId: { in: marketIds } } });
   await prisma.outcome.deleteMany({ where: { marketId: { in: marketIds } } });
   await prisma.market.deleteMany({ where: { id: { in: marketIds } } });
+  await prisma.event.deleteMany({
+    where: {
+      category: "sports",
+      sportKey: "basketball",
+      leagueKey: "nba",
+      slug: { startsWith: "nba-" },
+    },
+  });
+};
+
+const ensureNbaEvent = async (params: {
+  slug: string;
+  title: string;
+  description: string;
+  adminId: string;
+  eventType: "future" | "game";
+  startTime: Date;
+  homeTeamName?: string;
+  awayTeamName?: string;
+}) => {
+  return prisma.event.upsert({
+    where: { slug: params.slug },
+    update: {
+      title: params.title,
+      description: params.description,
+      category: "sports",
+      sportKey: "basketball",
+      leagueKey: "nba",
+      eventType: params.eventType,
+      homeTeamName: params.homeTeamName ?? null,
+      awayTeamName: params.awayTeamName ?? null,
+      startTime: params.startTime,
+      status: "scheduled",
+      source: "seed:nba",
+      metadata: { demo: true, seed: "nba" },
+    },
+    create: {
+      slug: params.slug,
+      title: params.title,
+      description: params.description,
+      category: "sports",
+      sportKey: "basketball",
+      leagueKey: "nba",
+      eventType: params.eventType,
+      homeTeamName: params.homeTeamName ?? null,
+      awayTeamName: params.awayTeamName ?? null,
+      startTime: params.startTime,
+      status: "scheduled",
+      source: "seed:nba",
+      metadata: { demo: true, seed: "nba" },
+      createdBy: params.adminId,
+    },
+    select: { id: true, slug: true },
+  });
 };
 
 const createNbaMarket = async (params: {
@@ -85,9 +139,40 @@ const createNbaMarket = async (params: {
   categoryId: string;
   adminId: string;
   tagIds: string[];
+  eventId: string;
+  closeTime: Date;
 }) => {
   const existing = await prisma.market.findUnique({ where: { slug: params.slug } });
-  if (existing) return false;
+  if (existing) {
+    await prisma.market.update({
+      where: { id: existing.id },
+      data: {
+        eventId: params.eventId,
+        categoryId: params.categoryId,
+        categoryLegacy: "sports",
+        marketType: "sports",
+        mechanism: "ORDERBOOK",
+        kind: "ORDERBOOK",
+        visibility: "PUBLIC",
+        status: "LIVE",
+        betCloseTime: params.closeTime,
+        closeTime: params.closeTime,
+        resolveTime: new Date(params.closeTime.getTime() + 3 * 60 * 60 * 1000),
+        isListed: true,
+        isCanceled: false,
+      },
+    });
+
+    for (const tagId of params.tagIds) {
+      await prisma.marketTag.upsert({
+        where: { marketId_tagId: { marketId: existing.id, tagId } },
+        update: {},
+        create: { marketId: existing.id, tagId },
+      });
+    }
+
+    return "linked" as const;
+  }
 
   await prisma.market.create({
     data: {
@@ -101,8 +186,12 @@ const createNbaMarket = async (params: {
       status: "LIVE",
       categoryId: params.categoryId,
       categoryLegacy: "sports",
+      marketType: "sports",
+      eventId: params.eventId,
       createdBy: params.adminId,
-      resolveTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 20),
+      betCloseTime: params.closeTime,
+      closeTime: params.closeTime,
+      resolveTime: new Date(params.closeTime.getTime() + 3 * 60 * 60 * 1000),
       outcomes: {
         create: params.outcomes.map((name) => ({ name })),
       },
@@ -112,7 +201,7 @@ const createNbaMarket = async (params: {
     },
   });
 
-  return true;
+  return "created" as const;
 };
 
 const run = async () => {
@@ -154,10 +243,19 @@ const run = async () => {
   ];
 
   let created = 0;
-  let skipped = 0;
+  let linked = 0;
+
+  const futuresEvent = await ensureNbaEvent({
+    slug: "nba-2026-futures",
+    title: "NBA 2026 Futures",
+    description: "Season-long NBA futures markets for the 2026 season.",
+    adminId: admin.id,
+    eventType: "future",
+    startTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 20),
+  });
 
   for (const market of futures) {
-    const ok = await createNbaMarket({
+    const result = await createNbaMarket({
       slug: market.slug,
       title: market.title,
       description: market.description,
@@ -165,20 +263,33 @@ const run = async () => {
       categoryId: sports.id,
       adminId: admin.id,
       tagIds: market.tags,
+      eventId: futuresEvent.id,
+      closeTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 20),
     });
-    if (ok) created += 1;
-    else skipped += 1;
+    if (result === "created") created += 1;
+    else linked += 1;
   }
 
   for (let i = 0; i < 20; i += 1) {
-    const away = teams[Math.floor(Math.random() * teams.length)];
-    let home = teams[Math.floor(Math.random() * teams.length)];
+    const away = teams[i % teams.length];
+    let home = teams[(i * 3 + 1) % teams.length];
     while (home === away) {
-      home = teams[Math.floor(Math.random() * teams.length)];
+      home = teams[(teams.indexOf(home) + 1) % teams.length];
     }
 
     const slug = `nba-game-${slugify(away)}-at-${slugify(home)}-${i + 1}`;
-    const ok = await createNbaMarket({
+    const startTime = new Date(Date.now() + 1000 * 60 * 60 * 24 * (7 + i));
+    const event = await ensureNbaEvent({
+      slug,
+      title: `NBA: ${away} at ${home}`,
+      description: `Demo NBA game event for ${away} at ${home}.`,
+      adminId: admin.id,
+      eventType: "game",
+      homeTeamName: home,
+      awayTeamName: away,
+      startTime,
+    });
+    const result = await createNbaMarket({
       slug,
       title: `NBA: ${away} at ${home}`,
       description: "Who wins this game?",
@@ -186,15 +297,20 @@ const run = async () => {
       categoryId: sports.id,
       adminId: admin.id,
       tagIds,
+      eventId: event.id,
+      closeTime: startTime,
     });
-    if (ok) created += 1;
-    else skipped += 1;
+    if (result === "created") created += 1;
+    else linked += 1;
   }
 
   console.log("NBA seed summary:", {
     created,
-    skipped,
+    linked,
     markets: await prisma.market.count({ where: { slug: { startsWith: "nba-" } } }),
+    events: await prisma.event.count({
+      where: { category: "sports", sportKey: "basketball", leagueKey: "nba" },
+    }),
   });
 };
 

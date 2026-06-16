@@ -22,6 +22,7 @@
     "backfill:realized": "tsx scripts/backfill_realized_pnl.ts",
     "seed:nba": "tsx prisma/seed_nba.ts",
     "seed:nba:reset": "tsx prisma/seed_nba.ts --reset",
+    "check:nba-seed-events": "tsx scripts/check_nba_seed_events.ts",
     "check:market-routing": "tsx prisma/check_market_routing.ts",
     "check:deposit-verify": "tsx prisma/check_deposit_verify.ts",
     "reset:phase2": "ts-node scripts/reset-phase2.ts",
