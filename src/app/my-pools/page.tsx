@@ -1,7 +1,14 @@
 "use client";
 
+/* eslint-disable react-hooks/purity */
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import PageContainer from "@/components/ui/PageContainer";
+import { EmptyState, ErrorState } from "@/components/ui/States";
 
 type PoolMarketItem = {
   id: string;
@@ -72,60 +79,61 @@ export default function MyPoolsPage() {
   };
 
   if (loading) {
-    return <main className="mx-auto max-w-5xl px-4 py-8">Loading private markets...</main>;
+    return <PageContainer size="default"><Card className="p-6 text-sm text-[var(--poly-muted)]">Loading private markets...</Card></PageContainer>;
   }
 
   if (error) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-8">
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </div>
-      </main>
+      <PageContainer size="default">
+        <ErrorState>{error}</ErrorState>
+      </PageContainer>
     );
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-semibold">My private markets</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+    <PageContainer size="default">
+      <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Pools</div>
+      <h1 className="mt-1 text-3xl font-semibold text-[var(--poly-text)]">My private markets</h1>
+      <p className="mt-1 text-sm text-[var(--poly-muted)]">
         Manage private pool markets you created or joined.
       </p>
       {message ? (
-        <div className="mt-4 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-700">
+        <div className="mt-4 rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] px-3 py-2 text-sm text-[var(--poly-muted)]">
           {message}
         </div>
       ) : null}
 
       <section className="mt-6">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Owned by you</h2>
+          <h2 className="text-lg font-semibold text-[var(--poly-text)]">Owned by you</h2>
           <Link
             href="/create"
-            className="rounded-md border border-neutral-300 px-3 py-1 text-sm text-neutral-700"
+            className="rounded-lg border border-[var(--poly-border)] bg-white px-3 py-1 text-sm font-semibold text-[var(--poly-text)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
           >
             Create new
           </Link>
         </div>
         {owned.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-600">
-            No owned private markets yet.
-          </div>
+          <EmptyState title="No owned private markets yet" />
         ) : (
           <div className="space-y-3">
             {owned.map((market) => (
-              <div
+              <Card
                 key={market.id}
-                className="rounded-lg border border-neutral-200 bg-white p-4"
+                className="p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="text-base font-semibold">{market.title}</div>
-                    <div className="mt-1 text-xs text-neutral-600">
-                      Status {market.status} | Pot {market.totalPot.toFixed(2)} U |{" "}
+                    <div className="text-base font-semibold text-[var(--poly-text)]">{market.title}</div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <Badge tone={market.status === "LIVE" || market.status === "ACTIVE" ? "positive" : market.status === "RESOLVED" ? "primary" : "neutral"}>{market.status}</Badge>
+                      <Badge tone="teal">Pot {market.totalPot.toFixed(2)} U</Badge>
+                      <Badge>{market.participants} participants</Badge>
+                    </div>
+                    <div className="mt-2 text-xs text-[var(--poly-muted)]">
                       {market.participants} participants
                     </div>
-                    <div className="mt-1 text-xs text-neutral-500">
+                    <div className="mt-1 text-xs text-[var(--poly-muted)]">
                       Bet close:{" "}
                       {market.betCloseTime
                         ? new Date(market.betCloseTime).toLocaleString()
@@ -140,7 +148,7 @@ export default function MyPoolsPage() {
                   <div className="flex flex-wrap gap-2 text-xs">
                     <Link
                       href={`/markets/${market.id}`}
-                      className="rounded-md border border-neutral-300 px-3 py-1 text-neutral-700"
+                      className="rounded-lg border border-[var(--poly-border)] px-3 py-1 text-[var(--poly-text)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
                     >
                       Open
                     </Link>
@@ -148,64 +156,63 @@ export default function MyPoolsPage() {
                       <>
                         <Link
                           href={`/markets/${market.id}`}
-                          className="rounded-md border border-neutral-300 px-3 py-1 text-neutral-700"
+                          className="rounded-lg border border-[var(--poly-border)] px-3 py-1 text-[var(--poly-text)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
                         >
                           {resolveLabel(market)}
                         </Link>
-                        <button
+                        <Button
                           onClick={() => cancelMarket(market.id)}
-                          className="rounded-md border border-neutral-300 px-3 py-1 text-neutral-700"
+                          variant="negative"
+                          size="sm"
                           type="button"
                         >
                           Cancel
-                        </button>
+                        </Button>
                       </>
                     ) : null}
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-semibold">You joined</h2>
+        <h2 className="mb-3 text-lg font-semibold text-[var(--poly-text)]">You joined</h2>
         {joined.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-600">
-            You have not joined any private markets yet.
-          </div>
+          <EmptyState title="You have not joined any private markets yet" />
         ) : (
           <div className="space-y-3">
             {joined.map((market) => (
-              <div
+              <Card
                 key={`${market.id}-${market.myBet.outcomeId}`}
-                className="rounded-lg border border-neutral-200 bg-white p-4"
+                className="p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="text-base font-semibold">{market.title}</div>
-                    <div className="mt-1 text-xs text-neutral-600">
+                    <div className="text-base font-semibold text-[var(--poly-text)]">{market.title}</div>
+                    <div className="mt-1 text-xs text-[var(--poly-muted)]">
                       Status {market.status} | My bet {market.myBet.outcomeName} for{" "}
                       {market.myBet.amount.toFixed(2)} U
                     </div>
-                    <div className="mt-1 text-xs text-neutral-500">
+                    <div className="mt-1 text-xs text-[var(--poly-muted)]">
                       Pot {market.totalPot.toFixed(2)} U | {market.participants} participants
                     </div>
                   </div>
                   <Link
                     href={`/markets/${market.id}`}
-                    className="rounded-md border border-neutral-300 px-3 py-1 text-xs text-neutral-700"
+                    className="rounded-lg border border-[var(--poly-border)] px-3 py-1 text-xs text-[var(--poly-text)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
                   >
                     Open
                   </Link>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
       </section>
-    </main>
+    </PageContainer>
   );
 }
 

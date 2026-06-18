@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { BrowserProvider } from "ethers";
 import TransferCryptoModal from "@/components/TransferCryptoModal";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import PageContainer from "@/components/ui/PageContainer";
 
 type Transaction = {
   id: string;
@@ -534,14 +538,17 @@ export default function WalletPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
+    <PageContainer size="default">
       {/* Internal Beta Banner */}
-      <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-medium text-amber-800">
-        ⚠️ Internal Beta — Test credits only. Deposits and withdrawals are disabled.
+      <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-800">
+        Internal Beta: test credits only. Deposits and withdrawals are disabled.
       </div>
-      <h1 className="text-2xl font-semibold">Wallet</h1>
-      <div className="mt-4 rounded-lg border border-neutral-200 bg-white p-4">
-        <div className="text-sm text-neutral-600">Balance</div>
+      <div>
+        <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Account</div>
+        <h1 className="mt-1 text-3xl font-semibold text-[var(--poly-text)]">Wallet</h1>
+      </div>
+      <Card className="mt-4 p-4">
+        <div className="text-sm font-semibold text-[var(--poly-muted)]">Balance</div>
         <div className="mt-2 grid gap-2 sm:grid-cols-3">
           <div>
             <div className="text-xs text-neutral-500">Available</div>
@@ -557,20 +564,20 @@ export default function WalletPage() {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <button
+          <Button
             onClick={handleFaucet}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-700 hover:border-neutral-400"
+            variant="outline"
             type="button"
           >
             Request faucet
-          </button>
+          </Button>
         </div>
         {message ? <div className="mt-3 text-sm text-neutral-600">{message}</div> : null}
-      </div>
+      </Card>
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Deposit</h2>
-        <p className="mt-1 text-sm text-neutral-600">
+      <Card className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Deposit</h2>
+        <p className="mt-1 text-sm text-[var(--poly-muted)]">
           During internal beta, deposits are disabled. Use the faucet to get test credits.
         </p>
         <div className="mt-4 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5">
@@ -681,21 +688,21 @@ export default function WalletPage() {
           )}
         </div>
         ) : null}
-      </section>
+      </Card>
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Withdraw</h2>
-        <div className="mt-4 rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-6 text-center">
-          <p className="text-sm font-medium text-neutral-600">Withdrawals coming soon</p>
-          <p className="mt-1 text-xs text-neutral-500">
+      <Card className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Withdraw</h2>
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--poly-border)] bg-[var(--poly-surface-muted)] p-6 text-center">
+          <p className="text-sm font-semibold text-[var(--poly-muted)]">Withdrawals coming soon</p>
+          <p className="mt-1 text-xs text-[var(--poly-muted)]">
             Internal beta uses test credits only. Real-money withdrawals are not yet available.
           </p>
         </div>
-      </section>
+      </Card>
 
-      <section id="history" className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Transaction history</h2>
-        <p className="mt-1 text-sm text-neutral-600">Deposits and withdrawals</p>
+      <Card id="history" className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Transaction history</h2>
+        <p className="mt-1 text-sm text-[var(--poly-muted)]">Deposits and withdrawals</p>
 
         {transactionsLoading ? (
           <div className="mt-4 text-sm text-neutral-600">Loading...</div>
@@ -748,10 +755,10 @@ export default function WalletPage() {
             </table>
           </div>
         )}
-      </section>
+      </Card>
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Withdrawal requests</h2>
+      <Card className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Withdrawal requests</h2>
         {withdrawalsLoading ? (
           <div className="mt-3 text-sm text-neutral-600">Loading...</div>
         ) : withdrawals.length === 0 ? (
@@ -788,24 +795,24 @@ export default function WalletPage() {
             </table>
           </div>
         )}
-      </section>
+      </Card>
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
+      <Card className="mt-6 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold">My Wallets</h2>
-            <p className="mt-1 text-sm text-neutral-600">
+            <h2 className="text-lg font-semibold text-[var(--poly-text)]">My Wallets</h2>
+            <p className="mt-1 text-sm text-[var(--poly-muted)]">
               Wallets linked to your account for login and withdrawals.
             </p>
           </div>
-          <button
+          <Button
             onClick={handleLinkWallet}
             disabled={linkingWallet}
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-700 hover:border-neutral-400 disabled:opacity-60"
+            variant="outline"
             type="button"
           >
             {linkingWallet ? "Linking..." : "Link new wallet"}
-          </button>
+          </Button>
         </div>
 
         {wrongNetwork ? (
@@ -854,9 +861,11 @@ export default function WalletPage() {
                       {new Date(wallet.createdAt).toLocaleString()}
                     </td>
                     <td className="px-2 py-2 text-neutral-700">
-                      {wallet.isActive ? "active" : "inactive"} /{" "}
-                      {wallet.isVerified ? "verified" : "unverified"} /{" "}
-                      {wallet.linkMethod.toLowerCase()}
+                      <div className="flex flex-wrap gap-1">
+                        <Badge tone={wallet.isActive ? "positive" : "neutral"}>{wallet.isActive ? "active" : "inactive"}</Badge>
+                        <Badge tone={wallet.isVerified ? "primary" : "warning"}>{wallet.isVerified ? "verified" : "unverified"}</Badge>
+                        <Badge>{wallet.linkMethod.toLowerCase()}</Badge>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -880,14 +889,14 @@ export default function WalletPage() {
             <div className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-700">
               App network
             </div>
-            <button
+            <Button
               onClick={handleManualLinkWallet}
               disabled={manualLinking}
-              className="rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-700 hover:border-neutral-400 disabled:opacity-60"
+              variant="outline"
               type="button"
             >
               {manualLinking ? "Adding..." : "Add wallet"}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -901,13 +910,12 @@ export default function WalletPage() {
             {walletNotice}
           </div>
         ) : null}
-      </section>
+      </Card>
       <TransferCryptoModal
         open={depositOpen}
         onClose={() => setDepositOpen(false)}
         platformBalance={Number(totalBalance ?? 0)}
       />
-    </main>
+    </PageContainer>
   );
 }
-

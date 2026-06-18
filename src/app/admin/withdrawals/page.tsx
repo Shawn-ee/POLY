@@ -1,6 +1,11 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useEffect, useState } from "react";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import PageContainer from "@/components/ui/PageContainer";
 
 type AdminWithdrawalItem = {
   id: string;
@@ -85,30 +90,34 @@ export default function AdminWithdrawalsPage() {
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
+    <PageContainer size="default">
       <div className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold">Admin Withdrawals</h1>
-        <button
-          className="rounded-md border border-neutral-300 px-3 py-1 text-sm"
+        <div>
+          <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Admin</div>
+          <h1 className="mt-1 text-3xl font-semibold text-[var(--poly-text)]">Withdrawals</h1>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => load()}
           type="button"
         >
           Refresh
-        </button>
+        </Button>
       </div>
 
       {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
       {loading ? <p className="mt-4 text-sm text-neutral-600">Loading...</p> : null}
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Pending</h2>
+      <Card className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Pending</h2>
         {pending.length === 0 ? (
           <p className="mt-3 text-sm text-neutral-600">No pending withdrawals.</p>
         ) : (
           <div className="mt-3 overflow-x-auto">
             <table className="w-full min-w-[980px] text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 text-neutral-600">
+                <tr className="border-b border-[var(--poly-border)] bg-[var(--poly-surface-muted)] text-[var(--poly-muted)]">
                   <th className="px-2 py-2 font-medium">Request</th>
                   <th className="px-2 py-2 font-medium">User</th>
                   <th className="px-2 py-2 font-medium">Amount</th>
@@ -133,7 +142,7 @@ export default function AdminWithdrawalsPage() {
                     <td className="px-2 py-2">
                       <div className="flex flex-col gap-2">
                         <input
-                          className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                          className="rounded-lg border border-[var(--poly-border)] px-2 py-1 text-xs focus:border-[var(--poly-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--poly-ring)]"
                           placeholder="txHash for complete"
                           value={txById[item.id] ?? ""}
                           onChange={(event) =>
@@ -141,7 +150,7 @@ export default function AdminWithdrawalsPage() {
                           }
                         />
                         <input
-                          className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                          className="rounded-lg border border-[var(--poly-border)] px-2 py-1 text-xs focus:border-[var(--poly-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--poly-ring)]"
                           placeholder="notes (optional)"
                           value={noteById[item.id] ?? ""}
                           onChange={(event) =>
@@ -149,22 +158,26 @@ export default function AdminWithdrawalsPage() {
                           }
                         />
                         <div className="flex gap-2">
-                          <button
-                            className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                          <Button
+                            className="px-2 py-1"
+                            size="sm"
+                            variant="outline"
                             onClick={() => completeRequest(item.id)}
                             disabled={busyId === item.id}
                             type="button"
                           >
                             Complete
-                          </button>
-                          <button
-                            className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                          </Button>
+                          <Button
+                            className="px-2 py-1"
+                            size="sm"
+                            variant="negative"
                             onClick={() => rejectRequest(item.id)}
                             disabled={busyId === item.id}
                             type="button"
                           >
                             Reject
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </td>
@@ -174,17 +187,17 @@ export default function AdminWithdrawalsPage() {
             </table>
           </div>
         )}
-      </section>
+      </Card>
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Recent Processed</h2>
+      <Card className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Recent Processed</h2>
         {recent.length === 0 ? (
           <p className="mt-3 text-sm text-neutral-600">No recent processed withdrawals.</p>
         ) : (
           <div className="mt-3 overflow-x-auto">
             <table className="w-full min-w-[980px] text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 text-neutral-600">
+                <tr className="border-b border-[var(--poly-border)] bg-[var(--poly-surface-muted)] text-[var(--poly-muted)]">
                   <th className="px-2 py-2 font-medium">Request</th>
                   <th className="px-2 py-2 font-medium">User</th>
                   <th className="px-2 py-2 font-medium">Amount</th>
@@ -208,8 +221,7 @@ export default function AdminWithdrawalsPage() {
             </table>
           </div>
         )}
-      </section>
-    </main>
+      </Card>
+    </PageContainer>
   );
 }
-
