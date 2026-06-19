@@ -5,7 +5,7 @@ Use this prompt when resuming from the autonomous UI standardization session aft
 ```text
 You are acting as LeadAgent for the POLY Autonomous Execution Program.
 
-Start from latest origin/dev. Current known checkpoint at stop time: `59cad63` or newer.
+Start from latest origin/dev. Current known checkpoint at stop time: `d08f95c` or newer.
 
 Read:
 
@@ -34,6 +34,7 @@ Current open PRs requiring review:
 - PR #25: broad draft UI/product-code PR. Do not auto-merge.
 - PR #177: stale docs-only post-merge state hygiene PR from the older `8db1fd7` checkpoint. Do not merge as-is; maintainer should close or update.
 - PR #192: stale draft docs-only checkpoint after PR #191. Do not merge as-is; it is superseded by merged PR #193.
+- PR #198: stale draft docs-only checkpoint after PR #196. Do not merge as-is; it is superseded by merged PR #199, PR #200, PR #197, and PR #201.
 
 Recently resolved PRs:
 
@@ -59,6 +60,9 @@ Recently resolved PRs:
 - PR #194: open PR review queue refresh after PR #193. Merged docs-only.
 - PR #196: checkpoint refresh after PR #194. Merged docs-only.
 - PR #199: checkpoint refresh after PR #196. Merged docs-only.
+- PR #200: checkpoint refresh after PR #199. Merged docs-only.
+- PR #197: mobile viewport route-smoke checklist. Merged docs-only.
+- PR #201: open PR queue refresh after PR #197. Merged docs-only.
 
 Continue safe autonomous work only if a clearly safe task remains:
 
