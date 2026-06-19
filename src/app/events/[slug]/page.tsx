@@ -11,7 +11,7 @@ import Card from "@/components/ui/Card";
 import OutcomeButton from "@/components/ui/OutcomeButton";
 import PageContainer from "@/components/ui/PageContainer";
 import { BetaNotice, PageHeader, SectionHeader } from "@/components/ui/PageHeader";
-import { EmptyState, ErrorState } from "@/components/ui/States";
+import { EmptyState, ErrorState, LoadingState } from "@/components/ui/States";
 
 type EventSummary = {
   id: string;
@@ -211,13 +211,34 @@ export default function EventPage() {
   }, [markets]);
 
   if (loading) {
-    return <PageContainer><div className="text-sm text-[var(--poly-muted)]">Loading event...</div></PageContainer>;
+    return (
+      <PageContainer>
+        <PageHeader
+          eyebrow="Event"
+          title="Loading event"
+          description="Preparing the event summary and related markets."
+        />
+        <LoadingState label="Loading event" count={4} />
+      </PageContainer>
+    );
   }
 
   if (error || !event) {
     return (
       <PageContainer>
-        <ErrorState>{error ?? "Event not found."}</ErrorState>
+        <ErrorState>
+          <div className="space-y-3">
+            <p>{error ?? "Event not found."}</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/sports" className="font-semibold text-red-800 underline-offset-4 hover:underline">
+                Back to sports
+              </Link>
+              <Link href="/events" className="font-semibold text-red-800 underline-offset-4 hover:underline">
+                View events
+              </Link>
+            </div>
+          </div>
+        </ErrorState>
       </PageContainer>
     );
   }
@@ -328,6 +349,13 @@ export default function EventPage() {
             </Link>
           ))}
         </div>
+      ) : null}
+
+      {!binaryMarkets.length && !nonBinaryMarkets.length ? (
+        <EmptyState
+          title="Markets for this event are not ready yet"
+          description="View all markets or check back when more event markets are available."
+        />
       ) : null}
     </PageContainer>
   );
