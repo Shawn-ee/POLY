@@ -52,6 +52,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #139 | Auto-merged | Docs-only admin auth test implementation scope; admin auth test implementation remains human-reviewed. |
 | #140 | Auto-merged | Docs-only bot dry-run test implementation scope refresh; bot runtime/test implementation remains human-reviewed by default. |
 | #141 | Auto-merged | Docs-only autonomous checkpoint and progress report. |
+| #142 | Auto-merged | Docs-only public route smoke evidence status; smoke implementation and package/workflow changes remain human-reviewed. |
 
 ## Open PR Decisions
 
@@ -89,6 +90,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Bot dry-run test implementation scope refresh was selected as docs-only because bot runtime behavior, credentials, and live trading are high-risk and future implementation must remain human-reviewed.
 - Autonomous progress reporting was selected after the PR #136-#140 checkpoint window to preserve resumable state without changing runtime behavior.
 - Public route smoke evidence status was selected because plans/templates/command scope exist, but no safe manual/browser evidence has been recorded and package/workflow changes remain human-reviewed.
+- Human review queue rollup was selected to preserve the autonomous decision not to merge PR #25, #134, or #135 while continuing other safe work.
 
 ## Skipped Or Downgraded Tasks
 
