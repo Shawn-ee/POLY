@@ -13,5 +13,17 @@ Use these documents by topic:
 - Jest, Playwright, integration, CI, and missing coverage: `TESTING_COVERAGE_REVIEW.md`
 - Subagent task routing and execution plan: `SUBAGENT_IMPROVEMENT_PLAN.md`
 - Phased roadmap to internal beta and public beta readiness: `IMPLEMENTATION_ROADMAP.md`
+- Public API and route-smoke safety:
+  - `PUBLIC_API_NO_LEAK_COVERAGE_MAP.md`
+  - `PUBLIC_API_TEST_IMPLEMENTATION_QUEUE.md`
+  - `PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md`
+  - `PUBLIC_ROUTE_SMOKE_MANUAL_RUN_PREREQUISITES.md`
+  - `PUBLIC_ROUTE_SMOKE_EVIDENCE_2026_06_18_NOT_RUN.md`
+- Autonomous execution state:
+  - `AUTONOMOUS_EXECUTION_STATE.md`
+  - `AUTONOMOUS_DECISION_LOG.md`
+  - `AUTONOMOUS_PROGRESS_REPORT.md`
+  - `HUMAN_REVIEW_QUEUE_ROLLUP.md`
+  - `HUMAN_DECISION_REQUIRED.md`
 
 This review is planning-only. It does not change product code, Prisma schema, migrations, wallet handling, ledger logic, matching, settlement, admin auth, bot live trading, deployment config, or production secrets.

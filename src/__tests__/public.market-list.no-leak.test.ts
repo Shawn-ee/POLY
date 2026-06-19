@@ -246,4 +246,38 @@ describe("public market list API no-leak checks", () => {
     expect(body).toEqual({ markets: [] });
     expectNoForbiddenKeys(body);
   });
+
+  test("GET /api/markets excludes grouped reference markets from the public list", async () => {
+    mockPrisma.market.findMany.mockResolvedValue([
+      market,
+      {
+        ...market,
+        id: "grouped-market",
+        title: "Grouped market should not appear in flat public list",
+        referenceMetadata: { group: { slug: "match-winner" } },
+      },
+    ]);
+
+    const response = await listMarkets(new NextRequest("http://localhost/api/markets?view=all"));
+
+    expect(response.status).toBe(200);
+    expect(mockPrisma.market.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          visibility: "PUBLIC",
+          isListed: true,
+        }),
+      }),
+    );
+
+    const body = await response.json();
+    expectOnlyKeys(body, ["markets"]);
+    expect(body.markets).toHaveLength(1);
+    expect(body.markets[0]).toMatchObject({
+      id: "market-1",
+      title: "Will France beat Argentina?",
+    });
+    expect(body.markets.map((item: { id: string }) => item.id)).not.toContain("grouped-market");
+    expectNoForbiddenKeys(body);
+  });
 });

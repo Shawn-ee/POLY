@@ -48,10 +48,11 @@ It does not approve launch, deploy production, enable funding, change code, alte
 | Public market list routes avoid sensitive fields. | `src/__tests__/public.market-list.no-leak.test.ts` targeted result and future CI inclusion decision. | Partial, expanded mocked coverage | TestingAgent, SecurityAgent | Yes, for low-risk test-only PRs |
 | Public market chart routes avoid sensitive fields. | `src/__tests__/public.market-chart.no-leak.test.ts` targeted result and future CI inclusion decision. | Partial, expanded mocked coverage | TestingAgent, SecurityAgent | Yes, for low-risk test-only PRs |
 | Public market detail contract is defined. | `docs/reviews/MARKET_DETAIL_PUBLIC_CONTRACT_DECISION.md` and `docs/reviews/MARKET_DETAIL_CLEANUP_IMPLEMENTATION_PLAN.md`. | Draft | BackendAgent, SecurityAgent | No |
-| Public market detail implementation has a review gate. | `docs/reviews/MARKET_DETAIL_TARGET_CONTRACT_CHECKLIST.md`. | Draft | BackendAgent, TestingAgent, SecurityAgent | No |
-| Public route cleanup gaps are mapped. | `docs/reviews/PUBLIC_ROUTE_CLEANUP_GAP_ANALYSIS.md`. | Draft | PlannerAgent, SecurityAgent | No |
-| Public API no-leak CI promotion is gated. | `docs/reviews/PUBLIC_NO_LEAK_CI_PROMOTION_READINESS.md`, `docs/reviews/PUBLIC_API_TEST_LANE_DECISION.md`, and `docs/reviews/PUBLIC_API_TEST_LANE_IMPLEMENTATION_SCOPE.md`. | Draft | TestingAgent, SecurityAgent, DeploymentAgent | No |
+| Public market detail implementation has a review gate. | `docs/reviews/MARKET_DETAIL_TARGET_CONTRACT_CHECKLIST.md`, `docs/reviews/MARKET_DETAIL_CURRENT_GAP_TEST_REVIEW_PACKET.md`, and PR #134 review status. | Draft/open review | BackendAgent, TestingAgent, SecurityAgent | No |
+| Public route cleanup gaps are mapped. | `docs/reviews/PUBLIC_ROUTE_CLEANUP_GAP_ANALYSIS.md` and route status rollups. | Draft | PlannerAgent, SecurityAgent | No |
+| Public API no-leak CI promotion is gated. | `docs/reviews/PUBLIC_NO_LEAK_CI_PROMOTION_READINESS.md`, `docs/reviews/PUBLIC_API_TEST_LANE_DECISION.md`, and `docs/reviews/PUBLIC_API_TEST_LANE_IMPLEMENTATION_SCOPE.md`. | Draft/human-reviewed before implementation | TestingAgent, SecurityAgent, DeploymentAgent | No |
 | Public quote/orderbook/trade-tape routes avoid sensitive fields. | Mocked read-only no-leak tests with no money movement. | Missing | TestingAgent, SecurityAgent | Maybe, only if low-risk and mocked |
+| Public route/page smoke evidence is scoped. | `docs/reviews/PUBLIC_ROUTE_PAGE_SMOKE_EVIDENCE_PLAN.md`, `docs/reviews/PUBLIC_ROUTE_SMOKE_COMMAND_SCOPE.md`, `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md`, and `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md`. | Draft/not run | TestingAgent, FrontendAgent, SecurityAgent | No |
 
 ## Admin And Security Evidence
 
@@ -77,7 +78,7 @@ It does not approve launch, deploy production, enable funding, change code, alte
 
 | Claim | Required evidence | Current status | Owner | Auto-approvable |
 |---|---|---|---|---|
-| Bot dry-run/live separation is clear. | `docs/reviews/BOT_DRY_RUN_SAFETY_TEST_PLAN.md` and future tests. | Draft | BotAgent, SecurityAgent | No |
+| Bot dry-run/live separation is clear. | `docs/reviews/BOT_DRY_RUN_SAFETY_TEST_PLAN.md`, `docs/reviews/BOT_DRY_RUN_TEST_IMPLEMENTATION_SCOPE.md`, and future human-reviewed tests. | Draft/review-gated | BotAgent, SecurityAgent | No |
 | Bot credentials are handled safely. | `docs/reviews/BOT_CREDENTIAL_HANDLING_REVIEW.md` and human-reviewed remediation evidence. | Draft | BotAgent, SecurityAgent | No |
 | Bot operations have a runbook. | `docs/reviews/BOT_OPERATIONS_RUNBOOK_OUTLINE.md` and future completed runbook. | Draft | BotAgent, DeploymentAgent | No |
 | Reference liquidity public/admin split is planned. | `docs/reviews/REFERENCE_LIQUIDITY_PUBLIC_ADMIN_SPLIT_DECISION.md` and `docs/reviews/REFERENCE_LIQUIDITY_SPLIT_IMPLEMENTATION_PLAN.md`. | Draft | SecurityAgent, BotAgent, LedgerWalletReviewerAgent | No |
@@ -101,17 +102,19 @@ It does not approve launch, deploy production, enable funding, change code, alte
 | Human-only decisions are separated from autonomous work. | `docs/reviews/HUMAN_DECISION_REQUIRED.md`. | Partial | LeadAgent, SecurityAgent | Yes, docs-only updates |
 | Autonomous continuation is documented. | `docs/reviews/AUTONOMOUS_CONTINUATION_PROMPT.md`. | Partial | LeadAgent | Yes, docs-only updates |
 | PR #25 has a non-auto-merge review path. | `docs/reviews/PR25_UI_REVIEW_CHECKLIST.md`, `docs/reviews/PR25_SPLIT_MERGE_DECISION.md`, and `docs/reviews/PR25_ADMIN_FUNDING_UI_REVIEW_PACKET.md`. | Draft | FrontendAgent, SecurityAgent | No |
+| Open non-auto-merge PRs are tracked. | `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md`. | Partial/current for PR #25, #134, and #135 | LeadAgent, SecurityAgent | Yes, docs-only updates |
+| Autonomous progress has a compact checkpoint. | `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`. | Partial | LeadAgent | Yes, docs-only updates |
 
 ## Recommended Evidence Collection Sequence
 
 1. Keep current public no-leak tests as targeted evidence until the public API test lane readiness gate is satisfied.
 2. Treat the optional `test:public-api` package-script implementation as human-reviewed because it changes `package.json`.
 3. Add remaining low-risk public read no-leak tests only when mocks and route boundaries are clear.
-4. Add public route/page smoke evidence for sports-first browsing.
+4. Add public route/page smoke evidence for sports-first browsing using `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md` and the evidence template.
 5. Complete market detail cleanup and reference-liquidity split plans before implementation.
 6. Keep PR #25 split or human-reviewed before any merge decision.
 7. Complete admin auth implementation scope before adding admin auth tests.
-8. Complete bot dry-run implementation scope before adding bot behavior tests.
+8. Complete bot dry-run implementation scope before adding bot behavior tests; keep future bot tests human-reviewed by default.
 9. Keep wallet, ledger, deposit, withdrawal, matching, settlement, custody, and production deployment evidence human-reviewed.
 
 ## Non-Goals
