@@ -26,6 +26,7 @@ It does not run browsers, start a server, add tests, change UI, change APIs, cha
 | Dedicated route smoke command | Not implemented | Package/script/workflow changes require human-reviewed PR. |
 | Browser/Playwright smoke run | Not run | No safe local run artifact has been recorded yet. |
 | Screenshot evidence | Not recorded | Future screenshots must use local safe data only. |
+| Current checkpoint not-run placeholder | Recorded | `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_2026_06_19_NOT_RUN.md` records that no server, browser, screenshots, or smoke run were used at `3870797`. |
 | CI promotion | Not approved | Any CI/package/workflow lane remains human-reviewed. |
 
 ## Candidate First Manual Evidence Run
