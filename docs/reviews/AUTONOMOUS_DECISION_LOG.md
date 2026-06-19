@@ -66,6 +66,8 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #134 | Auto-merged | Test-only mocked/local market-detail current-gap checks; branch updated from `dev`, full validation passed, no runtime behavior changed. |
 | #153 | Auto-merged | Docs-only open PR review queue and state update after PR #25, #134, and #135 review. |
 | #154 | Auto-merged | Focused lint-clean replacement for PR #135; changed only `src/app/my-pools/page.tsx`, full validation and focused lint passed, and no backend/API, wallet/funding, auth/admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
+| #157 | Auto-merged | Docs-only UI standardization master plan and progress tracker; validation diff checks passed. |
+| #158 | Auto-merged | Small display-only homepage copy/CTA simplification; changed only `src/app/page.tsx`, full validation and focused lint passed, and no data fetching, API, wallet, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 
 ## Open PR Decisions
 
@@ -115,6 +117,8 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - PR #135 was re-reviewed and updated from current `dev`, but was not merged because focused lint failed on the existing `useEffect(() => { load(); }, [])` hook pattern in an action-bearing UI page.
 - PR #25 was re-reviewed and left open as draft because it is broad and touches wallet/admin/private-pool/pool-detail UI surfaces.
 - PR #154 was selected as a focused replacement for PR #135 because it preserved the private pool list display intent while fixing the focused hook lint failure.
+- UI-000 was selected first in the UI standardization program because broad UI work needed an explicit master plan, route classification, merge policy, and progress tracker.
+- UI-001 was selected because homepage simplification is Phase 1, low-risk, public-facing, and could be limited to copy/CTA/empty-state display without changing behavior.
 
 ## Skipped Or Downgraded Tasks
 

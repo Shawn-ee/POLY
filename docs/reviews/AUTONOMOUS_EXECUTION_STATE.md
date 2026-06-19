@@ -2,9 +2,9 @@
 
 Last updated: 2026-06-18
 
-Current phase: Phase G - Beta readiness evidence and controlled UI readiness
+Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `9f36914`
+Current `dev` commit at last update: `ffd2744`
 
 ## Completed Tasks
 
@@ -65,6 +65,8 @@ Recent autonomous tasks completed before this state file:
 - TST-027: Public market-detail current-gap checks, merged as PR #134 after review validation.
 - DOC-065: Open PR review queue resolution, merged as PR #153.
 - FE-001-FOLLOWUP: Private pool list lint-safe display replacement, merged as PR #154.
+- UI-000: UI standardization master plan and progress tracker, merged as PR #157.
+- UI-001: Homepage display simplification, merged as PR #158.
 
 ## Open PRs
 
@@ -91,7 +93,7 @@ Recent autonomous tasks completed before this state file:
 
 1. Human/specialist review of PR #25 before merge or close.
 2. Optional local-only anonymous route smoke run only when a safe local app instance is available; record evidence without secrets or production data.
-3. Optional small display-only public-page UI PR only if it avoids wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic.
+3. Continue small display-only public-page UI PRs only if they avoid wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic.
 4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
 5. Package/workflow/public API test-lane promotion remains human-reviewed.
 
@@ -111,11 +113,13 @@ Known recurring non-failure output:
 
 ## Current Phase
 
-Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase D UI readiness has a non-auto-merge PR #25 review path, a private pool list replacement scope, and the lint-clean private pool list replacement merged as PR #154. Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
+Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase UI now has a master standardization plan, progress tracker, a merged private pool list replacement (#154), and a merged homepage display simplification (#158). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
 
 ## Next Recommended Actions
 
 - Keep PR #25 open as draft unless a human reviews or splits it.
+- Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
+- Continue Phase 1 UI work with sports/events/market discovery surfaces before wallet, admin, or trade-ticket surfaces.
 - Continue docs-only route/test readiness work and avoid repeating already-covered public API test groups.
 - Continue low-risk mocked public/read-only tests only where no runtime behavior changes are needed.
 - Market-detail current-gap checks are now merged as PR #134; future market-detail cleanup remains human-reviewed.

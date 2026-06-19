@@ -16,13 +16,13 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint when this tracker was created: `48eb10e`.
+Current known `dev` checkpoint after the first UI implementation pass: `ffd2744`.
 
 ## Pages Reviewed
 
 | Page | Reviewed evidence | Current status | Next action |
 |---|---|---|---|
-| `/` | `HOMEPAGE_SIMPLIFICATION_SPEC.md`, page UX review | Ready for small display PR | Simplify hierarchy and beta copy. |
+| `/` | `HOMEPAGE_SIMPLIFICATION_SPEC.md`, page UX review, PR #158 | Improved with first display PR | Later decide whether homepage wallet/admin concepts should move out of the main surface. |
 | `/markets` | Page UX review, public API test docs | Needs display inventory | Keep as secondary market browser. |
 | `/markets/[id]` | Market-detail contract docs and current-gap tests | Review-gated | Do not touch trade/order behavior. |
 | `/events` | Page UX review | Ready for display inventory | Align with event-first discovery. |
@@ -50,12 +50,15 @@ Current known `dev` checkpoint when this tracker was created: `48eb10e`.
 | Page | PR | Summary | Validation | Status |
 |---|---|---|---|---|
 | `/my-pools` | #154 | Focused private pool list display polish with lint-safe initial load. | Full validation and focused lint passed. | Merged |
+| `/` | #158 | Sports-first beta copy, primary/secondary CTAs, featured-event support copy, and safer empty state. | Full validation and focused lint passed. | Merged |
 
 ## PRs Merged
 
 | PR | Type | Files | Decision |
 |---|---|---|---|
 | #154 | Display-only UI | `src/app/my-pools/page.tsx` | Merged as focused replacement for PR #135. |
+| #157 | Docs-only | `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md`, `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` | Merged as UI standardization foundation. |
+| #158 | Display-only UI | `src/app/page.tsx` | Merged as small homepage display simplification. |
 
 ## PRs Left Open
 
@@ -79,6 +82,7 @@ Current safe evidence:
 - Public no-leak and response-shape tests for taxonomy, events, sports, market lists, event markets, market charts, and market-detail current gaps.
 - `npm run test:ci` baseline passes in recent validation runs.
 - Focused lint for `/my-pools` passed in PR #154.
+- Focused lint for `/` passed in PR #158.
 
 Needed evidence:
 
@@ -89,16 +93,16 @@ Needed evidence:
 
 ## Next UI Tasks
 
-1. UI-001: Homepage display simplification, small display-only PR.
-2. UI-002: Sports landing display polish, small display-only PR.
-3. UI-003: Events list display/state inventory, docs-only or small display PR.
-4. UI-004: Market list display inventory before code.
-5. UI-005: Login copy polish, display-only.
-6. UI-006: Portfolio empty/mobile-state display plan before code.
-7. UI-007: Wallet funding-claim copy review before any wallet UI change.
-8. UI-008: Admin IA display plan before admin UI changes.
-9. UI-009: Market-detail display-state plan before code.
-10. UI-010: Cross-page empty/loading/error terminology map.
+1. UI-002: Sports landing display polish, small display-only PR.
+2. UI-003: Events list display/state inventory, docs-only or small display PR.
+3. UI-004: Market list display inventory before code.
+4. UI-005: Login copy polish, display-only.
+5. UI-006: Portfolio empty/mobile-state display plan before code.
+6. UI-007: Wallet funding-claim copy review before any wallet UI change.
+7. UI-008: Admin IA display plan before admin UI changes.
+8. UI-009: Market-detail display-state plan before code.
+9. UI-010: Cross-page empty/loading/error terminology map.
+10. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
 
 ## Blocked UI Decisions
 
