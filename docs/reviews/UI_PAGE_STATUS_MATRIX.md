@@ -30,11 +30,11 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/sports` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/sports/soccer` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/sports/soccer/world-cup` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
-| `/events` | Needs display polish | Event list styling and states need alignment. | Small display-only route polish or inventory. | Maybe |
+| `/events` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/events/[slug]` | Human-review only | Event detail includes grouped/trade behavior. | Docs-only display shell plan first. | No by default |
 | `/markets` | Needs display polish | All-market browser can compete with sports path. | Display inventory before code. | Maybe |
 | `/markets/[id]` | Human-review only | Market detail can touch trade/order behavior. | Display shell plan first. | No by default |
-| `/login` | Needs copy cleanup | Beta/account expectation copy can be clearer. | Display-only copy polish. | Maybe |
+| `/login` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/portfolio` | Human-review only | Account state and positions are calculation-adjacent. | Empty/mobile state plan before code. | No by default |
 | `/wallet` | Human-review only | Funding copy can imply production readiness. | Funding-claim review before code. | No |
 | `/create` | Needs copy cleanup | Private pools are delayed/post-MVP. | Hide/delay docs or display-only framing. | No by default |
@@ -61,15 +61,16 @@ This matrix tracks the UI standardization state of every major route. It does no
 | #154 | `/my-pools` | Private pool list display polish and lint-safe initial load. |
 | #158 | `/` | Sports-first beta copy and homepage CTA simplification. |
 | #160 | `/sports`, `/sports/soccer`, `/sports/soccer/world-cup` | Sports discovery copy polish and non-demo World Cup framing. |
+| #163 | `/events` | Events list display/state polish. |
+| #164 | `/login` | Beta-safe login display polish. |
 
 ## Next Queue
 
-1. `/events` display/state polish or inventory.
-2. `/markets` display inventory.
-3. `/login` copy polish.
-4. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
-5. Portfolio/account display plan before code.
-6. Wallet funding-claim review before code.
+1. `/markets` display inventory.
+2. Public route smoke evidence for `/`, `/sports`, `/events`, `/login`.
+3. Portfolio/account display plan before code.
+4. Wallet funding-claim review before code.
+5. Event detail display shell plan before code.
 
 ## Validation
 

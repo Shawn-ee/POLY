@@ -29,11 +29,11 @@ This tracker records mobile UI risks and safe next tasks. It does not implement 
 | `/sports` | Improved copy only | Low | Add smoke/screenshot evidence. |
 | `/sports/soccer` | Improved copy only | Low | Add smoke/screenshot evidence. |
 | `/sports/soccer/world-cup` | Improved copy only | Low | Add smoke/screenshot evidence. |
-| `/events` | Unknown | Low/Medium | Display inventory or screenshot plan. |
+| `/events` | Improved first pass | Low | Add smoke/screenshot evidence. |
 | `/events/[slug]` | Unknown | Medium | Plan first; grouped trade surface is sensitive. |
 | `/markets` | Unknown | Low/Medium | Inventory filters and card wrapping. |
 | `/markets/[id]` | Unknown | Medium/High | Plan first; trade/order surface is sensitive. |
-| `/login` | Likely acceptable | Low/Medium | Copy and mobile sanity check. |
+| `/login` | Improved first pass | Low | Add smoke/screenshot evidence. |
 | `/portfolio` | Table risk | Medium | Mobile card plan before code. |
 | `/wallet` | Dense/beta-sensitive | High | Funding-claim review before mobile polish. |
 | `/my-pools` | Improved first pass | Medium | Further display-only polish only if scoped. |

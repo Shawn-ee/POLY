@@ -69,6 +69,9 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #157 | Auto-merged | Docs-only UI standardization master plan and progress tracker; validation diff checks passed. |
 | #158 | Auto-merged | Small display-only homepage copy/CTA simplification; changed only `src/app/page.tsx`, full validation and focused lint passed, and no data fetching, API, wallet, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 | #160 | Auto-merged | Small display-only sports discovery copy polish; changed only sports display pages/component, full validation and focused lint passed, and no route behavior, fetching, filters, wallet, auth, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
+| #162 | Auto-merged | Docs-only Phase 0 UI style foundation trackers; validation diff checks passed. |
+| #163 | Auto-merged | Small display-only events list state polish; changed only `src/app/events/page.tsx`, full validation and focused lint passed, and no fetching, event card, API, wallet, auth, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
+| #164 | Auto-merged | Small display-only login page polish; changed only `src/app/login/page.tsx`, full validation and focused lint passed, and no OAuth, wallet auth, session, cookie, admin auth, API, deployment, Prisma, package, workflow, or script behavior changed. |
 
 ## Open PR Decisions
 
@@ -121,6 +124,9 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - UI-000 was selected first in the UI standardization program because broad UI work needed an explicit master plan, route classification, merge policy, and progress tracker.
 - UI-001 was selected because homepage simplification is Phase 1, low-risk, public-facing, and could be limited to copy/CTA/empty-state display without changing behavior.
 - UI-002 was selected because sports discovery is the primary MVP path and the improvement could be limited to copy, labels, and empty-state text without changing behavior.
+- UI-013 through UI-017 were selected to complete Phase 0 style and status foundations before broad UI changes.
+- UI-003 was selected because `/events` is a public discovery page and could be aligned with shared state components without changing fetch or card behavior.
+- UI-005 was selected because `/login` is a low-risk onboarding surface and the lint-safe derived error cleanup did not change auth mechanics.
 
 ## Skipped Or Downgraded Tasks
 
