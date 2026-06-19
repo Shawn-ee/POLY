@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `f00ad82`
+Current `dev` commit at last update: `74bb6ee`
 
 ## Completed Tasks
 
@@ -58,7 +58,8 @@ Recent autonomous tasks completed before this state file:
 - DOC-059: Public API coverage map refresh after TST-028, merged as PR #147.
 - DOC-060: Public route smoke manual-run prerequisites, merged as PR #148.
 - DOC-057: Route smoke evidence placeholder instance, merged as PR #149.
-- DOC-061: Public route smoke docs index update, in progress.
+- DOC-061: Public route smoke docs index update, merged as PR #150.
+- DOC-062: Public beta launch blocker summary, in progress.
 
 ## Open PRs
 
@@ -89,8 +90,8 @@ Recent autonomous tasks completed before this state file:
 
 1. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
 2. TST-029: Another low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope.
-3. DOC-062: Public beta launch blocker summary refresh, docs-only.
-4. DOC-063: Autonomous continuation prompt refresh, docs-only if stopping soon.
+3. DOC-063: Autonomous continuation prompt refresh, docs-only if stopping soon.
+4. DOC-064: Final autonomous state checkpoint, docs-only if stopping soon.
 5. Human/specialist review of PR #25, PR #134, and PR #135 before merge.
 
 ## Last Validation Result
@@ -129,4 +130,5 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - DOC-060 is defining prerequisites for a future manual public route smoke evidence run.
 - DOC-057 is adding a dated route smoke evidence placeholder marked not run.
 - DOC-061 is updating the review index so route-smoke and autonomous state docs are discoverable.
+- DOC-062 is summarizing public beta launch blockers without approving beta.
 - Record any funding, trading, auth, bot, or deployment implementation need in `docs/reviews/HUMAN_DECISION_REQUIRED.md`.
