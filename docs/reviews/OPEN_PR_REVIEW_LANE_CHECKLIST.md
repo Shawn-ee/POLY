@@ -18,12 +18,11 @@ It does not modify those PR branches, merge them, change product code, change te
 
 | PR | Task | Type | Status | Auto-merge decision |
 |---|---|---|---|---|
-| #134 | TST-027 market detail current-gap checks | Test-only | Open for specialist/human review | Not eligible |
-| #135 | FE-001 private pool list display polish | UI code | Open for specialist/human review | Not eligible |
+| #25 | Broad admin/wallet/private-pool UI draft | UI/product-code | Open draft | Not eligible |
 
-PR #25 remains an older draft UI/product-code PR and is still not part of this review lane unless a human explicitly selects it.
+PR #134 was merged after full validation. PR #135 was closed as superseded by PR #154, which merged after full validation and focused lint.
 
-## PR #134 Review Checklist
+## Resolved PR #134 Review Checklist
 
 PR: <https://github.com/Shawn-ee/POLY/pull/134>
 
@@ -47,9 +46,12 @@ Review questions:
 - Do targeted Jest, Prisma generate/validate, TypeScript, and `npm run test:ci` results remain current?
 - Should the test merge now, be revised, or wait for market detail cleanup?
 
-Merge only after reviewer agreement.
+Resolution:
 
-## PR #135 Review Checklist
+- Merged after branch update and full validation.
+- The market-detail current-gap test remains evidence; future target-contract cleanup remains review-gated.
+
+## Resolved PR #135 Review Checklist
 
 PR: <https://github.com/Shawn-ee/POLY/pull/135>
 
@@ -77,7 +79,10 @@ Review questions:
 - Is the pre-existing `react-hooks/set-state-in-effect` lint issue acceptable to defer, or should it be fixed in a separate PR?
 - Should the PR merge, be revised, or be held until visual QA is available?
 
-Merge only after reviewer agreement.
+Resolution:
+
+- Closed as superseded by PR #154.
+- PR #154 fixed the focused hook lint issue and merged after full validation.
 
 ## Do Not Auto-Merge
 
@@ -89,8 +94,7 @@ Do not auto-merge:
 
 Reasons:
 
-- PR #134 documents medium-risk public API contract gaps.
-- PR #135 changes UI product code on an action-bearing private pool page.
+- PR #134 and PR #135 are already resolved and should not be re-opened for the same work.
 - PR #25 is broad, draft, stale, and touches wallet/admin/private-pool surfaces.
 
 ## Safe Next Actions
@@ -103,7 +107,7 @@ Autonomous agents may:
 
 Autonomous agents must not:
 
-- merge PR #134 or #135 without review
+- re-open PR #134 or #135 for duplicate work
 - merge or modify PR #25
 - change wallet, ledger, trading, admin auth, bot, deployment, Prisma, package, workflow, or secret behavior
 
@@ -111,7 +115,7 @@ Autonomous agents must not:
 
 This checklist does not:
 
-- approve PR #134 or PR #135
+- re-approve PR #134 or PR #135
 - modify PR #134 or PR #135
 - close PR #25
 - merge any PR

@@ -88,4 +88,4 @@ Run Playwright or browser screenshots only when a safe local app instance and no
 
 Treat PR #25 as a design/reference draft, not a merge candidate.
 
-Use PR #135 or future smaller PRs as replacement candidates, but do not auto-merge action-bearing UI changes unless validation is clean and the strict UI auto-merge policy is satisfied.
+Use PR #154 as the accepted private pool list replacement example. Future smaller PRs should remain route-specific, but do not auto-merge action-bearing UI changes unless validation is clean and the strict UI auto-merge policy is satisfied.

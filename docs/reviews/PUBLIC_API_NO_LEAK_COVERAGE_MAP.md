@@ -21,6 +21,7 @@ This document does not add tests, change CI, change route behavior, change API c
 | Market list reads | `src/__tests__/public.market-list.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/markets` filter/query response shape, no-leak assertions, empty-list behavior, and grouped reference market filtering. |
 | Event market reads | `src/__tests__/public.event-markets.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/events/[slug]/markets` and `/api/events/[slug]/grouped-markets`, including not-found/error response paths. |
 | Market chart reads | `src/__tests__/public.market-chart.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/markets/[id]/chart` success, empty-series, hidden-market guard, and missing-market paths. |
+| Market detail reads | `src/__tests__/public.market-detail.current-gap.test.ts` | Current-gap mocked coverage | Documents current extra-field exposure before target-contract cleanup. Future cleanup remains review-gated. |
 
 ## Current No-Leak Pattern
 
@@ -38,7 +39,7 @@ These tests are targeted and are not yet automatically included in `npm run test
 
 | Route group | Candidate routes | Risk | Recommended next action | Auto-merge default |
 |---|---|---:|---|---|
-| Market detail reads | `/api/markets/[id]` | Medium | Review auth/visibility guard and owner fields before testing. | No, unless explicitly scoped low-risk |
+| Market detail reads | `/api/markets/[id]` | Medium | Current-gap coverage exists; target-contract cleanup and target-contract tests remain review-gated. | No by default |
 | Event market reads | `/api/events/[slug]/markets`, `/api/events/[slug]/grouped-markets` | Low/Medium | Keep coverage current as contracts stabilize; add edge cases only if mocked/local. | Maybe |
 | Market chart reads | `/api/markets/[id]/chart` | Low/Medium | Keep empty/error coverage current; add target-contract cases only after contract changes are reviewed. | Maybe |
 | Market quote reads | `/api/markets/[id]/quote` | Medium | Follow `docs/reviews/QUOTE_ORDERBOOK_NO_LEAK_TEST_SCOPE.md`. | No by default |
@@ -63,12 +64,11 @@ These route groups require specialist review and often human review even when te
 
 ## Recommended Next Safe Tests
 
-1. Add a market detail current-gap test only if it remains mocked/local and is opened for review rather than auto-merged by default.
-2. Add target-contract tests for market detail only after the route contract is approved.
-3. Keep event market, market list, chart, taxonomy, sports, and event tests aligned with any future public response-shape decisions.
-4. Keep the market-list grouped reference filter test aligned with future event-first and grouped-market routing decisions.
-5. Leave quote, orderbook, and trade-tape tests behind `docs/reviews/QUOTE_ORDERBOOK_NO_LEAK_TEST_SCOPE.md`.
-6. Leave reference/liquidity routes blocked behind public/admin split approval and specialist review.
+1. Add target-contract tests for market detail only after the route contract is approved.
+2. Keep event market, market list, chart, taxonomy, sports, and event tests aligned with any future public response-shape decisions.
+3. Keep the market-list grouped reference filter test aligned with future event-first and grouped-market routing decisions.
+4. Leave quote, orderbook, and trade-tape tests behind `docs/reviews/QUOTE_ORDERBOOK_NO_LEAK_TEST_SCOPE.md`.
+5. Leave reference/liquidity routes blocked behind public/admin split approval and specialist review.
 
 ## Promotion Question
 

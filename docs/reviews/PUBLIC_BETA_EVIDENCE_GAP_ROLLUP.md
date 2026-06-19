@@ -23,7 +23,7 @@ It does not approve public beta, deploy production, enable deposits or withdrawa
 | Public API no-leak | Partial/expanded | Public mocked no-leak and response-shape tests, coverage map | Tests are targeted; CI lane not promoted. |
 | Public API contracts | Partial | Market/event/sports/chart decisions and status rollups | Market detail, reference/liquidity, quote/orderbook remain gated. |
 | Public route smoke | Draft/not run | Public route page smoke evidence plan, template, command scope, and status doc | No committed smoke run evidence yet; no package/workflow lane approved. |
-| UI replacement readiness | Draft/open review | PR #25 review docs, private-pool scope, UI rollup, human review queue rollup | PR #25 and PR #135 are not auto-mergeable; UI code replacements require review. |
+| UI replacement readiness | Partial/open review | PR #25 review docs, private-pool scope, UI rollup, human review queue rollup, and PR #154 | PR #25 is not auto-mergeable; future UI code replacements require review unless strict UI auto-merge rules pass. |
 | Admin auth | Draft/missing | Admin auth matrix, route ownership docs, and implementation test scope | Implementation tests and behavior sign-off missing. |
 | Wallet/funding | Missing/high-risk | Ledger/wallet rules and safety reviews | Human-approved funding architecture and evidence missing. |
 | Ledger/trading/settlement | Missing/high-risk | Financial safety review and rules | Invariant tests and human sign-off missing. |
@@ -66,11 +66,10 @@ Human review is required for:
 |---:|---|---|---|
 | 1 | Public route smoke evidence status updates | Docs-only | Yes |
 | 2 | UI replacement readiness updates after each scoped UI plan | Docs-only | Yes |
-| 3 | Human review queue rollup updates for PR #25, #134, and #135 | Docs-only | Yes |
-| 4 | Market detail current-gap test PR | Test-only | No by default |
-| 5 | Private pool list display-only UI PR | UI code | No if any action semantics are touched |
-| 6 | Public API test lane package-script PR | Package/script | No |
-| 7 | Admin/funding screenshot evidence packet after human-safe local screenshots | Docs/evidence | No if screenshots include sensitive/redacted data decisions |
+| 3 | Human review queue rollup updates for PR #25 and future non-auto-merge PRs | Docs-only | Yes |
+| 4 | Private pool list follow-up evidence after PR #154 | Docs-only | Yes |
+| 5 | Public API test lane package-script PR | Package/script | No |
+| 6 | Admin/funding screenshot evidence packet after human-safe local screenshots | Docs/evidence | No if screenshots include sensitive/redacted data decisions |
 
 ## Launch-Blocking Gaps
 
@@ -89,11 +88,10 @@ The following remain blockers for public beta:
 
 1. Keep updating autonomous state and decision logs after each batch.
 2. Keep public route smoke status current until a safe manual evidence run is available.
-3. Open market detail current-gap test PR only if mocked/local and leave it reviewable.
-4. Keep PR #25, PR #134, and PR #135 in the human review queue until reviewed.
-5. Open the smallest `/my-pools` display-only PR only if it preserves actions and handlers.
-6. Keep package/workflow/test-lane work human-reviewed.
-7. Continue docs-only high-risk area readiness packets.
+3. Keep PR #25 in the human review queue until reviewed, split, or closed.
+4. Treat PR #154 as the merged lint-clean replacement for the `/my-pools` display-only polish.
+5. Keep package/workflow/test-lane work human-reviewed.
+6. Continue docs-only high-risk area readiness packets.
 
 ## Non-Goals
 

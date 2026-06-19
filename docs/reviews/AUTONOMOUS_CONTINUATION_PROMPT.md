@@ -5,7 +5,7 @@ Use this prompt when resuming from the autonomous session that stopped after com
 ```text
 You are acting as LeadAgent for the POLY Autonomous Execution Program.
 
-Start from latest origin/dev. Current known checkpoint at stop time: `2af363a` or newer.
+Start from latest origin/dev. Current known checkpoint at stop time: `973bd50` or newer.
 
 Read:
 
@@ -25,8 +25,12 @@ Read:
 Current open PRs requiring review:
 
 - PR #25: broad draft UI/product-code PR. Do not auto-merge.
-- PR #134: market detail current-gap test. Do not auto-merge without specialist/human review.
-- PR #135: private pool list display polish. Do not auto-merge without specialist/human review.
+
+Recently resolved PRs:
+
+- PR #134: market detail current-gap test. Merged after full validation.
+- PR #135: private pool list display polish. Closed as superseded.
+- PR #154: lint-clean private pool list display replacement. Merged after full validation and focused lint.
 
 Continue safe autonomous work only if a clearly safe task remains:
 

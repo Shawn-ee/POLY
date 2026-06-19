@@ -25,9 +25,9 @@ The autonomous LeadAgent may prepare evidence and docs, but it must not mark pub
 | Area | Status | Why blocked | Primary evidence |
 |---|---|---|---|
 | Product/UX | Blocked | Sports-first UI and route smoke evidence are not complete. | `docs/reviews/MVP_INFORMATION_ARCHITECTURE.md`, `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_2026_06_18_NOT_RUN.md` |
-| Public API contracts | Blocked/partial | Public no-leak coverage expanded, but market detail and reference/liquidity boundaries remain review-gated. | `docs/reviews/PUBLIC_API_NO_LEAK_COVERAGE_MAP.md`, PR #134 |
+| Public API contracts | Blocked/partial | Public no-leak coverage expanded and market-detail current-gap checks are merged, but target-contract cleanup and reference/liquidity boundaries remain review-gated. | `docs/reviews/PUBLIC_API_NO_LEAK_COVERAGE_MAP.md`, `src/__tests__/public.market-detail.current-gap.test.ts` |
 | Public route smoke | Blocked/not run | Manual smoke evidence exists only as a not-run placeholder. | `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md`, `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_2026_06_18_NOT_RUN.md` |
-| UI replacement | Blocked/open review | PR #25 is broad and draft; PR #135 is UI code on an action-bearing page. | `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md` |
+| UI replacement | Blocked/partial | PR #25 is broad and draft; PR #154 merged the focused private-pool list replacement. Wallet/admin/pool-detail UI replacements remain review-gated. | `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md`, PR #154 |
 | Wallet/funding | Blocked/high-risk | Deposit, withdrawal, custody, and funding gates need human-approved architecture and tests. | `docs/reviews/FINANCIAL_SAFETY_REVIEW.md`, `docs/LEDGER_AND_WALLET_RULES.md` |
 | Ledger/trading/settlement | Blocked/high-risk | Ledger invariants, matching, settlement, orders, fills, trades, and positions need human-reviewed evidence. | `docs/reviews/FINANCIAL_SAFETY_REVIEW.md` |
 | Admin auth | Blocked/high-risk | Admin auth test implementation remains scoped but not implemented or approved. | `docs/reviews/ADMIN_AUTH_TEST_IMPLEMENTATION_SCOPE.md` |
@@ -74,15 +74,13 @@ Before public beta can be considered, humans must decide:
 5. Admin/auth readiness: whether admin access controls and tests are sufficient.
 6. Bot/liquidity scope: whether bots are disabled, dry-run only, or live.
 7. Deployment readiness: production target, rollback plan, monitoring, and incident owners.
-8. Open PR disposition: whether to merge, revise, split, or close PR #25, PR #134, and PR #135.
+8. Open PR disposition: whether to merge, revise, split, or close PR #25.
 
 ## Current Recommended Next Evidence
 
 1. Complete a local-only anonymous public route smoke run and record safe evidence.
-2. Decide PR #134 with BackendAgent/SecurityAgent review.
-3. Decide PR #135 with FrontendAgent/SecurityAgent review.
-4. Split or close PR #25 after human review.
-5. Keep wallet/funding, ledger/trading, admin auth, bot, package/workflow, and deployment implementation human-reviewed.
+2. Split or close PR #25 after human review.
+3. Keep wallet/funding, ledger/trading, admin auth, bot, package/workflow, and deployment implementation human-reviewed.
 
 ## Non-Goals
 

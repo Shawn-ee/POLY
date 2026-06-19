@@ -112,7 +112,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Public beta launch blocker summary was selected because the evidence set is now broad enough to need a concise no-go summary, while all launch decisions remain human-owned.
 - Final continuation prompt and state checkpoint were selected because remaining obvious work is either human/specialist review, local environment evidence, package/workflow promotion, or UI/source-code review work.
 - PR #134 was re-reviewed, updated from current `dev`, validated, and merged because it satisfied the explicit test-only auto-merge criteria.
-- PR #135 was re-reviewed and updated from current `dev`, but left open because focused lint failed on the existing `useEffect(() => { load(); }, [])` hook pattern in an action-bearing UI page.
+- PR #135 was re-reviewed and updated from current `dev`, but was not merged because focused lint failed on the existing `useEffect(() => { load(); }, [])` hook pattern in an action-bearing UI page.
 - PR #25 was re-reviewed and left open as draft because it is broad and touches wallet/admin/private-pool/pool-detail UI surfaces.
 - PR #154 was selected as a focused replacement for PR #135 because it preserved the private pool list display intent while fixing the focused hook lint failure.
 
