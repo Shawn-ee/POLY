@@ -45,13 +45,13 @@ This matrix tracks the UI standardization state of every major route. It does no
 
 | Route | Current status | Primary issue | Safe next action | Auto-merge default |
 |---|---|---|---|---|
-| `/admin` | Human-review only | Dense market operations console. | Admin IA display plan. | No by default |
+| `/admin` | Planned/review-gated | Dense market operations console with mutation paths. | Read-only display scope only after UI-025. | No by default |
 | `/admin/deposits` | Human-review only | Funding/reconciliation high risk. | Docs/screenshot requirements only. | No |
 | `/admin/withdrawals` | Human-review only | Withdrawal operations critical risk. | Docs/screenshot requirements only. | No |
 | `/admin/reference-markets` | Human-review only | Reference and bot/liquidity concerns overlap. | Split curation vs bot controls plan. | No |
 | `/admin/bots` | Human-review only | Dry-run/live state must be explicit. | Display review/runbook docs first. | No |
-| `/admin/agents` | Needs copy cleanup | Agent status should not imply production autonomy. | Display-only copy if narrow. | No by default |
-| `/admin/system` | Human-review only | Readiness severity needs clearer hierarchy. | Display plan first. | No |
+| `/admin/agents` | Planned/review-gated | Agent status should not imply production autonomy. | Read-only display copy only after UI-025. | No by default |
+| `/admin/system` | Planned/review-gated | Readiness severity needs clearer hierarchy. | Read-only status grouping only after UI-025. | No |
 | `/admin/markets/[marketId]/invariants` | Human-review only | Financial invariants are high risk. | Keep review-gated. | No |
 
 ## Completed UI PRs
@@ -68,10 +68,10 @@ This matrix tracks the UI standardization state of every major route. It does no
 ## Next Queue
 
 1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
-2. Admin IA display plan before admin code.
-3. Event detail loading/error/empty display-only scope after UI-018.
-4. Market detail screenshot/smoke checklist before code.
-5. Portfolio header/empty-state copy only if calculations remain untouched.
+2. Event detail loading/error/empty display-only scope after UI-018.
+3. Market detail screenshot/smoke checklist before code.
+4. Portfolio header/empty-state copy only if calculations remain untouched.
+5. Admin read-only display implementation only with explicit scope and full validation.
 
 ## Validation
 

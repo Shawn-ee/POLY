@@ -36,13 +36,13 @@ Current known `dev` checkpoint after the portfolio planning pass: `29f3648`.
 | `/create` | IA and page review | Delayed/post-MVP | Keep out of public MVP navigation. |
 | `/my-pools` | PR #154 | Improved in focused PR | Further work must stay small and display-only. |
 | `/pool/[id]` | IA | Hidden compatibility | No UI work planned. |
-| `/admin` | Page review | Human-reviewed by default | Admin IA plan before code. |
+| `/admin` | Page review, admin IA plan, admin display implementation scope | Planned; code remains review-gated | Read-only admin display PRs only after explicit scope. |
 | `/admin/deposits` | PR #25 review docs | Human-reviewed | Do not change funding behavior. |
 | `/admin/withdrawals` | PR #25 review docs | Human-reviewed | Do not change withdrawal behavior. |
 | `/admin/reference-markets` | Page review | Human-reviewed | Separate curation from bot controls in docs first. |
 | `/admin/bots` | Bot docs | Human-reviewed | Keep dry-run/live boundaries visible. |
-| `/admin/agents` | Page review | Internal | Copy clarity only if safe. |
-| `/admin/system` | Page review | Human-reviewed | Readiness/severity plan first. |
+| `/admin/agents` | Page review, admin display implementation scope | Internal/review-gated | Copy clarity only if safe and read-only. |
+| `/admin/system` | Page review, admin display implementation scope | Human-reviewed | Read-only status grouping only after explicit scope. |
 | `/admin/markets/[marketId]/invariants` | Financial safety docs | Human-reviewed | Keep review-gated. |
 
 ## Pages Changed
@@ -59,6 +59,7 @@ Current known `dev` checkpoint after the portfolio planning pass: `29f3648`.
 | `/markets/[id]` | Pending after UI-019 | Docs-only display shell plan separates market comprehension from orderbook, order ticket, pool action, position, and bot/reference behavior. | Docs-only diff checks. | Planned |
 | `/wallet` | Pending after UI-007 | Docs-only funding-claim review defines copy and behavior boundaries before any wallet display work. | Docs-only diff checks. | Planned |
 | `/portfolio` | Pending after UI-009 | Docs-only implementation scope separates safe display polish from balance, PnL, position, order, and history semantics. | Docs-only diff checks. | Planned |
+| `/admin` and internal admin routes | Pending after UI-025 | Docs-only admin display implementation scope separates read-only polish from auth, finance, market resolution, bot, system, and agent operations. | Docs-only diff checks. | Planned |
 
 ## PRs Merged
 
@@ -115,15 +116,15 @@ Needed evidence:
 ## Next UI Tasks
 
 1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
-2. UI-008: Admin IA display plan before admin UI changes.
-3. UI-010: Cross-page empty/loading/error terminology map.
-4. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
-5. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
-6. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
-7. UI-022: Market detail screenshot/smoke checklist before any code.
-8. UI-023: Wallet display scope packet if a human confirms funding-copy boundaries.
-9. UI-024: Portfolio header/empty-state copy PR only if calculations remain untouched.
-10. UI-025: Admin IA display implementation packet before admin code.
+2. UI-010: Cross-page empty/loading/error terminology map.
+3. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
+4. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
+5. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
+6. UI-022: Market detail screenshot/smoke checklist before any code.
+7. UI-023: Wallet display scope packet if a human confirms funding-copy boundaries.
+8. UI-024: Portfolio header/empty-state copy PR only if calculations remain untouched.
+9. UI-026: Admin read-only landing/status display PR only with human-reviewed scope.
+10. UI-027: Private pool/detail hidden-route decision before more pool UI.
 
 ## Blocked UI Decisions
 
