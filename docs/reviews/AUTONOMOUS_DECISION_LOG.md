@@ -90,6 +90,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #190 | Auto-merged | Docs-only checkpoint refresh after PR #188; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
 | #191 | Auto-merged | Docs-only anonymous route smoke checklist; no server, browser run, screenshots, package/workflow changes, fixtures, auth, wallet, funding, trading, admin, bot, or production data. |
 | #193 | Auto-merged | Docs-only checkpoint refresh after PR #191; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
+| #194 | Auto-merged | Docs-only open PR review queue refresh after PR #193; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
 
 ## Open PR Decisions
 
@@ -170,6 +171,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - `agent/public-route-smoke-anonymous-checklist` was selected because public route smoke evidence still needed an anonymous-only observation checklist before any local server, browser, screenshots, fixtures, or package/workflow changes.
 - `agent/current-dev-checkpoint-pr191-refresh` was selected because current `dev` contains merged PR #191 and several review trackers still pointed at the earlier `fac8139` checkpoint; it merged as PR #193.
 - `agent/current-open-pr-queue-refresh` was selected because open draft PR #192 is now superseded by merged PR #193 and should not be merged as-is.
+- `agent/current-dev-checkpoint-pr194` was selected because current `dev` contains merged PR #194 and several checkpoint trackers still pointed at the earlier `b697302` checkpoint.
 
 ## Skipped Or Downgraded Tasks
 

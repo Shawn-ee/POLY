@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `b697302`
+Current `dev` checkpoint: `2740a69`
 
 ## Summary
 
@@ -33,6 +33,7 @@ Recent work focused on:
 - Checkpoint refresh after PR #188, merged as PR #190.
 - Anonymous route smoke checklist, merged as PR #191.
 - Checkpoint refresh after PR #191, merged as PR #193.
+- Open PR review queue refresh after PR #193, merged as PR #194.
 
 ## Product Progress
 
@@ -88,6 +89,7 @@ Resolved UI work:
 - PR #190: checkpoint refresh after PR #188.
 - PR #191: anonymous route smoke checklist.
 - PR #193: checkpoint refresh after PR #191.
+- PR #194: open PR review queue refresh after PR #193.
 
 Review-gated UI scope docs:
 
@@ -149,7 +151,7 @@ Safe autonomous work remains available in these lanes:
 
 1. Human/specialist review of PR #25 before merge, split, or close.
 2. Close or update stale docs-only PR #177, which targets an older post-merge state checkpoint already superseded on `dev`.
-3. Close or update stale draft docs-only PR #192, which is superseded by merged PR #193.
+3. Close or update stale draft docs-only PR #192, which is superseded by merged PR #193 and reflected in the merged PR #194 queue refresh.
 4. Optional local-only anonymous route smoke run when a safe local app instance is available, using `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`.
 5. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
 6. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.

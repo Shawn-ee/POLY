@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `b697302`
+Current `dev` commit at last update: `2740a69`
 
 ## Completed Tasks
 
@@ -91,6 +91,7 @@ Recent autonomous tasks completed before this state file:
 - DOC-073: Checkpoint refresh after PR #188, merged as PR #190.
 - UI-012A: Anonymous route smoke checklist, merged as PR #191.
 - DOC-074: Checkpoint refresh after PR #191, merged as PR #193.
+- DOC-075: Open PR review queue refresh after PR #193, merged as PR #194.
 
 ## Open PRs
 
@@ -162,7 +163,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Keep admin auth and bot test implementation docs-only unless a later human-reviewed PR explicitly approves implementation.
 - Use `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md` as the compact checkpoint when resuming future autonomous sessions.
 - Use `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md` before proposing any route smoke package/workflow or Playwright implementation.
-- Use `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md` and `docs/reviews/OPEN_PR_REVIEW_QUEUE.md` to track the remaining non-auto-merge PR #25.
+- Use `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md` and `docs/reviews/OPEN_PR_REVIEW_QUEUE.md` to track the remaining non-auto-merge PR #25 and stale superseded PRs #177 and #192.
 - PR #145 added low-risk mocked coverage for grouped reference market filtering in `/api/markets`; future coverage map updates should include it.
 - DOC-059 is refreshing the public API coverage map and implementation queue after PR #145.
 - DOC-060 is defining prerequisites for a future manual public route smoke evidence run.
