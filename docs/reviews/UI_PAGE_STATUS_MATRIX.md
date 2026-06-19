@@ -33,7 +33,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/events` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/events/[slug]` | Planned/review-gated | Event detail includes grouped/trade behavior. | Only small loading/error/empty or metadata display PRs after UI-018. | No by default |
 | `/markets` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
-| `/markets/[id]` | Human-review only | Market detail can touch trade/order behavior. | Display shell plan first. | No by default |
+| `/markets/[id]` | Planned/review-gated | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Screenshot/smoke checklist or small read-only shell PR only after UI-019. | No by default |
 | `/login` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/portfolio` | Human-review only | Account state and positions are calculation-adjacent. | Empty/mobile state plan before code. | No by default |
 | `/wallet` | Human-review only | Funding copy can imply production readiness. | Funding-claim review before code. | No |
@@ -71,7 +71,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 2. Portfolio/account display plan before code.
 3. Wallet funding-claim review before code.
 4. Event detail loading/error/empty display-only scope after UI-018.
-5. Market detail display shell plan before code.
+5. Market detail screenshot/smoke checklist before code.
 
 ## Validation
 

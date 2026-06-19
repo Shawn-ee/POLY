@@ -24,7 +24,7 @@ Current known `dev` checkpoint after the markets display pass: `4b9a9b8`.
 |---|---|---|---|
 | `/` | `HOMEPAGE_SIMPLIFICATION_SPEC.md`, page UX review, PR #158 | Improved with first display PR | Later decide whether homepage wallet/admin concepts should move out of the main surface. |
 | `/markets` | Page UX review, public API test docs, PR #166 | Improved with market-board display polish | Later add route smoke/screenshot evidence. |
-| `/markets/[id]` | Market-detail contract docs and current-gap tests | Review-gated | Do not touch trade/order behavior. |
+| `/markets/[id]` | Market-detail contract docs, current-gap tests, market detail display shell plan | Planned; code remains review-gated | Do not touch trade/order behavior. |
 | `/events` | Page UX review, PR #163 | Improved with shared container/state components | Later add route smoke/screenshot evidence. |
 | `/events/[slug]` | Page UX review, event detail display shell plan | Planned; code remains review-gated | Avoid grouped trade behavior changes. |
 | `/sports` | Sports readiness checklist, PR #160 | Improved with sports-first copy | Later add route smoke/screenshot evidence. |
@@ -56,6 +56,7 @@ Current known `dev` checkpoint after the markets display pass: `4b9a9b8`.
 | `/login` | #164 | Beta-safe sign-in copy, shared page container, clearer error display, and lint-safe derived error string. | Full validation and focused lint passed. | Merged |
 | `/markets` | #166 | Sports-first market-board copy, grouped filters, beta-safe note, improved empty state, and clearer no-price fallback card. | Full validation and focused lint passed. | Merged |
 | `/events/[slug]` | Pending after UI-018 | Docs-only display shell plan separates safe read-only polish from grouped trade/order behavior. | Docs-only diff checks. | Planned |
+| `/markets/[id]` | Pending after UI-019 | Docs-only display shell plan separates market comprehension from orderbook, order ticket, pool action, position, and bot/reference behavior. | Docs-only diff checks. | Planned |
 
 ## PRs Merged
 
@@ -114,9 +115,9 @@ Needed evidence:
 5. UI-009: Market-detail display-state plan before code.
 6. UI-010: Cross-page empty/loading/error terminology map.
 7. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
-8. UI-019: Market detail display shell plan before code.
-9. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
-10. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
+8. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
+9. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
+10. UI-022: Market detail screenshot/smoke checklist before any code.
 
 ## Blocked UI Decisions
 
