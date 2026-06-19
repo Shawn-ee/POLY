@@ -69,6 +69,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | #203 | `/events/[slug]` | Loading/error/empty state copy polish without grouped trade/order behavior changes. |
 | #209 | UI state docs | Checkpoint refresh after PR #203. |
 | #211 | UI state docs | Checkpoint refresh after PR #210. |
+| #212 | UI state docs | Checkpoint refresh after PR #211. |
 
 ## Next Queue
 
