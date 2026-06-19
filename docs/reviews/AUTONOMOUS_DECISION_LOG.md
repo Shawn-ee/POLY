@@ -42,12 +42,34 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #127 | Auto-merged | Docs-only private pool list UI replacement scope. |
 | #128 | Auto-merged | Docs-only public route page smoke evidence plan. |
 | #129 | Auto-merged | Docs-only admin/funding UI screenshot evidence requirements. |
+| #130 | Auto-merged | Docs-only autonomous UI evidence checkpoint. |
+| #131 | Auto-merged | Docs-only UI replacement readiness rollup. |
+| #132 | Auto-merged | Docs-only public beta evidence gap rollup. |
+| #133 | Auto-merged | Docs-only public route smoke evidence template. |
+| #136 | Auto-merged | Docs-only checkpoint for open autonomous review PRs. |
+| #137 | Auto-merged | Docs-only open PR review lane checklist. |
+| #138 | Auto-merged | Docs-only public route smoke command scope. |
+| #139 | Auto-merged | Docs-only admin auth test implementation scope; admin auth test implementation remains human-reviewed. |
+| #140 | Auto-merged | Docs-only bot dry-run test implementation scope refresh; bot runtime/test implementation remains human-reviewed by default. |
+| #141 | Auto-merged | Docs-only autonomous checkpoint and progress report. |
+| #142 | Auto-merged | Docs-only public route smoke evidence status; smoke implementation and package/workflow changes remain human-reviewed. |
+| #143 | Auto-merged | Docs-only human review queue rollup for non-auto-merge PRs #25, #134, and #135. |
+| #144 | Auto-merged | Docs-only public beta evidence tracker refresh. |
+| #145 | Auto-merged | Low-risk mocked public/read-only test for `/api/markets` grouped reference filtering; full validation passed. |
+| #146 | Auto-merged | Docs-only checkpoint after public beta evidence and test progress. |
+| #147 | Auto-merged | Docs-only public API coverage map refresh after PR #145. |
+| #148 | Auto-merged | Docs-only public route smoke manual-run prerequisites. |
+| #149 | Auto-merged | Docs-only route smoke evidence placeholder marked not run. |
+| #150 | Auto-merged | Docs-only route-smoke and autonomous-state docs index update. |
+| #151 | Auto-merged | Docs-only public beta launch blocker summary. |
 
 ## Open PR Decisions
 
 | PR | Decision | Reason |
 | --- | --- | --- |
 | #25 | Do not auto-merge | Draft UI/product-code PR touching wallet/admin/private-pool surfaces. Requires human review or split PRs. |
+| #134 | Do not auto-merge | Test-only market-detail current-gap PR is medium-risk by public API contract topic and documents extra-field exposure. |
+| #135 | Do not auto-merge | UI product-code PR touches private pool action page and focused lint reports an existing hook-rule issue. |
 
 ## Task Selection Decisions
 
@@ -69,6 +91,23 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Private pool list UI replacement scope was selected before any PR #25 replacement UI code.
 - Public route page smoke evidence plan was selected before browser/test implementation.
 - Admin/funding UI screenshot requirements were selected to keep high-risk UI evidence human-reviewed.
+- UI replacement readiness rollup and public beta evidence gap rollup were selected before opening implementation review PRs.
+- Public route smoke evidence template was selected so future smoke runs can be recorded without exposing secrets or production data.
+- Market detail current-gap test was opened but left unmerged because it is useful evidence and not a low-risk auto-merge lane.
+- Private pool list display polish was opened but left unmerged because it changes UI product code on an action-bearing page.
+- Admin auth implementation test scope was selected as docs-only because auth behavior and auth tests are not auto-mergeable in the current policy.
+- Bot dry-run test implementation scope refresh was selected as docs-only because bot runtime behavior, credentials, and live trading are high-risk and future implementation must remain human-reviewed.
+- Autonomous progress reporting was selected after the PR #136-#140 checkpoint window to preserve resumable state without changing runtime behavior.
+- Public route smoke evidence status was selected because plans/templates/command scope exist, but no safe manual/browser evidence has been recorded and package/workflow changes remain human-reviewed.
+- Human review queue rollup was selected to preserve the autonomous decision not to merge PR #25, #134, or #135 while continuing other safe work.
+- Public beta evidence tracker refresh was selected after route smoke and human review queue docs changed, so beta evidence does not lag the autonomous state.
+- Public market-list grouped reference filter test was selected because it used existing mocks, avoided market-detail current-gap ambiguity, changed only `src/__tests__/`, and covered public/read-only response behavior.
+- Public API coverage map refresh was selected because PR #145 changed test coverage and the docs should remain the source of truth for future task selection.
+- Public route smoke manual-run prerequisites were selected before any browser/server evidence run so future route smoke work remains local-only, anonymous-first, and human-reviewed for package/workflow changes.
+- Route smoke evidence placeholder was selected to make the current not-run status explicit without starting a server, opening a browser, or capturing screenshots.
+- Route smoke docs index update was selected so future agents can find the route-smoke and autonomous state docs without scanning the full review folder.
+- Public beta launch blocker summary was selected because the evidence set is now broad enough to need a concise no-go summary, while all launch decisions remain human-owned.
+- Final continuation prompt and state checkpoint were selected because remaining obvious work is either human/specialist review, local environment evidence, package/workflow promotion, or UI/source-code review work.
 
 ## Skipped Or Downgraded Tasks
 
@@ -78,8 +117,11 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Market detail tests remain non-auto-merge by default if they document current contract gaps.
 - UI replacement work remains scoped through docs first; PR #25 itself is still not auto-mergeable.
 - Admin/funding UI evidence can be prepared autonomously, but implementation and screenshots using sensitive data remain human-reviewed.
+- PR #134 and PR #135 were left open instead of auto-merged under the autonomous policy.
 - Reference/liquidity public/admin split remains docs-only because implementation is high-risk by topic.
 - PR #25 direct merge remains blocked; replacement PRs should be smaller and reviewed independently.
+- Admin auth and bot dry-run implementation tests remain review-only by default; autonomous work may refine scope docs but must not implement or auto-merge those tests without later explicit approval.
+- Quote, orderbook, trade-tape, market detail current-gap, reference/liquidity, wallet, ledger, admin auth, and bot runtime tests remain non-auto-merge or docs-only unless a later human-reviewed scope permits implementation.
 
 ## Self-Review Notes
 

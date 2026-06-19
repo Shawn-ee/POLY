@@ -33,6 +33,7 @@ Current expanded coverage includes no-leak, response-shape, and selected empty/e
 | Add allowlist response-shape tests for event market reads. | Completed | `src/__tests__/public.event-markets.no-leak.test.ts` |
 | Add empty-state chart route tests. | Completed | `src/__tests__/public.market-chart.no-leak.test.ts` |
 | Add market list response-shape tests. | Completed | `src/__tests__/public.market-list.no-leak.test.ts` |
+| Add market list grouped reference filtering test. | Completed | `src/__tests__/public.market-list.no-leak.test.ts` |
 | Add event and event-market error/not-found tests. | Completed | `src/__tests__/public.events.no-leak.test.ts` and `src/__tests__/public.event-markets.no-leak.test.ts` |
 
 ## Recommended Next Test Tasks
@@ -41,7 +42,7 @@ Current expanded coverage includes no-leak, response-shape, and selected empty/e
 |---:|---|---:|---|---|
 | 1 | Add market detail current-gap test. | Medium | No by default | Should document current extra-field gap before cleanup. Must use mocks and avoid route behavior changes. |
 | 2 | Add market detail target-contract tests. | Medium | No by default | Pair with reviewed implementation cleanup or keep as skipped expectations if explicitly approved. |
-| 3 | Add public route page smoke evidence plan. | Low | Yes if docs-only | Plan screenshots/smoke checks before UI implementation. |
+| 3 | Add public route page smoke evidence status or manual evidence file. | Low | Yes if docs-only | Plan or record screenshots/smoke checks before UI implementation. |
 | 4 | Add optional `test:public-api` package script PR. | Low/Medium | No | Human-reviewed because it changes `package.json`; use `docs/reviews/PUBLIC_API_TEST_LANE_IMPLEMENTATION_SCOPE.md`. |
 | 5 | Add public liquidity summary tests. | High by topic | No | Wait for implementation and specialist review. |
 | 6 | Add quote/orderbook/trade-tape allowlist tests. | Medium/High | No by default | Trading-adjacent; use scope doc first. |

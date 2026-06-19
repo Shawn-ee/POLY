@@ -22,12 +22,12 @@ It does not approve public beta, deploy production, enable deposits or withdrawa
 | Product/IA | Partial | MVP IA, homepage/sports specs, UX reviews | Needs implementation evidence and screenshots. |
 | Public API no-leak | Partial/expanded | Public mocked no-leak and response-shape tests, coverage map | Tests are targeted; CI lane not promoted. |
 | Public API contracts | Partial | Market/event/sports/chart decisions and status rollups | Market detail, reference/liquidity, quote/orderbook remain gated. |
-| Public route smoke | Draft | Public route page smoke evidence plan | No committed smoke run evidence yet. |
-| UI replacement readiness | Draft | PR #25 review docs, private-pool scope, UI rollup | UI code replacements not yet implemented or reviewed. |
-| Admin auth | Draft/missing | Admin auth matrix and route ownership docs | Implementation tests and behavior sign-off missing. |
+| Public route smoke | Draft/not run | Public route page smoke evidence plan, template, command scope, and status doc | No committed smoke run evidence yet; no package/workflow lane approved. |
+| UI replacement readiness | Draft/open review | PR #25 review docs, private-pool scope, UI rollup, human review queue rollup | PR #25 and PR #135 are not auto-mergeable; UI code replacements require review. |
+| Admin auth | Draft/missing | Admin auth matrix, route ownership docs, and implementation test scope | Implementation tests and behavior sign-off missing. |
 | Wallet/funding | Missing/high-risk | Ledger/wallet rules and safety reviews | Human-approved funding architecture and evidence missing. |
 | Ledger/trading/settlement | Missing/high-risk | Financial safety review and rules | Invariant tests and human sign-off missing. |
-| Bot/liquidity | Draft/high-risk | Bot dry-run plan, credential review, operations outline | Live/dry-run controls and human sign-off missing. |
+| Bot/liquidity | Draft/high-risk | Bot dry-run plan, implementation scope, credential review, operations outline | Live/dry-run controls and human sign-off missing; future bot tests are review-gated. |
 | Deployment | Missing/high-risk | Agent rules and launch checklist | Production runbook, rollback, and human sign-off missing. |
 
 ## Safe Evidence To Collect Autonomously
@@ -37,7 +37,9 @@ Autonomous agents may continue collecting:
 - docs-only scope, checklist, and status rollups
 - mocked/local public no-leak and response-shape tests
 - public route smoke plans and templates
+- public route smoke evidence status updates
 - UI readiness documents for display-only PRs
+- human review queue rollups for non-auto-merge PRs
 - beta evidence tracker updates
 - human-decision tracking updates
 
@@ -62,12 +64,13 @@ Human review is required for:
 
 | Priority | Task | Type | Auto-merge default |
 |---:|---|---|---|
-| 1 | Public route smoke evidence template | Docs-only | Yes |
+| 1 | Public route smoke evidence status updates | Docs-only | Yes |
 | 2 | UI replacement readiness updates after each scoped UI plan | Docs-only | Yes |
-| 3 | Market detail current-gap test PR | Test-only | No by default |
-| 4 | Private pool list display-only UI PR | UI code | No if any action semantics are touched |
-| 5 | Public API test lane package-script PR | Package/script | No |
-| 6 | Admin/funding screenshot evidence packet after human-safe local screenshots | Docs/evidence | No if screenshots include sensitive/redacted data decisions |
+| 3 | Human review queue rollup updates for PR #25, #134, and #135 | Docs-only | Yes |
+| 4 | Market detail current-gap test PR | Test-only | No by default |
+| 5 | Private pool list display-only UI PR | UI code | No if any action semantics are touched |
+| 6 | Public API test lane package-script PR | Package/script | No |
+| 7 | Admin/funding screenshot evidence packet after human-safe local screenshots | Docs/evidence | No if screenshots include sensitive/redacted data decisions |
 
 ## Launch-Blocking Gaps
 
@@ -85,11 +88,12 @@ The following remain blockers for public beta:
 ## Suggested Evidence Collection Order
 
 1. Keep updating autonomous state and decision logs after each batch.
-2. Add public route smoke evidence template.
+2. Keep public route smoke status current until a safe manual evidence run is available.
 3. Open market detail current-gap test PR only if mocked/local and leave it reviewable.
-4. Open the smallest `/my-pools` display-only PR only if it preserves actions and handlers.
-5. Keep package/workflow/test-lane work human-reviewed.
-6. Continue docs-only high-risk area readiness packets.
+4. Keep PR #25, PR #134, and PR #135 in the human review queue until reviewed.
+5. Open the smallest `/my-pools` display-only PR only if it preserves actions and handlers.
+6. Keep package/workflow/test-lane work human-reviewed.
+7. Continue docs-only high-risk area readiness packets.
 
 ## Non-Goals
 

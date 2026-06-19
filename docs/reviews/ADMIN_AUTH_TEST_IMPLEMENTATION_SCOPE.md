@@ -1,98 +1,83 @@
 # Admin Auth Test Implementation Scope
 
-Task id: TST-014
-Assigned subagents: TestingAgent, SecurityAgent
-Risk level: High by topic
-Status: Docs-only implementation scope
+Task id: DOC-051
+
+Phase: Phase F/G - Admin/security review preparation
+
+Assigned subagents: SecurityAgent, TestingAgent, BackendAgent
+
+Risk level: High by auth/admin topic, docs-only in this task
 
 ## Purpose
 
-This document narrows the future implementation scope for admin auth tests. It converts the planning intent in `docs/reviews/ADMIN_AUTH_TEST_MATRIX.md` into explicit safe and forbidden boundaries for a later test-only PR.
+This document scopes a future first admin auth test implementation PR.
 
-This scope does not add tests, modify admin auth, modify middleware, change admin routes, alter financial operations, change bot behavior, touch Prisma, deploy, or change production settings.
+It does not add tests, change admin auth, change middleware, change admin routes, change product code, change Prisma, deploy, or alter runtime behavior.
+
+## Source Documents
+
+- `docs/reviews/ADMIN_AUTH_TEST_MATRIX.md`
+- `docs/reviews/API_ROUTE_OWNERSHIP_INVENTORY.md`
+- `docs/reviews/BROAD_TEST_SUITE_STABILIZATION_PLAN.md`
+- `docs/HIGH_RISK_AREAS.md`
 
 ## First Implementation Goal
 
-The first admin auth test implementation should prove that selected admin read surfaces reject unauthorized users and allow admins without exercising high-risk mutations.
+The first admin auth test PR should verify read-only access boundaries without executing admin mutations.
 
-The first implementation PR should be test-only and should target one small route group.
+Target checks:
 
-## Candidate First Route Group
+- signed-out user receives expected unauthorized response
+- signed-in non-admin user receives expected forbidden response
+- admin user can access selected read-only admin route responses
+- no route response exposes secret-like fields in the tested fixtures
 
-Preferred first candidate:
+## Candidate First Route Set
 
-- A read-only admin status or inventory route that does not mutate markets, deposits, withdrawals, settlement, bots, credentials, or deployment state.
+Prefer read-only or status routes:
 
-Avoid as first candidates:
+- `/api/admin/system`
+- `/api/admin/market-ops-stats`
+- `/api/admin/agents/status`
+- `/api/admin/agents/activity`
+- `/api/admin/markets` read path if it can be mocked safely
 
-- `/api/admin/deposits`
-- `/api/admin/deposits/rescan`
-- `/api/admin/withdrawals`
-- `/api/admin/withdrawals/[id]/complete`
-- `/api/admin/withdrawals/[id]/reject`
-- `/api/admin/markets/*/resolve`
-- `/api/admin/reference-markets/*/seed-bot`
-- Any bot live-control route
-- Any route requiring production config or real credentials
+Avoid finance and bot mutation routes in the first PR.
 
-## Required Auth Cases
+## Forbidden First PR Scope
 
-Future tests should cover:
+Do not include:
 
-- Signed-out request is rejected.
-- Signed-in non-admin request is rejected.
-- Signed-in admin request is accepted for read-only scope.
-- Response body does not expose secrets, private keys, production config, or sensitive logs.
+- deposit rescan
+- withdrawal complete/reject
+- market resolve/cancel/pause/close mutations
+- reference market import/seed-bot/refresh-snapshot mutations
+- bot create/update/live controls
+- agent file/log reads that could expose sensitive data unless separately reviewed
+- middleware or auth implementation changes
+- admin route behavior changes
+- Prisma schema or migrations
+- package/workflow/script changes
+- production credentials or production data
 
-## Safe Mocking Pattern
+## Mocking Requirements
 
-Future tests should mock:
+Future tests should:
 
-- Session/user lookup.
-- Admin role lookup.
-- Prisma reads.
-- Any file, log, config, or status helper.
+- mock session/auth helpers
+- mock admin requirement helpers
+- mock Prisma or service reads
+- use local fixture data only
+- avoid production DB and real credentials
+- avoid reading `.env` contents
 
-Mocks must use local fixture data only. They must not load real `.env` contents, production config, deployment credentials, or wallet/private-key material.
+If a route cannot be mocked without importing broad runtime dependencies, write a follow-up docs note instead of forcing implementation.
 
-## Forbidden Future Test Behavior
-
-Admin auth tests must not:
-
-- Change auth implementation.
-- Change middleware.
-- Change admin route behavior.
-- Invoke deposit rescan.
-- Complete or reject withdrawals.
-- Resolve markets.
-- Pause, close, cancel, or mutate markets.
-- Seed bots.
-- Start bots.
-- Import live reference markets.
-- Read production secrets.
-- Print environment variables.
-- Call real external services.
-- Mutate production or staging data.
-
-## Auto-Merge Policy
-
-Future admin auth implementation tests are not auto-mergeable by default in the current agent policy because admin auth is high-risk.
-
-A future test-only PR may be left open for human review even if:
-
-- Changed files are test-only.
-- Full validation passes.
-- ReviewerAgent and SecurityAgent self-review pass.
-
-Docs-only planning scopes like this document may be auto-merged after internal self-review because they do not change behavior.
-
-## Required Validation For Future Test PR
-
-Future implementation PRs should run:
+## Validation Required For Future Test PR
 
 ```bash
 git diff --check
-npx jest --runInBand --detectOpenHandles <new-test-file>
+npx jest --runInBand --detectOpenHandles <new-admin-auth-test-file>
 npx prisma generate --schema=prisma/schema.prisma
 npx prisma validate --schema=prisma/schema.prisma
 npx tsc --noEmit --pretty false --incremental false
@@ -100,44 +85,47 @@ npm run test:ci
 git diff --cached --check
 ```
 
-If a test needs Playwright or a dev server, keep that work in a separate human-reviewed PR.
+## Auto-Merge Boundary
+
+Do not auto-merge the first admin auth test implementation by default.
+
+Reason:
+
+- Admin auth is high-risk by topic.
+- Tests may encode route/auth behavior that needs SecurityAgent review.
+- Some admin routes may expose operational details that require no-leak review.
+
+The PR may be opened after validation, but it should remain open for SecurityAgent and human/specialist review.
 
 ## Review Requirements
 
-Future implementation PRs require:
+Required reviewers:
 
-- TestingAgent review for test isolation.
-- SecurityAgent review for auth semantics and no-secret exposure.
-- LedgerWalletReviewerAgent review if a route touches deposits, withdrawals, settlement, invariants, balances, or financial admin operations.
-- BotAgent review if a route touches bot, reference-market, seed, import, or live-control behavior.
-- DeploymentAgent review if a route touches system, config, logs, process status, or deployment state.
+- SecurityAgent
+- TestingAgent
+- BackendAgent if route mocks/read contracts are involved
+- LedgerWalletReviewerAgent if finance admin routes are included
+- BotAgent if bot/reference routes are included
+- DeploymentAgent if system/deployment config routes are included
 
-## Acceptance Criteria For Future First Test PR
+## Acceptance Criteria
 
-A future first implementation PR should:
+A future first implementation PR is acceptable when:
 
-- Test only one low-mutation admin route group.
-- Mock auth/session state.
-- Mock data access.
-- Avoid production config and secrets.
-- Avoid financial, bot, deployment, and market mutation routes.
-- Document why the route group was selected.
-- Leave behavior fixes for separate human-reviewed PRs if tests reveal a gap.
+- it is test-only
+- tests are mocked/local
+- no admin mutation route is executed
+- no production data or secrets are required
+- validation passes
+- PR body explains auth states tested
+- PR remains open for review unless a later explicit policy allows merge
 
 ## Non-Goals
 
 This scope does not:
 
-- Add tests.
-- Change admin auth.
-- Change admin UI.
-- Change admin APIs.
-- Change wallet, deposit, withdrawal, ledger, matching, settlement, market resolution, bot, deployment, Prisma, migration, or production behavior.
-
-## Validation For This Scope
-
-This scope is docs-only. Validation for this PR should be:
-
-```bash
-git diff --check
-```
+- implement tests
+- change admin auth
+- change middleware
+- change admin route behavior
+- change wallet, deposit, withdrawal, ledger, matching, settlement, trading, bot, Prisma, migrations, package scripts, workflows, deployment, secrets, or production behavior
