@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `45abc57`
+Current `dev` checkpoint: `b59eb3d`
 
 ## Summary
 
@@ -26,6 +26,7 @@ Recent work focused on:
 - Market-detail screenshot/smoke checklist before any future market-detail code, merged as PR #181.
 - Current-dev autonomous state refresh after UI follow-ups, merged as PR #182.
 - Autonomous checkpoint refresh after PR #182, merged as PR #183.
+- Checkpoint refresh after PR #183, merged as PR #184.
 
 ## Product Progress
 
@@ -74,6 +75,7 @@ Resolved UI work:
 - PR #181: market-detail screenshot/smoke checklist.
 - PR #182: current-dev autonomous state refresh after UI follow-ups.
 - PR #183: autonomous checkpoint refresh after PR #182.
+- PR #184: checkpoint refresh after PR #183.
 
 Review-gated UI scope docs:
 
