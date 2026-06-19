@@ -79,6 +79,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #171 | Auto-merged | Docs-only portfolio display scope; balance, locked-fund, PnL, position, order, and history semantics remain review-gated. |
 | #173 | Auto-merged | Docs-only admin display scope; admin auth, finance mutations, market resolution, bot/reference actions, system readiness, deployment, and agent operations remain review-gated. |
 | #179 | Auto-merge candidate | Docs-only UI state terminology map; no runtime code, tests, package/workflow changes, browser run, screenshots, or production data. |
+| #180 | Auto-merge candidate | Docs-only homepage wallet/admin surface decision; no runtime code, wallet/funding behavior, admin auth, package/workflow changes, browser run, screenshots, or production data. |
 
 ## Open PR Decisions
 
