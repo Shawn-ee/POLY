@@ -17,33 +17,33 @@ Completed phases:
 - Phase 9: internal funding beta evidence and go/no-go docs merged through PR #225.
 - Phase 10: internal beta route smoke evidence merged through PR #226.
 - Phase 11: server deployment readiness docs merged through PR #227.
+- Phase 12: final controlled internal beta readiness report added in the current PR.
 
 ## Current Status
 
-The current branch adds controlled internal beta deposit address API/UI evidence and resolves the previously open PR #220 blocker.
+The current branch adds the final controlled internal beta readiness report.
 
 Covered behavior:
 
-- wallet page exposes the existing guarded deposit modal with controlled internal beta copy.
-- deposit modal remains backed by guarded APIs.
-- anonymous and non-allowlisted users remain blocked by API guards.
-- deposit history blocks non-allowlisted users and omits private wallet material.
-- deposit address and deposit history responses omit raw private keys, encrypted private keys, seed, mnemonic, and secret markers.
-- no private-key generation, encryption, ledger, auto-credit, withdrawal, schema, migration, bot, or deployment behavior is changed by this branch.
+- current classification is Ready with Warnings.
+- owner can deploy current `dev` to the owner server for controlled internal beta setup.
+- funding must start disabled or kill-switched.
+- private server smoke is still required before enabling funding.
+- no production deployment was performed by Codex.
 
 ## Next Step
 
-Next step is **Phase 12: final controlled internal beta readiness report**.
+Next step is **owner server deployment and private smoke testing**.
 
 Do not deploy production, start bot services, enable public funding, remove the allowlist, or enable automatic withdrawal broadcast.
 
 Open items before final deployment readiness:
 
-1. Phase 12 final readiness report is still needed.
+1. Owner server deployment and private env validation have not been performed.
 2. Controlled real-chain deposit and withdrawal drills are still manual/not run.
-3. Full browser smoke timed out and should be rerun before final readiness.
-4. Owner server deployment and private env validation have not been performed.
-5. Env-backed allowlist may need schema-backed funding profile before a larger cohort.
+3. Full browser smoke timed out and should be rerun on server.
+4. Env-backed allowlist may need schema-backed funding profile before a larger cohort.
+5. Full repo lint still has pre-existing unrelated failures.
 
 ## Validation To Re-Run
 
