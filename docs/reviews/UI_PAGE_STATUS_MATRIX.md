@@ -26,7 +26,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 
 | Route | Current status | Primary issue | Safe next action | Auto-merge default |
 |---|---|---|---|---|
-| `/` | Big milestone merged | Wallet/admin concepts still exist on page. | Decide whether account/admin links move out later; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes; code review-gated |
+| `/` | Big milestone merged | Wallet/admin concepts still exist on page. | Use `HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md` before any homepage account/admin cleanup; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes; code review-gated |
 | `/sports` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/sports/soccer` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/sports/soccer/world-cup` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
@@ -70,15 +70,15 @@ This matrix tracks the UI standardization state of every major route. It does no
 ## Next Queue
 
 1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
-2. Homepage wallet/admin surface decision, docs-only before further homepage code.
-3. Event detail loading/error/empty display-only scope after UI-018 and `UI_STATE_TERMINOLOGY_MAP.md`.
-4. Market detail screenshot/smoke checklist before code.
-5. Portfolio header/empty-state copy only if calculations remain untouched.
-6. Admin read-only display implementation only with explicit scope and full validation.
+2. Event detail loading/error/empty display-only scope after UI-018 and `UI_STATE_TERMINOLOGY_MAP.md`.
+3. Market detail screenshot/smoke checklist before code.
+4. Portfolio header/empty-state copy only if calculations remain untouched.
+5. Admin read-only display implementation only with explicit scope and full validation.
 
 Completed queue item:
 
 - UI-010: Cross-page empty/loading/error terminology map in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
+- UI-011: Homepage wallet/admin surface decision in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 
 ## Validation
 

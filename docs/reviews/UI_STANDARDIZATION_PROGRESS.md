@@ -177,7 +177,7 @@ Needed evidence:
 
 1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
 2. UI-010: Cross-page empty/loading/error terminology map. Completed in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
-3. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
+3. UI-011: Homepage wallet/admin surface decision. Completed in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 4. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
 5. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
 6. UI-022: Market detail screenshot/smoke checklist before any code.
@@ -244,6 +244,33 @@ Skipped high-risk implementation:
 - Market detail orderbook, order ticket, pool actions, positions, reference, and bot behavior.
 - Portfolio, wallet, funding, balance, PnL, deposit, and withdrawal behavior.
 - Admin auth, finance operations, bot controls, deployment, package scripts, workflows, Prisma, and migrations.
+
+## Checkpoint After UI-010
+
+Tasks completed in this checkpoint:
+
+- UI-011: Homepage wallet/admin surface decision.
+
+Files added or updated:
+
+- `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`
+- `docs/reviews/UI_STANDARDIZATION_PROGRESS.md`
+- `docs/reviews/UI_PAGE_STATUS_MATRIX.md`
+- `docs/reviews/README.md`
+- `docs/reviews/AUTONOMOUS_EXECUTION_STATE.md`
+- `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`
+- `docs/reviews/AUTONOMOUS_DECISION_LOG.md`
+
+Validation:
+
+- `git diff --check` passed.
+
+Skipped high-risk implementation:
+
+- Homepage source-code changes.
+- Wallet balance, funding, deposit, withdrawal, faucet, and linked-wallet behavior.
+- Admin visibility, admin auth, admin operation controls, and internal route access.
+- Order, trade, position, ledger, matching, settlement, bot, deployment, package scripts, workflows, Prisma, and migrations.
 
 ## Auto-Merge Notes
 

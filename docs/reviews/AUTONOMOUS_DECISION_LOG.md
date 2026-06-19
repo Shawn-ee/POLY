@@ -145,6 +145,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - `agent/big-ui-overhaul` was selected because the user explicitly requested a single large cohesive UI overhaul instead of many tiny PRs. The plan was self-reviewed as display-only and review-gated, with no auto-merge.
 - `agent/ui-overhaul-post-merge-state` was selected to record PR #175's merge outcome and keep autonomous state docs resumable before any further UI or smoke-evidence work.
 - `agent/ui-state-terminology-map` was selected because UI-010 remained a safe docs-only follow-up after the big UI milestone and prevents future copy PRs from guessing about loading, empty, error, signed-out, unavailable, and beta-gated state wording.
+- `agent/homepage-surface-decision` was selected because UI-011 remained a safe docs-only follow-up and future homepage account/admin cleanup needs an explicit boundary before any source-code changes.
 
 ## Skipped Or Downgraded Tasks
 

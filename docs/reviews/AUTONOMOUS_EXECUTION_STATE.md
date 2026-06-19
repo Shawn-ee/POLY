@@ -80,6 +80,7 @@ Recent autonomous tasks completed before this state file:
 - BIG-UI-001: App-wide UI style standardization milestone, merged as PR #175.
 - DOC-066: Big UI milestone post-merge state refresh, merged as PR #176.
 - UI-010: Cross-page UI state terminology map, prepared as docs-only follow-up after the big UI milestone.
+- UI-011: Homepage wallet/admin surface decision, prepared as docs-only follow-up after UI-010.
 
 ## Open PRs
 
@@ -135,6 +136,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.
 - `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md` now maps loading, empty, error, signed-out, unavailable, and beta-gated wording by route group for future UI copy PRs.
+- `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md` now records that homepage wallet/admin concepts should stay secondary or out of normal content before future homepage code cleanup.
 - Event detail, market detail, wallet, and portfolio now have explicit planning/scope boundaries before future UI code.
 - Admin routes now have an explicit implementation scope and remain human-reviewed by default.
 - Continue docs-only route/test readiness work and avoid repeating already-covered public API test groups.
