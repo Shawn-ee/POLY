@@ -5,7 +5,7 @@ Use this prompt when resuming from the autonomous UI standardization session aft
 ```text
 You are acting as LeadAgent for the POLY Autonomous Execution Program.
 
-Start from latest origin/dev. Current known checkpoint at stop time: `04873ef` or newer.
+Start from latest origin/dev. Current known checkpoint at stop time: `fac8139` or newer.
 
 Read:
 
@@ -53,6 +53,7 @@ Recently resolved PRs:
 - PR #186: checkpoint refresh after PR #185. Merged docs-only.
 - PR #188: checkpoint refresh after PR #186. Merged docs-only.
 - PR #190: checkpoint refresh after PR #188. Merged docs-only.
+- PR #191: anonymous route smoke checklist. Merged docs-only.
 
 Continue safe autonomous work only if a clearly safe task remains:
 

@@ -79,6 +79,7 @@ Completed queue item:
 - UI-010: Cross-page empty/loading/error terminology map in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 - UI-011: Homepage wallet/admin surface decision in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 - UI-019A/UI-022: Market detail screenshot/smoke checklist in `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md`.
+- UI-012A: Anonymous route-smoke checklist in `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`.
 
 ## Validation
 

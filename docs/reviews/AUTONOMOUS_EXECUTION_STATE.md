@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `04873ef`
+Current `dev` commit at last update: `fac8139`
 
 ## Completed Tasks
 
@@ -89,6 +89,7 @@ Recent autonomous tasks completed before this state file:
 - DOC-071: Checkpoint refresh after PR #185, merged as PR #186.
 - DOC-072: Checkpoint refresh after PR #186, merged as PR #188.
 - DOC-073: Checkpoint refresh after PR #188, merged as PR #190.
+- UI-012A: Anonymous public route smoke checklist, merged as PR #191.
 
 ## Open PRs
 
@@ -115,7 +116,7 @@ Recent autonomous tasks completed before this state file:
 ## Next Task Queue
 
 1. Human/specialist review of PR #25 before merge or close.
-2. Optional local-only anonymous route smoke run only when a safe local app instance is available; record evidence without secrets or production data.
+2. Optional local-only anonymous route smoke run only when a safe local app instance is available; use `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and record evidence without secrets or production data.
 3. Continue small display-only public-page UI PRs only if they avoid wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic and follow `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md` for state copy.
 4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
 5. Package/workflow/public API test-lane promotion remains human-reviewed.
@@ -140,7 +141,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 
 ## Next Recommended Actions
 
-- PR #175, PR #176, and follow-up docs-only PRs #179-#186, #188, and #190 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
+- PR #175, PR #176, and follow-up docs-only PRs #179-#186, #188, #190, and #191 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
 - Keep PR #25 open as draft unless a human reviews or splits it.
 - Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.

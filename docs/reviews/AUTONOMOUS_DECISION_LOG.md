@@ -87,6 +87,8 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #185 | Auto-merged | Docs-only checkpoint refresh after PR #184; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
 | #186 | Auto-merged | Docs-only checkpoint refresh after PR #185; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
 | #188 | Auto-merged | Docs-only checkpoint refresh after PR #186; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
+| #190 | Auto-merged | Docs-only checkpoint refresh after PR #188; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
+| #191 | Auto-merged | Docs-only anonymous public route smoke checklist; no server startup, browser run, screenshots, fixtures, package/workflow changes, wallet, trading, admin, bot, secrets, or production data. |
 
 ## Open PR Decisions
 
@@ -162,6 +164,8 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - `agent/current-dev-checkpoint-pr185` was selected because current `dev` contains merged PR #185 and several review trackers still pointed at the earlier `b59eb3d` checkpoint.
 - `agent/current-dev-checkpoint-pr186` was selected because current `dev` contains merged PR #186 and several review trackers still pointed at the earlier `0d13a84` checkpoint.
 - `agent/current-dev-checkpoint-pr188` was selected because current `dev` contains merged PR #188 and several review trackers still pointed at the earlier `4a7e0a9` checkpoint.
+- `agent/current-dev-checkpoint-pr190` was selected because current `dev` contains merged PR #190 and several review trackers still pointed at the earlier checkpoint.
+- UI-012A was selected because the public route smoke lane needed an exact anonymous-route observation checklist before any local server, browser, screenshot, fixture, or smoke evidence run.
 
 ## Skipped Or Downgraded Tasks
 
