@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `40a118e`
+Current `dev` commit at last update: `521875b`
 
 ## Completed Tasks
 
@@ -44,6 +44,10 @@ Recent autonomous tasks completed before this state file:
 - DOC-045: UI replacement readiness rollup, merged as PR #131.
 - DOC-046: Public beta evidence gap rollup, merged as PR #132.
 - DOC-047: Public route smoke evidence template, merged as PR #133.
+- DOC-048: Open autonomous review PR checkpoint, merged as PR #136.
+- DOC-049: Open PR review lane checklist, merged as PR #137.
+- DOC-050: Public route smoke command scope, merged as PR #138.
+- DOC-051: Admin auth test implementation scope, merged as PR #139.
 
 ## Open PRs
 
@@ -72,10 +76,10 @@ Recent autonomous tasks completed before this state file:
 
 ## Next Task Queue
 
-1. DOC-049: Review-lane follow-up checklist for open PRs #134 and #135, docs-only if needed.
-2. DOC-050: Public route smoke command scoping, docs-only.
-3. DOC-051: Admin auth implementation test scope refresh, docs-only.
-4. DOC-052: Bot dry-run test implementation scope refresh, docs-only.
+1. DOC-052: Bot dry-run test implementation scope refresh, docs-only.
+2. DOC-053: Autonomous checkpoint after admin/bot test-scope docs, docs-only if needed.
+3. DOC-054: Public route smoke evidence status update after command scope, docs-only.
+4. DOC-055: Human-review queue rollup for PR #25, #134, and #135, docs-only if needed.
 5. Human/specialist review of PR #134 and PR #135 before merge.
 
 ## Last Validation Result
@@ -94,7 +98,7 @@ Known recurring non-failure output:
 
 ## Current Phase
 
-Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase D UI readiness has a non-auto-merge PR #25 review path, a private pool list replacement scope, and an open non-auto-merge UI PR (#135). Phase G beta evidence is current through PR #133.
+Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase D UI readiness has a non-auto-merge PR #25 review path, a private pool list replacement scope, and an open non-auto-merge UI PR (#135). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence is current through PR #133 and should be refreshed after the next public route smoke evidence change.
 
 ## Next Recommended Actions
 
@@ -105,4 +109,5 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Prefer docs-only scope packets before display-only replacement UI PRs.
 - Keep admin/funding UI screenshot evidence human-reviewed and do not use production data in screenshots.
 - Do not auto-merge PR #134 or PR #135.
+- Keep admin auth and bot test implementation docs-only unless a later human-reviewed PR explicitly approves implementation.
 - Record any funding, trading, auth, bot, or deployment implementation need in `docs/reviews/HUMAN_DECISION_REQUIRED.md`.

@@ -46,6 +46,10 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #131 | Auto-merged | Docs-only UI replacement readiness rollup. |
 | #132 | Auto-merged | Docs-only public beta evidence gap rollup. |
 | #133 | Auto-merged | Docs-only public route smoke evidence template. |
+| #136 | Auto-merged | Docs-only checkpoint for open autonomous review PRs. |
+| #137 | Auto-merged | Docs-only open PR review lane checklist. |
+| #138 | Auto-merged | Docs-only public route smoke command scope. |
+| #139 | Auto-merged | Docs-only admin auth test implementation scope; admin auth test implementation remains human-reviewed. |
 
 ## Open PR Decisions
 
@@ -79,6 +83,8 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Public route smoke evidence template was selected so future smoke runs can be recorded without exposing secrets or production data.
 - Market detail current-gap test was opened but left unmerged because it is useful evidence and not a low-risk auto-merge lane.
 - Private pool list display polish was opened but left unmerged because it changes UI product code on an action-bearing page.
+- Admin auth implementation test scope was selected as docs-only because auth behavior and auth tests are not auto-mergeable in the current policy.
+- Bot dry-run test implementation scope refresh was selected as docs-only because bot runtime behavior, credentials, and live trading are high-risk and future implementation must remain human-reviewed.
 
 ## Skipped Or Downgraded Tasks
 
@@ -91,6 +97,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - PR #134 and PR #135 were left open instead of auto-merged under the autonomous policy.
 - Reference/liquidity public/admin split remains docs-only because implementation is high-risk by topic.
 - PR #25 direct merge remains blocked; replacement PRs should be smaller and reviewed independently.
+- Admin auth and bot dry-run implementation tests remain review-only by default; autonomous work may refine scope docs but must not implement or auto-merge those tests without later explicit approval.
 
 ## Self-Review Notes
 

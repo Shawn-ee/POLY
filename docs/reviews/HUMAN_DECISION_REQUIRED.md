@@ -58,3 +58,4 @@ This document tracks decisions the autonomous LeadAgent must not make alone.
 - PR #135: private pool list display polish requires human/specialist review before merge because it changes UI product code on an action-bearing page.
 - Admin/funding UI screenshot evidence: screenshots or visual evidence must not use production data, secrets, private keys, raw custody details, or sensitive customer data; any redaction decision requires human review.
 - Reference/liquidity public/admin split: requires implementation approval before route changes.
+- Bot dry-run test implementation: requires BotAgent/SecurityAgent/human review before merge unless a later policy explicitly defines a narrow low-risk bot test auto-merge lane. Tests must not start live bots, read production credentials, connect to live exchanges/RPC, place orders, change liquidity behavior, or promote bot tests into CI without review.
