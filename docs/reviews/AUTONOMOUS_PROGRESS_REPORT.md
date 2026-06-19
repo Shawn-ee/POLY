@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-18
 
-Current `dev` checkpoint: `291b331`
+Current `dev` checkpoint: `bfb50b8`
 
 ## Summary
 
@@ -16,6 +16,7 @@ Recent work focused on:
 - UI replacement readiness planning before UI implementation.
 - Admin auth and bot dry-run test scopes kept docs-only and review-gated.
 - Persistent autonomous state and decision tracking.
+- Public market-list grouped reference filtering test coverage.
 
 ## Product Progress
 
@@ -33,6 +34,7 @@ Merged low-risk mocked public/read-only tests cover:
 - Public sports response-shape and empty behavior.
 - Public event-market response-shape behavior.
 - Public market list response-shape and error/empty behavior.
+- Public market list grouped reference filtering behavior.
 - Public market chart empty-state behavior.
 
 Open review-only test work:
@@ -103,8 +105,8 @@ Safe autonomous work remains available in these lanes:
 
 ## Next Recommended Queue
 
-1. DOC-054: Public route smoke evidence status update.
-2. DOC-055: Human-review queue rollup for PR #25, #134, and #135.
-3. DOC-056: Public beta evidence tracker refresh after current checkpoint.
-4. TST-028: A new low-risk mocked public/read-only test only if it avoids market-detail current-gap ambiguity.
-5. FE-002: A very small display-only public-page UI PR, opened for review and not auto-merged unless it satisfies the strict UI policy.
+1. DOC-057: Route smoke manual evidence file template instance.
+2. DOC-059: Public API coverage map refresh after TST-028.
+3. DOC-060: Public route smoke manual-run prerequisites.
+4. FE-002: A very small display-only public-page UI PR, opened for review and not auto-merged unless it satisfies the strict UI policy.
+5. Human/specialist review of PR #25, PR #134, and PR #135.

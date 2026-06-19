@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `fc0c57b`
+Current `dev` commit at last update: `bfb50b8`
 
 ## Completed Tasks
 
@@ -52,7 +52,9 @@ Recent autonomous tasks completed before this state file:
 - DOC-053: Autonomous checkpoint after admin/bot test-scope docs, merged as PR #141.
 - DOC-054: Public route smoke evidence status, merged as PR #142.
 - DOC-055: Human-review queue rollup for PR #25, #134, and #135, merged as PR #143.
-- DOC-056: Public beta evidence tracker refresh, in progress.
+- DOC-056: Public beta evidence tracker refresh, merged as PR #144.
+- TST-028: Public market-list grouped reference filter test, merged as PR #145.
+- DOC-058: Autonomous checkpoint after public beta/test refresh, in progress.
 
 ## Open PRs
 
@@ -81,10 +83,10 @@ Recent autonomous tasks completed before this state file:
 
 ## Next Task Queue
 
-1. TST-028: Low-risk mocked public/read-only test only if it avoids market-detail current-gap ambiguity.
-2. DOC-057: Route smoke manual evidence file template instance, docs-only if needed.
-3. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
-4. DOC-058: Public beta evidence status checkpoint after PR #143, docs-only if needed.
+1. DOC-057: Route smoke manual evidence file template instance, docs-only if needed.
+2. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
+3. DOC-059: Public API coverage map refresh after TST-028, docs-only.
+4. DOC-060: Public route smoke manual-run prerequisites, docs-only if needed.
 5. Human/specialist review of PR #25, PR #134, and PR #135 before merge.
 
 ## Last Validation Result
@@ -118,4 +120,5 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Use `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md` as the compact checkpoint when resuming future autonomous sessions.
 - Use `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md` before proposing any route smoke package/workflow or Playwright implementation.
 - Use `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md` to track non-auto-merge PRs #25, #134, and #135.
+- PR #145 added low-risk mocked coverage for grouped reference market filtering in `/api/markets`; future coverage map updates should include it.
 - Record any funding, trading, auth, bot, or deployment implementation need in `docs/reviews/HUMAN_DECISION_REQUIRED.md`.

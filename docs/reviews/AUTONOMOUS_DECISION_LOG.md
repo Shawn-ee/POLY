@@ -54,6 +54,8 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #141 | Auto-merged | Docs-only autonomous checkpoint and progress report. |
 | #142 | Auto-merged | Docs-only public route smoke evidence status; smoke implementation and package/workflow changes remain human-reviewed. |
 | #143 | Auto-merged | Docs-only human review queue rollup for non-auto-merge PRs #25, #134, and #135. |
+| #144 | Auto-merged | Docs-only public beta evidence tracker refresh. |
+| #145 | Auto-merged | Low-risk mocked public/read-only test for `/api/markets` grouped reference filtering; full validation passed. |
 
 ## Open PR Decisions
 
@@ -93,6 +95,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Public route smoke evidence status was selected because plans/templates/command scope exist, but no safe manual/browser evidence has been recorded and package/workflow changes remain human-reviewed.
 - Human review queue rollup was selected to preserve the autonomous decision not to merge PR #25, #134, or #135 while continuing other safe work.
 - Public beta evidence tracker refresh was selected after route smoke and human review queue docs changed, so beta evidence does not lag the autonomous state.
+- Public market-list grouped reference filter test was selected because it used existing mocks, avoided market-detail current-gap ambiguity, changed only `src/__tests__/`, and covered public/read-only response behavior.
 
 ## Skipped Or Downgraded Tasks
 
@@ -106,6 +109,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Reference/liquidity public/admin split remains docs-only because implementation is high-risk by topic.
 - PR #25 direct merge remains blocked; replacement PRs should be smaller and reviewed independently.
 - Admin auth and bot dry-run implementation tests remain review-only by default; autonomous work may refine scope docs but must not implement or auto-merge those tests without later explicit approval.
+- Quote, orderbook, trade-tape, market detail current-gap, reference/liquidity, wallet, ledger, admin auth, and bot runtime tests remain non-auto-merge or docs-only unless a later human-reviewed scope permits implementation.
 
 ## Self-Review Notes
 
