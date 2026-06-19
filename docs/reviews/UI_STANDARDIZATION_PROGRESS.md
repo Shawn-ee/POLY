@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the autonomous checkpoint refresh: `2740a69`.
+Current known `dev` checkpoint after the autonomous checkpoint refresh: `021c905`.
 
 ## Big UI Overhaul Milestone
 
@@ -40,6 +40,7 @@ Post-merge state:
 - PR #191 merged the anonymous public route smoke checklist.
 - PR #193 merged a docs-only checkpoint refresh after PR #191.
 - PR #194 merged a docs-only open PR review queue refresh after PR #193.
+- PR #196 merged a docs-only checkpoint refresh after PR #194.
 - Remaining autonomous UI work should prefer smoke evidence preparation, docs-only checklists, or very small display-only follow-ups that avoid forbidden areas.
 
 Scope confirmed:
@@ -189,6 +190,7 @@ Needed evidence:
 2. UI-010: Cross-page empty/loading/error terminology map. Completed in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 3. UI-011: Homepage wallet/admin surface decision. Completed in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 4. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
+   - UI-020A: Mobile viewport route-smoke checklist completed in `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`; no server, browser, screenshots, fixtures, or runtime code.
 5. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
 6. UI-022: Market detail screenshot/smoke checklist before any code. Completed in `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md`.
 7. UI-023: Wallet display scope packet if a human confirms funding-copy boundaries.
@@ -310,15 +312,17 @@ Skipped high-risk implementation:
 - Order ticket, orderbook, open orders, trades, fills, positions, balances, pool actions, reference data, and bot behavior.
 - Wallet, deposit, withdrawal, ledger, matching, settlement, admin auth, deployment, package scripts, workflows, Prisma, and migrations.
 
-## Checkpoint After PR #191
+## Checkpoint After PR #191 And UI-020A Prep
 
 Tasks completed in this checkpoint:
 
 - UI-012A: Anonymous public route smoke checklist.
+- UI-020A: Mobile viewport route smoke checklist.
 
 Files added or updated:
 
 - `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`
+- `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`
 
 Validation:
 

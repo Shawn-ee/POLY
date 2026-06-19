@@ -26,15 +26,15 @@ This matrix tracks the UI standardization state of every major route. It does no
 
 | Route | Current status | Primary issue | Safe next action | Auto-merge default |
 |---|---|---|---|---|
-| `/` | Big milestone merged | Wallet/admin concepts still exist on page; needs smoke evidence. | Use `PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` for local anonymous smoke observations; use `HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md` before any homepage account/admin cleanup. | Docs-only yes; code review-gated |
-| `/sports` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
-| `/sports/soccer` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
-| `/sports/soccer/world-cup` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
-| `/events` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/` | Big milestone merged | Wallet/admin concepts still exist on page; needs smoke evidence. | Use `PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` for local anonymous smoke observations; use `HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md` before any homepage account/admin cleanup. | Docs-only yes; code review-gated |
+| `/sports` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/sports/soccer` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/sports/soccer/world-cup` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/events` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/events/[slug]` | Big milestone touched read-only shell | Event detail includes grouped/trade behavior. | Human review; use `UI_STATE_TERMINOLOGY_MAP.md` and do not change grouped trade behavior without explicit approval. | No |
-| `/markets` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/markets` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/markets/[id]` | Big milestone touched shared header only | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Use `MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md` before evidence or code; human review before deeper display work; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
-| `/login` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/login` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/portfolio` | Big milestone touched display only | Account state and positions are calculation-adjacent. | Human review account terminology; use `UI_STATE_TERMINOLOGY_MAP.md`; calculations must remain untouched. | No |
 | `/wallet` | Big milestone touched display only | Funding copy can imply production readiness. | Human review funding copy; use `UI_STATE_TERMINOLOGY_MAP.md`; no funding behavior changes. | No |
 | `/create` | Big milestone touched display only | Private pools are delayed/post-MVP. | Product decision whether this route stays visible for MVP; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
@@ -69,7 +69,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 
 ## Next Queue
 
-1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`; `PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` is ready and should be used before the first local anonymous run.
+1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`; `PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` are ready and should be used before the first local anonymous run.
 2. Event detail loading/error/empty display-only scope after UI-018 and `UI_STATE_TERMINOLOGY_MAP.md`.
 3. Portfolio header/empty-state copy only if calculations remain untouched.
 4. Admin read-only display implementation only with explicit scope and full validation.
@@ -80,6 +80,7 @@ Completed queue item:
 - UI-011: Homepage wallet/admin surface decision in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 - UI-019A/UI-022: Market detail screenshot/smoke checklist in `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md`.
 - UI-012A: Anonymous route smoke checklist in `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`.
+- UI-020A: Mobile viewport route smoke checklist in `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
 
 ## Validation
 

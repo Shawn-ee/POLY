@@ -49,6 +49,8 @@ Safe evidence can include:
 - Browser viewport notes.
 - Docs-only checklists.
 
+Use `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` before recording desktop, tablet/narrow desktop, or mobile viewport observations for anonymous public routes.
+
 Do not capture:
 
 - Production data.
@@ -61,6 +63,7 @@ Do not capture:
 
 1. Public route smoke evidence for `/`, `/sports`, `/sports/soccer`, `/sports/soccer/world-cup`.
    - Preparation checklist: `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`.
+   - Viewport checklist: `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
 2. `/events` card wrapping and empty-state inventory.
 3. `/markets` filter wrapping screenshot evidence.
 4. `/login` mobile route smoke evidence.

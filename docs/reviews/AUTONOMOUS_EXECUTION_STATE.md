@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `2740a69`
+Current `dev` commit at last update: `021c905`
 
 ## Completed Tasks
 
@@ -92,6 +92,7 @@ Recent autonomous tasks completed before this state file:
 - UI-012A: Anonymous route smoke checklist, merged as PR #191.
 - DOC-074: Checkpoint refresh after PR #191, merged as PR #193.
 - DOC-075: Open PR review queue refresh after PR #193, merged as PR #194.
+- DOC-076: Checkpoint refresh after PR #194, merged as PR #196.
 
 ## Open PRs
 
@@ -119,7 +120,7 @@ Recent autonomous tasks completed before this state file:
 ## Next Task Queue
 
 1. Human/specialist review of PR #25 before merge or close.
-2. Optional local-only anonymous route smoke run only when a safe local app instance is available; record evidence without secrets or production data.
+2. Optional local-only anonymous route smoke run only when a safe local app instance is available; use the anonymous and mobile viewport checklists, and record evidence without secrets or production data.
 3. Continue small display-only public-page UI PRs only if they avoid wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic and follow `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md` for state copy.
 4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
 5. Package/workflow/public API test-lane promotion remains human-reviewed.
@@ -152,6 +153,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md` now records that homepage wallet/admin concepts should stay secondary or out of normal content before future homepage code cleanup.
 - `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md` now records safe preconditions and forbidden actions before any future market-detail screenshots, smoke evidence, or code.
 - `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` now records the anonymous public route observations and stop conditions for a future local-only smoke run.
+- `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` now records desktop, tablet/narrow desktop, and mobile viewport observations for that future local-only smoke run.
 - Event detail, market detail, wallet, and portfolio now have explicit planning/scope boundaries before future UI code.
 - Admin routes now have an explicit implementation scope and remain human-reviewed by default.
 - Continue docs-only route/test readiness work and avoid repeating already-covered public API test groups.

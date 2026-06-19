@@ -48,6 +48,7 @@ Use `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md` or a dated evidence c
 - Whether page copy follows `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 - Whether layout is readable at desktop width.
 - Whether layout is readable at mobile width.
+- Whether viewport observations follow `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
 - Whether any admin, funding, wallet, bot, secret, internal, or production-data leak is visible.
 - Screenshot or artifact path only if the artifact is local, non-sensitive, and explicitly safe to keep.
 - Any deferred routes and the reason.

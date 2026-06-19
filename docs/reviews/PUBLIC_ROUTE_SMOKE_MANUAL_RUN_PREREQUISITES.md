@@ -90,6 +90,8 @@ Use `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md` or a dated copy of th
 
 For the first anonymous-only run, use `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` to keep observations limited to public discovery routes and login, with no auth, wallet, funding, trading, admin, bot, fixture, or mutation steps.
 
+For desktop/mobile layout notes, use `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`. Screenshots remain optional and must be skipped if they would include secrets, production data, customer data, raw custody details, or sensitive internal notes.
+
 ## Safe Validation Before Recording Evidence
 
 At minimum, record:
