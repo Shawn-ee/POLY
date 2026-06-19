@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the checkpoint refresh following PR #202: `3870797`.
+Current known `dev` checkpoint after the event-detail state-copy merge: `c399472`.
 
 ## Big UI Overhaul Milestone
 
@@ -47,6 +47,8 @@ Post-merge state:
 - PR #201 merged the open PR queue refresh after PR #197.
 - PR #202 merged the checkpoint refresh after PR #201.
 - PR #204 merged the checkpoint refresh after PR #202.
+- PR #208 merged the checkpoint refresh after PR #204 and current open queue update.
+- PR #203 merged the event-detail loading/error/empty state copy polish after focused validation.
 - Remaining autonomous UI work should prefer smoke evidence preparation, docs-only checklists, or very small display-only follow-ups that avoid forbidden areas.
 
 Scope confirmed:
@@ -72,7 +74,7 @@ Forbidden areas not changed:
 | `/markets` | Page UX review, public API test docs, PR #166 | Improved with market-board display polish | Later add route smoke/screenshot evidence. |
 | `/markets/[id]` | Market-detail contract docs, current-gap tests, market detail display shell plan | Planned; code remains review-gated | Do not touch trade/order behavior. |
 | `/events` | Page UX review, PR #163 | Improved with shared container/state components | Later add route smoke/screenshot evidence. |
-| `/events/[slug]` | Page UX review, event detail display shell plan | Planned; code remains review-gated | Avoid grouped trade behavior changes. |
+| `/events/[slug]` | Page UX review, event detail display shell plan, PR #203 | Loading/error/empty state copy improved; grouped trade areas remain review-gated | Avoid grouped trade behavior, fetch, polling, or order callback changes. |
 | `/sports` | Sports readiness checklist, PR #160 | Improved with sports-first copy | Later add route smoke/screenshot evidence. |
 | `/sports/soccer` | Sports readiness checklist, PR #160 | Improved with soccer event-first copy | Later add route smoke/screenshot evidence. |
 | `/sports/soccer/world-cup` | Sports readiness checklist, PR #160 | Improved with demo framing removed | Later add route smoke/screenshot evidence. |
@@ -128,7 +130,7 @@ Validation summary for PR #175:
 | `/events` | #163 | Shared `PageContainer`, shared loading/empty states, event-first copy, and beta-safe empty state. | Full validation and focused lint passed. | Merged |
 | `/login` | #164 | Beta-safe sign-in copy, shared page container, clearer error display, and lint-safe derived error string. | Full validation and focused lint passed. | Merged |
 | `/markets` | #166 | Sports-first market-board copy, grouped filters, beta-safe note, improved empty state, and clearer no-price fallback card. | Full validation and focused lint passed. | Merged |
-| `/events/[slug]` | Pending after UI-018 | Docs-only display shell plan separates safe read-only polish from grouped trade/order behavior. | Docs-only diff checks. | Planned |
+| `/events/[slug]` | #203 | Loading/error/empty state copy polish; grouped trade/order behavior untouched. | Focused validation, full test baseline, and CI passed. | Merged |
 | `/markets/[id]` | Pending after UI-019 | Docs-only display shell plan separates market comprehension from orderbook, order ticket, pool action, position, and bot/reference behavior. | Docs-only diff checks. | Planned |
 | `/wallet` | Pending after UI-007 | Docs-only funding-claim review defines copy and behavior boundaries before any wallet display work. | Docs-only diff checks. | Planned |
 | `/portfolio` | Pending after UI-009 | Docs-only implementation scope separates safe display polish from balance, PnL, position, order, and history semantics. | Docs-only diff checks. | Planned |
@@ -159,7 +161,6 @@ Validation summary for PR #175:
 | PR | Reason |
 |---|---|
 | #25 | Broad draft UI/product-code PR touching wallet, admin deposit/withdrawal, private-pool, and pool-detail surfaces. Must not auto-merge. |
-| #203 | Draft event-detail state-copy UI PR. Keep review-gated unless strict display-only validation confirms no grouped trade state, order callbacks, polling, fetch behavior, wallet, ledger, trading, admin, bot, package/workflow, Prisma, deployment, or secrets changed. |
 | #205, #206, #207 | Duplicate draft docs-only checkpoint refresh PRs after PR #204. Close or reconcile before any further checkpoint merge. |
 
 ## UI Risks

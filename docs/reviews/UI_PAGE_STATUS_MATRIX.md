@@ -31,7 +31,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/sports/soccer` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/sports/soccer/world-cup` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/events` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
-| `/events/[slug]` | Big milestone touched read-only shell | Event detail includes grouped/trade behavior. | Human review; use `UI_STATE_TERMINOLOGY_MAP.md` and do not change grouped trade behavior without explicit approval. | No |
+| `/events/[slug]` | State-copy polish merged | Event detail still includes grouped/trade behavior beyond loading/error/empty state copy. | Human review for grouped trade, fetch, polling, market-list, or order-adjacent changes; use `UI_STATE_TERMINOLOGY_MAP.md` for future copy. | No |
 | `/markets` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/markets/[id]` | Big milestone touched shared header only | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Use `MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md` before evidence or code; human review before deeper display work; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
 | `/login` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` and `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
@@ -66,13 +66,13 @@ This matrix tracks the UI standardization state of every major route. It does no
 | #166 | `/markets` | Markets discovery display polish and beta-safe empty/fallback states. |
 | #175 | App-wide display shell | Shared display primitives and page-level standardization milestone. |
 | #176 | UI state docs | Post-merge status refresh after PR #175. |
+| #203 | `/events/[slug]` | Loading/error/empty state copy polish without grouped trade/order behavior changes. |
 
 ## Next Queue
 
 1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`; `PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md` are ready and should be used before the first local anonymous run.
-2. Event detail loading/error/empty display-only scope after UI-018 and `UI_STATE_TERMINOLOGY_MAP.md`.
-3. Portfolio header/empty-state copy only if calculations remain untouched.
-4. Admin read-only display implementation only with explicit scope and full validation.
+2. Portfolio header/empty-state copy only if calculations remain untouched.
+3. Admin read-only display implementation only with explicit scope and full validation.
 
 Completed queue item:
 
@@ -81,6 +81,7 @@ Completed queue item:
 - UI-019A/UI-022: Market detail screenshot/smoke checklist in `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md`.
 - UI-012A: Anonymous route smoke checklist in `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`.
 - UI-020A: Mobile viewport route smoke checklist in `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
+- UI-018A: Event detail loading/error/empty state copy polish merged as PR #203.
 
 ## Validation
 
