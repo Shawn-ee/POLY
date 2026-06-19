@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `b697302`
+Current `dev` checkpoint: `2740a69`
 
 ## Summary
 
@@ -33,6 +33,7 @@ Recent work focused on:
 - Checkpoint refresh after PR #188, merged as PR #190.
 - Anonymous route smoke checklist, merged as PR #191.
 - Checkpoint refresh after PR #191, merged as PR #193.
+- Open PR review queue refresh after PR #193, merged as PR #194.
 
 ## Product Progress
 
@@ -88,6 +89,7 @@ Resolved UI work:
 - PR #190: checkpoint refresh after PR #188.
 - PR #191: anonymous route smoke checklist.
 - PR #193: checkpoint refresh after PR #191.
+- PR #194: open PR review queue refresh after PR #193.
 
 Review-gated UI scope docs:
 
