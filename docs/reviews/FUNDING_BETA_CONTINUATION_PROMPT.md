@@ -14,32 +14,34 @@ Completed phases:
 - Phase 6: withdrawal request hold hardening evidence merged through PR #222.
 - Phase 7: admin manual withdrawal review evidence merged through PR #223.
 - Phase 8: bot/funding runtime safety evidence merged through PR #224.
-- Phase 9: internal funding beta evidence and go/no-go docs added in the current PR.
+- Phase 9: internal funding beta evidence and go/no-go docs merged through PR #225.
+- Phase 10: internal beta route smoke evidence added in the current PR.
 
 ## Current Status
 
-The current branch adds internal funding beta evidence, go/no-go, runbook, rollback, and env checklist docs without changing runtime behavior.
+The current branch adds local internal beta route smoke evidence without changing runtime behavior.
 
 Covered behavior:
 
-- consolidated evidence from PRs #217 through #224.
-- current funding-specific classification is Limited Internal Funding Beta Only.
-- open blockers are PR #220, private server env validation, controlled deposit drill, controlled withdrawal drill, internal route smoke, and final readiness docs.
-- no production deployment, public funding, automatic withdrawal broadcast, or live bots are approved.
+- temporary local dev server on port 3001 was used.
+- public/account/funding/admin shell routes returned HTTP 200 after local compilation.
+- anonymous funding and admin funding APIs returned 401.
+- no secret-pattern matches were found in sampled HTML or API bodies.
+- full browser smoke timed out and remains a warning.
 
 ## Next Step
 
-Next step is **Phase 10: internal UX / route smoke evidence**.
+Next step is **Phase 11: server deployment readiness documentation**.
 
 Do not deploy production, start bot services, enable public funding, remove the allowlist, or enable automatic withdrawal broadcast.
 
 Open items before final deployment readiness:
 
 1. PR #220 remains open for human/specialist review because it exposes the guarded funding UI entry point.
-2. Phase 10 internal route smoke evidence is still needed.
-3. Phase 11 server deployment readiness docs are still needed.
-4. Phase 12 final readiness report is still needed.
-5. Controlled real-chain deposit and withdrawal drills are still manual/not run.
+2. Phase 11 server deployment readiness docs are still needed.
+3. Phase 12 final readiness report is still needed.
+4. Controlled real-chain deposit and withdrawal drills are still manual/not run.
+5. Full browser smoke timed out and should be rerun before final readiness.
 
 ## Validation To Re-Run
 
