@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `6474faf`
+Current `dev` checkpoint: `279824c`
 
 ## Summary
 
@@ -44,6 +44,7 @@ Recent work focused on:
 - Checkpoint refresh after PR #204, merged as PR #208.
 - Event-detail loading/error/empty state copy polish, merged as PR #203.
 - Checkpoint refresh after PR #203, merged as PR #209.
+- Checkpoint refresh after PR #210, merged as PR #211.
 
 ## Product Progress
 
@@ -110,6 +111,7 @@ Resolved UI work:
 - PR #208: checkpoint refresh after PR #204 and current open queue update.
 - PR #203: event-detail loading/error/empty state copy polish.
 - PR #209: checkpoint refresh after PR #203.
+- PR #211: checkpoint refresh after PR #210.
 
 Review-gated UI scope docs:
 
@@ -174,7 +176,7 @@ Safe autonomous work remains available in these lanes:
 3. Close or update stale draft docs-only PR #192, which is superseded by merged PR #193 and reflected in the merged PR #194 queue refresh and PR #199 checkpoint.
 4. Close or update stale draft docs-only PR #198, which is superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204.
 5. Close or reconcile duplicate draft checkpoint PRs #205, #206, and #207 so stale/overlapping docs do not merge over PR #208 and PR #209.
-6. Close, update, or reconcile draft checkpoint PR #210 so overlapping docs do not merge over current `dev`.
+6. Close, update, or reconcile draft checkpoint PR #210 so stale docs do not merge over current `dev` after merged PR #211.
 7. Optional local-only anonymous route smoke run when a safe local app instance is available, using `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
 8. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
 9. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.

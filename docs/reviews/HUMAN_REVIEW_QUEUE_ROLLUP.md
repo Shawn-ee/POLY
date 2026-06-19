@@ -10,7 +10,7 @@ Risk level: Low for docs-only rollup
 
 ## Purpose
 
-This document summarizes open PRs that the autonomous LeadAgent has inspected but must not auto-merge under the current safety policy. The latest merged checkpoint refresh is PR #209 at `6474faf`.
+This document summarizes open PRs that the autonomous LeadAgent has inspected but must not auto-merge under the current safety policy. The latest merged checkpoint refresh is PR #211 at `279824c`.
 
 It does not modify any PR branch, source code, tests, UI, backend logic, wallet, ledger, trading, admin auth, bot behavior, deployment, Prisma, migrations, secrets, or production behavior.
 
@@ -25,7 +25,7 @@ It does not modify any PR branch, source code, tests, UI, backend logic, wallet,
 | #205 | `docs: refresh checkpoint after pr204` | Checkpoint docs plus `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_2026_06_19_NOT_RUN.md`, route-smoke status, and review index | Draft docs-only checkpoint/evidence refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and PR #209 |
 | #206 | `docs: refresh checkpoint after pr204` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and PR #209 |
 | #207 | `docs: refresh checkpoint after pr204` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and PR #209 |
-| #210 | `docs: refresh checkpoint after pr209` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the current checkpoint lane | Do not merge as-is | Maintainer should close, update, or reconcile against current `dev` |
+| #210 | `docs: refresh checkpoint after pr209` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh superseded by the latest checkpoint lane | Do not merge as-is | Maintainer should close, update, or reconcile against current `dev`; superseded by merged PR #211 |
 
 ## PR #25 Review Notes
 
@@ -59,6 +59,8 @@ PR #135 was closed as superseded after PR #154 merged. PR #154 applied the focus
 
 PR #203 was updated from current `dev`, validated, and merged after autonomous review confirmed it was limited to event-detail loading/error/empty state copy and did not touch grouped trade state, selected trade behavior, order callbacks, fetch URLs, polling, wallet, ledger, trading, admin, bot, Prisma, package/workflow, deployment, or secrets.
 
+PR #211 was merged as a docs-only checkpoint refresh after PR #210 review. It updated checkpoint/queue wording without changing runtime code, tests, package/workflow files, browser runs, screenshots, fixtures, wallet, order, bot/reference, or production data.
+
 ## Shared Non-Auto-Merge Reasons
 
 The remaining open queue includes one broad source-code UI PR and seven stale or overlapping docs-only PRs:
@@ -68,7 +70,7 @@ The remaining open queue includes one broad source-code UI PR and seven stale or
 - PR #192 is docs-only and draft, but its checkpoint intent was superseded by merged PR #193.
 - PR #198 is docs-only and draft, but its checkpoint intent was superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204.
 - PRs #205, #206, and #207 are overlapping draft checkpoint refreshes after PR #204 and should be reconciled or closed to avoid duplicate state docs already covered by PR #208 and PR #209.
-- PR #210 is a draft checkpoint refresh after PR #209 and should be reconciled or closed before it creates another overlapping checkpoint lane.
+- PR #210 is a draft checkpoint refresh after PR #209 and should be reconciled or closed because PR #211 now records the newer checkpoint lane.
 
 PR #25 should not be auto-merged by the autonomous LeadAgent under the current policy.
 

@@ -101,6 +101,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #208 | Auto-merged | Docs-only checkpoint refresh after PR #204 plus open queue update for PR #203 and duplicate drafts #205-#207; CI Validate passed. |
 | #203 | Auto-merged | Focused event-detail loading/error/empty state copy polish; changed only `src/app/events/[slug]/page.tsx`, avoided grouped trade/order/fetch/polling behavior, and passed focused/full validation plus CI Validate. |
 | #209 | Auto-merged | Docs-only checkpoint refresh after PR #203; no runtime code, tests, package/workflow changes, browser run, screenshots, fixtures, wallet, order, bot/reference, or production data. |
+| #211 | Auto-merged | Docs-only checkpoint refresh after PR #210; no runtime code, tests, package/workflow changes, browser run, screenshots, fixtures, wallet, order, bot/reference, or production data. |
 
 ## Open PR Decisions
 
@@ -111,7 +112,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #192 | Do not merge as-is | Draft docs-only checkpoint after PR #191 is superseded by merged PR #193. Close or update after maintainer review. |
 | #198 | Do not merge as-is | Draft docs-only checkpoint after PR #196 is superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204. Close or update after maintainer review. |
 | #205/#206/#207 | Do not merge as-is | Duplicate draft checkpoint refresh PRs after PR #204; superseded by merged PR #208 and PR #209. Close or reconcile to avoid stale/overlapping state docs. |
-| #210 | Do not merge as-is | Draft checkpoint refresh after PR #209 overlaps the current checkpoint lane. Close, update, or reconcile to avoid stale/overlapping state docs. |
+| #210 | Do not merge as-is | Draft checkpoint refresh after PR #209 is superseded by merged PR #211. Close, update, or reconcile to avoid stale/overlapping state docs. |
 | #135 | Closed as superseded | Replaced by PR #154, which carried the same focused display intent with a lint-safe initial load path and full validation. |
 | #175 | Merged after self-review | User requested self-review and merge if safe. The PR was display-only, avoided forbidden files/logic, passed focused validation/build, and full-lint failures were documented as pre-existing/unrelated. |
 | #176 | Auto-merged | Docs-only post-merge state refresh after PR #175; no runtime behavior changed. |
