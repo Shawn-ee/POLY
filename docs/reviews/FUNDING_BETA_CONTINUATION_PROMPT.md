@@ -1,7 +1,7 @@
 # Funding Beta Continuation Prompt
 
 Timestamp: 2026-06-19
-Current branch: `agent/beta-admin-manual-withdrawals`
+Current branch: `agent/beta-bot-funding-runtime-safety`
 Completed phases:
 
 - Phase 1: controlled internal funding beta architecture, merged through PR #215.
@@ -12,43 +12,49 @@ Completed phases:
 - Phase 4: deposit address API/UI evidence opened as PR #220 and left open for human review because it exposes a guarded funding UI entry point.
 - Phase 5: deposit monitor and auto-credit hardening evidence merged through PR #221.
 - Phase 6: withdrawal request hold hardening evidence merged through PR #222.
-- Phase 7: admin manual withdrawal review evidence added in the current PR.
+- Phase 7: admin manual withdrawal review evidence merged through PR #223.
+- Phase 8: bot/funding runtime safety evidence added in the current PR.
 
 ## Current Status
 
-The current branch adds admin manual withdrawal review evidence without changing runtime behavior.
+The current branch adds bot/funding runtime safety evidence without changing runtime behavior.
 
 Covered behavior:
 
-- normal users cannot list admin withdrawal review queue.
-- admin can list pending/recent withdrawals without signing material.
-- admin can reject withdrawal requests through manual review route.
-- admin can complete withdrawal requests with manually provided payout tx hash.
-- admin responses do not include treasury private keys or broadcast fields.
-- no automatic signing or withdrawal broadcast is introduced.
+- app deposit monitor is separate from bot runners.
+- app deposit monitor does not place orders, cancel orders, start bots, require bot credentials, or broadcast withdrawals.
+- `poly-bot` live internal services are gated by dry-run, live-enabled, global kill-switch, execution-mode, runtime readiness, and confirm-live controls.
+- live bot trading remains not approved for controlled internal funding beta.
+- local bot env files were not opened or printed.
 
 ## Next Step
 
-Next step is **review of the Phase 7 admin manual withdrawal review evidence PR**.
+Next step is **Phase 9: internal funding beta evidence and go/no-go documentation**.
 
-Do not continue to deposit auto-credit, withdrawal automation, or production funding rollout in the same run.
+Do not deploy production, start bot services, enable public funding, remove the allowlist, or enable automatic withdrawal broadcast.
 
-After human review, choose one:
+Open items before final deployment readiness:
 
-1. **Review PR #220** because it remains open for human review.
-2. **Phase 8 bot/funding runtime safety evidence**.
-3. **Phase 2D schema-based funding profile** if env-backed allowlist is not durable enough.
+1. PR #220 remains open for human/specialist review because it exposes the guarded funding UI entry point.
+2. Phase 9 evidence/go-no-go docs must classify what is actually tested, not tested, blocked, or manual.
+3. Phase 10 internal route smoke evidence is still needed.
+4. Phase 11 server deployment readiness docs are still needed.
+5. Phase 12 final readiness report is still needed.
 
 ## Validation To Re-Run
 
 ```powershell
 git diff --check
 git diff --cached --check
+```
+
+For code/test changes in later phases, also run:
+
+```powershell
 npx prisma generate --schema=prisma/schema.prisma
 npx prisma validate --schema=prisma/schema.prisma
 npx tsc --noEmit --pretty false --incremental false
 npm run test:ci
-npx jest --runInBand src/__tests__/admin.withdrawals.review.route.test.ts src/__tests__/admin.withdrawals.complete.route.test.ts
 ```
 
 ## Warnings
