@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import EventCard from "@/components/EventCard";
+import PageContainer from "@/components/ui/PageContainer";
+import { EmptyState, LoadingState } from "@/components/ui/States";
 
 type EventSummary = {
   id: string;
@@ -36,27 +38,24 @@ export default function EventsPage() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold">Events</h1>
-        <p className="text-sm text-neutral-600">
-          Browse grouped market events and jump into their related markets.
+    <PageContainer>
+      <div className="mb-8 rounded-lg border border-[var(--poly-border)] bg-white p-5 shadow-[var(--poly-shadow-sm)]">
+        <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">
+          Event discovery
+        </div>
+        <h1 className="mt-2 text-3xl font-semibold text-[var(--poly-text)]">Events</h1>
+        <p className="mt-2 max-w-2xl text-sm text-[var(--poly-muted)]">
+          Start with an event, then compare the related Yes/No markets attached to it.
         </p>
       </div>
 
       {loading ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={`event-skeleton-${index}`}
-              className="h-40 animate-pulse rounded-xl border border-neutral-200 bg-neutral-100"
-            />
-          ))}
-        </div>
+        <LoadingState label="Loading events" count={6} />
       ) : events.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-6 text-sm text-neutral-600">
-          No events yet.
-        </div>
+        <EmptyState
+          title="No events are ready yet"
+          description="Check sports and markets again soon while beta events are being prepared."
+        />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {events.map((event) =>
@@ -79,6 +78,6 @@ export default function EventsPage() {
           )}
         </div>
       )}
-    </main>
+    </PageContainer>
   );
 }
