@@ -88,6 +88,8 @@ Use `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md` or a dated copy of th
 - no-leak observations
 - limitations and deferred routes
 
+For the first anonymous-only run, use `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` to keep observations limited to public discovery routes and login, with no auth, wallet, funding, trading, admin, bot, fixture, or mutation steps.
+
 ## Safe Validation Before Recording Evidence
 
 At minimum, record:

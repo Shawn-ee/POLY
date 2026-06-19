@@ -69,7 +69,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 
 ## Next Queue
 
-1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
+1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`; use `PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` before the first local anonymous run.
 2. Event detail loading/error/empty display-only scope after UI-018 and `UI_STATE_TERMINOLOGY_MAP.md`.
 3. Portfolio header/empty-state copy only if calculations remain untouched.
 4. Admin read-only display implementation only with explicit scope and full validation.

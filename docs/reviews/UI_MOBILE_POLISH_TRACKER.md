@@ -60,6 +60,7 @@ Do not capture:
 ## Next Mobile Tasks
 
 1. Public route smoke evidence for `/`, `/sports`, `/sports/soccer`, `/sports/soccer/world-cup`.
+   - Preparation checklist: `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`.
 2. `/events` card wrapping and empty-state inventory.
 3. `/markets` filter wrapping screenshot evidence.
 4. `/login` mobile route smoke evidence.

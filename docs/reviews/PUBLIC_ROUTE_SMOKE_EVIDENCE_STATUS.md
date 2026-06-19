@@ -21,6 +21,7 @@ It does not run browsers, start a server, add tests, change UI, change APIs, cha
 | Smoke evidence plan | Ready | `docs/reviews/PUBLIC_ROUTE_PAGE_SMOKE_EVIDENCE_PLAN.md` |
 | Evidence template | Ready | `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md` |
 | Command scope | Ready | `docs/reviews/PUBLIC_ROUTE_SMOKE_COMMAND_SCOPE.md` |
+| Anonymous manual checklist | Ready | `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` |
 | Dedicated route smoke command | Not implemented | Package/script/workflow changes require human-reviewed PR. |
 | Browser/Playwright smoke run | Not run | No safe local run artifact has been recorded yet. |
 | Screenshot evidence | Not recorded | Future screenshots must use local safe data only. |
@@ -89,7 +90,7 @@ Do not auto-merge future smoke work if it changes:
 
 ## Next Recommended Step
 
-Run a future local-only manual evidence pass only after a safe local dev server and safe test data are available. Record the results in a copy of `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md` or a dated evidence file under `docs/reviews/`.
+Run a future local-only manual evidence pass only after a safe local dev server and safe test data are available. Use `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` for the first anonymous route set, then record the results in a copy of `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md` or a dated evidence file under `docs/reviews/`.
 
 ## Non-Goals
 

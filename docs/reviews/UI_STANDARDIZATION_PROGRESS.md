@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the autonomous checkpoint refresh: `c8f8064`.
+Current known `dev` checkpoint after the autonomous checkpoint refresh: `04873ef`.
 
 ## Big UI Overhaul Milestone
 
@@ -36,6 +36,7 @@ Post-merge state:
 - PR #185 merged a docs-only checkpoint refresh after PR #184.
 - PR #186 merged a docs-only checkpoint refresh after PR #185.
 - PR #188 merged a docs-only checkpoint refresh after PR #186.
+- PR #190 merged a docs-only checkpoint refresh after PR #188.
 - Remaining autonomous UI work should prefer smoke evidence preparation, docs-only checklists, or very small display-only follow-ups that avoid forbidden areas.
 
 Scope confirmed:
@@ -181,6 +182,7 @@ Needed evidence:
 ## Next UI Tasks
 
 1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
+   - UI-012A: Anonymous route-smoke checklist prepared in `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`; no server, browser, screenshots, fixtures, or runtime code.
 2. UI-010: Cross-page empty/loading/error terminology map. Completed in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 3. UI-011: Homepage wallet/admin surface decision. Completed in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 4. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
