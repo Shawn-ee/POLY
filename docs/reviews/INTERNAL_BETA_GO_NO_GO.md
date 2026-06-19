@@ -10,6 +10,29 @@ Decision basis: actual recovery-pass evidence in `docs/reviews/INTERNAL_BETA_TES
 
 This is not public beta readiness.
 
+## Controlled Internal Funding Beta Overlay
+
+Current funding-specific classification:
+
+**Limited Internal Funding Beta Only**
+
+Funding safety evidence has improved since the original internal-use smoke pass. The repo now has merged evidence for allowlist and kill switch controls, deposit wallet no-leak coverage, deposit auto-credit idempotency coverage, withdrawal hold coverage, admin manual withdrawal review coverage, and bot/funding runtime separation.
+
+This does not yet make the project deploy-ready for owner server funding tests because:
+
+- PR #220 remains open for the guarded funding UI entry point.
+- private server env values have not been configured or validated in this evidence pass.
+- controlled real-chain deposit and withdrawal drills have not been run.
+- final deployment readiness and route smoke docs remain incomplete.
+
+See:
+
+- `docs/reviews/INTERNAL_FUNDING_BETA_TEST_EVIDENCE.md`
+- `docs/reviews/INTERNAL_FUNDING_BETA_GO_NO_GO.md`
+- `docs/reviews/INTERNAL_FUNDING_BETA_RUNBOOK.md`
+- `docs/reviews/INTERNAL_FUNDING_BETA_ROLLBACK_PLAN.md`
+- `docs/reviews/INTERNAL_FUNDING_BETA_ENV_CHECKLIST.md`
+
 ## Why This Improved From Limited Internal Use Only
 
 The recovery pass produced real evidence that the requested anonymous public routes load locally:

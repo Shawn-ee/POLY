@@ -13,33 +13,33 @@ Completed phases:
 - Phase 5: deposit monitor and auto-credit hardening evidence merged through PR #221.
 - Phase 6: withdrawal request hold hardening evidence merged through PR #222.
 - Phase 7: admin manual withdrawal review evidence merged through PR #223.
-- Phase 8: bot/funding runtime safety evidence added in the current PR.
+- Phase 8: bot/funding runtime safety evidence merged through PR #224.
+- Phase 9: internal funding beta evidence and go/no-go docs added in the current PR.
 
 ## Current Status
 
-The current branch adds bot/funding runtime safety evidence without changing runtime behavior.
+The current branch adds internal funding beta evidence, go/no-go, runbook, rollback, and env checklist docs without changing runtime behavior.
 
 Covered behavior:
 
-- app deposit monitor is separate from bot runners.
-- app deposit monitor does not place orders, cancel orders, start bots, require bot credentials, or broadcast withdrawals.
-- `poly-bot` live internal services are gated by dry-run, live-enabled, global kill-switch, execution-mode, runtime readiness, and confirm-live controls.
-- live bot trading remains not approved for controlled internal funding beta.
-- local bot env files were not opened or printed.
+- consolidated evidence from PRs #217 through #224.
+- current funding-specific classification is Limited Internal Funding Beta Only.
+- open blockers are PR #220, private server env validation, controlled deposit drill, controlled withdrawal drill, internal route smoke, and final readiness docs.
+- no production deployment, public funding, automatic withdrawal broadcast, or live bots are approved.
 
 ## Next Step
 
-Next step is **Phase 9: internal funding beta evidence and go/no-go documentation**.
+Next step is **Phase 10: internal UX / route smoke evidence**.
 
 Do not deploy production, start bot services, enable public funding, remove the allowlist, or enable automatic withdrawal broadcast.
 
 Open items before final deployment readiness:
 
 1. PR #220 remains open for human/specialist review because it exposes the guarded funding UI entry point.
-2. Phase 9 evidence/go-no-go docs must classify what is actually tested, not tested, blocked, or manual.
-3. Phase 10 internal route smoke evidence is still needed.
-4. Phase 11 server deployment readiness docs are still needed.
-5. Phase 12 final readiness report is still needed.
+2. Phase 10 internal route smoke evidence is still needed.
+3. Phase 11 server deployment readiness docs are still needed.
+4. Phase 12 final readiness report is still needed.
+5. Controlled real-chain deposit and withdrawal drills are still manual/not run.
 
 ## Validation To Re-Run
 
