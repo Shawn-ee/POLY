@@ -77,6 +77,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #169 | Auto-merged | Docs-only market-detail display shell plan; orderbook, order ticket, pool actions, positions, and bot/reference behavior remain review-gated. |
 | #170 | Auto-merged | Docs-only wallet funding-claim review; deposit, withdrawal, linked-wallet, balance, and ledger behavior remain review-gated. |
 | #171 | Auto-merged | Docs-only portfolio display scope; balance, locked-fund, PnL, position, order, and history semantics remain review-gated. |
+| #173 | Auto-merged | Docs-only admin display scope; admin auth, finance mutations, market resolution, bot/reference actions, system readiness, deployment, and agent operations remain review-gated. |
 
 ## Open PR Decisions
 
@@ -137,6 +138,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - UI-019 was selected as docs-only because `/markets/[id]` routes into orderbook, order ticket, pool action, position, and bot/reference surfaces.
 - UI-007 was selected as docs-only because `/wallet` owns deposit, withdrawal, linked-wallet, external balance, and transaction surfaces.
 - UI-009 was selected as docs-only because `/portfolio` displays balances, locked funds, PnL, positions, and account history.
+- UI-025 was selected as docs-only because admin surfaces include auth, finance operations, market resolution, bot/reference controls, system readiness, and agent monitoring.
 
 ## Skipped Or Downgraded Tasks
 

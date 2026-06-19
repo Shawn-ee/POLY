@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the portfolio planning pass: `29f3648`.
+Current known `dev` checkpoint after the admin display scope pass: `afb031e`.
 
 ## Pages Reviewed
 
@@ -77,6 +77,7 @@ Current known `dev` checkpoint after the portfolio planning pass: `29f3648`.
 | #169 | Docs-only | `docs/reviews/MARKET_DETAIL_DISPLAY_SHELL_PLAN.md`, UI trackers | Merged as market-detail display shell scope. |
 | #170 | Docs-only | `docs/reviews/WALLET_FUNDING_CLAIM_REVIEW.md`, UI trackers | Merged as wallet funding-claim boundary review. |
 | #171 | Docs-only | `docs/reviews/PORTFOLIO_DISPLAY_IMPLEMENTATION_SCOPE.md`, UI trackers | Merged as portfolio display implementation scope. |
+| #173 | Docs-only | `docs/reviews/ADMIN_DISPLAY_IMPLEMENTATION_SCOPE.md`, UI trackers | Merged as admin display implementation scope. |
 
 ## PRs Left Open
 

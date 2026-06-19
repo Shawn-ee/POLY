@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `29f3648`
+Current `dev` commit at last update: `afb031e`
 
 ## Completed Tasks
 
@@ -76,6 +76,7 @@ Recent autonomous tasks completed before this state file:
 - UI-019: Market detail display shell plan, merged as PR #169.
 - UI-007: Wallet funding-claim review, merged as PR #170.
 - UI-009: Portfolio display implementation scope, merged as PR #171.
+- UI-025: Admin display implementation scope, merged as PR #173.
 
 ## Open PRs
 
@@ -122,7 +123,7 @@ Known recurring non-failure output:
 
 ## Current Phase
 
-Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase UI now has a master standardization plan, progress tracker, style foundation docs, a merged private pool list replacement (#154), homepage display simplification (#158), sports discovery copy polish (#160), events list display polish (#163), beta login display polish (#164), markets discovery display polish (#166), event-detail display shell plan (#168), market-detail display shell plan (#169), wallet funding-claim review (#170), and portfolio display implementation scope (#171). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
+Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase UI now has a master standardization plan, progress tracker, style foundation docs, a merged private pool list replacement (#154), homepage display simplification (#158), sports discovery copy polish (#160), events list display polish (#163), beta login display polish (#164), markets discovery display polish (#166), event-detail display shell plan (#168), market-detail display shell plan (#169), wallet funding-claim review (#170), portfolio display implementation scope (#171), and admin display implementation scope (#173). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
 
 ## Next Recommended Actions
 
@@ -131,6 +132,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Continue Phase 1 UI work with sports/events/market discovery surfaces before wallet, admin, or trade-ticket surfaces.
 - Public homepage, sports, events, markets, login, and private-pool list now have first-pass display improvements; prefer smoke evidence or docs-only plans before more public-page code.
 - Event detail, market detail, wallet, and portfolio now have explicit planning/scope boundaries before future UI code.
+- Admin routes now have an explicit implementation scope and remain human-reviewed by default.
 - Continue docs-only route/test readiness work and avoid repeating already-covered public API test groups.
 - Continue low-risk mocked public/read-only tests only where no runtime behavior changes are needed.
 - Market-detail current-gap checks are now merged as PR #134; future market-detail cleanup remains human-reviewed.
