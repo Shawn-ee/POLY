@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `ceb503d`
+Current `dev` commit at last update: `d2e4955`
 
 ## Completed Tasks
 
@@ -56,7 +56,8 @@ Recent autonomous tasks completed before this state file:
 - TST-028: Public market-list grouped reference filter test, merged as PR #145.
 - DOC-058: Autonomous checkpoint after public beta/test refresh, merged as PR #146.
 - DOC-059: Public API coverage map refresh after TST-028, merged as PR #147.
-- DOC-060: Public route smoke manual-run prerequisites, in progress.
+- DOC-060: Public route smoke manual-run prerequisites, merged as PR #148.
+- DOC-057: Route smoke evidence placeholder instance, in progress.
 
 ## Open PRs
 
@@ -85,10 +86,10 @@ Recent autonomous tasks completed before this state file:
 
 ## Next Task Queue
 
-1. DOC-057: Route smoke manual evidence file template instance, docs-only if needed.
-2. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
-3. TST-029: Another low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope.
-4. DOC-061: Public route smoke docs index update, docs-only if needed.
+1. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
+2. TST-029: Another low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope.
+3. DOC-061: Public route smoke docs index update, docs-only if needed.
+4. DOC-062: Public beta launch blocker summary refresh, docs-only.
 5. Human/specialist review of PR #25, PR #134, and PR #135 before merge.
 
 ## Last Validation Result
@@ -125,4 +126,5 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - PR #145 added low-risk mocked coverage for grouped reference market filtering in `/api/markets`; future coverage map updates should include it.
 - DOC-059 is refreshing the public API coverage map and implementation queue after PR #145.
 - DOC-060 is defining prerequisites for a future manual public route smoke evidence run.
+- DOC-057 is adding a dated route smoke evidence placeholder marked not run.
 - Record any funding, trading, auth, bot, or deployment implementation need in `docs/reviews/HUMAN_DECISION_REQUIRED.md`.

@@ -58,6 +58,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #145 | Auto-merged | Low-risk mocked public/read-only test for `/api/markets` grouped reference filtering; full validation passed. |
 | #146 | Auto-merged | Docs-only checkpoint after public beta evidence and test progress. |
 | #147 | Auto-merged | Docs-only public API coverage map refresh after PR #145. |
+| #148 | Auto-merged | Docs-only public route smoke manual-run prerequisites. |
 
 ## Open PR Decisions
 
@@ -100,6 +101,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Public market-list grouped reference filter test was selected because it used existing mocks, avoided market-detail current-gap ambiguity, changed only `src/__tests__/`, and covered public/read-only response behavior.
 - Public API coverage map refresh was selected because PR #145 changed test coverage and the docs should remain the source of truth for future task selection.
 - Public route smoke manual-run prerequisites were selected before any browser/server evidence run so future route smoke work remains local-only, anonymous-first, and human-reviewed for package/workflow changes.
+- Route smoke evidence placeholder was selected to make the current not-run status explicit without starting a server, opening a browser, or capturing screenshots.
 
 ## Skipped Or Downgraded Tasks
 
