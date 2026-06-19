@@ -159,6 +159,8 @@ Validation summary for PR #175:
 | PR | Reason |
 |---|---|
 | #25 | Broad draft UI/product-code PR touching wallet, admin deposit/withdrawal, private-pool, and pool-detail surfaces. Must not auto-merge. |
+| #203 | Draft event-detail state-copy UI PR. Keep review-gated unless strict display-only validation confirms no grouped trade state, order callbacks, polling, fetch behavior, wallet, ledger, trading, admin, bot, package/workflow, Prisma, deployment, or secrets changed. |
+| #205, #206, #207 | Duplicate draft docs-only checkpoint refresh PRs after PR #204. Close or reconcile before any further checkpoint merge. |
 
 ## UI Risks
 

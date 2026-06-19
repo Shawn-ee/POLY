@@ -35,6 +35,8 @@ Current open PRs requiring review:
 - PR #177: stale docs-only post-merge state hygiene PR from the older `8db1fd7` checkpoint. Do not merge as-is; maintainer should close or update.
 - PR #192: stale draft docs-only checkpoint after PR #191. Do not merge as-is; it is superseded by merged PR #193.
 - PR #198: stale draft docs-only checkpoint after PR #196. Do not merge as-is; it is superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204.
+- PR #203: draft event-detail state-copy UI PR. Do not auto-merge unless it passes focused review and strict display-only validation.
+- PR #205, #206, #207: duplicate/stale draft checkpoint refresh PRs after PR #204. Do not merge as-is; maintainer should close or reconcile with the latest checkpoint refresh.
 
 Recently resolved PRs:
 

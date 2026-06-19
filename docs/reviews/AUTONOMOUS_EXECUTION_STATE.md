@@ -106,6 +106,8 @@ Recent autonomous tasks completed before this state file:
 - PR #177: Docs-only post-merge state hygiene PR from the older `8db1fd7` checkpoint. Superseded by later `dev` state refreshes and should be closed or updated by a human/maintainer rather than merged as-is.
 - PR #192: Draft docs-only checkpoint after PR #191. Superseded by merged PR #193 and later checkpoint docs through PR #199; should be closed or updated by a human/maintainer rather than merged as-is.
 - PR #198: Draft docs-only checkpoint after PR #196. Superseded by merged PR #199 and later docs through PR #200, PR #197, PR #201, PR #202, and PR #204; should be closed or updated by a human/maintainer rather than merged as-is.
+- PR #203: Draft event-detail state-copy UI PR. It changes `src/app/events/[slug]/page.tsx`; keep review-gated unless focused validation confirms it is display-only and avoids grouped trade/order behavior.
+- PR #205, PR #206, PR #207: Draft docs-only checkpoint refresh PRs after PR #204. They overlap with this checkpoint-refresh lane and should be closed or reconciled by a maintainer rather than merged as-is.
 
 ## Blocked Tasks
 

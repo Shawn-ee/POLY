@@ -167,7 +167,9 @@ Safe autonomous work remains available in these lanes:
 2. Close or update stale docs-only PR #177, which targets an older post-merge state checkpoint already superseded on `dev`.
 3. Close or update stale draft docs-only PR #192, which is superseded by merged PR #193 and reflected in the merged PR #194 queue refresh and PR #199 checkpoint.
 4. Close or update stale draft docs-only PR #198, which is superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204.
-5. Optional local-only anonymous route smoke run when a safe local app instance is available, using `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
-6. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
-7. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
-8. Human-reviewed package/workflow decision for any future public API or route-smoke test lane promotion.
+5. Review PR #203 as a focused event-detail display/state-copy PR; keep it draft/review-gated unless strict display-only validation passes and grouped trade/order behavior is untouched.
+6. Close or reconcile duplicate draft checkpoint PRs #205, #206, and #207 so stale/overlapping docs do not merge over the latest checkpoint refresh.
+7. Optional local-only anonymous route smoke run when a safe local app instance is available, using `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
+8. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
+9. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
+10. Human-reviewed package/workflow decision for any future public API or route-smoke test lane promotion.

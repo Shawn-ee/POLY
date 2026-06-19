@@ -107,6 +107,8 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #177 | Do not merge as-is | Docs-only post-merge state hygiene PR targets older checkpoint `8db1fd7`; later `dev` commits already supersede the same state area. Close or update after maintainer review. |
 | #192 | Do not merge as-is | Draft docs-only checkpoint after PR #191 is superseded by merged PR #193. Close or update after maintainer review. |
 | #198 | Do not merge as-is | Draft docs-only checkpoint after PR #196 is superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204. Close or update after maintainer review. |
+| #203 | Do not auto-merge yet | Draft event-detail UI product-code PR; requires focused validation and confirmation that grouped trade state, order callbacks, polling, fetch behavior, wallet, ledger, trading, admin, bot, package/workflow, Prisma, deployment, and secrets are untouched. |
+| #205/#206/#207 | Do not merge as-is | Duplicate draft checkpoint refresh PRs after PR #204; close or reconcile with the latest checkpoint refresh to avoid stale/overlapping state docs. |
 | #135 | Closed as superseded | Replaced by PR #154, which carried the same focused display intent with a lint-safe initial load path and full validation. |
 | #175 | Merged after self-review | User requested self-review and merge if safe. The PR was display-only, avoided forbidden files/logic, passed focused validation/build, and full-lint failures were documented as pre-existing/unrelated. |
 | #176 | Auto-merged | Docs-only post-merge state refresh after PR #175; no runtime behavior changed. |

@@ -8,7 +8,7 @@ Mode: AUTONOMOUS_REVIEW_RESOLVER
 
 ## Purpose
 
-This document records the current open PR review queue after autonomous review of PR #25, PR #134, PR #135, PR #154, stale docs-only PR #177, superseded draft docs-only PR #192, stale draft docs-only PR #198, merged checkpoint refreshes through PR #204, merged route-smoke preparation PR #197, and merged open PR queue refresh PR #201 on `dev`.
+This document records the current open PR review queue after autonomous review of PR #25, PR #134, PR #135, PR #154, stale docs-only PR #177, superseded draft docs-only PR #192, stale draft docs-only PR #198, draft event-detail UI PR #203, duplicate draft checkpoint PRs #205-#207, merged checkpoint refreshes through PR #204, merged route-smoke preparation PR #197, and merged open PR queue refresh PR #201 on `dev`.
 
 It does not change product code, UI code, backend logic, wallet, deposit, withdrawal, ledger, matching, settlement, admin auth behavior, bot live trading, deployment, Prisma, migrations, secrets, or production behavior.
 
@@ -20,6 +20,10 @@ It does not change product code, UI code, backend logic, wallet, deposit, withdr
 | #177 | `docs: refresh UI post-merge state` | Docs-only state refresh | Low by file type, stale by content | Close or update, do not merge as-is | Targets older checkpoint `8db1fd7`; current `dev` is `3870797` and includes later state-refresh docs through PR #204. |
 | #192 | `docs: refresh autonomous checkpoint after pr191` | Draft docs-only checkpoint | Low by file type, stale by content | Close or update, do not merge as-is | Superseded by merged PR #193 and reflected in later queue/checkpoint refreshes through PR #204 on current `dev` checkpoint `3870797`. |
 | #198 | `docs: refresh checkpoint after pr196` | Draft docs-only checkpoint | Low by file type, stale by content | Close or update, do not merge as-is | Superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204 on current `dev` checkpoint `3870797`. |
+| #203 | `feat: polish event detail state copy` | Draft event-detail UI product-code PR | Medium by grouped trade/order adjacency | Keep draft/review-gated | Changes `src/app/events/[slug]/page.tsx`; must confirm no grouped trade state, order callbacks, fetch URLs, polling, API behavior, wallet, ledger, trading, admin, bot, package/workflow, Prisma, deployment, or secrets changed. |
+| #205 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint/evidence refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Overlaps the latest PR #204 checkpoint refresh lane and also adds a not-run route-smoke evidence placeholder; reconcile before merge. |
+| #206 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Duplicates the post-PR #204 checkpoint refresh intent; reconcile before merge. |
+| #207 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Duplicates the post-PR #204 checkpoint refresh intent; reconcile before merge. |
 | #134 | `test: add public market detail current-gap checks` | Test-only mocked public route current-gap PR | Medium by public API contract topic | Merged | Changed only `src/__tests__/public.market-detail.current-gap.test.ts`; full validation passed; no runtime behavior changed. |
 | #135 | `feat: polish private pool list display` | UI product-code PR on action-bearing page | Medium | Closed as superseded | Replaced by lint-clean PR #154. |
 | #154 | `fix: make private pool list load lint-safe` | Focused UI display replacement for PR #135 | Medium | Merged | Changed only `src/app/my-pools/page.tsx`; full validation and focused lint passed; no product/runtime behavior outside the page changed. |
@@ -177,7 +181,11 @@ Open and unresolved:
 1. PR #25: draft/broad/split required.
 2. PR #177: stale docs-only state refresh from an older checkpoint; close as superseded or update from current `dev`.
 3. PR #192: stale draft docs-only checkpoint superseded by PR #193; close as superseded or update from current `dev`.
-4. PR #198: stale draft docs-only checkpoint superseded by PR #199, PR #200, PR #197, PR #201, and PR #202; close as superseded or update from current `dev`.
+4. PR #198: stale draft docs-only checkpoint superseded by PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204; close as superseded or update from current `dev`.
+5. PR #203: draft event-detail state-copy UI PR; keep review-gated unless strict display-only validation passes.
+6. PR #205: draft checkpoint/evidence refresh after PR #204; reconcile or close because it overlaps the latest checkpoint lane.
+7. PR #206: draft checkpoint refresh after PR #204; reconcile or close because it overlaps the latest checkpoint lane.
+8. PR #207: draft checkpoint refresh after PR #204; reconcile or close because it overlaps the latest checkpoint lane.
 
 Resolved:
 
@@ -196,5 +204,7 @@ Resolved:
 2. Close or update PR #177 so stale state-refresh wording does not merge over newer docs.
 3. Close or update PR #192 so its superseded checkpoint wording does not merge over PR #193-era docs.
 4. Close or update PR #198 so its superseded checkpoint wording does not merge over PR #199/#200/#197/#201/#202/#204-era docs.
-5. Keep wallet/admin funding UI, pool detail action UI, and package/workflow changes human-reviewed.
-6. Use PR #154 as the accepted replacement for the private pool list display polish.
+5. Review PR #203 against `docs/reviews/EVENT_DETAIL_DISPLAY_SHELL_PLAN.md`; do not merge unless grouped trade/order/fetch/polling behavior is confirmed unchanged and validation passes.
+6. Close or reconcile duplicate checkpoint drafts #205, #206, and #207 before any further state-refresh merge.
+7. Keep wallet/admin funding UI, pool detail action UI, and package/workflow changes human-reviewed.
+8. Use PR #154 as the accepted replacement for the private pool list display polish.
