@@ -16,32 +16,34 @@ Completed phases:
 - Phase 8: bot/funding runtime safety evidence merged through PR #224.
 - Phase 9: internal funding beta evidence and go/no-go docs merged through PR #225.
 - Phase 10: internal beta route smoke evidence added in the current PR.
+- Phase 11: server deployment readiness docs added in the current PR.
 
 ## Current Status
 
-The current branch adds local internal beta route smoke evidence without changing runtime behavior.
+The current branch adds controlled internal beta server deployment readiness docs without changing runtime behavior.
 
 Covered behavior:
 
-- temporary local dev server on port 3001 was used.
-- public/account/funding/admin shell routes returned HTTP 200 after local compilation.
-- anonymous funding and admin funding APIs returned 401.
-- no secret-pattern matches were found in sampled HTML or API bodies.
-- full browser smoke timed out and remains a warning.
+- server deployment checklist.
+- required env names and safe initial states.
+- service runbook.
+- rollback plan.
+- post-deploy smoke checklist.
+- no production deployment was performed.
 
 ## Next Step
 
-Next step is **Phase 11: server deployment readiness documentation**.
+Next step is **Phase 12: final controlled internal beta readiness report**.
 
 Do not deploy production, start bot services, enable public funding, remove the allowlist, or enable automatic withdrawal broadcast.
 
 Open items before final deployment readiness:
 
 1. PR #220 remains open for human/specialist review because it exposes the guarded funding UI entry point.
-2. Phase 11 server deployment readiness docs are still needed.
-3. Phase 12 final readiness report is still needed.
-4. Controlled real-chain deposit and withdrawal drills are still manual/not run.
-5. Full browser smoke timed out and should be rerun before final readiness.
+2. Phase 12 final readiness report is still needed.
+3. Controlled real-chain deposit and withdrawal drills are still manual/not run.
+4. Full browser smoke timed out and should be rerun before final readiness.
+5. Owner server deployment and private env validation have not been performed.
 
 ## Validation To Re-Run
 
