@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `c40d11a`
+Current `dev` commit at last update: `d557708`
 
 ## Completed Tasks
 
@@ -79,13 +79,14 @@ Recent autonomous tasks completed before this state file:
 - UI-025: Admin display implementation scope, merged as PR #173.
 - BIG-UI-001: App-wide UI style standardization milestone, merged as PR #175.
 - DOC-066: Big UI milestone post-merge state refresh, merged as PR #176.
-- UI-010: Cross-page UI state terminology map, prepared as docs-only follow-up after the big UI milestone.
-- UI-011: Homepage wallet/admin surface decision, prepared as docs-only follow-up after UI-010.
-- UI-019A/UI-022: Market detail screenshot and smoke checklist, prepared as docs-only pre-code evidence gate.
+- UI-010: Cross-page UI state terminology map, merged as PR #179.
+- UI-011: Homepage wallet/admin surface decision, merged as PR #180.
+- UI-019A/UI-022: Market detail screenshot and smoke checklist, merged as PR #181.
 
 ## Open PRs
 
 - PR #25: Draft UI/product-code PR. Not auto-mergeable. Reviewed separately in `docs/reviews/PR25_UI_REVIEW_CHECKLIST.md`, `docs/reviews/PR25_SPLIT_MERGE_DECISION.md`, and `docs/reviews/PR25_ADMIN_FUNDING_UI_REVIEW_PACKET.md`.
+- PR #177: Docs-only post-merge state hygiene PR from the older `8db1fd7` checkpoint. Superseded by later `dev` state refreshes and should be closed or updated by a human/maintainer rather than merged as-is.
 
 ## Blocked Tasks
 
@@ -132,7 +133,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 
 ## Next Recommended Actions
 
-- PR #175 and post-merge state PR #176 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
+- PR #175, PR #176, and follow-up docs-only PRs #179-#181 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
 - Keep PR #25 open as draft unless a human reviews or splits it.
 - Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.

@@ -19,6 +19,7 @@ It does not modify any PR branch, source code, tests, UI, backend logic, wallet,
 | PR | Title | Changed files | Classification | Auto-merge decision | Required review |
 |---|---|---|---|---|---|
 | #25 | `feat: polish admin wallet and pool UI` | `docs/CURRENT_STATE.md`, `docs/agent-reports/2026-06-18-ui-admin-subpages-wallet-pools-light.md`, `src/app/admin/deposits/page.tsx`, `src/app/admin/withdrawals/page.tsx`, `src/app/my-pools/page.tsx`, `src/app/wallet/page.tsx`, `src/components/PoolMarketDetail.tsx` | Draft UI/product-code PR touching wallet/admin/private-pool/pool-detail surfaces | Do not auto-merge | Human, FrontendAgent, SecurityAgent, LedgerWalletReviewerAgent for wallet/funding-adjacent display |
+| #177 | `docs: refresh UI post-merge state` | `docs/reviews/AUTONOMOUS_EXECUTION_STATE.md`, `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`, `docs/reviews/UI_PAGE_STATUS_MATRIX.md`, `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` | Docs-only state refresh from older `8db1fd7` checkpoint | Do not merge as-is | Maintainer should close as superseded or update from current `dev` |
 
 ## PR #25 Review Notes
 
@@ -52,9 +53,10 @@ PR #135 was closed as superseded after PR #154 merged. PR #154 applied the focus
 
 ## Shared Non-Auto-Merge Reasons
 
-The remaining open queue includes source-code changes outside the docs-only auto-merge lane:
+The remaining open queue includes one broad source-code PR and one stale docs-only PR:
 
 - PR #25 changes multiple `src/` UI surfaces.
+- PR #177 is docs-only, but its state-refresh content is stale and superseded by later `dev` commits, so merging as-is would regress the tracker language.
 
 PR #25 should not be auto-merged by the autonomous LeadAgent under the current policy.
 
@@ -66,6 +68,7 @@ Autonomous work may continue on:
 - docs-only review packets
 - low-risk public/read-only mocked tests that do not repeat the merged market-detail current-gap task
 - small UI PRs opened for review, not auto-merged, if they avoid wallet/funding/admin/trading/auth/bot/deployment behavior
+- stale docs-only PR cleanup or closure when a maintainer confirms the superseded state
 
 ## Non-Goals
 

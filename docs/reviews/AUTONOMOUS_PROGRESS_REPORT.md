@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `c40d11a`
+Current `dev` checkpoint: `d557708`
 
 ## Summary
 
@@ -21,9 +21,9 @@ Recent work focused on:
 - Public beta launch blocker summary.
 - Controlled UI standardization for public discovery pages and review-gated account/trading-adjacent scopes.
 - Big UI overhaul post-merge state refresh after PR #175.
-- Cross-page UI state terminology mapping after the big UI milestone.
-- Homepage wallet/admin surface decision before future homepage code cleanup.
-- Market-detail screenshot/smoke checklist before any future market-detail code.
+- Cross-page UI state terminology mapping after the big UI milestone, merged as PR #179.
+- Homepage wallet/admin surface decision before future homepage code cleanup, merged as PR #180.
+- Market-detail screenshot/smoke checklist before any future market-detail code, merged as PR #181.
 
 ## Product Progress
 
@@ -67,9 +67,9 @@ Resolved UI work:
 - PR #166: markets discovery display polish.
 - PR #175: app-wide display standardization milestone.
 - PR #176: docs-only post-merge UI state refresh.
-- UI-010: cross-page loading, empty, error, signed-out, unavailable, and beta-gated state terminology map.
-- UI-011: homepage wallet/admin surface decision.
-- UI-019A/UI-022: market-detail screenshot/smoke checklist.
+- PR #179: cross-page loading, empty, error, signed-out, unavailable, and beta-gated state terminology map.
+- PR #180: homepage wallet/admin surface decision.
+- PR #181: market-detail screenshot/smoke checklist.
 
 Review-gated UI scope docs:
 
@@ -130,7 +130,8 @@ Safe autonomous work remains available in these lanes:
 ## Next Recommended Queue
 
 1. Human/specialist review of PR #25 before merge, split, or close.
-2. Optional local-only anonymous route smoke run when a safe local app instance is available.
-3. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
-4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
-5. Human-reviewed package/workflow decision for any future public API or route-smoke test lane promotion.
+2. Close or update stale docs-only PR #177, which targets an older post-merge state checkpoint already superseded on `dev`.
+3. Optional local-only anonymous route smoke run when a safe local app instance is available.
+4. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
+5. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
+6. Human-reviewed package/workflow decision for any future public API or route-smoke test lane promotion.

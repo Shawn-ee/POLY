@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the big UI post-merge state refresh: `8db1fd7`.
+Current known `dev` checkpoint after the big UI post-merge state refresh: `d557708`.
 
 ## Big UI Overhaul Milestone
 

@@ -78,15 +78,16 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #170 | Auto-merged | Docs-only wallet funding-claim review; deposit, withdrawal, linked-wallet, balance, and ledger behavior remain review-gated. |
 | #171 | Auto-merged | Docs-only portfolio display scope; balance, locked-fund, PnL, position, order, and history semantics remain review-gated. |
 | #173 | Auto-merged | Docs-only admin display scope; admin auth, finance mutations, market resolution, bot/reference actions, system readiness, deployment, and agent operations remain review-gated. |
-| #179 | Auto-merge candidate | Docs-only UI state terminology map; no runtime code, tests, package/workflow changes, browser run, screenshots, or production data. |
-| #180 | Auto-merge candidate | Docs-only homepage wallet/admin surface decision; no runtime code, wallet/funding behavior, admin auth, package/workflow changes, browser run, screenshots, or production data. |
-| #181 | Auto-merge candidate | Docs-only market-detail screenshot/smoke checklist; no runtime code, browser run, screenshots, fixtures, order behavior, wallet behavior, bot/reference behavior, or production data. |
+| #179 | Auto-merged | Docs-only UI state terminology map; no runtime code, tests, package/workflow changes, browser run, screenshots, or production data. |
+| #180 | Auto-merged | Docs-only homepage wallet/admin surface decision; no runtime code, wallet/funding behavior, admin auth, package/workflow changes, browser run, screenshots, or production data. |
+| #181 | Auto-merged | Docs-only market-detail screenshot/smoke checklist; no runtime code, browser run, screenshots, fixtures, order behavior, wallet behavior, bot/reference behavior, or production data. |
 
 ## Open PR Decisions
 
 | PR | Decision | Reason |
 | --- | --- | --- |
 | #25 | Do not auto-merge | Draft UI/product-code PR touching wallet/admin/private-pool surfaces. Requires human review or split PRs. |
+| #177 | Do not merge as-is | Docs-only post-merge state hygiene PR targets older checkpoint `8db1fd7`; later `dev` commits already supersede the same state area. Close or update after maintainer review. |
 | #135 | Closed as superseded | Replaced by PR #154, which carried the same focused display intent with a lint-safe initial load path and full validation. |
 | #175 | Merged after self-review | User requested self-review and merge if safe. The PR was display-only, avoided forbidden files/logic, passed focused validation/build, and full-lint failures were documented as pre-existing/unrelated. |
 | #176 | Auto-merged | Docs-only post-merge state refresh after PR #175; no runtime behavior changed. |
@@ -149,6 +150,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - `agent/ui-state-terminology-map` was selected because UI-010 remained a safe docs-only follow-up after the big UI milestone and prevents future copy PRs from guessing about loading, empty, error, signed-out, unavailable, and beta-gated state wording.
 - `agent/homepage-surface-decision` was selected because UI-011 remained a safe docs-only follow-up and future homepage account/admin cleanup needs an explicit boundary before any source-code changes.
 - `agent/market-detail-smoke-checklist` was selected because UI-019A/UI-022 remained a safe docs-only prerequisite before any market-detail screenshot, smoke evidence, or source-code work.
+- `agent/post-ui-state-current-dev-refresh` was selected because current `dev` contains merged docs-only PRs #179-#181 and open stale PR #177 was not reflected in the state docs.
 
 ## Skipped Or Downgraded Tasks
 
