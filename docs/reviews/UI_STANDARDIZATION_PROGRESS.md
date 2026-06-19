@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the event-detail state-copy merge: `c399472`.
+Current known `dev` checkpoint after the PR #209 checkpoint refresh: `6474faf`.
 
 ## Big UI Overhaul Milestone
 
@@ -49,6 +49,7 @@ Post-merge state:
 - PR #204 merged the checkpoint refresh after PR #202.
 - PR #208 merged the checkpoint refresh after PR #204 and current open queue update.
 - PR #203 merged the event-detail loading/error/empty state copy polish after focused validation.
+- PR #209 merged the checkpoint refresh after PR #203.
 - Remaining autonomous UI work should prefer smoke evidence preparation, docs-only checklists, or very small display-only follow-ups that avoid forbidden areas.
 
 Scope confirmed:
@@ -162,6 +163,7 @@ Validation summary for PR #175:
 |---|---|
 | #25 | Broad draft UI/product-code PR touching wallet, admin deposit/withdrawal, private-pool, and pool-detail surfaces. Must not auto-merge. |
 | #205, #206, #207 | Duplicate draft docs-only checkpoint refresh PRs after PR #204. Close or reconcile before any further checkpoint merge. |
+| #210 | Draft docs-only checkpoint refresh after PR #209. Close, update, or reconcile before any further checkpoint merge. |
 
 ## UI Risks
 

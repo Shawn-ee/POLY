@@ -8,7 +8,7 @@ Mode: AUTONOMOUS_REVIEW_RESOLVER
 
 ## Purpose
 
-This document records the current open PR review queue after autonomous review of PR #25, PR #134, PR #135, PR #154, stale docs-only PR #177, superseded draft docs-only PR #192, stale draft docs-only PR #198, duplicate draft checkpoint PRs #205-#207, merged checkpoint refreshes through PR #208, merged event-detail state-copy PR #203, merged route-smoke preparation PR #197, and merged open PR queue refresh PR #201 on `dev`.
+This document records the current open PR review queue after autonomous review of PR #25, PR #134, PR #135, PR #154, stale docs-only PR #177, superseded draft docs-only PR #192, stale draft docs-only PR #198, duplicate draft checkpoint PRs #205-#207, new draft checkpoint PR #210, merged checkpoint refreshes through PR #209, merged event-detail state-copy PR #203, merged route-smoke preparation PR #197, and merged open PR queue refresh PR #201 on `dev`.
 
 It does not change product code, UI code, backend logic, wallet, deposit, withdrawal, ledger, matching, settlement, admin auth behavior, bot live trading, deployment, Prisma, migrations, secrets, or production behavior.
 
@@ -17,12 +17,13 @@ It does not change product code, UI code, backend logic, wallet, deposit, withdr
 | PR | Title | Classification | Risk | Decision | Reason |
 |---|---|---|---|---|---|
 | #25 | `feat: polish admin wallet and pool UI` | Broad draft UI/product-code PR | High by touched surfaces | Leave open as draft | Touches wallet, admin deposit/withdrawal, private pool, and pool detail UI surfaces; too broad for autonomous merge. |
-| #177 | `docs: refresh UI post-merge state` | Docs-only state refresh | Low by file type, stale by content | Close or update, do not merge as-is | Targets older checkpoint `8db1fd7`; current `dev` is `c399472` and includes later state-refresh docs through PR #208 and PR #203. |
-| #192 | `docs: refresh autonomous checkpoint after pr191` | Draft docs-only checkpoint | Low by file type, stale by content | Close or update, do not merge as-is | Superseded by merged PR #193 and reflected in later queue/checkpoint refreshes through PR #208 and PR #203 on current `dev` checkpoint `c399472`. |
-| #198 | `docs: refresh checkpoint after pr196` | Draft docs-only checkpoint | Low by file type, stale by content | Close or update, do not merge as-is | Superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, PR #204, PR #208, and PR #203 on current `dev` checkpoint `c399472`. |
-| #205 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint/evidence refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Overlaps the checkpoint lane now covered by PR #208 and the post-PR #203 checkpoint; also adds a not-run route-smoke evidence placeholder that should be reconciled before merge. |
-| #206 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Duplicates the post-PR #204 checkpoint refresh intent now covered by PR #208 and the post-PR #203 checkpoint; reconcile before merge. |
-| #207 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Duplicates the post-PR #204 checkpoint refresh intent now covered by PR #208 and the post-PR #203 checkpoint; reconcile before merge. |
+| #177 | `docs: refresh UI post-merge state` | Docs-only state refresh | Low by file type, stale by content | Close or update, do not merge as-is | Targets older checkpoint `8db1fd7`; current `dev` is `6474faf` and includes later state-refresh docs through PR #209. |
+| #192 | `docs: refresh autonomous checkpoint after pr191` | Draft docs-only checkpoint | Low by file type, stale by content | Close or update, do not merge as-is | Superseded by merged PR #193 and reflected in later queue/checkpoint refreshes through PR #209 on current `dev` checkpoint `6474faf`. |
+| #198 | `docs: refresh checkpoint after pr196` | Draft docs-only checkpoint | Low by file type, stale by content | Close or update, do not merge as-is | Superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, PR #204, PR #208, PR #203, and PR #209 on current `dev` checkpoint `6474faf`. |
+| #205 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint/evidence refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Overlaps the checkpoint lane now covered by PR #208 and PR #209; also adds a not-run route-smoke evidence placeholder that should be reconciled before merge. |
+| #206 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Duplicates the post-PR #204 checkpoint refresh intent now covered by PR #208 and PR #209; reconcile before merge. |
+| #207 | `docs: refresh checkpoint after pr204` | Draft docs-only checkpoint refresh | Low by file type, overlapping by content | Close or reconcile, do not merge as-is | Duplicates the post-PR #204 checkpoint refresh intent now covered by PR #208 and PR #209; reconcile before merge. |
+| #210 | `docs: refresh checkpoint after pr209` | Draft docs-only checkpoint refresh | Low by file type, overlapping by content | Close, update, or reconcile; do not merge as-is | Overlaps the current checkpoint-refresh lane after PR #209 and should not merge over newer queue/status wording without maintainer review. |
 | #134 | `test: add public market detail current-gap checks` | Test-only mocked public route current-gap PR | Medium by public API contract topic | Merged | Changed only `src/__tests__/public.market-detail.current-gap.test.ts`; full validation passed; no runtime behavior changed. |
 | #135 | `feat: polish private pool list display` | UI product-code PR on action-bearing page | Medium | Closed as superseded | Replaced by lint-clean PR #154. |
 | #154 | `fix: make private pool list load lint-safe` | Focused UI display replacement for PR #135 | Medium | Merged | Changed only `src/app/my-pools/page.tsx`; full validation and focused lint passed; no product/runtime behavior outside the page changed. |
@@ -181,9 +182,10 @@ Open and unresolved:
 2. PR #177: stale docs-only state refresh from an older checkpoint; close as superseded or update from current `dev`.
 3. PR #192: stale draft docs-only checkpoint superseded by PR #193; close as superseded or update from current `dev`.
 4. PR #198: stale draft docs-only checkpoint superseded by PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204; close as superseded or update from current `dev`.
-5. PR #205: draft checkpoint/evidence refresh after PR #204; reconcile or close because it overlaps PR #208 and the post-PR #203 checkpoint.
-6. PR #206: draft checkpoint refresh after PR #204; reconcile or close because it overlaps PR #208 and the post-PR #203 checkpoint.
-7. PR #207: draft checkpoint refresh after PR #204; reconcile or close because it overlaps PR #208 and the post-PR #203 checkpoint.
+5. PR #205: draft checkpoint/evidence refresh after PR #204; reconcile or close because it overlaps PR #208 and PR #209.
+6. PR #206: draft checkpoint refresh after PR #204; reconcile or close because it overlaps PR #208 and PR #209.
+7. PR #207: draft checkpoint refresh after PR #204; reconcile or close because it overlaps PR #208 and PR #209.
+8. PR #210: draft checkpoint refresh after PR #209; reconcile, update, or close because it overlaps the current checkpoint lane.
 
 Resolved:
 
@@ -197,6 +199,7 @@ Resolved:
 8. PR #204: merged as docs-only checkpoint refresh after PR #202.
 9. PR #208: merged as docs-only checkpoint refresh after PR #204 and current open queue update.
 10. PR #203: merged as focused event-detail loading/error/empty state copy polish after validation.
+11. PR #209: merged as docs-only checkpoint refresh after PR #203.
 
 ## Next Recommended Actions
 
@@ -205,5 +208,6 @@ Resolved:
 3. Close or update PR #192 so its superseded checkpoint wording does not merge over PR #193-era docs.
 4. Close or update PR #198 so its superseded checkpoint wording does not merge over PR #199/#200/#197/#201/#202/#204-era docs.
 5. Close or reconcile duplicate checkpoint drafts #205, #206, and #207 before any further state-refresh merge.
-6. Keep wallet/admin funding UI, pool detail action UI, and package/workflow changes human-reviewed.
-7. Use PR #154 as the accepted replacement for the private pool list display polish.
+6. Close, update, or reconcile PR #210 before it creates another overlapping checkpoint lane.
+7. Keep wallet/admin funding UI, pool detail action UI, and package/workflow changes human-reviewed.
+8. Use PR #154 as the accepted replacement for the private pool list display polish.

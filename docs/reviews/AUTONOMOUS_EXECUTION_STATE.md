@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `c399472`
+Current `dev` commit at last update: `6474faf`
 
 ## Completed Tasks
 
@@ -101,6 +101,7 @@ Recent autonomous tasks completed before this state file:
 - DOC-081: Checkpoint refresh after PR #202, merged as PR #204.
 - DOC-082: Checkpoint refresh after PR #204, merged as PR #208.
 - UI-018A: Event-detail loading/error/empty state copy polish, merged as PR #203 after focused validation.
+- DOC-083: Checkpoint refresh after PR #203, merged as PR #209.
 
 ## Open PRs
 
@@ -108,7 +109,8 @@ Recent autonomous tasks completed before this state file:
 - PR #177: Docs-only post-merge state hygiene PR from the older `8db1fd7` checkpoint. Superseded by later `dev` state refreshes and should be closed or updated by a human/maintainer rather than merged as-is.
 - PR #192: Draft docs-only checkpoint after PR #191. Superseded by merged PR #193 and later checkpoint docs through PR #199; should be closed or updated by a human/maintainer rather than merged as-is.
 - PR #198: Draft docs-only checkpoint after PR #196. Superseded by merged PR #199 and later docs through PR #200, PR #197, PR #201, PR #202, and PR #204; should be closed or updated by a human/maintainer rather than merged as-is.
-- PR #205, PR #206, PR #207: Draft docs-only checkpoint refresh PRs after PR #204. They are superseded by merged PR #208 and this post-PR #203 checkpoint; close or reconcile rather than merging as-is.
+- PR #205, PR #206, PR #207: Draft docs-only checkpoint refresh PRs after PR #204. They are superseded by merged PR #208 and PR #209; close or reconcile rather than merging as-is.
+- PR #210: Draft docs-only checkpoint refresh after PR #209. It overlaps the current checkpoint refresh lane and should be closed, updated, or reconciled by a maintainer rather than merged as-is.
 
 ## Blocked Tasks
 

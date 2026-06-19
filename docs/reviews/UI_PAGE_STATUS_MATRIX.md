@@ -67,6 +67,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | #175 | App-wide display shell | Shared display primitives and page-level standardization milestone. |
 | #176 | UI state docs | Post-merge status refresh after PR #175. |
 | #203 | `/events/[slug]` | Loading/error/empty state copy polish without grouped trade/order behavior changes. |
+| #209 | UI state docs | Checkpoint refresh after PR #203. |
 
 ## Next Queue
 

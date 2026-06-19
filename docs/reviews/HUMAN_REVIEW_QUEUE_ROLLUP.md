@@ -10,7 +10,7 @@ Risk level: Low for docs-only rollup
 
 ## Purpose
 
-This document summarizes open PRs that the autonomous LeadAgent has inspected but must not auto-merge under the current safety policy. The latest merged checkpoint refresh is PR #208, followed by event-detail state-copy PR #203, at `c399472`.
+This document summarizes open PRs that the autonomous LeadAgent has inspected but must not auto-merge under the current safety policy. The latest merged checkpoint refresh is PR #209 at `6474faf`.
 
 It does not modify any PR branch, source code, tests, UI, backend logic, wallet, ledger, trading, admin auth, bot behavior, deployment, Prisma, migrations, secrets, or production behavior.
 
@@ -22,9 +22,10 @@ It does not modify any PR branch, source code, tests, UI, backend logic, wallet,
 | #177 | `docs: refresh UI post-merge state` | `docs/reviews/AUTONOMOUS_EXECUTION_STATE.md`, `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`, `docs/reviews/UI_PAGE_STATUS_MATRIX.md`, `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` | Docs-only state refresh from older `8db1fd7` checkpoint | Do not merge as-is | Maintainer should close as superseded or update from current `dev` |
 | #192 | `docs: refresh autonomous checkpoint after pr191` | `docs/reviews/AUTONOMOUS_CONTINUATION_PROMPT.md`, `docs/reviews/AUTONOMOUS_DECISION_LOG.md`, `docs/reviews/AUTONOMOUS_EXECUTION_STATE.md`, `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`, `docs/reviews/UI_PAGE_STATUS_MATRIX.md`, `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` | Draft docs-only checkpoint after PR #191 | Do not merge as-is | Maintainer should close as superseded by merged PR #193 or update from current `dev` |
 | #198 | `docs: refresh checkpoint after pr196` | `docs/reviews/AUTONOMOUS_CONTINUATION_PROMPT.md`, `docs/reviews/AUTONOMOUS_DECISION_LOG.md`, `docs/reviews/AUTONOMOUS_EXECUTION_STATE.md`, `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`, `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md`, `docs/reviews/OPEN_PR_REVIEW_QUEUE.md`, `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` | Draft docs-only checkpoint after PR #196 | Do not merge as-is | Maintainer should close as superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204 or update from current `dev` |
-| #205 | `docs: refresh checkpoint after pr204` | Checkpoint docs plus `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_2026_06_19_NOT_RUN.md`, route-smoke status, and review index | Draft docs-only checkpoint/evidence refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and the post-PR #203 checkpoint |
-| #206 | `docs: refresh checkpoint after pr204` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and the post-PR #203 checkpoint |
-| #207 | `docs: refresh checkpoint after pr204` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and the post-PR #203 checkpoint |
+| #205 | `docs: refresh checkpoint after pr204` | Checkpoint docs plus `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_2026_06_19_NOT_RUN.md`, route-smoke status, and review index | Draft docs-only checkpoint/evidence refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and PR #209 |
+| #206 | `docs: refresh checkpoint after pr204` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and PR #209 |
+| #207 | `docs: refresh checkpoint after pr204` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the latest checkpoint lane | Do not merge as-is | Maintainer should close or reconcile; superseded by PR #208 and PR #209 |
+| #210 | `docs: refresh checkpoint after pr209` | Checkpoint docs and queue/progress trackers | Draft docs-only checkpoint refresh overlapping the current checkpoint lane | Do not merge as-is | Maintainer should close, update, or reconcile against current `dev` |
 
 ## PR #25 Review Notes
 
@@ -60,13 +61,14 @@ PR #203 was updated from current `dev`, validated, and merged after autonomous r
 
 ## Shared Non-Auto-Merge Reasons
 
-The remaining open queue includes one broad source-code UI PR and six stale or overlapping docs-only PRs:
+The remaining open queue includes one broad source-code UI PR and seven stale or overlapping docs-only PRs:
 
 - PR #25 changes multiple `src/` UI surfaces.
 - PR #177 is docs-only, but its state-refresh content is stale and superseded by later `dev` commits, so merging as-is would regress the tracker language.
 - PR #192 is docs-only and draft, but its checkpoint intent was superseded by merged PR #193.
 - PR #198 is docs-only and draft, but its checkpoint intent was superseded by merged PR #199, PR #200, PR #197, PR #201, PR #202, and PR #204.
-- PRs #205, #206, and #207 are overlapping draft checkpoint refreshes after PR #204 and should be reconciled or closed to avoid duplicate state docs already covered by PR #208 and the post-PR #203 checkpoint.
+- PRs #205, #206, and #207 are overlapping draft checkpoint refreshes after PR #204 and should be reconciled or closed to avoid duplicate state docs already covered by PR #208 and PR #209.
+- PR #210 is a draft checkpoint refresh after PR #209 and should be reconciled or closed before it creates another overlapping checkpoint lane.
 
 PR #25 should not be auto-merged by the autonomous LeadAgent under the current policy.
 
@@ -78,7 +80,7 @@ Autonomous work may continue on:
 - docs-only review packets
 - low-risk public/read-only mocked tests that do not repeat the merged market-detail current-gap task
 - small UI PRs opened for review, not auto-merged, if they avoid wallet/funding/admin/trading/auth/bot/deployment behavior
-- stale docs-only PR cleanup or closure when a maintainer confirms the superseded or overlapping state for PR #177, PR #192, PR #198, PR #205, PR #206, or PR #207
+- stale docs-only PR cleanup or closure when a maintainer confirms the superseded or overlapping state for PR #177, PR #192, PR #198, PR #205, PR #206, PR #207, or PR #210
 
 ## Non-Goals
 
