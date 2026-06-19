@@ -53,7 +53,6 @@ This document tracks decisions the autonomous LeadAgent must not make alone.
 - Optional `test:public-api` package script: requires human review because it changes `package.json` and may later affect required validation lanes.
 - Market detail cleanup: requires target contract approval before route implementation.
 - Market detail current-gap tests: may be opened for review if mocked/local, but should not be auto-merged by default while the public contract is being stabilized.
-- PR #134: market detail current-gap test requires BackendAgent/SecurityAgent/human review before merge because it documents current extra-field exposure.
 - PR #25 replacement UI implementation: private pool, wallet, admin deposit, admin withdrawal, and pool detail replacement PRs require human review if they change actions, API calls, request payloads, confirmations, funding copy, or admin operation controls.
 - PR #135: private pool list display polish requires human/specialist review before merge because it changes UI product code on an action-bearing page.
 - Admin/funding UI screenshot evidence: screenshots or visual evidence must not use production data, secrets, private keys, raw custody details, or sensitive customer data; any redaction decision requires human review.

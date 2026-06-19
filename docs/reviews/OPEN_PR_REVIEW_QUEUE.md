@@ -1,0 +1,145 @@
+# Open PR Review Queue
+
+Last updated: 2026-06-18
+
+Task id: DOC-065
+
+Mode: AUTONOMOUS_REVIEW_RESOLVER
+
+## Purpose
+
+This document records the current open PR review queue after autonomous review of PR #25, PR #134, and PR #135.
+
+It does not change product code, UI code, backend logic, wallet, deposit, withdrawal, ledger, matching, settlement, admin auth behavior, bot live trading, deployment, Prisma, migrations, secrets, or production behavior.
+
+## Review Outcome Summary
+
+| PR | Title | Classification | Risk | Decision | Reason |
+|---|---|---|---|---|---|
+| #25 | `feat: polish admin wallet and pool UI` | Broad draft UI/product-code PR | High by touched surfaces | Leave open as draft | Touches wallet, admin deposit/withdrawal, private pool, and pool detail UI surfaces; too broad for autonomous merge. |
+| #134 | `test: add public market detail current-gap checks` | Test-only mocked public route current-gap PR | Medium by public API contract topic | Merged | Changed only `src/__tests__/public.market-detail.current-gap.test.ts`; full validation passed; no runtime behavior changed. |
+| #135 | `feat: polish private pool list display` | UI product-code PR on action-bearing page | Medium | Leave open | Display-intent, but changes `src/app/my-pools/page.tsx`; focused lint fails on existing hook pattern. |
+
+## PR #25 Details
+
+Changed files:
+
+- `docs/CURRENT_STATE.md`
+- `docs/agent-reports/2026-06-18-ui-admin-subpages-wallet-pools-light.md`
+- `src/app/admin/deposits/page.tsx`
+- `src/app/admin/withdrawals/page.tsx`
+- `src/app/my-pools/page.tsx`
+- `src/app/wallet/page.tsx`
+- `src/components/PoolMarketDetail.tsx`
+
+Review classification:
+
+- Draft PR.
+- Broad UI/product-code PR.
+- Wallet/funding-adjacent.
+- Admin deposit/withdrawal operation-screen adjacent.
+- Private-pool and pool-detail action-surface adjacent.
+
+Decision:
+
+- Do not merge autonomously.
+- Leave open as draft.
+- Prefer split/replacement PRs.
+
+Comment added:
+
+- Yes. The PR now has a comment explaining classification, why it was not auto-merged, and recommended split/replacement path.
+
+## PR #134 Details
+
+Changed files:
+
+- `src/__tests__/public.market-detail.current-gap.test.ts`
+
+Review classification:
+
+- Test-only.
+- Mocked/local/read-only.
+- No route implementation changes.
+- Medium by public API contract topic because it documents current extra market-detail fields.
+
+Validation after updating from current `dev`:
+
+```bash
+git diff --check dev...HEAD
+npx jest --runInBand --detectOpenHandles src/__tests__/public.market-detail.current-gap.test.ts
+npx prisma generate --schema=prisma/schema.prisma
+npx prisma validate --schema=prisma/schema.prisma
+npx tsc --noEmit --pretty false --incremental false
+npm run test:ci
+```
+
+Result:
+
+- Passed.
+- Prisma emitted existing package config deprecation and `.env` load notices.
+- `npm run test:ci` emitted the existing health-route failure-path `console.error`.
+
+Decision:
+
+- Merged as PR #134.
+- Merge commit: `2d5dfd767dc148bad5a18259eab4fec65e65e42f`.
+
+## PR #135 Details
+
+Changed files:
+
+- `src/app/my-pools/page.tsx`
+
+Review classification:
+
+- UI product-code.
+- Display-intent.
+- Action-bearing private-pool page.
+- No backend/API implementation changes in the PR diff.
+
+Validation after updating from current `dev`:
+
+```bash
+git diff --check dev...HEAD
+npx prisma generate --schema=prisma/schema.prisma
+npx prisma validate --schema=prisma/schema.prisma
+npx tsc --noEmit --pretty false --incremental false
+npm run test:ci
+npm run lint -- src/app/my-pools/page.tsx
+```
+
+Result:
+
+- `git diff --check dev...HEAD`: passed.
+- Prisma generate: passed with existing Prisma deprecation and `.env` load notices.
+- Prisma validate: passed with existing Prisma deprecation and `.env` load notices.
+- TypeScript: passed.
+- `npm run test:ci`: passed with existing health-route failure-path `console.error`.
+- Focused lint: failed on `react-hooks/set-state-in-effect` for the existing `useEffect(() => { load(); }, [])` pattern.
+
+Decision:
+
+- Do not merge autonomously.
+- Leave open for human/specialist review.
+
+Comment added:
+
+- Yes. The PR now has a comment explaining validation results, classification, why it was not auto-merged, and recommended next action.
+
+## Current Queue
+
+Open and unresolved:
+
+1. PR #25: draft/broad/split required.
+2. PR #135: UI product-code, focused lint not clean, specialist review required.
+
+Resolved:
+
+1. PR #134: merged after validation.
+
+## Next Recommended Actions
+
+1. Decide whether to close PR #25 as superseded or split it into smaller route-specific PRs.
+2. Review PR #135 line-by-line or fix the existing hook lint issue in a focused PR before merge.
+3. Keep wallet/admin funding UI, pool detail action UI, and package/workflow changes human-reviewed.
