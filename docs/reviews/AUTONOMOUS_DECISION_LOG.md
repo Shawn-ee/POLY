@@ -64,13 +64,15 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #151 | Auto-merged | Docs-only public beta launch blocker summary. |
 | #152 | Auto-merged | Docs-only final autonomous continuation state. |
 | #134 | Auto-merged | Test-only mocked/local market-detail current-gap checks; branch updated from `dev`, full validation passed, no runtime behavior changed. |
+| #153 | Auto-merged | Docs-only open PR review queue and state update after PR #25, #134, and #135 review. |
+| #154 | Auto-merged | Focused lint-clean replacement for PR #135; changed only `src/app/my-pools/page.tsx`, full validation and focused lint passed, and no backend/API, wallet/funding, auth/admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 
 ## Open PR Decisions
 
 | PR | Decision | Reason |
 | --- | --- | --- |
 | #25 | Do not auto-merge | Draft UI/product-code PR touching wallet/admin/private-pool surfaces. Requires human review or split PRs. |
-| #135 | Do not auto-merge | UI product-code PR touches private pool action page and focused lint reports an existing hook-rule issue. |
+| #135 | Closed as superseded | Replaced by PR #154, which carried the same focused display intent with a lint-safe initial load path and full validation. |
 
 ## Task Selection Decisions
 
@@ -112,6 +114,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - PR #134 was re-reviewed, updated from current `dev`, validated, and merged because it satisfied the explicit test-only auto-merge criteria.
 - PR #135 was re-reviewed and updated from current `dev`, but left open because focused lint failed on the existing `useEffect(() => { load(); }, [])` hook pattern in an action-bearing UI page.
 - PR #25 was re-reviewed and left open as draft because it is broad and touches wallet/admin/private-pool/pool-detail UI surfaces.
+- PR #154 was selected as a focused replacement for PR #135 because it preserved the private pool list display intent while fixing the focused hook lint failure.
 
 ## Skipped Or Downgraded Tasks
 
@@ -121,7 +124,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Market detail tests remain non-auto-merge by default if they document current contract gaps.
 - UI replacement work remains scoped through docs first; PR #25 itself is still not auto-mergeable.
 - Admin/funding UI evidence can be prepared autonomously, but implementation and screenshots using sensitive data remain human-reviewed.
-- PR #135 was left open instead of auto-merged under the autonomous policy.
+- PR #135 was closed as superseded after PR #154 merged.
 - Reference/liquidity public/admin split remains docs-only because implementation is high-risk by topic.
 - PR #25 direct merge remains blocked; replacement PRs should be smaller and reviewed independently.
 - Admin auth and bot dry-run implementation tests remain review-only by default; autonomous work may refine scope docs but must not implement or auto-merge those tests without later explicit approval.

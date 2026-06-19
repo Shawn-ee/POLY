@@ -8,7 +8,7 @@ Mode: AUTONOMOUS_REVIEW_RESOLVER
 
 ## Purpose
 
-This document records the current open PR review queue after autonomous review of PR #25, PR #134, and PR #135.
+This document records the current open PR review queue after autonomous review of PR #25, PR #134, PR #135, and PR #154.
 
 It does not change product code, UI code, backend logic, wallet, deposit, withdrawal, ledger, matching, settlement, admin auth behavior, bot live trading, deployment, Prisma, migrations, secrets, or production behavior.
 
@@ -18,7 +18,8 @@ It does not change product code, UI code, backend logic, wallet, deposit, withdr
 |---|---|---|---|---|---|
 | #25 | `feat: polish admin wallet and pool UI` | Broad draft UI/product-code PR | High by touched surfaces | Leave open as draft | Touches wallet, admin deposit/withdrawal, private pool, and pool detail UI surfaces; too broad for autonomous merge. |
 | #134 | `test: add public market detail current-gap checks` | Test-only mocked public route current-gap PR | Medium by public API contract topic | Merged | Changed only `src/__tests__/public.market-detail.current-gap.test.ts`; full validation passed; no runtime behavior changed. |
-| #135 | `feat: polish private pool list display` | UI product-code PR on action-bearing page | Medium | Leave open | Display-intent, but changes `src/app/my-pools/page.tsx`; focused lint fails on existing hook pattern. |
+| #135 | `feat: polish private pool list display` | UI product-code PR on action-bearing page | Medium | Closed as superseded | Replaced by lint-clean PR #154. |
+| #154 | `fix: make private pool list load lint-safe` | Focused UI display replacement for PR #135 | Medium | Merged | Changed only `src/app/my-pools/page.tsx`; full validation and focused lint passed; no product/runtime behavior outside the page changed. |
 
 ## PR #25 Details
 
@@ -120,26 +121,64 @@ Result:
 
 Decision:
 
-- Do not merge autonomously.
-- Leave open for human/specialist review.
+- Superseded by PR #154.
+- Closed after PR #154 merged.
 
-Comment added:
+Comments added:
 
-- Yes. The PR now has a comment explaining validation results, classification, why it was not auto-merged, and recommended next action.
+- Yes. The PR first received a comment explaining validation results, classification, why it was not auto-merged, and recommended next action.
+- A second comment records that PR #154 superseded it after full validation.
+
+## PR #154 Details
+
+Changed files:
+
+- `src/app/my-pools/page.tsx`
+
+Review classification:
+
+- Focused replacement for PR #135.
+- UI product-code.
+- Display-intent on an action-bearing private-pool page.
+- No backend/API, wallet/funding, auth/admin, trading, bot, deployment, Prisma, package, workflow, script, or secret changes.
+
+Validation:
+
+```bash
+git diff --check
+git diff --cached --check
+npx prisma generate --schema=prisma/schema.prisma
+npx prisma validate --schema=prisma/schema.prisma
+npx tsc --noEmit --pretty false --incremental false
+npm run test:ci
+npm run lint -- src/app/my-pools/page.tsx
+```
+
+Result:
+
+- Passed.
+- Prisma emitted existing package config deprecation and `.env` load notices.
+- `npm run test:ci` emitted the existing health-route failure-path `console.error`.
+
+Decision:
+
+- Merged as PR #154.
+- Merge commit: `9f369147558e4be0442245d97d0af0c9875b706a`.
 
 ## Current Queue
 
 Open and unresolved:
 
 1. PR #25: draft/broad/split required.
-2. PR #135: UI product-code, focused lint not clean, specialist review required.
 
 Resolved:
 
 1. PR #134: merged after validation.
+2. PR #135: closed as superseded by PR #154.
+3. PR #154: merged after validation.
 
 ## Next Recommended Actions
 
 1. Decide whether to close PR #25 as superseded or split it into smaller route-specific PRs.
-2. Review PR #135 line-by-line or fix the existing hook lint issue in a focused PR before merge.
-3. Keep wallet/admin funding UI, pool detail action UI, and package/workflow changes human-reviewed.
+2. Keep wallet/admin funding UI, pool detail action UI, and package/workflow changes human-reviewed.
+3. Use PR #154 as the accepted replacement for the private pool list display polish.

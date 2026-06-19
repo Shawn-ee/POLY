@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-18
 
-Current `dev` checkpoint: `2af363a`
+Current `dev` checkpoint: `9f36914`
 
 ## Summary
 
@@ -25,7 +25,7 @@ Recent work focused on:
 - MVP information architecture and homepage/sports-first simplification docs are available.
 - Public route status and public beta evidence docs identify the current route contract gaps.
 - PR #25 has multiple docs-only review packets, but the PR itself remains blocked from autonomous merge.
-- The first small replacement UI PR is open as PR #135 and remains human-reviewed because it changes an action-bearing page.
+- The first small replacement UI polish for the private pool list was merged as PR #154 after full validation and focused lint.
 
 ## Test Progress
 
@@ -39,9 +39,9 @@ Merged low-risk mocked public/read-only tests cover:
 - Public market list grouped reference filtering behavior.
 - Public market chart empty-state behavior.
 
-Open review-only test work:
+Resolved review-only test work:
 
-- PR #134: market detail current-gap tests. It is intentionally not auto-merged because it documents current public contract gaps and needs specialist review.
+- PR #134: market detail current-gap tests. It was updated from `dev`, fully validated, and merged.
 
 ## UI Progress
 
@@ -52,9 +52,9 @@ Completed docs-only readiness work:
 - Private pool list replacement scope.
 - UI replacement readiness rollup.
 
-Open UI work:
+Resolved UI work:
 
-- PR #135: private pool list display polish. It is not auto-merged because it changes UI product code on an action-bearing page and focused lint reports a pre-existing hook-rule issue.
+- PR #154: private pool list display polish replacement. It superseded PR #135 and fixed the focused hook lint failure while preserving the display-only intent.
 
 ## Blocked High-Risk Areas
 
@@ -101,13 +101,13 @@ Safe autonomous work remains available in these lanes:
 
 - Docs-only public route smoke evidence status updates.
 - Docs-only public beta evidence tracker refreshes.
-- Docs-only PR review lane rollups for PR #25, #134, and #135.
+- Docs-only PR review lane rollups for PR #25 and any future non-auto-merge PRs.
 - Low-risk public/read-only mocked tests that do not require product/runtime changes.
 - Small display-only UI PRs may be opened only if they avoid order tickets, wallet/funding, auth/admin behavior, bot behavior, deployment, Prisma, package/workflow/script changes, and financial logic; UI PRs should not be auto-merged unless they satisfy the strict display-only UI policy.
 
 ## Next Recommended Queue
 
-1. Human/specialist review of PR #25, PR #134, and PR #135.
+1. Human/specialist review of PR #25 before merge, split, or close.
 2. Optional local-only anonymous route smoke run when a safe local app instance is available.
 3. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
 4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.

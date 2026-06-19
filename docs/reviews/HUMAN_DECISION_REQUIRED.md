@@ -54,7 +54,7 @@ This document tracks decisions the autonomous LeadAgent must not make alone.
 - Market detail cleanup: requires target contract approval before route implementation.
 - Market detail current-gap tests: may be opened for review if mocked/local, but should not be auto-merged by default while the public contract is being stabilized.
 - PR #25 replacement UI implementation: private pool, wallet, admin deposit, admin withdrawal, and pool detail replacement PRs require human review if they change actions, API calls, request payloads, confirmations, funding copy, or admin operation controls.
-- PR #135: private pool list display polish requires human/specialist review before merge because it changes UI product code on an action-bearing page.
+- PR #135: closed as superseded by PR #154; future private pool UI changes still require focused scope, full validation, and action-surface review.
 - Admin/funding UI screenshot evidence: screenshots or visual evidence must not use production data, secrets, private keys, raw custody details, or sensitive customer data; any redaction decision requires human review.
 - Reference/liquidity public/admin split: requires implementation approval before route changes.
 - Bot dry-run test implementation: requires BotAgent/SecurityAgent/human review before merge unless a later policy explicitly defines a narrow low-risk bot test auto-merge lane. Tests must not start live bots, read production credentials, connect to live exchanges/RPC, place orders, change liquidity behavior, or promote bot tests into CI without review.

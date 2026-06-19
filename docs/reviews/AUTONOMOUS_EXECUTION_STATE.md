@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `2d5dfd7`
+Current `dev` commit at last update: `9f36914`
 
 ## Completed Tasks
 
@@ -63,19 +63,18 @@ Recent autonomous tasks completed before this state file:
 - DOC-063: Autonomous continuation prompt refresh, merged as PR #152.
 - DOC-064: Final autonomous state checkpoint, merged as PR #152.
 - TST-027: Public market-detail current-gap checks, merged as PR #134 after review validation.
-- DOC-065: Open PR review queue resolution, in progress.
+- DOC-065: Open PR review queue resolution, merged as PR #153.
+- FE-001-FOLLOWUP: Private pool list lint-safe display replacement, merged as PR #154.
 
 ## Open PRs
 
 - PR #25: Draft UI/product-code PR. Not auto-mergeable. Reviewed separately in `docs/reviews/PR25_UI_REVIEW_CHECKLIST.md`, `docs/reviews/PR25_SPLIT_MERGE_DECISION.md`, and `docs/reviews/PR25_ADMIN_FUNDING_UI_REVIEW_PACKET.md`.
-- PR #135: Private pool list display polish. Open for specialist/human review; not auto-mergeable because it changes UI product code under `src/app/my-pools/page.tsx` and focused lint reports a pre-existing hook-rule issue.
 
 ## Blocked Tasks
 
 - Merge PR #25 directly: blocked from autonomous auto-merge because it changes `src/` UI/product-code files and touches wallet/admin/private-pool surfaces.
 - Promote public no-leak tests into CI: blocked until a separate package/workflow decision is reviewed. Readiness criteria are documented in `docs/reviews/PUBLIC_NO_LEAK_CI_PROMOTION_READINESS.md` and `docs/reviews/PUBLIC_API_TEST_LANE_IMPLEMENTATION_SCOPE.md`.
 - Market detail cleanup implementation: blocked from autonomous implementation; requires reviewed contract and implementation PR.
-- Merge PR #135 automatically: blocked because it changes UI product code on an action-bearing private pool surface.
 - Reference/liquidity public/admin split implementation: blocked from autonomous implementation; high-risk by topic.
 
 ## Deferred High-Risk Items
@@ -90,7 +89,7 @@ Recent autonomous tasks completed before this state file:
 
 ## Next Task Queue
 
-1. Human/specialist review of PR #25 and PR #135 before merge.
+1. Human/specialist review of PR #25 before merge or close.
 2. Optional local-only anonymous route smoke run only when a safe local app instance is available; record evidence without secrets or production data.
 3. Optional small display-only public-page UI PR only if it avoids wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic.
 4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
@@ -112,7 +111,7 @@ Known recurring non-failure output:
 
 ## Current Phase
 
-Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase D UI readiness has a non-auto-merge PR #25 review path, a private pool list replacement scope, and an open non-auto-merge UI PR (#135). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
+Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase D UI readiness has a non-auto-merge PR #25 review path, a private pool list replacement scope, and the lint-clean private pool list replacement merged as PR #154. Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
 
 ## Next Recommended Actions
 
@@ -122,11 +121,11 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Market-detail current-gap checks are now merged as PR #134; future market-detail cleanup remains human-reviewed.
 - Prefer docs-only scope packets before display-only replacement UI PRs.
 - Keep admin/funding UI screenshot evidence human-reviewed and do not use production data in screenshots.
-- Do not auto-merge PR #135.
+- PR #135 was closed as superseded by PR #154.
 - Keep admin auth and bot test implementation docs-only unless a later human-reviewed PR explicitly approves implementation.
 - Use `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md` as the compact checkpoint when resuming future autonomous sessions.
 - Use `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md` before proposing any route smoke package/workflow or Playwright implementation.
-- Use `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md` to track non-auto-merge PRs #25, #134, and #135.
+- Use `docs/reviews/HUMAN_REVIEW_QUEUE_ROLLUP.md` and `docs/reviews/OPEN_PR_REVIEW_QUEUE.md` to track the remaining non-auto-merge PR #25.
 - PR #145 added low-risk mocked coverage for grouped reference market filtering in `/api/markets`; future coverage map updates should include it.
 - DOC-059 is refreshing the public API coverage map and implementation queue after PR #145.
 - DOC-060 is defining prerequisites for a future manual public route smoke evidence run.
@@ -134,5 +133,5 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - DOC-061 is updating the review index so route-smoke and autonomous state docs are discoverable.
 - DOC-062 is summarizing public beta launch blockers without approving beta.
 - DOC-063/DOC-064 are finalizing continuation state for this autonomous session.
-- DOC-065 records the autonomous review resolution for PR #25, PR #134, and PR #135.
+- DOC-065 records the autonomous review resolution for PR #25, PR #134, PR #135, and PR #154.
 - Record any funding, trading, auth, bot, or deployment implementation need in `docs/reviews/HUMAN_DECISION_REQUIRED.md`.
