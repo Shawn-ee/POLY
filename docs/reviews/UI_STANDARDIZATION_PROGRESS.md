@@ -16,14 +16,14 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the first events/login pass: `fe6ea4e`.
+Current known `dev` checkpoint after the markets display pass: `4b9a9b8`.
 
 ## Pages Reviewed
 
 | Page | Reviewed evidence | Current status | Next action |
 |---|---|---|---|
 | `/` | `HOMEPAGE_SIMPLIFICATION_SPEC.md`, page UX review, PR #158 | Improved with first display PR | Later decide whether homepage wallet/admin concepts should move out of the main surface. |
-| `/markets` | Page UX review, public API test docs | Needs display inventory | Keep as secondary market browser. |
+| `/markets` | Page UX review, public API test docs, PR #166 | Improved with market-board display polish | Later add route smoke/screenshot evidence. |
 | `/markets/[id]` | Market-detail contract docs and current-gap tests | Review-gated | Do not touch trade/order behavior. |
 | `/events` | Page UX review, PR #163 | Improved with shared container/state components | Later add route smoke/screenshot evidence. |
 | `/events/[slug]` | Page UX review | Needs plan first | Avoid grouped trade behavior changes. |
@@ -54,6 +54,7 @@ Current known `dev` checkpoint after the first events/login pass: `fe6ea4e`.
 | `/sports`, `/sports/soccer`, `/sports/soccer/world-cup` | #160 | Sports-first discovery copy, World Cup non-demo framing, `All markets` secondary link, and beta-safe empty state. | Full validation and focused lint passed. | Merged |
 | `/events` | #163 | Shared `PageContainer`, shared loading/empty states, event-first copy, and beta-safe empty state. | Full validation and focused lint passed. | Merged |
 | `/login` | #164 | Beta-safe sign-in copy, shared page container, clearer error display, and lint-safe derived error string. | Full validation and focused lint passed. | Merged |
+| `/markets` | #166 | Sports-first market-board copy, grouped filters, beta-safe note, improved empty state, and clearer no-price fallback card. | Full validation and focused lint passed. | Merged |
 
 ## PRs Merged
 
@@ -66,6 +67,7 @@ Current known `dev` checkpoint after the first events/login pass: `fe6ea4e`.
 | #162 | Docs-only | UI style guide, page matrix, terminology guide, state guide, and mobile tracker | Merged as Phase 0 style foundation. |
 | #163 | Display-only UI | `src/app/events/page.tsx` | Merged as events list state/display polish. |
 | #164 | Display-only UI | `src/app/login/page.tsx` | Merged as beta login display polish. |
+| #166 | Display-only UI | `src/app/markets/page.tsx` | Merged as markets discovery display polish. |
 
 ## PRs Left Open
 
@@ -93,6 +95,7 @@ Current safe evidence:
 - Focused lint for sports pages and `SportsEventsPage` passed in PR #160.
 - Focused lint for `/events` passed in PR #163.
 - Focused lint for `/login` passed in PR #164.
+- Focused lint for `/markets` passed in PR #166.
 
 Needed evidence:
 
@@ -103,16 +106,16 @@ Needed evidence:
 
 ## Next UI Tasks
 
-1. UI-004: Market list display inventory or small display polish.
+1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
 2. UI-006: Portfolio empty/mobile-state display plan before code.
 3. UI-007: Wallet funding-claim copy review before any wallet UI change.
 4. UI-008: Admin IA display plan before admin UI changes.
 5. UI-009: Market-detail display-state plan before code.
 6. UI-010: Cross-page empty/loading/error terminology map.
 7. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
-8. UI-012: Public route smoke evidence for homepage, sports, events, and login.
-9. UI-018: Market list filter/mobile polish if display-only.
-10. UI-019: Event detail display shell plan before code.
+8. UI-018: Event detail display shell plan before code.
+9. UI-019: Market detail display shell plan before code.
+10. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
 
 ## Blocked UI Decisions
 

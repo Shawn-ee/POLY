@@ -72,6 +72,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #162 | Auto-merged | Docs-only Phase 0 UI style foundation trackers; validation diff checks passed. |
 | #163 | Auto-merged | Small display-only events list state polish; changed only `src/app/events/page.tsx`, full validation and focused lint passed, and no fetching, event card, API, wallet, auth, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 | #164 | Auto-merged | Small display-only login page polish; changed only `src/app/login/page.tsx`, full validation and focused lint passed, and no OAuth, wallet auth, session, cookie, admin auth, API, deployment, Prisma, package, workflow, or script behavior changed. |
+| #166 | Auto-merged | Small display-only markets discovery polish; changed only `src/app/markets/page.tsx`, full validation and focused lint passed, and no filtering behavior, API behavior, wallet, auth, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 
 ## Open PR Decisions
 
@@ -127,6 +128,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - UI-013 through UI-017 were selected to complete Phase 0 style and status foundations before broad UI changes.
 - UI-003 was selected because `/events` is a public discovery page and could be aligned with shared state components without changing fetch or card behavior.
 - UI-005 was selected because `/login` is a low-risk onboarding surface and the lint-safe derived error cleanup did not change auth mechanics.
+- UI-004 was selected because `/markets` is a public discovery page and the polish could be limited to existing filter presentation, beta-safe copy, empty state text, and no-price fallback display without changing fetch, routing, or API behavior.
 
 ## Skipped Or Downgraded Tasks
 

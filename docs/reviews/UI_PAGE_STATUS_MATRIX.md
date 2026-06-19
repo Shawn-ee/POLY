@@ -32,7 +32,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/sports/soccer/world-cup` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/events` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/events/[slug]` | Human-review only | Event detail includes grouped/trade behavior. | Docs-only display shell plan first. | No by default |
-| `/markets` | Needs display polish | All-market browser can compete with sports path. | Display inventory before code. | Maybe |
+| `/markets` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/markets/[id]` | Human-review only | Market detail can touch trade/order behavior. | Display shell plan first. | No by default |
 | `/login` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/portfolio` | Human-review only | Account state and positions are calculation-adjacent. | Empty/mobile state plan before code. | No by default |
@@ -63,14 +63,15 @@ This matrix tracks the UI standardization state of every major route. It does no
 | #160 | `/sports`, `/sports/soccer`, `/sports/soccer/world-cup` | Sports discovery copy polish and non-demo World Cup framing. |
 | #163 | `/events` | Events list display/state polish. |
 | #164 | `/login` | Beta-safe login display polish. |
+| #166 | `/markets` | Markets discovery display polish and beta-safe empty/fallback states. |
 
 ## Next Queue
 
-1. `/markets` display inventory.
-2. Public route smoke evidence for `/`, `/sports`, `/events`, `/login`.
-3. Portfolio/account display plan before code.
-4. Wallet funding-claim review before code.
-5. Event detail display shell plan before code.
+1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
+2. Portfolio/account display plan before code.
+3. Wallet funding-claim review before code.
+4. Event detail display shell plan before code.
+5. Market detail display shell plan before code.
 
 ## Validation
 

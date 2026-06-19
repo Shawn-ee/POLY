@@ -31,7 +31,7 @@ This tracker records mobile UI risks and safe next tasks. It does not implement 
 | `/sports/soccer/world-cup` | Improved copy only | Low | Add smoke/screenshot evidence. |
 | `/events` | Improved first pass | Low | Add smoke/screenshot evidence. |
 | `/events/[slug]` | Unknown | Medium | Plan first; grouped trade surface is sensitive. |
-| `/markets` | Unknown | Low/Medium | Inventory filters and card wrapping. |
+| `/markets` | Improved first pass | Low | Add smoke/screenshot evidence, especially filter wrapping. |
 | `/markets/[id]` | Unknown | Medium/High | Plan first; trade/order surface is sensitive. |
 | `/login` | Improved first pass | Low | Add smoke/screenshot evidence. |
 | `/portfolio` | Table risk | Medium | Mobile card plan before code. |
@@ -61,8 +61,8 @@ Do not capture:
 
 1. Public route smoke evidence for `/`, `/sports`, `/sports/soccer`, `/sports/soccer/world-cup`.
 2. `/events` card wrapping and empty-state inventory.
-3. `/markets` filter wrapping inventory.
-4. `/login` mobile copy polish.
+3. `/markets` filter wrapping screenshot evidence.
+4. `/login` mobile route smoke evidence.
 5. `/portfolio` mobile card plan before implementation.
 
 ## Validation
