@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `291b331`
+Current `dev` commit at last update: `b2850c1`
 
 ## Completed Tasks
 
@@ -49,7 +49,8 @@ Recent autonomous tasks completed before this state file:
 - DOC-050: Public route smoke command scope, merged as PR #138.
 - DOC-051: Admin auth test implementation scope, merged as PR #139.
 - DOC-052: Bot dry-run test implementation scope refresh, merged as PR #140.
-- DOC-053: Autonomous checkpoint after admin/bot test-scope docs, in progress.
+- DOC-053: Autonomous checkpoint after admin/bot test-scope docs, merged as PR #141.
+- DOC-054: Public route smoke evidence status, in progress.
 
 ## Open PRs
 
@@ -78,10 +79,10 @@ Recent autonomous tasks completed before this state file:
 
 ## Next Task Queue
 
-1. DOC-054: Public route smoke evidence status update after command scope, docs-only.
-2. DOC-055: Human-review queue rollup for PR #25, #134, and #135, docs-only if needed.
-3. DOC-056: Public beta evidence tracker refresh after current checkpoint, docs-only.
-4. TST-028: Low-risk mocked public/read-only test only if it avoids market-detail current-gap ambiguity.
+1. DOC-055: Human-review queue rollup for PR #25, #134, and #135, docs-only if needed.
+2. DOC-056: Public beta evidence tracker refresh after current checkpoint, docs-only.
+3. TST-028: Low-risk mocked public/read-only test only if it avoids market-detail current-gap ambiguity.
+4. DOC-057: Route smoke manual evidence file template instance, docs-only if needed.
 5. Human/specialist review of PR #134 and PR #135 before merge.
 
 ## Last Validation Result
@@ -113,4 +114,5 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Do not auto-merge PR #134 or PR #135.
 - Keep admin auth and bot test implementation docs-only unless a later human-reviewed PR explicitly approves implementation.
 - Use `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md` as the compact checkpoint when resuming future autonomous sessions.
+- Use `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_STATUS.md` before proposing any route smoke package/workflow or Playwright implementation.
 - Record any funding, trading, auth, bot, or deployment implementation need in `docs/reviews/HUMAN_DECISION_REQUIRED.md`.
