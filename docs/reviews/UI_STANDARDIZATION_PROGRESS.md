@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the market-detail planning pass: `6b2a758`.
+Current known `dev` checkpoint after the portfolio planning pass: `29f3648`.
 
 ## Pages Reviewed
 
@@ -72,6 +72,10 @@ Current known `dev` checkpoint after the market-detail planning pass: `6b2a758`.
 | #163 | Display-only UI | `src/app/events/page.tsx` | Merged as events list state/display polish. |
 | #164 | Display-only UI | `src/app/login/page.tsx` | Merged as beta login display polish. |
 | #166 | Display-only UI | `src/app/markets/page.tsx` | Merged as markets discovery display polish. |
+| #168 | Docs-only | `docs/reviews/EVENT_DETAIL_DISPLAY_SHELL_PLAN.md`, UI trackers | Merged as event-detail display shell scope. |
+| #169 | Docs-only | `docs/reviews/MARKET_DETAIL_DISPLAY_SHELL_PLAN.md`, UI trackers | Merged as market-detail display shell scope. |
+| #170 | Docs-only | `docs/reviews/WALLET_FUNDING_CLAIM_REVIEW.md`, UI trackers | Merged as wallet funding-claim boundary review. |
+| #171 | Docs-only | `docs/reviews/PORTFOLIO_DISPLAY_IMPLEMENTATION_SCOPE.md`, UI trackers | Merged as portfolio display implementation scope. |
 
 ## PRs Left Open
 
@@ -129,6 +133,31 @@ Needed evidence:
 - Whether admin finance pages should receive UI polish before funding architecture approval.
 - Whether market detail target-contract cleanup happens before more market detail UI changes.
 - Whether UI smoke tests get a package script or workflow lane.
+
+## Checkpoint After PRs #168-#171
+
+Tasks completed in this checkpoint:
+
+- UI-018: Event detail display shell plan.
+- UI-019: Market detail display shell plan.
+- UI-007: Wallet funding-claim review.
+- UI-009: Portfolio display implementation scope.
+
+PRs opened and merged: #168, #169, #170, #171.
+
+PRs left open: #25 remains draft/human-only.
+
+Validation:
+
+- `git diff --check` passed for each docs-only PR.
+- `git diff --cached --check` passed before each docs-only commit.
+
+Skipped high-risk implementation:
+
+- Event detail grouped trade behavior.
+- Market detail orderbook, order ticket, pool actions, positions, and bot/reference behavior.
+- Wallet deposits, withdrawals, linked-wallet behavior, and balance semantics.
+- Portfolio balances, PnL, positions, order semantics, and history calculations.
 
 ## Auto-Merge Notes
 

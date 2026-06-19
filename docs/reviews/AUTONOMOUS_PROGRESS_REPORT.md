@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-18
 
-Current `dev` checkpoint: `9f36914`
+Current `dev` checkpoint: `29f3648`
 
 ## Summary
 
@@ -19,6 +19,7 @@ Recent work focused on:
 - Public market-list grouped reference filtering test coverage.
 - Public route smoke prerequisites and not-run evidence placeholder.
 - Public beta launch blocker summary.
+- Controlled UI standardization for public discovery pages and review-gated account/trading-adjacent scopes.
 
 ## Product Progress
 
@@ -55,6 +56,18 @@ Completed docs-only readiness work:
 Resolved UI work:
 
 - PR #154: private pool list display polish replacement. It superseded PR #135 and fixed the focused hook lint failure while preserving the display-only intent.
+- PR #158: homepage display simplification.
+- PR #160: sports discovery copy polish.
+- PR #163: events list display/state polish.
+- PR #164: beta login display polish.
+- PR #166: markets discovery display polish.
+
+Review-gated UI scope docs:
+
+- PR #168: event detail display shell plan.
+- PR #169: market detail display shell plan.
+- PR #170: wallet funding-claim review.
+- PR #171: portfolio display implementation scope.
 
 ## Blocked High-Risk Areas
 

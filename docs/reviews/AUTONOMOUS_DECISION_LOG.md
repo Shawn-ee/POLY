@@ -73,6 +73,10 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #163 | Auto-merged | Small display-only events list state polish; changed only `src/app/events/page.tsx`, full validation and focused lint passed, and no fetching, event card, API, wallet, auth, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 | #164 | Auto-merged | Small display-only login page polish; changed only `src/app/login/page.tsx`, full validation and focused lint passed, and no OAuth, wallet auth, session, cookie, admin auth, API, deployment, Prisma, package, workflow, or script behavior changed. |
 | #166 | Auto-merged | Small display-only markets discovery polish; changed only `src/app/markets/page.tsx`, full validation and focused lint passed, and no filtering behavior, API behavior, wallet, auth, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
+| #168 | Auto-merged | Docs-only event-detail display shell plan; grouped trade and order behavior remain review-gated. |
+| #169 | Auto-merged | Docs-only market-detail display shell plan; orderbook, order ticket, pool actions, positions, and bot/reference behavior remain review-gated. |
+| #170 | Auto-merged | Docs-only wallet funding-claim review; deposit, withdrawal, linked-wallet, balance, and ledger behavior remain review-gated. |
+| #171 | Auto-merged | Docs-only portfolio display scope; balance, locked-fund, PnL, position, order, and history semantics remain review-gated. |
 
 ## Open PR Decisions
 
@@ -129,6 +133,10 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - UI-003 was selected because `/events` is a public discovery page and could be aligned with shared state components without changing fetch or card behavior.
 - UI-005 was selected because `/login` is a low-risk onboarding surface and the lint-safe derived error cleanup did not change auth mechanics.
 - UI-004 was selected because `/markets` is a public discovery page and the polish could be limited to existing filter presentation, beta-safe copy, empty state text, and no-price fallback display without changing fetch, routing, or API behavior.
+- UI-018 was selected as docs-only because `/events/[slug]` imports `GroupedTradeTicket` and supports grouped trade selection/order callbacks.
+- UI-019 was selected as docs-only because `/markets/[id]` routes into orderbook, order ticket, pool action, position, and bot/reference surfaces.
+- UI-007 was selected as docs-only because `/wallet` owns deposit, withdrawal, linked-wallet, external balance, and transaction surfaces.
+- UI-009 was selected as docs-only because `/portfolio` displays balances, locked funds, PnL, positions, and account history.
 
 ## Skipped Or Downgraded Tasks
 
