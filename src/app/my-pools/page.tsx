@@ -30,6 +30,7 @@ export default function MyPoolsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [nowMs] = useState(() => Date.now());
 
   const load = async () => {
     setLoading(true);
@@ -46,7 +47,26 @@ export default function MyPoolsPage() {
   };
 
   useEffect(() => {
-    load();
+    let canceled = false;
+
+    const loadInitial = async () => {
+      const res = await fetch("/api/pool-markets/mine");
+      const data = await res.json().catch(() => null);
+      if (canceled) return;
+      setLoading(false);
+      if (!res.ok) {
+        setError(data?.error ?? "Failed to load private markets.");
+        return;
+      }
+      setOwned(data.owned ?? []);
+      setJoined(data.joined ?? []);
+    };
+
+    void loadInitial();
+
+    return () => {
+      canceled = true;
+    };
   }, []);
 
   const cancelMarket = async (marketId: string) => {
@@ -68,17 +88,26 @@ export default function MyPoolsPage() {
   const resolveLabel = (market: PoolMarketItem) => {
     if (!market.resolveTime) return "Resolve";
     const resolveAt = new Date(market.resolveTime).getTime();
-    return Date.now() >= resolveAt ? "Resolve now" : "Resolve";
+    return nowMs >= resolveAt ? "Resolve now" : "Resolve";
   };
 
+  const formatDateTime = (value: string | null) =>
+    value ? new Date(value).toLocaleString() : "Not set";
+
   if (loading) {
-    return <main className="mx-auto max-w-5xl px-4 py-8">Loading private markets...</main>;
+    return (
+      <main className="mx-auto max-w-5xl px-4 py-8">
+        <div className="rounded-lg border border-neutral-200 bg-white p-5 text-sm text-neutral-600">
+          Loading private markets...
+        </div>
+      </main>
+    );
   }
 
   if (error) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {error}
         </div>
       </main>
@@ -87,29 +116,38 @@ export default function MyPoolsPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-2xl font-semibold">My private markets</h1>
-      <p className="mt-1 text-sm text-neutral-600">
-        Manage private pool markets you created or joined.
-      </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">My private markets</h1>
+          <p className="mt-1 max-w-2xl text-sm text-neutral-600">
+            Track pools you created or joined. Private pool actions remain separate from
+            public sports markets.
+          </p>
+        </div>
+        <Link
+          href="/create"
+          className="inline-flex w-fit items-center rounded-md border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-800"
+        >
+          Create new
+        </Link>
+      </div>
       {message ? (
-        <div className="mt-4 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-700">
+        <div className="mt-4 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-700">
           {message}
         </div>
       ) : null}
 
       <section className="mt-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Owned by you</h2>
-          <Link
-            href="/create"
-            className="rounded-md border border-neutral-300 px-3 py-1 text-sm text-neutral-700"
-          >
-            Create new
-          </Link>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-lg font-semibold">Owned by you</h2>
+            <p className="text-xs text-neutral-500">Pools where you can manage owner actions.</p>
+          </div>
         </div>
         {owned.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-600">
-            No owned private markets yet.
+          <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-5 text-sm text-neutral-600">
+            No owned private markets yet. Create a pool only when you are ready to manage
+            participants and resolution timing.
           </div>
         ) : (
           <div className="space-y-3">
@@ -119,22 +157,18 @@ export default function MyPoolsPage() {
                 className="rounded-lg border border-neutral-200 bg-white p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="text-base font-semibold">{market.title}</div>
-                    <div className="mt-1 text-xs text-neutral-600">
-                      Status {market.status} | Pot {market.totalPot.toFixed(2)} U |{" "}
-                      {market.participants} participants
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="text-base font-semibold">{market.title}</div>
+                      <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-xs text-neutral-600">
+                        {market.status}
+                      </span>
                     </div>
-                    <div className="mt-1 text-xs text-neutral-500">
-                      Bet close:{" "}
-                      {market.betCloseTime
-                        ? new Date(market.betCloseTime).toLocaleString()
-                        : "--"}
-                      {" | "}
-                      Resolve:{" "}
-                      {market.resolveTime
-                        ? new Date(market.resolveTime).toLocaleString()
-                        : "--"}
+                    <div className="mt-2 grid gap-1 text-xs text-neutral-600 sm:grid-cols-2">
+                      <div>Pot {market.totalPot.toFixed(2)} U</div>
+                      <div>{market.participants} participants</div>
+                      <div>Bet close: {formatDateTime(market.betCloseTime)}</div>
+                      <div>Resolve: {formatDateTime(market.resolveTime)}</div>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 text-xs">
@@ -170,9 +204,12 @@ export default function MyPoolsPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-semibold">You joined</h2>
+        <div className="mb-3">
+          <h2 className="text-lg font-semibold">You joined</h2>
+          <p className="text-xs text-neutral-500">Pools where you already have a recorded bet.</p>
+        </div>
         {joined.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-600">
+          <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-5 text-sm text-neutral-600">
             You have not joined any private markets yet.
           </div>
         ) : (
@@ -183,14 +220,19 @@ export default function MyPoolsPage() {
                 className="rounded-lg border border-neutral-200 bg-white p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="text-base font-semibold">{market.title}</div>
-                    <div className="mt-1 text-xs text-neutral-600">
-                      Status {market.status} | My bet {market.myBet.outcomeName} for{" "}
-                      {market.myBet.amount.toFixed(2)} U
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="text-base font-semibold">{market.title}</div>
+                      <span className="rounded-full border border-neutral-200 px-2 py-0.5 text-xs text-neutral-600">
+                        {market.status}
+                      </span>
                     </div>
-                    <div className="mt-1 text-xs text-neutral-500">
-                      Pot {market.totalPot.toFixed(2)} U | {market.participants} participants
+                    <div className="mt-2 grid gap-1 text-xs text-neutral-600 sm:grid-cols-2">
+                      <div>
+                        My bet: {market.myBet.outcomeName} for {market.myBet.amount.toFixed(2)} U
+                      </div>
+                      <div>Pot {market.totalPot.toFixed(2)} U</div>
+                      <div>{market.participants} participants</div>
                     </div>
                   </div>
                   <Link
