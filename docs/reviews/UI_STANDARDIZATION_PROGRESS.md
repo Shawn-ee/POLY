@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the markets display pass: `4b9a9b8`.
+Current known `dev` checkpoint after the market-detail planning pass: `6b2a758`.
 
 ## Pages Reviewed
 
@@ -31,7 +31,7 @@ Current known `dev` checkpoint after the markets display pass: `4b9a9b8`.
 | `/sports/soccer` | Sports readiness checklist, PR #160 | Improved with soccer event-first copy | Later add route smoke/screenshot evidence. |
 | `/sports/soccer/world-cup` | Sports readiness checklist, PR #160 | Improved with demo framing removed | Later add route smoke/screenshot evidence. |
 | `/portfolio` | Portfolio mobile card spec | Needs review-gated display task | Do not change calculations. |
-| `/wallet` | Account risk disclosure spec, safety docs | Human-reviewed by default | Display/copy only after funding-claim review. |
+| `/wallet` | Account risk disclosure spec, wallet beta-state spec, funding-claim review | Human-reviewed by default | Display/copy only after explicit human-reviewed scope. |
 | `/login` | IA and risk copy docs, PR #164 | Improved with beta-safe copy and lint-safe error display | Later add route smoke/screenshot evidence. |
 | `/create` | IA and page review | Delayed/post-MVP | Keep out of public MVP navigation. |
 | `/my-pools` | PR #154 | Improved in focused PR | Further work must stay small and display-only. |
@@ -57,6 +57,7 @@ Current known `dev` checkpoint after the markets display pass: `4b9a9b8`.
 | `/markets` | #166 | Sports-first market-board copy, grouped filters, beta-safe note, improved empty state, and clearer no-price fallback card. | Full validation and focused lint passed. | Merged |
 | `/events/[slug]` | Pending after UI-018 | Docs-only display shell plan separates safe read-only polish from grouped trade/order behavior. | Docs-only diff checks. | Planned |
 | `/markets/[id]` | Pending after UI-019 | Docs-only display shell plan separates market comprehension from orderbook, order ticket, pool action, position, and bot/reference behavior. | Docs-only diff checks. | Planned |
+| `/wallet` | Pending after UI-007 | Docs-only funding-claim review defines copy and behavior boundaries before any wallet display work. | Docs-only diff checks. | Planned |
 
 ## PRs Merged
 
@@ -110,14 +111,14 @@ Needed evidence:
 
 1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
 2. UI-006: Portfolio empty/mobile-state display plan before code.
-3. UI-007: Wallet funding-claim copy review before any wallet UI change.
-4. UI-008: Admin IA display plan before admin UI changes.
-5. UI-009: Market-detail display-state plan before code.
-6. UI-010: Cross-page empty/loading/error terminology map.
-7. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
-8. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
-9. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
-10. UI-022: Market detail screenshot/smoke checklist before any code.
+3. UI-008: Admin IA display plan before admin UI changes.
+4. UI-009: Portfolio/account display implementation scope before code.
+5. UI-010: Cross-page empty/loading/error terminology map.
+6. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
+7. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
+8. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
+9. UI-022: Market detail screenshot/smoke checklist before any code.
+10. UI-023: Wallet display scope packet if a human confirms funding-copy boundaries.
 
 ## Blocked UI Decisions
 

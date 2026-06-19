@@ -36,7 +36,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/markets/[id]` | Planned/review-gated | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Screenshot/smoke checklist or small read-only shell PR only after UI-019. | No by default |
 | `/login` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/portfolio` | Human-review only | Account state and positions are calculation-adjacent. | Empty/mobile state plan before code. | No by default |
-| `/wallet` | Human-review only | Funding copy can imply production readiness. | Funding-claim review before code. | No |
+| `/wallet` | Human-review only | Funding copy can imply production readiness. | Human-reviewed display scope only after funding-claim review. | No |
 | `/create` | Needs copy cleanup | Private pools are delayed/post-MVP. | Hide/delay docs or display-only framing. | No by default |
 | `/my-pools` | Done for first pass | Optional private-pool surface. | Further work only if small/display-only. | Maybe if strict |
 | `/pool/[id]` | Done/hidden | Compatibility route only. | No UI work unless surfaced. | Maybe docs-only |
