@@ -81,6 +81,7 @@ Recent autonomous tasks completed before this state file:
 - DOC-066: Big UI milestone post-merge state refresh, merged as PR #176.
 - UI-010: Cross-page UI state terminology map, prepared as docs-only follow-up after the big UI milestone.
 - UI-011: Homepage wallet/admin surface decision, prepared as docs-only follow-up after UI-010.
+- UI-019A/UI-022: Market detail screenshot and smoke checklist, prepared as docs-only pre-code evidence gate.
 
 ## Open PRs
 
@@ -137,6 +138,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.
 - `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md` now maps loading, empty, error, signed-out, unavailable, and beta-gated wording by route group for future UI copy PRs.
 - `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md` now records that homepage wallet/admin concepts should stay secondary or out of normal content before future homepage code cleanup.
+- `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md` now records safe preconditions and forbidden actions before any future market-detail screenshots, smoke evidence, or code.
 - Event detail, market detail, wallet, and portfolio now have explicit planning/scope boundaries before future UI code.
 - Admin routes now have an explicit implementation scope and remain human-reviewed by default.
 - Continue docs-only route/test readiness work and avoid repeating already-covered public API test groups.

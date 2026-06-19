@@ -33,7 +33,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/events` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/events/[slug]` | Big milestone touched read-only shell | Event detail includes grouped/trade behavior. | Human review; use `UI_STATE_TERMINOLOGY_MAP.md` and do not change grouped trade behavior without explicit approval. | No |
 | `/markets` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
-| `/markets/[id]` | Big milestone touched shared header only | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Human review before deeper display work; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
+| `/markets/[id]` | Big milestone touched shared header only | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Use `MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md` before evidence or code; human review before deeper display work; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
 | `/login` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
 | `/portfolio` | Big milestone touched display only | Account state and positions are calculation-adjacent. | Human review account terminology; use `UI_STATE_TERMINOLOGY_MAP.md`; calculations must remain untouched. | No |
 | `/wallet` | Big milestone touched display only | Funding copy can imply production readiness. | Human review funding copy; use `UI_STATE_TERMINOLOGY_MAP.md`; no funding behavior changes. | No |
@@ -71,14 +71,14 @@ This matrix tracks the UI standardization state of every major route. It does no
 
 1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
 2. Event detail loading/error/empty display-only scope after UI-018 and `UI_STATE_TERMINOLOGY_MAP.md`.
-3. Market detail screenshot/smoke checklist before code.
-4. Portfolio header/empty-state copy only if calculations remain untouched.
-5. Admin read-only display implementation only with explicit scope and full validation.
+3. Portfolio header/empty-state copy only if calculations remain untouched.
+4. Admin read-only display implementation only with explicit scope and full validation.
 
 Completed queue item:
 
 - UI-010: Cross-page empty/loading/error terminology map in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 - UI-011: Homepage wallet/admin surface decision in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
+- UI-019A/UI-022: Market detail screenshot/smoke checklist in `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md`.
 
 ## Validation
 

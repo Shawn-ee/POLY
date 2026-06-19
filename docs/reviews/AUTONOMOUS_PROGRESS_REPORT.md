@@ -23,6 +23,7 @@ Recent work focused on:
 - Big UI overhaul post-merge state refresh after PR #175.
 - Cross-page UI state terminology mapping after the big UI milestone.
 - Homepage wallet/admin surface decision before future homepage code cleanup.
+- Market-detail screenshot/smoke checklist before any future market-detail code.
 
 ## Product Progress
 
@@ -68,6 +69,7 @@ Resolved UI work:
 - PR #176: docs-only post-merge UI state refresh.
 - UI-010: cross-page loading, empty, error, signed-out, unavailable, and beta-gated state terminology map.
 - UI-011: homepage wallet/admin surface decision.
+- UI-019A/UI-022: market-detail screenshot/smoke checklist.
 
 Review-gated UI scope docs:
 

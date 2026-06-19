@@ -180,7 +180,7 @@ Needed evidence:
 3. UI-011: Homepage wallet/admin surface decision. Completed in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 4. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
 5. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
-6. UI-022: Market detail screenshot/smoke checklist before any code.
+6. UI-022: Market detail screenshot/smoke checklist before any code. Completed in `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md`.
 7. UI-023: Wallet display scope packet if a human confirms funding-copy boundaries.
 8. UI-024: Portfolio header/empty-state copy PR only if calculations remain untouched.
 9. UI-026: Admin read-only landing/status display PR only with human-reviewed scope.
@@ -271,6 +271,34 @@ Skipped high-risk implementation:
 - Wallet balance, funding, deposit, withdrawal, faucet, and linked-wallet behavior.
 - Admin visibility, admin auth, admin operation controls, and internal route access.
 - Order, trade, position, ledger, matching, settlement, bot, deployment, package scripts, workflows, Prisma, and migrations.
+
+## Checkpoint After UI-011
+
+Tasks completed in this checkpoint:
+
+- UI-019A/UI-022: Market detail screenshot and smoke checklist before any market-detail code.
+
+Files added or updated:
+
+- `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md`
+- `docs/reviews/MARKET_DETAIL_DISPLAY_SHELL_PLAN.md`
+- `docs/reviews/UI_STANDARDIZATION_PROGRESS.md`
+- `docs/reviews/UI_PAGE_STATUS_MATRIX.md`
+- `docs/reviews/README.md`
+- `docs/reviews/AUTONOMOUS_EXECUTION_STATE.md`
+- `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`
+- `docs/reviews/AUTONOMOUS_DECISION_LOG.md`
+
+Validation:
+
+- `git diff --check` passed.
+
+Skipped high-risk implementation:
+
+- Server startup, browser automation, screenshots, and fixture creation.
+- Market-detail source-code changes.
+- Order ticket, orderbook, open orders, trades, fills, positions, balances, pool actions, reference data, and bot behavior.
+- Wallet, deposit, withdrawal, ledger, matching, settlement, admin auth, deployment, package scripts, workflows, Prisma, and migrations.
 
 ## Auto-Merge Notes
 

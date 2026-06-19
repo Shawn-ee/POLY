@@ -86,6 +86,7 @@ Future autonomous PRs must not change:
 A future market-detail display PR is acceptable only when:
 
 - It is small, reversible, and limited to read-only layout/copy/state presentation.
+- It has reviewed `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md` before any screenshot or smoke evidence is captured.
 - No order, trade, pool, wallet, position, bot, reference, API, or Prisma behavior changes.
 - The PR body identifies whether orderbook or pool action-bearing components were touched.
 - Full validation passes.
