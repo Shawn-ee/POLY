@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `2740a69`
+Current `dev` commit at last update: `021c905`
 
 ## Completed Tasks
 
@@ -92,6 +92,7 @@ Recent autonomous tasks completed before this state file:
 - UI-012A: Anonymous route smoke checklist, merged as PR #191.
 - DOC-074: Checkpoint refresh after PR #191, merged as PR #193.
 - DOC-075: Open PR review queue refresh after PR #193, merged as PR #194.
+- DOC-076: Checkpoint refresh after PR #194, merged as PR #196.
 
 ## Open PRs
 
