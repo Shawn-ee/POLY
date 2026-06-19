@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `ffd2744`
+Current `dev` commit at last update: `f6da0c0`
 
 ## Completed Tasks
 
@@ -67,6 +67,7 @@ Recent autonomous tasks completed before this state file:
 - FE-001-FOLLOWUP: Private pool list lint-safe display replacement, merged as PR #154.
 - UI-000: UI standardization master plan and progress tracker, merged as PR #157.
 - UI-001: Homepage display simplification, merged as PR #158.
+- UI-002: Sports discovery copy polish, merged as PR #160.
 
 ## Open PRs
 
@@ -113,7 +114,7 @@ Known recurring non-failure output:
 
 ## Current Phase
 
-Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase UI now has a master standardization plan, progress tracker, a merged private pool list replacement (#154), and a merged homepage display simplification (#158). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
+Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase UI now has a master standardization plan, progress tracker, a merged private pool list replacement (#154), a merged homepage display simplification (#158), and merged sports discovery copy polish (#160). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
 
 ## Next Recommended Actions
 

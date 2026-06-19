@@ -68,6 +68,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #154 | Auto-merged | Focused lint-clean replacement for PR #135; changed only `src/app/my-pools/page.tsx`, full validation and focused lint passed, and no backend/API, wallet/funding, auth/admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 | #157 | Auto-merged | Docs-only UI standardization master plan and progress tracker; validation diff checks passed. |
 | #158 | Auto-merged | Small display-only homepage copy/CTA simplification; changed only `src/app/page.tsx`, full validation and focused lint passed, and no data fetching, API, wallet, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
+| #160 | Auto-merged | Small display-only sports discovery copy polish; changed only sports display pages/component, full validation and focused lint passed, and no route behavior, fetching, filters, wallet, auth, admin, trading, bot, deployment, Prisma, package, workflow, or script behavior changed. |
 
 ## Open PR Decisions
 
@@ -119,6 +120,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - PR #154 was selected as a focused replacement for PR #135 because it preserved the private pool list display intent while fixing the focused hook lint failure.
 - UI-000 was selected first in the UI standardization program because broad UI work needed an explicit master plan, route classification, merge policy, and progress tracker.
 - UI-001 was selected because homepage simplification is Phase 1, low-risk, public-facing, and could be limited to copy/CTA/empty-state display without changing behavior.
+- UI-002 was selected because sports discovery is the primary MVP path and the improvement could be limited to copy, labels, and empty-state text without changing behavior.
 
 ## Skipped Or Downgraded Tasks
 
