@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `496a463`
+Current `dev` commit at last update: `fc0c57b`
 
 ## Completed Tasks
 
@@ -51,7 +51,8 @@ Recent autonomous tasks completed before this state file:
 - DOC-052: Bot dry-run test implementation scope refresh, merged as PR #140.
 - DOC-053: Autonomous checkpoint after admin/bot test-scope docs, merged as PR #141.
 - DOC-054: Public route smoke evidence status, merged as PR #142.
-- DOC-055: Human-review queue rollup for PR #25, #134, and #135, in progress.
+- DOC-055: Human-review queue rollup for PR #25, #134, and #135, merged as PR #143.
+- DOC-056: Public beta evidence tracker refresh, in progress.
 
 ## Open PRs
 
@@ -80,10 +81,10 @@ Recent autonomous tasks completed before this state file:
 
 ## Next Task Queue
 
-1. DOC-056: Public beta evidence tracker refresh after current checkpoint, docs-only.
-2. TST-028: Low-risk mocked public/read-only test only if it avoids market-detail current-gap ambiguity.
-3. DOC-057: Route smoke manual evidence file template instance, docs-only if needed.
-4. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
+1. TST-028: Low-risk mocked public/read-only test only if it avoids market-detail current-gap ambiguity.
+2. DOC-057: Route smoke manual evidence file template instance, docs-only if needed.
+3. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
+4. DOC-058: Public beta evidence status checkpoint after PR #143, docs-only if needed.
 5. Human/specialist review of PR #25, PR #134, and PR #135 before merge.
 
 ## Last Validation Result
