@@ -131,16 +131,33 @@ export default function Home() {
 
   return (
     <PageContainer>
-      <div className="mb-8 flex flex-col gap-4 rounded-lg border border-[var(--poly-border)] bg-white p-5 shadow-[var(--poly-shadow-sm)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-8 flex flex-col gap-5 rounded-lg border border-[var(--poly-border)] bg-white p-5 shadow-[var(--poly-shadow-sm)] sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Prediction markets</div>
-          <h1 className="mt-2 text-3xl font-semibold text-[var(--poly-text)]">Live Markets</h1>
-          <p className="mt-1 text-sm text-[var(--poly-muted)]">
-            Scan live markets, compare prices, and trade with test U credits.
+          <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Internal beta</div>
+          <h1 className="mt-2 text-3xl font-semibold text-[var(--poly-text)]">
+            Sports prediction markets
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-[var(--poly-muted)]">
+            Browse events, compare Yes/No prices, and track markets with test credits while
+            POLY is still in beta.
           </p>
         </div>
-        <div className="flex items-center gap-3 text-sm text-[var(--poly-muted)]">
-          <div>
+        <div className="flex flex-col gap-3 text-sm text-[var(--poly-muted)] sm:items-end">
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/sports"
+              className="inline-flex min-h-9 items-center justify-center rounded-lg bg-[var(--poly-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--poly-primary-hover)]"
+            >
+              Browse sports
+            </Link>
+            <Link
+              href="/markets"
+              className="inline-flex min-h-9 items-center justify-center rounded-lg border border-[var(--poly-border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--poly-text)] transition hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
+            >
+              View markets
+            </Link>
+          </div>
+          <div className="text-xs">
             Wallet:{" "}
             {walletBalance === null ? "--" : walletBalance.toFixed(2)} U
           </div>
@@ -159,8 +176,10 @@ export default function Home() {
         <section className="mb-10">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-[var(--poly-text)]">Featured Events</h2>
-              <p className="text-sm text-[var(--poly-muted)]">Grouped markets with shared event context.</p>
+              <h2 className="text-xl font-semibold text-[var(--poly-text)]">Featured events</h2>
+              <p className="text-sm text-[var(--poly-muted)]">
+                Start with the event, then choose the market question that matches your view.
+              </p>
             </div>
             <Link href="/events" className="text-sm font-semibold text-[var(--poly-primary)] hover:text-[var(--poly-primary-hover)]">
               View all events
@@ -249,7 +268,10 @@ export default function Home() {
       ) : null}
 
       {markets.length === 0 ? (
-        <EmptyState title="No markets yet" description="Create one in the admin panel." />
+        <EmptyState
+          title="No markets are ready yet"
+          description="Check sports and events again soon while beta markets are being prepared."
+        />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {markets.map((market) => (
