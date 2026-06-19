@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `59cad63`
+Current `dev` checkpoint: `5d19f3d`
 
 ## Summary
 
@@ -36,6 +36,8 @@ Recent work focused on:
 - Open PR review queue refresh after PR #193, merged as PR #194.
 - Checkpoint refresh after PR #194, merged as PR #196.
 - Checkpoint refresh after PR #196, merged as PR #199.
+- Checkpoint refresh after PR #199, merged as PR #200.
+- Mobile viewport route-smoke checklist, merged as PR #197.
 
 ## Product Progress
 
@@ -94,6 +96,8 @@ Resolved UI work:
 - PR #194: open PR review queue refresh after PR #193.
 - PR #196: checkpoint refresh after PR #194.
 - PR #199: checkpoint refresh after PR #196.
+- PR #200: checkpoint refresh after PR #199.
+- PR #197: mobile viewport route-smoke checklist.
 
 Review-gated UI scope docs:
 
@@ -156,7 +160,8 @@ Safe autonomous work remains available in these lanes:
 1. Human/specialist review of PR #25 before merge, split, or close.
 2. Close or update stale docs-only PR #177, which targets an older post-merge state checkpoint already superseded on `dev`.
 3. Close or update stale draft docs-only PR #192, which is superseded by merged PR #193 and reflected in the merged PR #194 queue refresh and PR #199 checkpoint.
-4. Optional local-only anonymous route smoke run when a safe local app instance is available, using `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
-5. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
-6. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
-7. Human-reviewed package/workflow decision for any future public API or route-smoke test lane promotion.
+4. Close or update stale draft docs-only PR #198, which is superseded by merged PR #199, PR #200, and PR #197.
+5. Optional local-only anonymous route smoke run when a safe local app instance is available, using `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` and `docs/reviews/PUBLIC_ROUTE_SMOKE_MOBILE_VIEWPORT_CHECKLIST.md`.
+6. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
+7. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
+8. Human-reviewed package/workflow decision for any future public API or route-smoke test lane promotion.
