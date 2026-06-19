@@ -31,7 +31,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/sports/soccer` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/sports/soccer/world-cup` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/events` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
-| `/events/[slug]` | Human-review only | Event detail includes grouped/trade behavior. | Docs-only display shell plan first. | No by default |
+| `/events/[slug]` | Planned/review-gated | Event detail includes grouped/trade behavior. | Only small loading/error/empty or metadata display PRs after UI-018. | No by default |
 | `/markets` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/markets/[id]` | Human-review only | Market detail can touch trade/order behavior. | Display shell plan first. | No by default |
 | `/login` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
@@ -70,7 +70,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
 2. Portfolio/account display plan before code.
 3. Wallet funding-claim review before code.
-4. Event detail display shell plan before code.
+4. Event detail loading/error/empty display-only scope after UI-018.
 5. Market detail display shell plan before code.
 
 ## Validation
