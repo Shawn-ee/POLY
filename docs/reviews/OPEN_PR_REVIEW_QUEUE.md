@@ -17,7 +17,7 @@ It does not change product code, UI code, backend logic, wallet, deposit, withdr
 | PR | Title | Classification | Risk | Decision | Reason |
 |---|---|---|---|---|---|
 | #25 | `feat: polish admin wallet and pool UI` | Broad draft UI/product-code PR | High by touched surfaces | Leave open as draft | Touches wallet, admin deposit/withdrawal, private pool, and pool detail UI surfaces; too broad for autonomous merge. |
-| #177 | `docs: refresh UI post-merge state` | Docs-only state refresh | Low by file type, stale by content | Close or update, do not merge as-is | Targets older checkpoint `8db1fd7`; current `dev` is `4a7e0a9` and includes later state-refresh docs through PR #186. |
+| #177 | `docs: refresh UI post-merge state` | Docs-only state refresh | Low by file type, stale by content | Close or update, do not merge as-is | Targets older checkpoint `8db1fd7`; current `dev` is `c8f8064` and includes later state-refresh docs through PR #188. |
 | #134 | `test: add public market detail current-gap checks` | Test-only mocked public route current-gap PR | Medium by public API contract topic | Merged | Changed only `src/__tests__/public.market-detail.current-gap.test.ts`; full validation passed; no runtime behavior changed. |
 | #135 | `feat: polish private pool list display` | UI product-code PR on action-bearing page | Medium | Closed as superseded | Replaced by lint-clean PR #154. |
 | #154 | `fix: make private pool list load lint-safe` | Focused UI display replacement for PR #135 | Medium | Merged | Changed only `src/app/my-pools/page.tsx`; full validation and focused lint passed; no product/runtime behavior outside the page changed. |
