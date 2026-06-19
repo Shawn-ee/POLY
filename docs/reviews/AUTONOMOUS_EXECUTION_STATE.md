@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `8db1fd7`
+Current `dev` commit at last update: `c40d11a`
 
 ## Completed Tasks
 
@@ -79,6 +79,7 @@ Recent autonomous tasks completed before this state file:
 - UI-025: Admin display implementation scope, merged as PR #173.
 - BIG-UI-001: App-wide UI style standardization milestone, merged as PR #175.
 - DOC-066: Big UI milestone post-merge state refresh, merged as PR #176.
+- UI-010: Cross-page UI state terminology map, prepared as docs-only follow-up after the big UI milestone.
 
 ## Open PRs
 
@@ -105,7 +106,7 @@ Recent autonomous tasks completed before this state file:
 
 1. Human/specialist review of PR #25 before merge or close.
 2. Optional local-only anonymous route smoke run only when a safe local app instance is available; record evidence without secrets or production data.
-3. Continue small display-only public-page UI PRs only if they avoid wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic.
+3. Continue small display-only public-page UI PRs only if they avoid wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic and follow `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md` for state copy.
 4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
 5. Package/workflow/public API test-lane promotion remains human-reviewed.
 
@@ -133,6 +134,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - Keep PR #25 open as draft unless a human reviews or splits it.
 - Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.
+- `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md` now maps loading, empty, error, signed-out, unavailable, and beta-gated wording by route group for future UI copy PRs.
 - Event detail, market detail, wallet, and portfolio now have explicit planning/scope boundaries before future UI code.
 - Admin routes now have an explicit implementation scope and remain human-reviewed by default.
 - Continue docs-only route/test readiness work and avoid repeating already-covered public API test groups.

@@ -26,20 +26,20 @@ This matrix tracks the UI standardization state of every major route. It does no
 
 | Route | Current status | Primary issue | Safe next action | Auto-merge default |
 |---|---|---|---|---|
-| `/` | Big milestone merged | Wallet/admin concepts still exist on page. | Decide whether account/admin links move out later; docs first. | Docs-only yes; code review-gated |
-| `/sports` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation. | Docs-only yes |
-| `/sports/soccer` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation. | Docs-only yes |
-| `/sports/soccer/world-cup` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation. | Docs-only yes |
-| `/events` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation. | Docs-only yes |
-| `/events/[slug]` | Big milestone touched read-only shell | Event detail includes grouped/trade behavior. | Human review; do not change grouped trade behavior without explicit approval. | No |
-| `/markets` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation. | Docs-only yes |
-| `/markets/[id]` | Big milestone touched shared header only | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Human review before any deeper display work. | No |
-| `/login` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation. | Docs-only yes |
-| `/portfolio` | Big milestone touched display only | Account state and positions are calculation-adjacent. | Human review account terminology; calculations must remain untouched. | No |
-| `/wallet` | Big milestone touched display only | Funding copy can imply production readiness. | Human review funding copy; no funding behavior changes. | No |
-| `/create` | Big milestone touched display only | Private pools are delayed/post-MVP. | Product decision whether this route stays visible for MVP. | No |
-| `/my-pools` | Big milestone touched display only | Optional private-pool surface. | Human review before pool behavior changes. | No |
-| `/pool/[id]` | Done/hidden | Compatibility route only. | No UI work unless surfaced. | Maybe docs-only |
+| `/` | Big milestone merged | Wallet/admin concepts still exist on page. | Decide whether account/admin links move out later; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes; code review-gated |
+| `/sports` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/sports/soccer` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/sports/soccer/world-cup` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/events` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/events/[slug]` | Big milestone touched read-only shell | Event detail includes grouped/trade behavior. | Human review; use `UI_STATE_TERMINOLOGY_MAP.md` and do not change grouped trade behavior without explicit approval. | No |
+| `/markets` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/markets/[id]` | Big milestone touched shared header only | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Human review before deeper display work; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
+| `/login` | Big milestone merged | Needs smoke/screenshot evidence. | Public route smoke evidence preparation; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Docs-only yes |
+| `/portfolio` | Big milestone touched display only | Account state and positions are calculation-adjacent. | Human review account terminology; use `UI_STATE_TERMINOLOGY_MAP.md`; calculations must remain untouched. | No |
+| `/wallet` | Big milestone touched display only | Funding copy can imply production readiness. | Human review funding copy; use `UI_STATE_TERMINOLOGY_MAP.md`; no funding behavior changes. | No |
+| `/create` | Big milestone touched display only | Private pools are delayed/post-MVP. | Product decision whether this route stays visible for MVP; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
+| `/my-pools` | Big milestone touched display only | Optional private-pool surface. | Human review before pool behavior changes; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | No |
+| `/pool/[id]` | Done/hidden | Compatibility route only. | No UI work unless surfaced; use `UI_STATE_TERMINOLOGY_MAP.md` for state copy. | Maybe docs-only |
 
 ## Admin And Internal Routes
 
@@ -70,10 +70,15 @@ This matrix tracks the UI standardization state of every major route. It does no
 ## Next Queue
 
 1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
-2. Event detail loading/error/empty display-only scope after UI-018.
-3. Market detail screenshot/smoke checklist before code.
-4. Portfolio header/empty-state copy only if calculations remain untouched.
-5. Admin read-only display implementation only with explicit scope and full validation.
+2. Homepage wallet/admin surface decision, docs-only before further homepage code.
+3. Event detail loading/error/empty display-only scope after UI-018 and `UI_STATE_TERMINOLOGY_MAP.md`.
+4. Market detail screenshot/smoke checklist before code.
+5. Portfolio header/empty-state copy only if calculations remain untouched.
+6. Admin read-only display implementation only with explicit scope and full validation.
+
+Completed queue item:
+
+- UI-010: Cross-page empty/loading/error terminology map in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 
 ## Validation
 

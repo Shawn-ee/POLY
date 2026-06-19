@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `8db1fd7`
+Current `dev` checkpoint: `c40d11a`
 
 ## Summary
 
@@ -21,6 +21,7 @@ Recent work focused on:
 - Public beta launch blocker summary.
 - Controlled UI standardization for public discovery pages and review-gated account/trading-adjacent scopes.
 - Big UI overhaul post-merge state refresh after PR #175.
+- Cross-page UI state terminology mapping after the big UI milestone.
 
 ## Product Progress
 
@@ -64,6 +65,7 @@ Resolved UI work:
 - PR #166: markets discovery display polish.
 - PR #175: app-wide display standardization milestone.
 - PR #176: docs-only post-merge UI state refresh.
+- UI-010: cross-page loading, empty, error, signed-out, unavailable, and beta-gated state terminology map.
 
 Review-gated UI scope docs:
 
@@ -119,7 +121,7 @@ Safe autonomous work remains available in these lanes:
 - Docs-only public beta evidence tracker refreshes.
 - Docs-only PR review lane rollups for PR #25 and any future non-auto-merge PRs.
 - Low-risk public/read-only mocked tests that do not require product/runtime changes.
-- Small display-only UI PRs may be opened only if they avoid order tickets, wallet/funding, auth/admin behavior, bot behavior, deployment, Prisma, package/workflow/script changes, and financial logic; UI PRs should not be auto-merged unless they satisfy the strict display-only UI policy.
+- Small display-only UI PRs may be opened only if they avoid order tickets, wallet/funding, auth/admin behavior, bot behavior, deployment, Prisma, package/workflow/script changes, and financial logic, and follow `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`; UI PRs should not be auto-merged unless they satisfy the strict display-only UI policy.
 
 ## Next Recommended Queue
 

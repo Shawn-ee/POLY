@@ -78,6 +78,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #170 | Auto-merged | Docs-only wallet funding-claim review; deposit, withdrawal, linked-wallet, balance, and ledger behavior remain review-gated. |
 | #171 | Auto-merged | Docs-only portfolio display scope; balance, locked-fund, PnL, position, order, and history semantics remain review-gated. |
 | #173 | Auto-merged | Docs-only admin display scope; admin auth, finance mutations, market resolution, bot/reference actions, system readiness, deployment, and agent operations remain review-gated. |
+| #179 | Auto-merge candidate | Docs-only UI state terminology map; no runtime code, tests, package/workflow changes, browser run, screenshots, or production data. |
 
 ## Open PR Decisions
 
@@ -143,6 +144,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - UI-025 was selected as docs-only because admin surfaces include auth, finance operations, market resolution, bot/reference controls, system readiness, and agent monitoring.
 - `agent/big-ui-overhaul` was selected because the user explicitly requested a single large cohesive UI overhaul instead of many tiny PRs. The plan was self-reviewed as display-only and review-gated, with no auto-merge.
 - `agent/ui-overhaul-post-merge-state` was selected to record PR #175's merge outcome and keep autonomous state docs resumable before any further UI or smoke-evidence work.
+- `agent/ui-state-terminology-map` was selected because UI-010 remained a safe docs-only follow-up after the big UI milestone and prevents future copy PRs from guessing about loading, empty, error, signed-out, unavailable, and beta-gated state wording.
 
 ## Skipped Or Downgraded Tasks
 

@@ -176,7 +176,7 @@ Needed evidence:
 ## Next UI Tasks
 
 1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
-2. UI-010: Cross-page empty/loading/error terminology map.
+2. UI-010: Cross-page empty/loading/error terminology map. Completed in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 3. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
 4. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
 5. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
@@ -219,6 +219,31 @@ Skipped high-risk implementation:
 - Market detail orderbook, order ticket, pool actions, positions, and bot/reference behavior.
 - Wallet deposits, withdrawals, linked-wallet behavior, and balance semantics.
 - Portfolio balances, PnL, positions, order semantics, and history calculations.
+
+## Checkpoint After PR #176
+
+Tasks completed in this checkpoint:
+
+- UI-010: Cross-page empty/loading/error terminology map.
+
+Files added or updated:
+
+- `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`
+- `docs/reviews/UI_STANDARDIZATION_PROGRESS.md`
+- `docs/reviews/UI_PAGE_STATUS_MATRIX.md`
+- `docs/reviews/README.md`
+
+Validation:
+
+- `git diff --check` passed.
+
+Skipped high-risk implementation:
+
+- Public route smoke execution, server startup, browser automation, and screenshots.
+- Event detail grouped trade behavior.
+- Market detail orderbook, order ticket, pool actions, positions, reference, and bot behavior.
+- Portfolio, wallet, funding, balance, PnL, deposit, and withdrawal behavior.
+- Admin auth, finance operations, bot controls, deployment, package scripts, workflows, Prisma, and migrations.
 
 ## Auto-Merge Notes
 
