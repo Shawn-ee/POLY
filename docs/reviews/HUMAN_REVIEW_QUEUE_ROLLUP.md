@@ -10,7 +10,7 @@ Risk level: Low for docs-only rollup
 
 ## Purpose
 
-This document summarizes open PRs that the autonomous LeadAgent has inspected but must not auto-merge under the current safety policy. The latest merged queue refresh is PR #194 at `2740a69`.
+This document summarizes open PRs that the autonomous LeadAgent has inspected but must not auto-merge under the current safety policy. The latest merged checkpoint refresh is PR #196 at `021c905`.
 
 It does not modify any PR branch, source code, tests, UI, backend logic, wallet, ledger, trading, admin auth, bot behavior, deployment, Prisma, migrations, secrets, or production behavior.
 
