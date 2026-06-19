@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the admin display scope pass: `afb031e`.
+Current known `dev` checkpoint after the big UI milestone and post-merge state checkpoint: `8db1fd7`.
 
 ## Big UI Overhaul Milestone
 
@@ -130,6 +130,8 @@ Validation summary for PR #175:
 | #170 | Docs-only | `docs/reviews/WALLET_FUNDING_CLAIM_REVIEW.md`, UI trackers | Merged as wallet funding-claim boundary review. |
 | #171 | Docs-only | `docs/reviews/PORTFOLIO_DISPLAY_IMPLEMENTATION_SCOPE.md`, UI trackers | Merged as portfolio display implementation scope. |
 | #173 | Docs-only | `docs/reviews/ADMIN_DISPLAY_IMPLEMENTATION_SCOPE.md`, UI trackers | Merged as admin display implementation scope. |
+| #175 | Display-only UI milestone | Shared UI primitives and app-wide display standardization across public, account, private-pool, and admin landing surfaces | Merged after self-review and validation. |
+| #176 | Docs-only | Autonomous/UI state docs | Merged as post-merge state checkpoint after PR #175. |
 
 ## PRs Left Open
 
