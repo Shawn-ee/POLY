@@ -1,7 +1,13 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import PageContainer from "@/components/ui/PageContainer";
 
 type PoolMarketResponse = {
   market: {
@@ -186,15 +192,15 @@ export default function PoolMarketDetail({ marketId }: { marketId: string }) {
   };
 
   if (viewState === "loadingAuth") {
-    return <main className="mx-auto max-w-4xl px-4 py-8">Checking login...</main>;
+    return <PageContainer size="default"><Card className="p-6 text-sm text-[var(--poly-muted)]">Checking login...</Card></PageContainer>;
   }
 
   if (viewState === "joiningInvite") {
-    return <main className="mx-auto max-w-4xl px-4 py-8">Accepting invite...</main>;
+    return <PageContainer size="default"><Card className="p-6 text-sm text-[var(--poly-muted)]">Accepting invite...</Card></PageContainer>;
   }
 
   if (viewState === "loadingMarket") {
-    return <main className="mx-auto max-w-4xl px-4 py-8">Loading market...</main>;
+    return <PageContainer size="default"><Card className="p-6 text-sm text-[var(--poly-muted)]">Loading market...</Card></PageContainer>;
   }
 
   if (viewState === "unauthenticated") {
@@ -250,30 +256,32 @@ export default function PoolMarketDetail({ marketId }: { marketId: string }) {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
-      <div className="rounded-lg border border-neutral-200 bg-white p-4">
+    <PageContainer size="default">
+      <Card className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold">{data.title}</h1>
             <p className="mt-1 text-sm text-neutral-600">{data.description}</p>
-            <div className="mt-2 text-xs text-neutral-500">
-              Private Pool Bet (no trading) • Status {data.status}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Badge tone="teal">No trading</Badge>
+              <Badge tone={data.status === "LIVE" || data.status === "ACTIVE" ? "positive" : data.status === "RESOLVED" ? "primary" : "neutral"}>{data.status}</Badge>
             </div>
           </div>
           {data.isOwner ? (
-            <button
+            <Button
               onClick={() => navigator.clipboard.writeText(inviteUrl)}
-              className="rounded-md border border-neutral-300 px-3 py-1 text-xs text-neutral-700"
+              variant="outline"
+              size="sm"
               type="button"
             >
               Copy invite link
-            </button>
+            </Button>
           ) : null}
         </div>
-      </div>
+      </Card>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div className="rounded-lg border border-neutral-200 bg-white p-4">
+        <Card className="p-4">
           <h2 className="text-lg font-semibold">Place your bet</h2>
           <p className="mt-1 text-xs text-neutral-500">
             Betting closes in {timeLeftLabel(data.betCloseTime)}
@@ -328,16 +336,16 @@ export default function PoolMarketDetail({ marketId }: { marketId: string }) {
             </div>
           ) : null}
           {message ? <div className="mt-3 text-sm text-neutral-600">{message}</div> : null}
-        </div>
+        </Card>
 
         <div className="space-y-4">
-          <div className="rounded-lg border border-neutral-200 bg-white p-4 text-sm">
+          <Card className="p-4 text-sm">
             <div>Total pot: {data.totalPot.toFixed(2)} U</div>
             <div className="mt-1 text-neutral-600">
               Participants: {data.participants}/{data.maxParticipants}
             </div>
-          </div>
-          <div className="rounded-lg border border-neutral-200 bg-white p-4 text-sm">
+          </Card>
+          <Card className="p-4 text-sm">
             <h3 className="font-semibold">Pool sides</h3>
             <div className="mt-2 space-y-2">
               {data.outcomes.map((outcome) => {
@@ -352,9 +360,9 @@ export default function PoolMarketDetail({ marketId }: { marketId: string }) {
                 );
               })}
             </div>
-          </div>
+          </Card>
           {data.isOwner ? (
-            <div className="rounded-lg border border-neutral-200 bg-white p-4 text-sm">
+            <Card className="p-4 text-sm">
               <div className="font-semibold">Owner actions</div>
               <div className="mt-2 grid grid-cols-1 gap-2">
                 <button
@@ -372,11 +380,11 @@ export default function PoolMarketDetail({ marketId }: { marketId: string }) {
                   Cancel and refund all
                 </button>
               </div>
-            </div>
+            </Card>
           ) : null}
         </div>
       </div>
-    </main>
+    </PageContainer>
   );
 }
 

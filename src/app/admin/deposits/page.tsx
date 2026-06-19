@@ -1,6 +1,11 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { useEffect, useState } from "react";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import PageContainer from "@/components/ui/PageContainer";
 
 type AdminDepositItem = {
   id: string;
@@ -67,59 +72,63 @@ export default function AdminDepositsPage() {
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
+    <PageContainer size="default">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Admin Deposits</h1>
-        <button
-          className="rounded-md border border-neutral-300 px-3 py-1 text-sm"
+        <div>
+          <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Admin</div>
+          <h1 className="mt-1 text-3xl font-semibold text-[var(--poly-text)]">Deposits</h1>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => void load()}
           type="button"
         >
           Refresh
-        </button>
+        </Button>
       </div>
 
-      <div className="mt-4 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Rescan Polygon USDC</h2>
+      <Card className="mt-4 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Rescan Polygon USDC</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           <input
             value={fromBlock}
             onChange={(event) => setFromBlock(event.target.value)}
             placeholder="Optional from block"
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-[var(--poly-border)] px-3 py-2 text-sm focus:border-[var(--poly-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--poly-ring)]"
           />
-          <button
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+          <Button
+            variant="outline"
             onClick={() => void rescan()}
             disabled={rescanBusy}
             type="button"
           >
             {rescanBusy ? "Rescanning..." : "Run rescan"}
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
       {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
       {loading ? <p className="mt-4 text-sm text-neutral-600">Loading...</p> : null}
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Pending / Review</h2>
+      <Card className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Pending / Review</h2>
         {pending.length === 0 ? (
           <p className="mt-3 text-sm text-neutral-600">No pending deposits.</p>
         ) : (
           <DepositTable items={pending} />
         )}
-      </section>
+      </Card>
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Credited</h2>
+      <Card className="mt-6 p-4">
+        <h2 className="text-lg font-semibold text-[var(--poly-text)]">Credited</h2>
         {recent.length === 0 ? (
           <p className="mt-3 text-sm text-neutral-600">No credited deposits yet.</p>
         ) : (
           <DepositTable items={recent} />
         )}
-      </section>
-    </main>
+      </Card>
+    </PageContainer>
   );
 }
 
@@ -128,7 +137,7 @@ function DepositTable({ items }: { items: AdminDepositItem[] }) {
     <div className="mt-3 overflow-x-auto">
       <table className="w-full min-w-[1100px] text-left text-sm">
         <thead>
-          <tr className="border-b border-neutral-200 text-neutral-600">
+          <tr className="border-b border-[var(--poly-border)] bg-[var(--poly-surface-muted)] text-[var(--poly-muted)]">
             <th className="px-2 py-2 font-medium">User</th>
             <th className="px-2 py-2 font-medium">Amount</th>
             <th className="px-2 py-2 font-medium">Status</th>
@@ -158,4 +167,3 @@ function DepositTable({ items }: { items: AdminDepositItem[] }) {
     </div>
   );
 }
-
