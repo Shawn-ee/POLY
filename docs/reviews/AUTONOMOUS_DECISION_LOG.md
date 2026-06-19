@@ -61,6 +61,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #148 | Auto-merged | Docs-only public route smoke manual-run prerequisites. |
 | #149 | Auto-merged | Docs-only route smoke evidence placeholder marked not run. |
 | #150 | Auto-merged | Docs-only route-smoke and autonomous-state docs index update. |
+| #151 | Auto-merged | Docs-only public beta launch blocker summary. |
 
 ## Open PR Decisions
 
@@ -106,6 +107,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Route smoke evidence placeholder was selected to make the current not-run status explicit without starting a server, opening a browser, or capturing screenshots.
 - Route smoke docs index update was selected so future agents can find the route-smoke and autonomous state docs without scanning the full review folder.
 - Public beta launch blocker summary was selected because the evidence set is now broad enough to need a concise no-go summary, while all launch decisions remain human-owned.
+- Final continuation prompt and state checkpoint were selected because remaining obvious work is either human/specialist review, local environment evidence, package/workflow promotion, or UI/source-code review work.
 
 ## Skipped Or Downgraded Tasks
 

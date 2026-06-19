@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-18
 
-Current `dev` checkpoint: `bfb50b8`
+Current `dev` checkpoint: `2af363a`
 
 ## Summary
 
@@ -17,6 +17,8 @@ Recent work focused on:
 - Admin auth and bot dry-run test scopes kept docs-only and review-gated.
 - Persistent autonomous state and decision tracking.
 - Public market-list grouped reference filtering test coverage.
+- Public route smoke prerequisites and not-run evidence placeholder.
+- Public beta launch blocker summary.
 
 ## Product Progress
 
@@ -105,8 +107,8 @@ Safe autonomous work remains available in these lanes:
 
 ## Next Recommended Queue
 
-1. DOC-057: Route smoke manual evidence file template instance.
-2. DOC-059: Public API coverage map refresh after TST-028.
-3. DOC-060: Public route smoke manual-run prerequisites.
-4. FE-002: A very small display-only public-page UI PR, opened for review and not auto-merged unless it satisfies the strict UI policy.
-5. Human/specialist review of PR #25, PR #134, and PR #135.
+1. Human/specialist review of PR #25, PR #134, and PR #135.
+2. Optional local-only anonymous route smoke run when a safe local app instance is available.
+3. Optional small display-only public-page UI PR, opened for review unless strict UI auto-merge conditions are satisfied.
+4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
+5. Human-reviewed package/workflow decision for any future public API or route-smoke test lane promotion.

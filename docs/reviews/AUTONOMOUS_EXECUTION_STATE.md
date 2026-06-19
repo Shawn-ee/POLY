@@ -4,7 +4,7 @@ Last updated: 2026-06-18
 
 Current phase: Phase G - Beta readiness evidence and controlled UI readiness
 
-Current `dev` commit at last update: `74bb6ee`
+Current `dev` commit at last update: `2af363a`
 
 ## Completed Tasks
 
@@ -59,7 +59,9 @@ Recent autonomous tasks completed before this state file:
 - DOC-060: Public route smoke manual-run prerequisites, merged as PR #148.
 - DOC-057: Route smoke evidence placeholder instance, merged as PR #149.
 - DOC-061: Public route smoke docs index update, merged as PR #150.
-- DOC-062: Public beta launch blocker summary, in progress.
+- DOC-062: Public beta launch blocker summary, merged as PR #151.
+- DOC-063: Autonomous continuation prompt refresh, in progress.
+- DOC-064: Final autonomous state checkpoint, in progress.
 
 ## Open PRs
 
@@ -88,11 +90,11 @@ Recent autonomous tasks completed before this state file:
 
 ## Next Task Queue
 
-1. FE-002: Small display-only public-page UI PR if safe, open for review unless strict UI auto-merge applies.
-2. TST-029: Another low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope.
-3. DOC-063: Autonomous continuation prompt refresh, docs-only if stopping soon.
-4. DOC-064: Final autonomous state checkpoint, docs-only if stopping soon.
-5. Human/specialist review of PR #25, PR #134, and PR #135 before merge.
+1. Human/specialist review of PR #25, PR #134, and PR #135 before merge.
+2. Optional local-only anonymous route smoke run only when a safe local app instance is available; record evidence without secrets or production data.
+3. Optional small display-only public-page UI PR only if it avoids wallet/funding, order/trading, auth/admin, bot, deployment, package/workflow/script, Prisma, and financial logic.
+4. Optional low-risk mocked public/read-only test only if it is clearly outside trading/funding/admin/bot scope and not already covered.
+5. Package/workflow/public API test-lane promotion remains human-reviewed.
 
 ## Last Validation Result
 
@@ -110,7 +112,7 @@ Known recurring non-failure output:
 
 ## Current Phase
 
-Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase D UI readiness has a non-auto-merge PR #25 review path, a private pool list replacement scope, and an open non-auto-merge UI PR (#135). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence is current through PR #133 and should be refreshed after the next public route smoke evidence change. A longer progress report now exists at `docs/reviews/AUTONOMOUS_PROGRESS_REPORT.md`.
+Phase A state hygiene is complete enough for continued autonomous work. Phase B public API safety/testing has expanded with mocked public error/empty-state tests, market-list grouped reference filtering, and market-detail current-gap gates. Phase C test-lane readiness is documented, but package/workflow implementation remains human-reviewed. Phase D UI readiness has a non-auto-merge PR #25 review path, a private pool list replacement scope, and an open non-auto-merge UI PR (#135). Phase F high-risk admin/bot testing scopes are being kept docs-only. Phase G beta evidence now includes a route-smoke not-run placeholder and a public beta launch blocker summary.
 
 ## Next Recommended Actions
 
@@ -131,4 +133,5 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 - DOC-057 is adding a dated route smoke evidence placeholder marked not run.
 - DOC-061 is updating the review index so route-smoke and autonomous state docs are discoverable.
 - DOC-062 is summarizing public beta launch blockers without approving beta.
+- DOC-063/DOC-064 are finalizing continuation state for this autonomous session.
 - Record any funding, trading, auth, bot, or deployment implementation need in `docs/reviews/HUMAN_DECISION_REQUIRED.md`.
