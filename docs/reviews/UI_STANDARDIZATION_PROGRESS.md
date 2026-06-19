@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the autonomous checkpoint refresh: `04873ef`.
+Current known `dev` checkpoint after the autonomous checkpoint refresh: `fac8139`.
 
 ## Big UI Overhaul Milestone
 
@@ -37,6 +37,7 @@ Post-merge state:
 - PR #186 merged a docs-only checkpoint refresh after PR #185.
 - PR #188 merged a docs-only checkpoint refresh after PR #186.
 - PR #190 merged a docs-only checkpoint refresh after PR #188.
+- PR #191 merged the anonymous public route smoke checklist.
 - Remaining autonomous UI work should prefer smoke evidence preparation, docs-only checklists, or very small display-only follow-ups that avoid forbidden areas.
 
 Scope confirmed:
@@ -182,7 +183,7 @@ Needed evidence:
 ## Next UI Tasks
 
 1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
-   - UI-012A: Anonymous route-smoke checklist prepared in `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`; no server, browser, screenshots, fixtures, or runtime code.
+   - UI-012A: Anonymous route-smoke checklist completed in `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`; no server, browser, screenshots, fixtures, or runtime code.
 2. UI-010: Cross-page empty/loading/error terminology map. Completed in `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md`.
 3. UI-011: Homepage wallet/admin surface decision. Completed in `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md`.
 4. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
@@ -306,6 +307,25 @@ Skipped high-risk implementation:
 - Market-detail source-code changes.
 - Order ticket, orderbook, open orders, trades, fills, positions, balances, pool actions, reference data, and bot behavior.
 - Wallet, deposit, withdrawal, ledger, matching, settlement, admin auth, deployment, package scripts, workflows, Prisma, and migrations.
+
+## Checkpoint After PR #191
+
+Tasks completed in this checkpoint:
+
+- UI-012A: Anonymous public route smoke checklist.
+
+Files added or updated:
+
+- `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md`
+
+Validation:
+
+- `git diff --check` passed.
+
+Skipped high-risk implementation:
+
+- Server startup, browser automation, screenshots, fixtures, and route smoke execution.
+- Package scripts, workflows, Playwright config, runtime code, UI code, API behavior, auth, wallet, funding, trading, admin, bot, Prisma, migrations, deployment, secrets, and production data.
 
 ## Auto-Merge Notes
 

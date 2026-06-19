@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `04873ef`
+Current `dev` checkpoint: `fac8139`
 
 ## Summary
 
@@ -31,6 +31,7 @@ Recent work focused on:
 - Checkpoint refresh after PR #185, merged as PR #186.
 - Checkpoint refresh after PR #186, merged as PR #188.
 - Checkpoint refresh after PR #188, merged as PR #190.
+- Anonymous route smoke checklist, merged as PR #191.
 
 ## Product Progress
 
@@ -84,6 +85,7 @@ Resolved UI work:
 - PR #186: checkpoint refresh after PR #185.
 - PR #188: checkpoint refresh after PR #186.
 - PR #190: checkpoint refresh after PR #188.
+- PR #191: anonymous route smoke checklist.
 
 Review-gated UI scope docs:
 
@@ -135,7 +137,7 @@ Known recurring non-failure output:
 
 Safe autonomous work remains available in these lanes:
 
-- Docs-only public route smoke evidence status updates.
+- Docs-only public route smoke evidence status updates and anonymous checklist refinements.
 - Docs-only public beta evidence tracker refreshes.
 - Docs-only PR review lane rollups for PR #25 and any future non-auto-merge PRs.
 - Low-risk public/read-only mocked tests that do not require product/runtime changes.

@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `04873ef`
+Current `dev` commit at last update: `fac8139`
 
 ## Completed Tasks
 
@@ -89,6 +89,7 @@ Recent autonomous tasks completed before this state file:
 - DOC-071: Checkpoint refresh after PR #185, merged as PR #186.
 - DOC-072: Checkpoint refresh after PR #186, merged as PR #188.
 - DOC-073: Checkpoint refresh after PR #188, merged as PR #190.
+- UI-012A: Anonymous route smoke checklist, merged as PR #191.
 
 ## Open PRs
 
@@ -140,13 +141,14 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 
 ## Next Recommended Actions
 
-- PR #175, PR #176, and follow-up docs-only PRs #179-#186, #188, and #190 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
+- PR #175, PR #176, and follow-up docs-only PRs #179-#186, #188, #190, and #191 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
 - Keep PR #25 open as draft unless a human reviews or splits it.
 - Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.
 - `docs/reviews/UI_STATE_TERMINOLOGY_MAP.md` now maps loading, empty, error, signed-out, unavailable, and beta-gated wording by route group for future UI copy PRs.
 - `docs/reviews/HOMEPAGE_WALLET_ADMIN_SURFACE_DECISION.md` now records that homepage wallet/admin concepts should stay secondary or out of normal content before future homepage code cleanup.
 - `docs/reviews/MARKET_DETAIL_SCREENSHOT_SMOKE_CHECKLIST.md` now records safe preconditions and forbidden actions before any future market-detail screenshots, smoke evidence, or code.
+- `docs/reviews/PUBLIC_ROUTE_SMOKE_ANONYMOUS_CHECKLIST.md` now records the anonymous public route observations and stop conditions for a future local-only smoke run.
 - Event detail, market detail, wallet, and portfolio now have explicit planning/scope boundaries before future UI code.
 - Admin routes now have an explicit implementation scope and remain human-reviewed by default.
 - Continue docs-only route/test readiness work and avoid repeating already-covered public API test groups.
