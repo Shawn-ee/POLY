@@ -5,7 +5,7 @@ export default function SportsPage() {
     <SportsEventsPage
       title="Sports Prediction Markets"
       eyebrow="Sports"
-      description="Browse sports events, then trade event markets such as match winner, totals, both teams to score, qualification, and score lines."
+      description="Browse sports by event first, then compare the Yes/No markets attached to each match or tournament."
       endpoint="/api/events?category=sports"
       showHeroLinks
       showTabs

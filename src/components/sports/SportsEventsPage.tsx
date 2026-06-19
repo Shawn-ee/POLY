@@ -100,7 +100,7 @@ export default function SportsEventsPage({
               className="rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] p-5 transition hover:border-[var(--poly-primary)] hover:bg-white"
             >
               <div className="text-sm font-semibold text-[var(--poly-text)]">World Cup</div>
-              <div className="mt-1 text-sm text-[var(--poly-muted)]">Demo event markets grouped by fixture.</div>
+              <div className="mt-1 text-sm text-[var(--poly-muted)]">Tournament markets grouped by fixture.</div>
             </Link>
           </div>
         ) : null}
@@ -139,10 +139,12 @@ export default function SportsEventsPage({
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold text-[var(--poly-text)]">Events</h2>
-            <p className="mt-1 text-sm text-[var(--poly-muted)]">Open an event to see its markets and outcomes.</p>
+            <p className="mt-1 text-sm text-[var(--poly-muted)]">
+              Open an event to compare related Yes/No markets.
+            </p>
           </div>
           <Link href="/markets" className="text-sm font-semibold text-[var(--poly-primary)] hover:text-[var(--poly-primary-hover)]">
-            General markets
+            All markets
           </Link>
         </div>
 
@@ -151,7 +153,10 @@ export default function SportsEventsPage({
         ) : error ? (
           <ErrorState>{error}</ErrorState>
         ) : filteredEvents.length === 0 ? (
-          <EmptyState title="No sports events found" description="Try another status filter." />
+          <EmptyState
+            title="No sports events found"
+            description="Try another status filter, or check back as beta markets are prepared."
+          />
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filteredEvents.map((event) => (

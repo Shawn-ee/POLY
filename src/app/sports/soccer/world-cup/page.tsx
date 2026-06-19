@@ -5,7 +5,7 @@ export default function WorldCupPage() {
     <SportsEventsPage
       title="World Cup"
       eyebrow="Soccer"
-      description="World Cup event markets grouped by match. Use the event page to compare match, goals, qualify, and score markets."
+      description="World Cup markets grouped by match. Open an event to compare the available Yes/No questions before trading."
       endpoint="/api/sports/soccer/world-cup/events"
       showTabs
     />

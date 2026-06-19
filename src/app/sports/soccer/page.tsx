@@ -5,7 +5,7 @@ export default function SoccerPage() {
     <SportsEventsPage
       title="Soccer"
       eyebrow="Sports"
-      description="Soccer events grouped by fixture, with multiple prediction markets under each event."
+      description="Find soccer fixtures, then open an event to compare match, goals, qualification, and score markets."
       endpoint="/api/sports/soccer/events"
       showHeroLinks
       showTabs
