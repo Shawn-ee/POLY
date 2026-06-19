@@ -96,6 +96,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #200 | Auto-merged | Docs-only checkpoint refresh after PR #199; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
 | #197 | Auto-merged | Docs-only mobile viewport route-smoke checklist; no server, browser run, screenshots, package/workflow changes, fixtures, auth, wallet, funding, trading, admin, bot, or production data. |
 | #201 | Auto-merged | Docs-only open PR queue refresh after PR #197; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
+| #202 | Auto-merged | Docs-only checkpoint refresh after PR #201; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
 
 ## Open PR Decisions
 
@@ -104,7 +105,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #25 | Do not auto-merge | Draft UI/product-code PR touching wallet/admin/private-pool surfaces. Requires human review or split PRs. |
 | #177 | Do not merge as-is | Docs-only post-merge state hygiene PR targets older checkpoint `8db1fd7`; later `dev` commits already supersede the same state area. Close or update after maintainer review. |
 | #192 | Do not merge as-is | Draft docs-only checkpoint after PR #191 is superseded by merged PR #193. Close or update after maintainer review. |
-| #198 | Do not merge as-is | Draft docs-only checkpoint after PR #196 is superseded by merged PR #199, PR #200, PR #197, and PR #201. Close or update after maintainer review. |
+| #198 | Do not merge as-is | Draft docs-only checkpoint after PR #196 is superseded by merged PR #199, PR #200, PR #197, PR #201, and PR #202. Close or update after maintainer review. |
 | #135 | Closed as superseded | Replaced by PR #154, which carried the same focused display intent with a lint-safe initial load path and full validation. |
 | #175 | Merged after self-review | User requested self-review and merge if safe. The PR was display-only, avoided forbidden files/logic, passed focused validation/build, and full-lint failures were documented as pre-existing/unrelated. |
 | #176 | Auto-merged | Docs-only post-merge state refresh after PR #175; no runtime behavior changed. |
@@ -183,6 +184,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - `agent/public-route-smoke-mobile-checklist` was selected because the first anonymous route-smoke run still needed desktop, tablet/narrow desktop, and mobile viewport observation prompts before any local server, browser, screenshots, fixtures, or package/workflow changes.
 - `agent/open-pr-queue-after-pr197` was selected because PR #198 is now stale after merged PR #199, PR #200, and PR #197 and should not be merged as-is.
 - `agent/current-dev-checkpoint-pr201` was selected because current `dev` contains merged PR #201 and several checkpoint trackers still pointed at the earlier `5d19f3d` checkpoint.
+- `agent/current-dev-checkpoint-pr202` was selected because current `dev` contains merged PR #202 and several checkpoint trackers still pointed at the earlier `d08f95c` checkpoint.
 
 ## Skipped Or Downgraded Tasks
 

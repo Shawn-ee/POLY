@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the open PR queue refresh following the mobile viewport route-smoke checklist: `d08f95c`.
+Current known `dev` checkpoint after the checkpoint refresh following PR #201: `6e618e7`.
 
 ## Big UI Overhaul Milestone
 
@@ -45,6 +45,7 @@ Post-merge state:
 - PR #200 merged a docs-only checkpoint refresh after PR #199.
 - PR #197 merged the mobile viewport route-smoke checklist.
 - PR #201 merged the open PR queue refresh after PR #197.
+- PR #202 merged the checkpoint refresh after PR #201.
 - Remaining autonomous UI work should prefer smoke evidence preparation, docs-only checklists, or very small display-only follow-ups that avoid forbidden areas.
 
 Scope confirmed:
