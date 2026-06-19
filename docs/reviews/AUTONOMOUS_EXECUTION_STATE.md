@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `c399472`
+Current `dev` commit at last update: `6474faf`
 
 ## Completed Tasks
 
@@ -101,14 +101,15 @@ Recent autonomous tasks completed before this state file:
 - DOC-081: Checkpoint refresh after PR #202, merged as PR #204.
 - DOC-082: Checkpoint refresh after PR #204, merged as PR #208.
 - UI-018A: Event-detail loading/error/empty state copy polish, merged as PR #203 after focused validation.
+- DOC-083: Checkpoint refresh after PR #203, merged as PR #209.
 
 ## Open PRs
 
 - PR #25: Draft UI/product-code PR. Not auto-mergeable. Reviewed separately in `docs/reviews/PR25_UI_REVIEW_CHECKLIST.md`, `docs/reviews/PR25_SPLIT_MERGE_DECISION.md`, and `docs/reviews/PR25_ADMIN_FUNDING_UI_REVIEW_PACKET.md`.
 - PR #177: Docs-only post-merge state hygiene PR from the older `8db1fd7` checkpoint. Superseded by later `dev` state refreshes and should be closed or updated by a human/maintainer rather than merged as-is.
 - PR #192: Draft docs-only checkpoint after PR #191. Superseded by merged PR #193 and later checkpoint docs through PR #199; should be closed or updated by a human/maintainer rather than merged as-is.
-- PR #198: Draft docs-only checkpoint after PR #196. Superseded by merged PR #199 and later docs through PR #200, PR #197, PR #201, PR #202, and PR #204; should be closed or updated by a human/maintainer rather than merged as-is.
-- PR #205, PR #206, PR #207: Draft docs-only checkpoint refresh PRs after PR #204. They are superseded by merged PR #208 and this post-PR #203 checkpoint; close or reconcile rather than merging as-is.
+- PR #198: Draft docs-only checkpoint after PR #196. Superseded by merged PR #199 and later docs through PR #200, PR #197, PR #201, PR #202, PR #204, PR #208, PR #203, and PR #209; should be closed or updated by a human/maintainer rather than merged as-is.
+- PR #205, PR #206, PR #207: Draft docs-only checkpoint refresh PRs after PR #204. They are superseded by merged PR #208, PR #209, and the post-PR #203 checkpoint; close or reconcile rather than merging as-is.
 
 ## Blocked Tasks
 
@@ -155,7 +156,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 
 ## Next Recommended Actions
 
-- PR #175, PR #176, follow-up docs-only PRs #179-#186, #188, #190, #191, #193, #194, #196, #199, #200, #197, #201, #202, #204, #208, and event-detail state-copy PR #203 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
+- PR #175, PR #176, follow-up docs-only PRs #179-#186, #188, #190, #191, #193, #194, #196, #199, #200, #197, #201, #202, #204, #208, event-detail state-copy PR #203, and checkpoint PR #209 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
 - Keep PR #25 open as draft unless a human reviews or splits it.
 - Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.
