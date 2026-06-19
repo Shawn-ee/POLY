@@ -16,7 +16,7 @@ It does not change UI code, product logic, wallet/deposit/withdrawal behavior, l
 
 ## Current Dev Checkpoint
 
-Current known `dev` checkpoint after the big UI follow-up state refresh: `f91470f`.
+Current known `dev` checkpoint after the autonomous checkpoint refresh: `45abc57`.
 
 ## Big UI Overhaul Milestone
 
@@ -31,6 +31,7 @@ Merge status: Merged after autonomous self-review because the diff remained disp
 Post-merge state:
 
 - PR #176 merged a docs-only state refresh after PR #175.
+- PR #183 merged a docs-only autonomous checkpoint refresh after PR #182.
 - Remaining autonomous UI work should prefer smoke evidence preparation, docs-only checklists, or very small display-only follow-ups that avoid forbidden areas.
 
 Scope confirmed:

@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `f91470f`
+Current `dev` checkpoint: `45abc57`
 
 ## Summary
 
@@ -25,6 +25,7 @@ Recent work focused on:
 - Homepage wallet/admin surface decision before future homepage code cleanup, merged as PR #180.
 - Market-detail screenshot/smoke checklist before any future market-detail code, merged as PR #181.
 - Current-dev autonomous state refresh after UI follow-ups, merged as PR #182.
+- Autonomous checkpoint refresh after PR #182, merged as PR #183.
 
 ## Product Progress
 
@@ -72,6 +73,7 @@ Resolved UI work:
 - PR #180: homepage wallet/admin surface decision.
 - PR #181: market-detail screenshot/smoke checklist.
 - PR #182: current-dev autonomous state refresh after UI follow-ups.
+- PR #183: autonomous checkpoint refresh after PR #182.
 
 Review-gated UI scope docs:
 
