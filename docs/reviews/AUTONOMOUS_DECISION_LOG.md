@@ -56,6 +56,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #143 | Auto-merged | Docs-only human review queue rollup for non-auto-merge PRs #25, #134, and #135. |
 | #144 | Auto-merged | Docs-only public beta evidence tracker refresh. |
 | #145 | Auto-merged | Low-risk mocked public/read-only test for `/api/markets` grouped reference filtering; full validation passed. |
+| #146 | Auto-merged | Docs-only checkpoint after public beta evidence and test progress. |
 
 ## Open PR Decisions
 
@@ -96,6 +97,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - Human review queue rollup was selected to preserve the autonomous decision not to merge PR #25, #134, or #135 while continuing other safe work.
 - Public beta evidence tracker refresh was selected after route smoke and human review queue docs changed, so beta evidence does not lag the autonomous state.
 - Public market-list grouped reference filter test was selected because it used existing mocks, avoided market-detail current-gap ambiguity, changed only `src/__tests__/`, and covered public/read-only response behavior.
+- Public API coverage map refresh was selected because PR #145 changed test coverage and the docs should remain the source of truth for future task selection.
 
 ## Skipped Or Downgraded Tasks
 

@@ -18,7 +18,7 @@ This document does not add tests, change CI, change route behavior, change API c
 | Taxonomy reads | `src/__tests__/public.taxonomy.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/categories` and `/api/tags` no-leak, response-shape, and empty-state paths. |
 | Event reads | `src/__tests__/public.events.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/events` and `/api/events/[slug]` with mocked Prisma, including not-found/error response paths. |
 | Sports reads | `src/__tests__/public.sports.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/sports`, `/api/sports/soccer/events`, and `/api/sports/soccer/world-cup/events`, including empty-state paths. |
-| Market list reads | `src/__tests__/public.market-list.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/markets` filter/query response shape, no-leak assertions, and empty-list behavior. |
+| Market list reads | `src/__tests__/public.market-list.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/markets` filter/query response shape, no-leak assertions, empty-list behavior, and grouped reference market filtering. |
 | Event market reads | `src/__tests__/public.event-markets.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/events/[slug]/markets` and `/api/events/[slug]/grouped-markets`, including not-found/error response paths. |
 | Market chart reads | `src/__tests__/public.market-chart.no-leak.test.ts` | Expanded mocked coverage | Covers `/api/markets/[id]/chart` success, empty-series, hidden-market guard, and missing-market paths. |
 
@@ -66,8 +66,9 @@ These route groups require specialist review and often human review even when te
 1. Add a market detail current-gap test only if it remains mocked/local and is opened for review rather than auto-merged by default.
 2. Add target-contract tests for market detail only after the route contract is approved.
 3. Keep event market, market list, chart, taxonomy, sports, and event tests aligned with any future public response-shape decisions.
-4. Leave quote, orderbook, and trade-tape tests behind `docs/reviews/QUOTE_ORDERBOOK_NO_LEAK_TEST_SCOPE.md`.
-5. Leave reference/liquidity routes blocked behind public/admin split approval and specialist review.
+4. Keep the market-list grouped reference filter test aligned with future event-first and grouped-market routing decisions.
+5. Leave quote, orderbook, and trade-tape tests behind `docs/reviews/QUOTE_ORDERBOOK_NO_LEAK_TEST_SCOPE.md`.
+6. Leave reference/liquidity routes blocked behind public/admin split approval and specialist review.
 
 ## Promotion Question
 
