@@ -35,7 +35,7 @@ This matrix tracks the UI standardization state of every major route. It does no
 | `/markets` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
 | `/markets/[id]` | Planned/review-gated | Market detail can touch trade/order, pool, position, bot, and wallet-adjacent behavior. | Screenshot/smoke checklist or small read-only shell PR only after UI-019. | No by default |
 | `/login` | Done for first pass | Needs smoke/screenshot evidence. | Public route smoke evidence. | Docs-only yes |
-| `/portfolio` | Human-review only | Account state and positions are calculation-adjacent. | Empty/mobile state plan before code. | No by default |
+| `/portfolio` | Planned/review-gated | Account state and positions are calculation-adjacent. | Only small display PRs after UI-009; calculations must remain untouched. | No by default |
 | `/wallet` | Human-review only | Funding copy can imply production readiness. | Human-reviewed display scope only after funding-claim review. | No |
 | `/create` | Needs copy cleanup | Private pools are delayed/post-MVP. | Hide/delay docs or display-only framing. | No by default |
 | `/my-pools` | Done for first pass | Optional private-pool surface. | Further work only if small/display-only. | Maybe if strict |
@@ -68,10 +68,10 @@ This matrix tracks the UI standardization state of every major route. It does no
 ## Next Queue
 
 1. Public route smoke evidence for `/`, `/sports`, `/events`, `/markets`, `/login`.
-2. Portfolio/account display plan before code.
-3. Wallet funding-claim review before code.
-4. Event detail loading/error/empty display-only scope after UI-018.
-5. Market detail screenshot/smoke checklist before code.
+2. Admin IA display plan before admin code.
+3. Event detail loading/error/empty display-only scope after UI-018.
+4. Market detail screenshot/smoke checklist before code.
+5. Portfolio header/empty-state copy only if calculations remain untouched.
 
 ## Validation
 

@@ -30,7 +30,7 @@ Current known `dev` checkpoint after the market-detail planning pass: `6b2a758`.
 | `/sports` | Sports readiness checklist, PR #160 | Improved with sports-first copy | Later add route smoke/screenshot evidence. |
 | `/sports/soccer` | Sports readiness checklist, PR #160 | Improved with soccer event-first copy | Later add route smoke/screenshot evidence. |
 | `/sports/soccer/world-cup` | Sports readiness checklist, PR #160 | Improved with demo framing removed | Later add route smoke/screenshot evidence. |
-| `/portfolio` | Portfolio mobile card spec | Needs review-gated display task | Do not change calculations. |
+| `/portfolio` | Portfolio mobile card spec, portfolio implementation scope | Planned; code remains review-gated | Do not change calculations. |
 | `/wallet` | Account risk disclosure spec, wallet beta-state spec, funding-claim review | Human-reviewed by default | Display/copy only after explicit human-reviewed scope. |
 | `/login` | IA and risk copy docs, PR #164 | Improved with beta-safe copy and lint-safe error display | Later add route smoke/screenshot evidence. |
 | `/create` | IA and page review | Delayed/post-MVP | Keep out of public MVP navigation. |
@@ -58,6 +58,7 @@ Current known `dev` checkpoint after the market-detail planning pass: `6b2a758`.
 | `/events/[slug]` | Pending after UI-018 | Docs-only display shell plan separates safe read-only polish from grouped trade/order behavior. | Docs-only diff checks. | Planned |
 | `/markets/[id]` | Pending after UI-019 | Docs-only display shell plan separates market comprehension from orderbook, order ticket, pool action, position, and bot/reference behavior. | Docs-only diff checks. | Planned |
 | `/wallet` | Pending after UI-007 | Docs-only funding-claim review defines copy and behavior boundaries before any wallet display work. | Docs-only diff checks. | Planned |
+| `/portfolio` | Pending after UI-009 | Docs-only implementation scope separates safe display polish from balance, PnL, position, order, and history semantics. | Docs-only diff checks. | Planned |
 
 ## PRs Merged
 
@@ -110,15 +111,15 @@ Needed evidence:
 ## Next UI Tasks
 
 1. UI-012: Public route smoke evidence for homepage, sports, markets, events, and login.
-2. UI-006: Portfolio empty/mobile-state display plan before code.
-3. UI-008: Admin IA display plan before admin UI changes.
-4. UI-009: Portfolio/account display implementation scope before code.
-5. UI-010: Cross-page empty/loading/error terminology map.
-6. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
-7. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
-8. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
-9. UI-022: Market detail screenshot/smoke checklist before any code.
-10. UI-023: Wallet display scope packet if a human confirms funding-copy boundaries.
+2. UI-008: Admin IA display plan before admin UI changes.
+3. UI-010: Cross-page empty/loading/error terminology map.
+4. UI-011: Homepage wallet/admin surface decision, docs-only before further homepage code.
+5. UI-020: Login, homepage, sports, events, and markets mobile smoke evidence.
+6. UI-021: Event detail loading/error/empty copy PR only if it avoids grouped trade behavior.
+7. UI-022: Market detail screenshot/smoke checklist before any code.
+8. UI-023: Wallet display scope packet if a human confirms funding-copy boundaries.
+9. UI-024: Portfolio header/empty-state copy PR only if calculations remain untouched.
+10. UI-025: Admin IA display implementation packet before admin code.
 
 ## Blocked UI Decisions
 
