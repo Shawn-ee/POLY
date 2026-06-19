@@ -16,7 +16,7 @@ Risk level: Low for docs-only evidence status
 - Environment: Not run
 - Base URL: Not run
 - Tester/subagent: LeadAgent planning checkpoint
-- Related PR: TBD
+- Related PR: PR #205
 - Related docs:
   - `docs/reviews/PUBLIC_ROUTE_PAGE_SMOKE_EVIDENCE_PLAN.md`
   - `docs/reviews/PUBLIC_ROUTE_SMOKE_EVIDENCE_TEMPLATE.md`
