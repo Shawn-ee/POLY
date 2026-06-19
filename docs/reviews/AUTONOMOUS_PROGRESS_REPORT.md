@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `0d13a84`
+Current `dev` checkpoint: `4a7e0a9`
 
 ## Summary
 
@@ -28,6 +28,7 @@ Recent work focused on:
 - Autonomous checkpoint refresh after PR #182, merged as PR #183.
 - Checkpoint refresh after PR #183, merged as PR #184.
 - Checkpoint refresh after PR #184, merged as PR #185.
+- Checkpoint refresh after PR #185, merged as PR #186.
 
 ## Product Progress
 
@@ -78,6 +79,7 @@ Resolved UI work:
 - PR #183: autonomous checkpoint refresh after PR #182.
 - PR #184: checkpoint refresh after PR #183.
 - PR #185: checkpoint refresh after PR #184.
+- PR #186: checkpoint refresh after PR #185.
 
 Review-gated UI scope docs:
 
