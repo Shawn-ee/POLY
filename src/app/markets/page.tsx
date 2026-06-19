@@ -177,101 +177,117 @@ function MarketsPageInner() {
 
   return (
     <PageContainer>
-      <div className="mb-8 rounded-lg border border-[var(--poly-border)] bg-white p-5 shadow-[var(--poly-shadow-sm)]">
+      <div className="mb-6 rounded-lg border border-[var(--poly-border)] bg-white p-5 shadow-[var(--poly-shadow-sm)]">
         <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Market board</div>
-        <h1 className="mt-2 text-3xl font-semibold text-[var(--poly-text)]">Live Markets</h1>
-        <p className="mt-1 text-sm text-[var(--poly-muted)]">
-          Browse categories, follow events, and compare binary market prices.
+        <h1 className="mt-2 text-3xl font-semibold text-[var(--poly-text)]">Find a market</h1>
+        <p className="mt-2 max-w-2xl text-sm text-[var(--poly-muted)]">
+          Start with live sports markets, compare Yes/No prices, and open an event when you want more context.
         </p>
+        <div className="mt-4 rounded-md border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] px-3 py-2 text-xs text-[var(--poly-muted)]">
+          POLY is in beta. Market prices are shown for discovery; funding and trading safeguards stay separate.
+        </div>
       </div>
 
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        {[
-          { key: "live", label: "Live" },
-          { key: "resolved", label: "Resolved" },
-          { key: "all", label: "All" },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => {
-              const params = new URLSearchParams(searchParams.toString());
-              params.set("view", tab.key);
-              router.replace(`/markets?${params.toString()}`);
-            }}
-            className={`rounded-full border px-3 py-1 text-xs ${
-              activeView === tab.key
-                ? "border-[var(--poly-primary)] bg-[var(--poly-primary)] text-white"
-                : "border-[var(--poly-border)] bg-white text-[var(--poly-muted)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
-            }`}
-            type="button"
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <section className="mb-8 rounded-lg border border-[var(--poly-border)] bg-white p-4 shadow-[var(--poly-shadow-sm)]">
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-[var(--poly-text)]">Browse markets</h2>
+            <p className="text-xs text-[var(--poly-muted)]">Filter by status, category, and league.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { key: "live", label: "Live" },
+              { key: "resolved", label: "Resolved" },
+              { key: "all", label: "All" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set("view", tab.key);
+                  router.replace(`/markets?${params.toString()}`);
+                }}
+                className={`rounded-full border px-3 py-1 text-xs ${
+                  activeView === tab.key
+                    ? "border-[var(--poly-primary)] bg-[var(--poly-primary)] text-white"
+                    : "border-[var(--poly-border)] bg-white text-[var(--poly-muted)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
+                }`}
+                type="button"
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <div className="mb-2 flex flex-wrap items-center gap-1">
-        {topTags.map((tag) => (
-          <button
-            key={tag.id}
-            onClick={() => {
-              if (tag.slug === "all") {
-                setFilters("all", "");
-                return;
-              }
-              if (tag.slug === "sports") {
-                setFilters("sports", activeLeague || "nba");
-                return;
-              }
-              setFilters(tag.slug, "");
-            }}
-            className={`rounded-full border px-3 py-1 text-xs ${
-              (tag.slug === "all" && (!activeCategory || activeCategory === "all")) ||
-              (tag.slug !== "all" && activeCategory === tag.slug)
-                ? "border-[var(--poly-primary)] bg-[var(--poly-primary)] text-white"
-                : "border-[var(--poly-border)] bg-white text-[var(--poly-muted)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
-            }`}
-            type="button"
-          >
-            {tag.name}
-          </button>
-        ))}
-        {activeCategory === "sports" ? (
-          <button
-            onClick={() => setShowAllLeagues((prev) => !prev)}
-            className="rounded-full border border-[var(--poly-border)] bg-white px-3 py-1 text-xs text-[var(--poly-muted)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
-            type="button"
-          >
-            {showAllLeagues ? "Less" : "Leagues"}
-          </button>
-        ) : null}
-      </div>
-
-      {activeCategory === "sports" ? (
-        <div className="mb-2 flex flex-wrap gap-1">
-          {visibleSportsChips.map((tag) => (
+        <div className="flex flex-wrap items-center gap-1">
+          {topTags.map((tag) => (
             <button
               key={tag.id}
-              onClick={() => setFilters("sports", tag.slug)}
+              onClick={() => {
+                if (tag.slug === "all") {
+                  setFilters("all", "");
+                  return;
+                }
+                if (tag.slug === "sports") {
+                  setFilters("sports", activeLeague || "nba");
+                  return;
+                }
+                setFilters(tag.slug, "");
+              }}
               className={`rounded-full border px-3 py-1 text-xs ${
-                activeLeague === tag.slug
-                  ? "border-[var(--poly-teal)] bg-[var(--poly-teal)] text-white"
-                  : "border-[var(--poly-border)] bg-white text-[var(--poly-muted)] hover:border-[var(--poly-teal)] hover:text-[var(--poly-teal)]"
+                (tag.slug === "all" && (!activeCategory || activeCategory === "all")) ||
+                (tag.slug !== "all" && activeCategory === tag.slug)
+                  ? "border-[var(--poly-primary)] bg-[var(--poly-primary)] text-white"
+                  : "border-[var(--poly-border)] bg-white text-[var(--poly-muted)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
               }`}
               type="button"
             >
               {tag.name}
             </button>
           ))}
+          {activeCategory === "sports" ? (
+            <button
+              onClick={() => setShowAllLeagues((prev) => !prev)}
+              className="rounded-full border border-[var(--poly-border)] bg-white px-3 py-1 text-xs text-[var(--poly-muted)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-primary)]"
+              type="button"
+            >
+              {showAllLeagues ? "Less" : "Leagues"}
+            </button>
+          ) : null}
         </div>
-      ) : null}
+
+        {activeCategory === "sports" ? (
+          <div className="mt-3 border-t border-[var(--poly-border)] pt-3">
+            <div className="mb-2 text-xs font-semibold uppercase text-[var(--poly-muted)]">Leagues</div>
+            <div className="flex flex-wrap gap-1">
+              {visibleSportsChips.map((tag) => (
+                <button
+                  key={tag.id}
+                  onClick={() => setFilters("sports", tag.slug)}
+                  className={`rounded-full border px-3 py-1 text-xs ${
+                    activeLeague === tag.slug
+                      ? "border-[var(--poly-teal)] bg-[var(--poly-teal)] text-white"
+                      : "border-[var(--poly-border)] bg-white text-[var(--poly-muted)] hover:border-[var(--poly-teal)] hover:text-[var(--poly-teal)]"
+                  }`}
+                  type="button"
+                >
+                  {tag.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </section>
 
       {events.length ? (
         <section className="mb-8">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-[var(--poly-text)]">Active Events</h2>
-              <p className="text-sm text-[var(--poly-muted)]">Explore grouped markets before drilling into individual contracts.</p>
+              <h2 className="text-lg font-semibold text-[var(--poly-text)]">Active events</h2>
+              <p className="text-sm text-[var(--poly-muted)]">
+                Use events to compare related markets before drilling into one contract.
+              </p>
             </div>
             <button
               onClick={() => router.push("/events")}
@@ -307,7 +323,10 @@ function MarketsPageInner() {
       {loading ? (
         <LoadingState label="Loading markets" count={8} />
       ) : markets.length === 0 ? (
-        <EmptyState title="No markets yet" description="Try another category or view." />
+        <EmptyState
+          title="No markets match this view"
+          description="Try Live sports, another league, or All markets while beta markets are being prepared."
+        />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {markets.map((market) => (
@@ -333,10 +352,13 @@ function MarketsPageInner() {
                 className="group flex h-full flex-col justify-between rounded-lg border border-[var(--poly-border)] bg-white p-5 shadow-[var(--poly-shadow-sm)] transition hover:border-[var(--poly-border-strong)] hover:shadow-[var(--poly-shadow-md)]"
               >
                 <div>
-                  <h3 className="line-clamp-2 text-base font-semibold text-[var(--poly-text)]">{market.title}</h3>
-                  <div className="mt-2 text-xs text-[var(--poly-muted)]">
+                  <div className="mb-3 inline-flex rounded-full bg-[var(--poly-surface-muted)] px-2 py-1 text-xs font-semibold text-[var(--poly-muted)]">
                     {market.referenceOnly && market.tradable === false ? "Coming soon" : market.status}
                   </div>
+                  <h3 className="line-clamp-2 text-base font-semibold text-[var(--poly-text)]">{market.title}</h3>
+                  <p className="mt-2 text-sm text-[var(--poly-muted)]">
+                    Price display is not ready for this market yet.
+                  </p>
                 </div>
                 <div className="mt-6 text-xs text-[var(--poly-muted)]">
                   Outcomes: {market.outcomes.map((outcome) => outcome.name).join(" / ")}
