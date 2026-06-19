@@ -81,6 +81,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 | #179 | Auto-merged | Docs-only UI state terminology map; no runtime code, tests, package/workflow changes, browser run, screenshots, or production data. |
 | #180 | Auto-merged | Docs-only homepage wallet/admin surface decision; no runtime code, wallet/funding behavior, admin auth, package/workflow changes, browser run, screenshots, or production data. |
 | #181 | Auto-merged | Docs-only market-detail screenshot/smoke checklist; no runtime code, browser run, screenshots, fixtures, order behavior, wallet behavior, bot/reference behavior, or production data. |
+| #182 | Auto-merged | Docs-only current-dev autonomous state refresh after UI follow-ups; no runtime code, browser run, screenshots, package/workflow changes, fixtures, wallet, order, bot/reference, or production data. |
 
 ## Open PR Decisions
 
@@ -150,7 +151,7 @@ Autonomous LeadAgent must not auto-merge backend implementation, UI product-code
 - `agent/ui-state-terminology-map` was selected because UI-010 remained a safe docs-only follow-up after the big UI milestone and prevents future copy PRs from guessing about loading, empty, error, signed-out, unavailable, and beta-gated state wording.
 - `agent/homepage-surface-decision` was selected because UI-011 remained a safe docs-only follow-up and future homepage account/admin cleanup needs an explicit boundary before any source-code changes.
 - `agent/market-detail-smoke-checklist` was selected because UI-019A/UI-022 remained a safe docs-only prerequisite before any market-detail screenshot, smoke evidence, or source-code work.
-- `agent/post-ui-state-current-dev-refresh` was selected because current `dev` contains merged docs-only PRs #179-#181 and open stale PR #177 was not reflected in the state docs.
+- `agent/post-ui-state-current-dev-refresh` was selected because current `dev` contained merged docs-only PRs #179-#181 and open stale PR #177 was not reflected in the state docs; it merged as PR #182.
 
 ## Skipped Or Downgraded Tasks
 

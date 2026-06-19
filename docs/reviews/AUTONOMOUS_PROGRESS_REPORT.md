@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-19
 
-Current `dev` checkpoint: `d557708`
+Current `dev` checkpoint: `f91470f`
 
 ## Summary
 
@@ -24,6 +24,7 @@ Recent work focused on:
 - Cross-page UI state terminology mapping after the big UI milestone, merged as PR #179.
 - Homepage wallet/admin surface decision before future homepage code cleanup, merged as PR #180.
 - Market-detail screenshot/smoke checklist before any future market-detail code, merged as PR #181.
+- Current-dev autonomous state refresh after UI follow-ups, merged as PR #182.
 
 ## Product Progress
 
@@ -70,6 +71,7 @@ Resolved UI work:
 - PR #179: cross-page loading, empty, error, signed-out, unavailable, and beta-gated state terminology map.
 - PR #180: homepage wallet/admin surface decision.
 - PR #181: market-detail screenshot/smoke checklist.
+- PR #182: current-dev autonomous state refresh after UI follow-ups.
 
 Review-gated UI scope docs:
 

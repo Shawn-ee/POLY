@@ -4,7 +4,7 @@ Last updated: 2026-06-19
 
 Current phase: Phase UI - Controlled UI standardization
 
-Current `dev` commit at last update: `d557708`
+Current `dev` commit at last update: `f91470f`
 
 ## Completed Tasks
 
@@ -82,6 +82,7 @@ Recent autonomous tasks completed before this state file:
 - UI-010: Cross-page UI state terminology map, merged as PR #179.
 - UI-011: Homepage wallet/admin surface decision, merged as PR #180.
 - UI-019A/UI-022: Market detail screenshot and smoke checklist, merged as PR #181.
+- DOC-067: Current-dev autonomous state refresh after UI follow-ups, merged as PR #182.
 
 ## Open PRs
 
@@ -133,7 +134,7 @@ Phase A state hygiene is complete enough for continued autonomous work. Phase B 
 
 ## Next Recommended Actions
 
-- PR #175, PR #176, and follow-up docs-only PRs #179-#181 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
+- PR #175, PR #176, and follow-up docs-only PRs #179-#182 are merged. Continue with docs-only state refreshes, screenshot/manual evidence preparation, or focused follow-up tasks only when the scope is clearly safe.
 - Keep PR #25 open as draft unless a human reviews or splits it.
 - Use `docs/reviews/UI_STANDARDIZATION_MASTER_PLAN.md` and `docs/reviews/UI_STANDARDIZATION_PROGRESS.md` before selecting new UI work.
 - Public homepage, sports, events, markets, login, private-pool list, and the big shared display shell now have merged display improvements; prefer smoke evidence or docs-only plans before more public-page code.

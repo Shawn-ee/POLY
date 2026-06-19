@@ -5,7 +5,7 @@ Use this prompt when resuming from the autonomous UI standardization session aft
 ```text
 You are acting as LeadAgent for the POLY Autonomous Execution Program.
 
-Start from latest origin/dev. Current known checkpoint at stop time: `8db1fd7` or newer.
+Start from latest origin/dev. Current known checkpoint at stop time: `f91470f` or newer.
 
 Read:
 
@@ -32,6 +32,7 @@ Read:
 Current open PRs requiring review:
 
 - PR #25: broad draft UI/product-code PR. Do not auto-merge.
+- PR #177: stale docs-only post-merge state hygiene PR from the older `8db1fd7` checkpoint. Do not merge as-is; maintainer should close or update.
 
 Recently resolved PRs:
 
@@ -42,6 +43,10 @@ Recently resolved PRs:
 - PR #168, #169, #170, #171, #173: review-gated scope docs for event detail, market detail, wallet, portfolio, and admin display work.
 - PR #175: app-wide display standardization milestone. Merged after self-review and validation.
 - PR #176: post-merge UI/autonomous state refresh. Merged docs-only.
+- PR #179: cross-page UI state terminology map. Merged docs-only.
+- PR #180: homepage wallet/admin surface decision. Merged docs-only.
+- PR #181: market-detail screenshot/smoke checklist. Merged docs-only.
+- PR #182: current-dev autonomous state refresh after UI follow-ups. Merged docs-only.
 
 Continue safe autonomous work only if a clearly safe task remains:
 
