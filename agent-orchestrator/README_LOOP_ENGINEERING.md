@@ -50,6 +50,7 @@ Agents own decisions. Scripts and harnesses produce evidence.
 
 - `agent-orchestrator/prompts/LEAD_AGENT_OPERATING_PROMPT.md`: main Lead Agent brain.
 - `agent-orchestrator/prompts/AUDIT_AGENT_OPERATING_PROMPT.md`: Independent Audit Agent launcher prompt.
+- `agent-orchestrator/prompts/DUAL_AGENT_LOOP_OPERATING_PROMPT.md`: one-terminal Meta-Orchestrator prompt for Lead Agent plus Independent Audit Agent loop.
 - `agent-orchestrator/prompts/subagents/`: subagent operating prompts.
 - `agent-orchestrator/prompts/subagents/INDEPENDENT_AUDIT_AGENT.md`: Independent Audit Agent role definition.
 - `agent-orchestrator/specs/HARNESS_OUTPUT_CONVENTION.md`: structured harness evidence format.
@@ -64,6 +65,7 @@ Agents own decisions. Scripts and harnesses produce evidence.
 - `agent-orchestrator/bin/`: legacy helper scripts.
 - `agent-orchestrator/scripts/start_lead_agent.sh`: Lead Agent launcher helper.
 - `agent-orchestrator/scripts/start_audit_agent.sh`: Independent Audit Agent launcher helper.
+- `agent-orchestrator/scripts/start_dual_agent_loop.sh`: one-terminal dual-agent loop launcher helper.
 
 ## Starting The Lead Agent
 
@@ -118,6 +120,67 @@ bash agent-orchestrator/scripts/start_audit_agent.sh agent-orchestrator/runs/<ru
 ```
 
 The audit launcher only starts Codex with the audit prompt and captures logs. It does not decide whether the audit passes.
+
+## One-Terminal Dual Agent Loop
+
+The one-terminal dual-agent loop runs inside a single Codex session while preserving two role-independent agents:
+
+- Lead Agent: implements work, assigns subagents, validates, writes completion/fix reports.
+- Independent Audit Agent: skeptically audits evidence and decides `AUDIT_PASS`, `AUDIT_PASS_WITH_WARNINGS`, `AUDIT_FAIL`, or `AUDIT_BLOCKED`.
+
+The Meta-Orchestrator coordinates the two roles but does not replace either role.
+
+Flow:
+
+```text
+Owner goal
+  -> Meta-Orchestrator
+  -> Lead Agent work
+  -> Validation evidence
+  -> Reviewer Agent internal review
+  -> Lead Agent report
+  -> Independent Audit Agent review
+  -> findings back to Lead Agent if needed
+  -> repeat until audit pass or three repeated blockers
+```
+
+The Audit Agent remains role-independent even though it runs in the same terminal session. It must not implement fixes, weaken tests, or accept Lead Agent claims without evidence.
+
+The loop stops only when:
+
+- Independent Audit Agent returns `AUDIT_PASS`;
+- Independent Audit Agent returns `AUDIT_PASS_WITH_WARNINGS` with warnings safe for controlled internal beta;
+- the same critical blocker repeats three consecutive rounds;
+- a required external secret/session/credential is missing and no safe fallback exists;
+- a blocked area would be required to continue.
+
+The loop does not stop merely because one PR merged, one scorecard changed, a subgoal completed, or tests passed without audit.
+
+PowerShell:
+
+```powershell
+codex exec --full-auto (Get-Content agent-orchestrator/prompts/DUAL_AGENT_LOOP_OPERATING_PROMPT.md -Raw)
+```
+
+Git Bash:
+
+```bash
+codex exec --full-auto "$(cat agent-orchestrator/prompts/DUAL_AGENT_LOOP_OPERATING_PROMPT.md)"
+```
+
+Helper launcher:
+
+```bash
+bash agent-orchestrator/scripts/start_dual_agent_loop.sh
+```
+
+With an explicit goal:
+
+```bash
+bash agent-orchestrator/scripts/start_dual_agent_loop.sh agent-orchestrator/goals/WORLD_CUP_TRADABLE_INTERNAL_BETA_V2_GOAL.md
+```
+
+The helper script only launches Codex with the dual-agent prompt and captures logs under `agent-orchestrator/runs/`. It does not choose tasks, audit evidence, or decide pass/fail.
 
 ## Giving A New Goal
 
