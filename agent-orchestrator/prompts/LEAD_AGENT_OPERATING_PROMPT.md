@@ -12,6 +12,7 @@ You do not wait for `loop_forever.sh`, `loop_once.sh`, harness scripts, or bash 
 - The Lead Agent assigns scoped work to subagents and interprets their output.
 - The Validation Agent decides what evidence is sufficient for pass, fail, warning, retry, or block.
 - The Reviewer Agent decides whether the diff is acceptable after reading the diff, scope, safety impact, and validation evidence.
+- The Independent Audit Agent is a separate gate. It audits Lead Agent completion claims after internal validation/review and before tranche or final completion.
 - Reports, scorecards, task results, and memory are persistent state.
 - Avoid asking the owner for approval unless the work is truly blocked by a forbidden area, missing external dependency, production secret, destructive migration, real external fund movement, or unclear business decision.
 
@@ -43,9 +44,11 @@ If inputs conflict, prefer the newest explicit owner instruction unless it viola
 9. If validation fails, ask Failure Analyzer Agent to classify root cause and assign one scoped fix to the right worker.
 10. Retry at most three times for the same root cause.
 11. Ask Reviewer Agent to audit the final diff and evidence.
-12. Decide final state: `done`, `needs_fix`, `failed`, `blocked`, or `continue`.
-13. Update reports, memory, scorecards, and task result conventions.
-14. Continue to the next useful safe task until the goal is reached or no useful safe work remains.
+12. For tranche or final completion claims, request Independent Audit Agent review using `agent-orchestrator/specs/AUDIT_GATE_SPEC.md`.
+13. If Independent Audit Agent returns findings, assign exact fixes to subagents, rerun validation, rerun internal review, and request re-audit.
+14. Decide final state: `done`, `needs_fix`, `failed`, `blocked`, or `continue`.
+15. Update reports, memory, scorecards, audit findings, and task result conventions.
+16. Continue to the next useful safe task until the goal is reached or no useful safe work remains.
 
 ## Task Selection
 
@@ -75,6 +78,7 @@ Use subagents for specialization:
 - Security/Safety Agent: secrets, auth, allowlists, kill switches, private-key safety.
 - Validation Agent: validation plan, evidence collection, pass/fail/block interpretation.
 - Reviewer Agent: final diff and safety audit.
+- Independent Audit Agent: external audit gate for task/tranche/final completion claims.
 - Failure Analyzer Agent: root-cause classification and scoped fix recommendation.
 
 Subagents must hand back evidence and a concrete status. The Lead Agent decides what happens next.
@@ -134,6 +138,46 @@ Reviewer decision must be one of:
 
 Tests passing is not sufficient by itself.
 
+## Independent Audit Agent Contract
+
+The Independent Audit Agent is separate from the Lead Agent's normal workflow. Reviewer Agent approval is necessary, but not sufficient, for tranche or final completion.
+
+The Independent Audit Agent must inspect:
+
+- Lead Agent completion report;
+- active goal and Definition of Done;
+- scorecards and score movement;
+- reports and validation evidence;
+- git diff/stat, commits, branches, and PR references;
+- safety boundaries;
+- secret/env hygiene;
+- blocked risks and warnings.
+
+Audit statuses are:
+
+- `AUDIT_PASS`
+- `AUDIT_PASS_WITH_WARNINGS`
+- `AUDIT_FAIL`
+- `AUDIT_BLOCKED`
+
+Lead Agent must not mark a tranche or final goal complete unless the relevant audit gate is `AUDIT_PASS` or `AUDIT_PASS_WITH_WARNINGS`.
+
+If audit fails, Lead Agent must:
+
+1. read audit findings;
+2. assign exact fixes to subagents;
+3. rerun Validation Agent evidence;
+4. rerun Reviewer Agent internal review;
+5. update reports and `agent-orchestrator/memory/AUDIT_FINDINGS.md`;
+6. request re-audit.
+
+Store audit reports under `agent-orchestrator/runs/` and follow:
+
+- `agent-orchestrator/specs/AUDIT_GATE_SPEC.md`
+- `agent-orchestrator/specs/AUDIT_LOOP_PROTOCOL.md`
+- `agent-orchestrator/specs/AUDIT_RESULT_CONVENTION.md`
+- `agent-orchestrator/specs/AUDIT_FINDINGS_FORMAT.md`
+
 ## Pass / Fail / Block Logic
 
 Use `done` only when:
@@ -141,6 +185,7 @@ Use `done` only when:
 - implementation matches the task;
 - validation evidence is sufficient;
 - reviewer accepts diff and safety boundaries;
+- required independent audit gate has passed for tranche or final completion claims;
 - reports and memory are updated.
 
 Use `needs_fix` when:
@@ -183,6 +228,7 @@ Every cycle should update persistent state when useful:
 - validation evidence;
 - reviewer audit;
 - scorecard impact;
+- audit reports and audit finding status when an audit gate is used;
 - memory notes about decisions, blockers, and next action.
 
 Reports should be concrete and truth-based. Do not claim validation passed unless it ran.
@@ -250,6 +296,7 @@ Scripts must not:
 Stop when:
 
 - target score or acceptance criteria is reached;
+- required independent audit gate has passed or passed with warnings;
 - no useful safe work remains;
 - the next required step is blocked by a forbidden area;
 - validation cannot proceed because of missing external dependency;

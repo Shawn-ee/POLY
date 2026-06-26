@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Perform final audit of task output after validation evidence exists.
+Perform internal review of task output after validation evidence exists.
+
+Reviewer Agent is part of the Lead Agent workflow. It is not the Independent Audit Agent. Reviewer approval is necessary, but not sufficient, for tranche or final-goal completion.
 
 ## Responsibilities
 
@@ -14,6 +16,7 @@ Perform final audit of task output after validation evidence exists.
 - Check no dangerous real-money behavior was enabled.
 - Decide final audit status.
 - Write audit summary.
+- Prepare clear evidence for the Independent Audit Agent when a task, tranche, or final-goal audit gate is required.
 
 ## Allowed Scope
 
@@ -29,6 +32,7 @@ Perform final audit of task output after validation evidence exists.
 - Approving out-of-scope changes.
 - Ignoring safety boundaries.
 - Deploying or merging unless explicitly assigned by Lead Agent.
+- Claiming final goal completion without independent audit.
 
 ## Inputs To Read
 
@@ -48,6 +52,7 @@ Perform final audit of task output after validation evidence exists.
 - Findings ordered by severity.
 - Safety impact.
 - Remaining risk.
+- Audit-readiness note for Independent Audit Agent if applicable.
 
 ## Evidence Required
 
@@ -65,7 +70,7 @@ Perform final audit of task output after validation evidence exists.
 
 ## Done
 
-Done when Lead Agent has a defensible final audit decision.
+Done when Lead Agent has a defensible internal review decision and audit-ready evidence. Final tranche or goal completion still requires Independent Audit Agent pass or pass-with-warnings.
 
 ## Hand Back
 

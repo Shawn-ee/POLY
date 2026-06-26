@@ -14,6 +14,7 @@ Own validation decisions for POLY tasks. Validation is agent-driven, not script-
 - Decide if retry is justified.
 - Rerun validation after fixes.
 - Write validation evidence.
+- Produce exact evidence that the Independent Audit Agent can inspect later.
 
 ## Allowed Scope
 
@@ -26,6 +27,7 @@ Own validation decisions for POLY tasks. Validation is agent-driven, not script-
 ## Forbidden Scope
 
 - Treating harness output as final decision without interpretation.
+- Hiding command details or log paths from the audit record.
 - Weakening validation to pass.
 - Product priority decisions.
 - Recursive fix task generation.
@@ -47,6 +49,7 @@ Own validation decisions for POLY tasks. Validation is agent-driven, not script-
 - Classification: `pass`, `fail`, `warn`, or `blocked`.
 - Failure owner subagent.
 - Retry recommendation.
+- Audit-ready command/log summary.
 
 ## Evidence Required
 
@@ -55,6 +58,7 @@ Own validation decisions for POLY tasks. Validation is agent-driven, not script-
 - Log paths.
 - Why evidence proves or does not prove correctness.
 - Remaining untested risk.
+- Any evidence gap the Independent Audit Agent should know about.
 
 ## Tools
 
@@ -79,7 +83,7 @@ May use:
 
 ## Done
 
-Done when validation evidence is interpreted and handed to Lead Agent with a clear decision.
+Done when validation evidence is interpreted and handed to Lead Agent with a clear decision and enough exact command/log detail for Independent Audit Agent inspection.
 
 ## Hand Back
 

@@ -23,6 +23,7 @@ OWNER GOAL
     -> Worker Agents
     -> Validation Agent
     -> Reviewer Agent
+    -> Independent Audit Agent
     -> Memory / scorecard / report updates
     -> next loop decision by Lead Agent
 ```
@@ -41,19 +42,28 @@ Agents own decisions. Scripts and harnesses produce evidence.
 - Testing/Harness Agent: tests and harness evidence.
 - Security/Safety Agent: secrets, auth, allowlists, kill switches, forbidden areas.
 - Validation Agent: chooses and interprets validation.
-- Reviewer Agent: final diff and safety audit.
+- Reviewer Agent: internal diff and safety review.
+- Independent Audit Agent: separate audit gate that verifies completion claims.
 - Failure Analyzer Agent: root-cause analysis without recursive task churn.
 
 ## Folder Structure
 
 - `agent-orchestrator/prompts/LEAD_AGENT_OPERATING_PROMPT.md`: main Lead Agent brain.
+- `agent-orchestrator/prompts/AUDIT_AGENT_OPERATING_PROMPT.md`: Independent Audit Agent launcher prompt.
 - `agent-orchestrator/prompts/subagents/`: subagent operating prompts.
+- `agent-orchestrator/prompts/subagents/INDEPENDENT_AUDIT_AGENT.md`: Independent Audit Agent role definition.
 - `agent-orchestrator/specs/HARNESS_OUTPUT_CONVENTION.md`: structured harness evidence format.
 - `agent-orchestrator/specs/TASK_RESULT_CONVENTION.md`: task cycle report format.
+- `agent-orchestrator/specs/AUDIT_GATE_SPEC.md`: task, tranche, and final audit gates.
+- `agent-orchestrator/specs/AUDIT_LOOP_PROTOCOL.md`: Lead Agent and Audit Agent loop protocol.
+- `agent-orchestrator/specs/AUDIT_RESULT_CONVENTION.md`: required audit report fields.
+- `agent-orchestrator/specs/AUDIT_FINDINGS_FORMAT.md`: required finding fields.
 - `agent-orchestrator/goals/GOAL_INTAKE_TEMPLATE.md`: owner goal intake template.
+- `agent-orchestrator/memory/AUDIT_FINDINGS.md`: open and closed audit finding tracker.
 - `agent-orchestrator/runs/`: timestamped run reports.
 - `agent-orchestrator/bin/`: legacy helper scripts.
 - `agent-orchestrator/scripts/start_lead_agent.sh`: Lead Agent launcher helper.
+- `agent-orchestrator/scripts/start_audit_agent.sh`: Independent Audit Agent launcher helper.
 
 ## Starting The Lead Agent
 
@@ -78,6 +88,36 @@ bash agent-orchestrator/scripts/start_lead_agent.sh
 ```
 
 The launcher creates a timestamped run folder and starts Codex. It does not choose tasks, validate, review, or decide next steps.
+
+## Starting The Independent Audit Agent
+
+Use the Audit Agent after a Lead Agent completion report, tranche report, or final readiness report.
+
+PowerShell:
+
+```powershell
+codex exec --full-auto (Get-Content agent-orchestrator/prompts/AUDIT_AGENT_OPERATING_PROMPT.md -Raw)
+```
+
+Git Bash:
+
+```bash
+codex exec --full-auto "$(cat agent-orchestrator/prompts/AUDIT_AGENT_OPERATING_PROMPT.md)"
+```
+
+Helper launcher:
+
+```bash
+bash agent-orchestrator/scripts/start_audit_agent.sh
+```
+
+With an explicit report path:
+
+```bash
+bash agent-orchestrator/scripts/start_audit_agent.sh agent-orchestrator/runs/<run>/REPORT.md
+```
+
+The audit launcher only starts Codex with the audit prompt and captures logs. It does not decide whether the audit passes.
 
 ## Giving A New Goal
 
@@ -118,6 +158,47 @@ Validation Agent owns validation decisions.
 Harnesses, tests, Playwright, API smoke checks, log inspection, and build commands are tools. Their output is evidence. The Validation Agent decides whether that evidence proves pass, fail, warning, or block.
 
 Validation failures go back to the Lead Agent. The Lead Agent may assign Failure Analyzer Agent and then one scoped fix to the correct worker.
+
+## Audit-Gated Workflow
+
+Wrong:
+
+```text
+Lead Agent writes its own report -> Lead Agent marks complete
+```
+
+Correct:
+
+```text
+Lead Agent proposes completion
+  -> Validation Agent evidence
+  -> Reviewer Agent internal review
+  -> Independent Audit Agent external audit
+  -> Lead Agent fixes findings
+  -> validation/review/re-audit repeats
+  -> completion only after AUDIT_PASS or AUDIT_PASS_WITH_WARNINGS
+```
+
+Audit gates:
+
+- Gate A: task-level audit after a task or PR.
+- Gate B: tranche-level audit after a phase or group of PRs.
+- Gate C: final-goal audit before marking a goal complete.
+
+The Independent Audit Agent checks evidence, diffs, reports, scorecards, PRs, safety boundaries, secret hygiene, and blocked risks. It can issue:
+
+- `AUDIT_PASS`
+- `AUDIT_PASS_WITH_WARNINGS`
+- `AUDIT_FAIL`
+- `AUDIT_BLOCKED`
+
+Open findings are tracked in:
+
+```text
+agent-orchestrator/memory/AUDIT_FINDINGS.md
+```
+
+Lead Agent must fix audit findings and request re-audit before completion unless the audit explicitly accepts a warning.
 
 ## Old Loop Scripts
 
