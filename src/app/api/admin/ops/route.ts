@@ -15,6 +15,7 @@ export async function GET() {
       liveLocalOrders,
       openOrders,
       pendingResolutionMarkets,
+      resolutionProposals,
     ] = await Promise.all([
       prisma.market.count({ where: { referenceSource: "polymarket" } }),
       prisma.market.count({ where: { referenceSource: "polymarket", referenceMetadata: { path: ["importStatus"], equals: "approved" } } }),
@@ -24,6 +25,7 @@ export async function GET() {
       prisma.botOrderIntent.count({ where: { dryRun: false } }),
       prisma.order.count({ where: { status: { in: ["OPEN", "PARTIAL"] } } }),
       prisma.market.count({ where: { status: { in: ["CLOSED", "PAUSED"] }, resolvedOutcomeId: null } }),
+      prisma.canonicalEvent.count({ where: { eventType: "resolution_proposal" } }),
     ]);
 
     return NextResponse.json({
@@ -36,6 +38,7 @@ export async function GET() {
       liveLocalIntents: liveLocalOrders,
       openOrders,
       pendingResolutionMarkets,
+      resolutionProposals,
       safety: {
         productionDeploy: false,
         realMoneyMode: process.env.REAL_MONEY_MODE === "true",
