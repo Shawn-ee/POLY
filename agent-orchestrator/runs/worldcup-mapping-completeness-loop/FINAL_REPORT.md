@@ -6,6 +6,17 @@ Branch: `agent/worldcup-mapping-completeness-loop`
 
 Base commit: `e88be635c9b6605cacf035376e715cfa2de875ef`
 
+Implementation commit: `95a4290390c7a1ac836a3be6483cc18d350bb173`
+
+Dev merge commit: `3056e2e2ce0e71f6f6c14cc29f6b180cca404c7c`
+
+Main merge commit: `c24a0a5ebda27d483307215430a1bcf51458c003`
+
+PRs:
+
+- PR #268: `agent/worldcup-mapping-completeness-loop` -> `dev`
+- PR #269: `dev` -> `main`
+
 ## Final Verdict
 
 - reviewer: MERGE READY
