@@ -227,6 +227,18 @@ Discovery/import score is now 95/100. No `WC-DISC-*` pending tasks remain in the
 
 Next recommended action: checkpoint/commit coherent discovery/import implementation work, then generate a new targeted enhancement for persisted discovery-candidate DB storage if durable admin review queue persistence is desired.
 
+## 2026-06-28 WC-DISC-OPS-001 Complete
+
+Completed the persisted Polymarket discovery candidate model and store. Added a non-destructive Prisma migration, discovery command persistence flag, duplicate-safe persistence service, and focused tests. Discovery/import score is now 96/100.
+
+Next recommended task: `WC-DISC-OPS-002 Candidate Review API`.
+
+Next recommended command:
+
+```sh
+bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-002-candidate-review-api.md
+```
+
 ## 2026-06-26 SEC-001
 
 Route-security failure from `20260626T041912Z-harness_only` was investigated. `line` is safe public sports display metadata from `serializeMarketReadModel`, exposed only after public/listed route filters in the checked routes. The two public no-leak tests now allow `line` narrowly with documentation. `route_security_check.sh` passed in `20260626T042256Z-harness_only`.

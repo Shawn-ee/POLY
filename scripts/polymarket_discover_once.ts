@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { prisma } from "@/lib/db";
 import fixture from "@/server/services/polymarket/__fixtures__/worldCupDiscovery.fixture.json";
-import { PolymarketDiscoveryClient, buildWorldCupDiscoveryReport } from "@/server/services/polymarket";
+import { PolymarketDiscoveryClient, buildWorldCupDiscoveryReport, persistWorldCupDiscoveryReport } from "@/server/services/polymarket";
 import { PolymarketGammaWire } from "@/server/services/polymarket/types";
 
 const DEFAULT_OUTPUT = path.resolve(process.cwd(), "test-logs", "polymarket-world-cup-discovery-candidates.json");
@@ -11,13 +11,17 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const fixtureMode = envFlag("POLYMARKET_DISCOVERY_FIXTURE_MODE", true);
   const liveSmoke = envFlag("POLYMARKET_DISCOVERY_LIVE_SMOKE", false);
-  const skipDb = envFlag("POLYMARKET_DISCOVERY_SKIP_DB", fixtureMode);
+  const skipDb = argFlag(args.skipDb, envFlag("POLYMARKET_DISCOVERY_SKIP_DB", fixtureMode));
+  const persistCandidates = argFlag(args.persistCandidates, envFlag("POLYMARKET_DISCOVERY_PERSIST_CANDIDATES", false));
   const outputPath = args.output ?? DEFAULT_OUTPUT;
-  const existingDuplicateKeys = skipDb ? new Set<string>() : await loadExistingDuplicateKeys();
 
   if (!fixtureMode && !liveSmoke) {
     throw new Error("Live discovery is disabled. Set POLYMARKET_DISCOVERY_FIXTURE_MODE=true or POLYMARKET_DISCOVERY_LIVE_SMOKE=true.");
   }
+  if (persistCandidates && skipDb) {
+    throw new Error("Persisted discovery candidates require POLYMARKET_DISCOVERY_SKIP_DB=false.");
+  }
+  const existingDuplicateKeys = skipDb ? new Set<string>() : await loadExistingDuplicateKeys();
 
   const rawMarkets = fixtureMode ? readFixtureMarkets() : await readLiveMarkets(Number(args.limit ?? "25"));
   const report = buildWorldCupDiscoveryReport({
@@ -27,10 +31,13 @@ async function main() {
     liveSmoke,
     existingDuplicateKeys,
   });
+  const persisted = persistCandidates
+    ? await persistWorldCupDiscoveryReport(report, { batchId: args.batchId })
+    : null;
 
   await mkdir(path.dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
-  process.stdout.write(`${JSON.stringify({ ...report, outputPath }, null, 2)}\n`);
+  await writeFile(outputPath, `${JSON.stringify({ ...report, persisted }, null, 2)}\n`, "utf8");
+  process.stdout.write(`${JSON.stringify({ ...report, persisted, outputPath }, null, 2)}\n`);
 }
 
 function readFixtureMarkets(): PolymarketGammaWire[] {
@@ -84,7 +91,11 @@ function parseArgs(argv: string[]) {
   for (let index = 0; index < argv.length; index += 1) {
     const part = argv[index];
     if (!part.startsWith("--")) continue;
-    const key = part.slice(2);
+    const [key, inlineValue] = part.slice(2).split("=", 2);
+    if (inlineValue != null) {
+      args[key] = inlineValue;
+      continue;
+    }
     const next = argv[index + 1];
     if (!next || next.startsWith("--")) {
       args[key] = "true";
@@ -94,6 +105,11 @@ function parseArgs(argv: string[]) {
     index += 1;
   }
   return args;
+}
+
+function argFlag(value: string | undefined, fallback: boolean) {
+  if (value == null || value.trim() === "") return fallback;
+  return value.trim().toLowerCase() === "true";
 }
 
 function envFlag(name: string, fallback: boolean) {

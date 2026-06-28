@@ -258,6 +258,43 @@ model Event {
   @@index([externalSlug])
 }
 
+model PolymarketDiscoveryCandidate {
+  id               String   @id @default(uuid())
+  source           String   @default("polymarket")
+  externalSlug     String?
+  externalMarketId String?
+  conditionId      String?
+  title            String
+  question         String?
+  eventTitle       String?
+  marketType       String?
+  status           String   @default("discovered")
+  confidence       String?
+  reasonCodes      Json
+  outcomes         Json
+  tokenIds         Json
+  rawMetadata      Json
+  batchId          String
+  importedEventId  String?
+  importedMarketId String?
+  importedOutcomeIds Json?
+  reviewedBy       String?
+  reviewedAt       DateTime?
+  reviewNotes      String?
+  firstSeenAt      DateTime @default(now())
+  lastSeenAt       DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([source, externalMarketId])
+  @@unique([source, conditionId])
+  @@unique([source, externalSlug])
+  @@index([status, lastSeenAt])
+  @@index([source, status])
+  @@index([batchId])
+  @@index([importedMarketId])
+}
+
 model Market {
   id                      String                   @id @default(uuid())
   slug                    String?                  @unique
