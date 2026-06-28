@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("local admin can open sports market trading UI", async ({ page }, testInfo) => {
   const response = await page.goto("/sports/soccer/world-cup", { waitUntil: "networkidle" });
-  const worldCupHeading = page.getByRole("heading", { name: /world cup/i });
+  const worldCupHeading = page.getByRole("heading", { name: "World Cup", exact: true });
   const hasSportsUi = response?.status() !== 404 && (await worldCupHeading.count()) > 0;
   test.skip(!hasSportsUi, "Sports UI pages are not present on this branch yet.");
 
