@@ -1,5 +1,6 @@
 import fixture from "@/server/services/polymarket/__fixtures__/worldCupDiscovery.fixture.json";
 import {
+  buildImportCandidateFromPersistedCandidate,
   buildCandidatePersistenceInput,
   persistWorldCupDiscoveryReport,
 } from "@/server/services/polymarket/discoveryCandidateStore";
@@ -108,6 +109,29 @@ describe("polymarket discovery candidate store", () => {
         lastSeenAt: now,
         batchId: "batch-2",
       }),
+    });
+  });
+
+  test("rebuilds an import candidate from persisted raw metadata", () => {
+    const candidate = report.candidates.find((item) => item.market.externalMarketId === "pm-worldcup-usa-mexico-1x2");
+    if (!candidate) throw new Error("Missing USA Mexico fixture candidate.");
+    const input = buildCandidatePersistenceInput(candidate, { batchId: "batch-1", now });
+
+    const rebuilt = buildImportCandidateFromPersistedCandidate({ rawMetadata: input.rawMetadata });
+
+    expect(rebuilt).toMatchObject({
+      candidateId: "polymarket:cond-worldcup-usa-mexico-1x2",
+      source: "polymarket",
+      market: {
+        externalMarketId: "pm-worldcup-usa-mexico-1x2",
+        conditionId: "cond-worldcup-usa-mexico-1x2",
+        marketType: "match_winner_1x2",
+        outcomes: [
+          { name: "USA", tokenId: "tok-usa" },
+          { name: "Draw", tokenId: "tok-draw" },
+          { name: "Mexico", tokenId: "tok-mexico" },
+        ],
+      },
     });
   });
 });

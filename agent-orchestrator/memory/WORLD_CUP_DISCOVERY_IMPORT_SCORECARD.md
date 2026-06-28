@@ -5,7 +5,7 @@ Updated: 2026-06-28
 | Area | Max | Current | Evidence |
 |---|---:|---:|---|
 | Discovery bot | 10 | 10 | `polymarket:discover:once` exists, defaults to fixture report mode, harness validates output, optional live read-only smoke passed against the public reference source with DB skipped, and `POLYMARKET_DISCOVERY_PERSIST_CANDIDATES=true` can persist candidates when DB access is explicitly enabled. |
-| Draft import | 10 | 9 | `polymarket:import:draft` converts fixture discovery candidates into draft import requests with `visibility=PRIVATE`, `desiredStatus=draft`, non-tradable outcomes, and dry-run reporting. |
+| Draft import | 10 | 10 | `polymarket:import:draft` converts fixture reports or `draft_import_ready` persisted DB candidates into draft import requests with `visibility=PRIVATE`, `desiredStatus=draft`, non-tradable outcomes, and dry-run reporting. Confirmed DB import marks candidates `imported_draft`. |
 | Duplicate prevention | 8 | 8 | Discovery and draft import planning dedupe by condition ID, external market ID, slug, title, event keys, and outcome token IDs; fixture tests cover duplicate chains and repeated candidates. |
 | Mapping validator | 12 | 9 | `polymarket:mapping:validate` validates fixture candidates with confidence, reason codes, missing fields, and lifecycle recommendations; DB-backed imported-record validation is still pending. |
 | Confidence scoring/admin review | 8 | 8 | `polymarket:admin-review:report` summarizes mapping, validation confidence, reasons, reference prices, promotion eligibility, and recommended admin action; admin-only APIs list/detail/update persisted candidates, and the report can summarize the DB candidate queue. |
@@ -15,7 +15,7 @@ Updated: 2026-06-28
 | Public no-leak safety | 8 | 8 | Public market/event serializers no longer expose mapping IDs/tokens, event detail filters to public listed markets, and route tests cover imported enabled markets without mapping leaks. |
 | Market maker dry-run after import | 7 | 7 | Imported candidates now have direct MM dry-run planning coverage for intents, stale references, closed markets, disabled mappings, and risk limits. |
 | End-to-end discovery-to-trading smoke | 5 | 5 | `world_cup_discovery_to_trading_e2e_check.sh` chains fixture discovery, draft import, validation, admin review, promotion dry-run, public no-leak, and order-ticket gates. |
-| Total | 100 | 98 | Fixture-first discovery/import through admin review, dry-run promotion, guarded DB lifecycle mutation, local DB lifecycle E2E, imported-market MM dry-run, public no-leak checks, E2E, read-only live-smoke gating, persisted discovery candidate storage, admin-only candidate review APIs, and DB-backed review reporting are harnessed. |
+| Total | 100 | 99 | Fixture-first discovery/import through admin review, dry-run promotion, guarded DB lifecycle mutation, local DB lifecycle E2E, imported-market MM dry-run, public no-leak checks, E2E, read-only live-smoke gating, persisted discovery candidate storage, admin-only candidate review APIs, DB-backed review reporting, and queue-backed draft import are harnessed. |
 
 Targets:
 
@@ -106,3 +106,7 @@ Added admin-only persisted candidate review APIs for list/filter, detail, and st
 ## 2026-06-28 WC-DISC-OPS-003
 
 Upgraded the admin review report flow with a persisted candidate queue report builder and `polymarket:admin-review:report --fromDb=true`. The report shows title, market type, outcomes, token IDs, confidence, blockers, duplicate status, raw metadata summary, import IDs, and recommended actions. Score increased to 98/100.
+
+## 2026-06-28 WC-DISC-OPS-004
+
+Updated draft import to support `polymarket:import:draft --fromDb=true`, loading only persisted candidates marked `draft_import_ready`. Confirmed imports mark candidates `imported_draft` and store imported Event/Market/Outcome IDs. Score increased to 99/100.

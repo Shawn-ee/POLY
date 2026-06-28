@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { PolymarketImportCandidate } from "@/server/services/polymarket/types";
+import { PolymarketGammaWire, PolymarketImportCandidate } from "@/server/services/polymarket/types";
 import { WorldCupDiscoveryIgnoredMarket, WorldCupDiscoveryReport } from "@/server/services/polymarket/discoveryReport";
+import { buildPolymarketImportCandidates, parsePolymarketMarketCandidate } from "@/server/services/polymarket/parser";
 import { prisma } from "@/lib/db";
 
 export const POLYMARKET_DISCOVERY_CANDIDATE_STATUSES = [
@@ -249,6 +250,50 @@ export async function updateDiscoveryCandidateReviewStatus(params: {
   return serializeDiscoveryCandidate(candidate);
 }
 
+export async function listDraftImportReadyDiscoveryCandidates(params: {
+  source?: string | null;
+  batchId?: string | null;
+  limit?: number;
+} = {}) {
+  const rows = await prisma.polymarketDiscoveryCandidate.findMany({
+    where: {
+      source: params.source ?? "polymarket",
+      status: "draft_import_ready",
+      ...(params.batchId ? { batchId: params.batchId } : {}),
+    },
+    orderBy: [{ lastSeenAt: "asc" }, { createdAt: "asc" }],
+    take: Math.min(Math.max(params.limit ?? 100, 1), 500),
+  });
+  return rows.map(serializeDiscoveryCandidate);
+}
+
+export function buildImportCandidateFromPersistedCandidate(candidate: {
+  rawMetadata: unknown;
+}): PolymarketImportCandidate | null {
+  const rawMarket = readRawMarket(candidate.rawMetadata);
+  if (!rawMarket) return null;
+  const market = parsePolymarketMarketCandidate(rawMarket);
+  if (!market) return null;
+  return buildPolymarketImportCandidates({ event: null, markets: [market] })[0] ?? null;
+}
+
+export async function markDiscoveryCandidateImported(params: {
+  candidateId: string;
+  eventId: string | null;
+  marketId: string;
+  outcomeIds: string[];
+}) {
+  return prisma.polymarketDiscoveryCandidate.update({
+    where: { id: params.candidateId },
+    data: {
+      status: "imported_draft",
+      importedEventId: params.eventId,
+      importedMarketId: params.marketId,
+      importedOutcomeIds: params.outcomeIds,
+    },
+  });
+}
+
 function statusForCandidate(candidate: PolymarketImportCandidate): PolymarketDiscoveryCandidateStatus {
   if (candidate.reasons.includes("unsupported_market_type") || candidate.reasons.includes("not_world_cup_soccer")) {
     return "ignored";
@@ -323,6 +368,13 @@ function serializeDiscoveryCandidate(candidate: Prisma.PolymarketDiscoveryCandid
     createdAt: candidate.createdAt.toISOString(),
     updatedAt: candidate.updatedAt.toISOString(),
   };
+}
+
+function readRawMarket(rawMetadata: unknown): PolymarketGammaWire | null {
+  if (!rawMetadata || typeof rawMetadata !== "object" || Array.isArray(rawMetadata)) return null;
+  const market = (rawMetadata as Record<string, unknown>).market;
+  if (!market || typeof market !== "object" || Array.isArray(market)) return null;
+  return market as PolymarketGammaWire;
 }
 
 function duplicateWhere(input: DiscoveryCandidatePersistenceInput) {
