@@ -96,7 +96,22 @@ describe("reference market maker dry-run planner", () => {
     expect(plan.skipped).toContainEqual({ marketId: "market-1", outcomeId: "outcome-yes", reason: "risk_exceeded" });
   });
 
-  test("live mode is refused by the dry-run planner", () => {
+  test("live mode plans non-dry-run intents for live-local execution", () => {
+    const plan = planReferenceMarketMakerIntents({
+      dryRun: false,
+      configs: [{ ...baseConfig, dryRun: false }],
+      references: [baseReference],
+      now,
+    });
+
+    expect(plan.intents).toEqual([
+      expect.objectContaining({ side: "BUY", price: 0.48, dryRun: false, status: "PLANNED" }),
+      expect.objectContaining({ side: "SELL", price: 0.52, dryRun: false, status: "PLANNED" }),
+    ]);
+    expect(plan.skipped).toEqual([]);
+  });
+
+  test("mode mismatch is skipped", () => {
     const plan = planReferenceMarketMakerIntents({
       dryRun: false,
       configs: [baseConfig],
@@ -105,10 +120,6 @@ describe("reference market maker dry-run planner", () => {
     });
 
     expect(plan.intents).toHaveLength(0);
-    expect(plan.skipped).toContainEqual({
-      marketId: "market-1",
-      outcomeId: null,
-      reason: "live_order_placement_disabled",
-    });
+    expect(plan.skipped).toContainEqual({ marketId: "market-1", outcomeId: null, reason: "mode_mismatch" });
   });
 });

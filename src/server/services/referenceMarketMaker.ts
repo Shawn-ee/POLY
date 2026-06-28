@@ -2,6 +2,9 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { buildReferenceQuotes, ReferenceQuoteMarketType } from "@/server/services/referenceQuoteEngine";
 import { isPolymarketMappingEnabled } from "@/server/services/polymarket";
+import { cancelOrderAndUnlock, placeOrderAndMatch } from "@/server/services/matching";
+
+const DEFAULT_BOT_USERNAME = "system-liquidity-bot";
 
 export type ReferenceMarketMakerConfig = {
   id: string;
@@ -40,7 +43,7 @@ export type PlannedBotOrderIntent = {
   price: number;
   size: number;
   reason: string;
-  status: "DRY_RUN" | "SKIPPED";
+  status: "DRY_RUN" | "PLANNED" | "SKIPPED";
   dryRun: boolean;
 };
 
@@ -53,16 +56,16 @@ export type ReferenceMarketMakerPlan = {
 export async function runReferenceMarketMakerOnce(options: { dryRun?: boolean } = {}) {
   const forceDryRun = options.dryRun !== false;
   if (!forceDryRun) {
-    throw new Error("Live reference market maker order placement is disabled until Phase 6 guards are enabled.");
+    assertLiveLocalBotTradingAllowed();
   }
 
   const configs = await prisma.botQuoteConfig.findMany({
-    where: { enabled: true, source: "polymarket" },
+    where: { enabled: true, source: "polymarket", dryRun: forceDryRun },
     orderBy: [{ marketId: "asc" }, { outcomeId: "asc" }],
   });
   const references = await loadReferenceRows(configs.map((config) => config.marketId));
   const plan = planReferenceMarketMakerIntents({
-    dryRun: true,
+    dryRun: forceDryRun,
     configs: configs.map(configFromPrisma),
     references,
     now: Date.now(),
@@ -83,13 +86,62 @@ export async function runReferenceMarketMakerOnce(options: { dryRun?: boolean } 
     });
   }
 
+  if (!forceDryRun && plan.intents.length > 0) {
+    const bot = await loadBotUserForLiveLocal();
+    const canceled = await cancelOpenBotOrders({
+      userId: bot.id,
+      marketIds: Array.from(new Set(plan.intents.map((intent) => intent.marketId))),
+    });
+    const placed = [];
+    for (const intent of plan.intents) {
+      const result = await placeOrderAndMatch({
+        marketId: intent.marketId,
+        outcomeId: intent.outcomeId,
+        userId: bot.id,
+        side: intent.side,
+        type: "LIMIT",
+        price: intent.price,
+        size: intent.size,
+      });
+      placed.push(result.order);
+    }
+
+    return {
+      generatedAt: new Date().toISOString(),
+      dryRun: false,
+      liveOrdersEnabled: true,
+      intentsCreated: plan.intents.length,
+      placedOrders: placed,
+      canceledOrders: canceled,
+      skippedCount: plan.skipped.length,
+      intents: plan.intents,
+      skipped: plan.skipped,
+    };
+  }
+
   return {
     generatedAt: new Date().toISOString(),
-    dryRun: true,
+    dryRun: forceDryRun,
+    liveOrdersEnabled: false,
     intentsCreated: plan.intents.length,
     skippedCount: plan.skipped.length,
     intents: plan.intents,
     skipped: plan.skipped,
+  };
+}
+
+export async function pauseAllReferenceMarketMakerQuotes(options: { botUsername?: string } = {}) {
+  assertLocalBotOperationAllowed();
+  const bot = await loadBotUserForLiveLocal(options.botUsername);
+  await prisma.botQuoteConfig.updateMany({
+    where: { enabled: true, source: "polymarket" },
+    data: { enabled: false },
+  });
+  const canceledOrders = await cancelOpenBotOrders({ userId: bot.id });
+  return {
+    generatedAt: new Date().toISOString(),
+    enabled: false,
+    canceledOrders,
   };
 }
 
@@ -107,8 +159,8 @@ export function planReferenceMarketMakerIntents(params: {
     if (!config.enabled) {
       continue;
     }
-    if (!params.dryRun || !config.dryRun) {
-      skipped.push({ marketId: config.marketId, outcomeId: config.outcomeId, reason: "live_order_placement_disabled" });
+    if (params.dryRun !== config.dryRun) {
+      skipped.push({ marketId: config.marketId, outcomeId: config.outcomeId, reason: "mode_mismatch" });
       continue;
     }
 
@@ -167,6 +219,7 @@ export function planReferenceMarketMakerIntents(params: {
         continue;
       }
 
+      const status = params.dryRun ? "DRY_RUN" : "PLANNED";
       intents.push({
         marketId: config.marketId,
         outcomeId: quote.outcomeId,
@@ -174,8 +227,8 @@ export function planReferenceMarketMakerIntents(params: {
         price: quote.targetBid,
         size,
         reason: "reference_market_maker_quote",
-        status: "DRY_RUN",
-        dryRun: true,
+        status,
+        dryRun: params.dryRun,
       });
       intents.push({
         marketId: config.marketId,
@@ -184,13 +237,66 @@ export function planReferenceMarketMakerIntents(params: {
         price: quote.targetAsk,
         size,
         reason: "reference_market_maker_quote",
-        status: "DRY_RUN",
-        dryRun: true,
+        status,
+        dryRun: params.dryRun,
       });
     }
   }
 
-  return { dryRun: true, intents, skipped };
+  return { dryRun: params.dryRun, intents, skipped };
+}
+
+function assertLocalBotOperationAllowed() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Local bot operation is disabled in production.");
+  }
+  if (process.env.REAL_MONEY_MODE !== "false") {
+    throw new Error("Local bot operation requires REAL_MONEY_MODE=false.");
+  }
+}
+
+function assertLiveLocalBotTradingAllowed() {
+  assertLocalBotOperationAllowed();
+  if (process.env.ALLOW_BOT_TRADING !== "true") {
+    throw new Error("Live-local bot trading requires ALLOW_BOT_TRADING=true.");
+  }
+  if (process.env.LOCAL_BOT_TRADING_ONLY !== "true") {
+    throw new Error("Live-local bot trading requires LOCAL_BOT_TRADING_ONLY=true.");
+  }
+}
+
+async function loadBotUserForLiveLocal(username = process.env.REFERENCE_MM_BOT_USERNAME ?? DEFAULT_BOT_USERNAME) {
+  const bot = await prisma.user.findUnique({
+    where: { username },
+    include: { balance: true },
+  });
+  if (!bot) {
+    throw new Error(`Bot user ${username} is missing.`);
+  }
+  if (!bot.balance) {
+    throw new Error(`Bot user ${username} is missing a demo balance.`);
+  }
+  return bot;
+}
+
+async function cancelOpenBotOrders(params: { userId: string; marketIds?: string[] }) {
+  const orders = await prisma.order.findMany({
+    where: {
+      userId: params.userId,
+      ...(params.marketIds ? { marketId: { in: params.marketIds } } : {}),
+      status: { in: ["OPEN", "PARTIAL"] },
+      remaining: { gt: new Prisma.Decimal(0) },
+    },
+    orderBy: { createdAt: "asc" },
+    select: { id: true },
+  });
+
+  const canceled = [];
+  for (const order of orders) {
+    const result = await cancelOrderAndUnlock({ orderId: order.id, userId: params.userId });
+    canceled.push(result.order);
+  }
+  return canceled;
 }
 
 async function loadReferenceRows(marketIds: string[]): Promise<ReferenceMarketMakerReference[]> {
