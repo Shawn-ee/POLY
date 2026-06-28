@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { isPolymarketMappingEnabled } from "@/server/services/polymarket/mappings";
 import { referenceSnapshotConfig, upsertReferenceQuoteSnapshots } from "@/server/services/referenceQuoteSnapshots";
 
 const GAMMA_BASE_URL = "https://gamma-api.polymarket.com";
@@ -21,10 +22,7 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
       ...(options.slug ? { externalSlug: options.slug } : {}),
       ...(options.eventSlug ? { event: { slug: options.eventSlug } } : {}),
       ...(options.onlyMmEnabled ? { referenceMetadata: { path: ["mmEnabled"], equals: true } } : {}),
-      OR: [
-        { isListed: true },
-        { referenceMetadata: { path: ["importStatus"], equals: "approved" } },
-      ],
+      referenceMetadata: { path: ["importStatus"], equals: "approved" },
     },
     include: {
       outcomes: {
@@ -39,6 +37,10 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
   const skipped: Array<Record<string, unknown>> = [];
 
   for (const market of markets) {
+    if (!isPolymarketMappingEnabled(market.referenceMetadata)) {
+      skipped.push({ marketId: market.id, title: market.title, reason: "mapping_not_verified_or_disabled" });
+      continue;
+    }
     if (!market.externalSlug) {
       skipped.push({ marketId: market.id, title: market.title, reason: "missing_external_slug" });
       continue;

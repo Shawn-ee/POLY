@@ -52,6 +52,8 @@
     "markets:group-worldcup-winner": "tsx scripts/group_worldcup_event.ts",
     "reference:snapshot-refresh": "tsx scripts/refresh_reference_snapshots.ts",
     "reference:snapshot-watch": "tsx scripts/refresh_reference_snapshots.ts --watch --pollMs 5000",
+    "reference:sync:once": "tsx scripts/reference_sync_once.ts",
+    "reference:sync:loop": "tsx scripts/reference_sync_loop.ts",
     "deposits:monitor": "tsx scripts/run_polygon_deposit_monitor.ts",
     "test:polygon-deposits": "tsx scripts/test_polygon_deposits.ts",
     "test:reference-bot-initialization": "tsx scripts/test_reference_bot_initialization.ts",
