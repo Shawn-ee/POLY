@@ -4,6 +4,7 @@ import { CanonicalApiError, serializeForApi } from "@/lib/canonicalApi";
 import { prisma } from "@/lib/db";
 import { getOutcomeQuotes } from "@/lib/orderbookPricing";
 import { COMBO_RISK_LIMITS, validateComboRisk, type ComboRiskLeg } from "@/server/services/comboRisk";
+import { worldCupEligibleMarketWhere, worldCupFreshReferenceCutoff } from "@/server/services/worldCupPublicEligibility";
 
 const ZERO = new Prisma.Decimal(0);
 const ONE = new Prisma.Decimal(1);
@@ -201,6 +202,7 @@ const validateAndPriceComboLegs = async (legs: NormalizedComboRequest["legs"], s
   if (marketById.size !== marketIds.length) {
     throw new CanonicalApiError("INVALID_REQUEST", "One or more combo markets are invalid.", 400);
   }
+  await assertComboWorldCupMarketsEligible(marketIds);
 
   const outcomes = await prisma.outcome.findMany({
     where: { id: { in: outcomeIds } },
@@ -250,6 +252,25 @@ const validateAndPriceComboLegs = async (legs: NormalizedComboRequest["legs"], s
 
   return { pricedLegs, risk: finalRisk };
 };
+
+async function assertComboWorldCupMarketsEligible(marketIds: string[]) {
+  const uniqueMarketIds = [...new Set(marketIds)];
+  const worldCupMarkets = await prisma.market.findMany({
+    where: { id: { in: uniqueMarketIds }, event: { sportKey: "soccer", leagueKey: "world_cup" } },
+    select: { id: true },
+  });
+  if (worldCupMarkets.length === 0) return;
+
+  const eligible = await prisma.market.findMany({
+    where: { id: { in: worldCupMarkets.map((market) => market.id) }, ...worldCupEligibleMarketWhere(worldCupFreshReferenceCutoff()) },
+    select: { id: true },
+  });
+  const eligibleIds = new Set(eligible.map((market) => market.id));
+  const blocked = worldCupMarkets.find((market) => !eligibleIds.has(market.id));
+  if (blocked) {
+    throw new CanonicalApiError("COMBO_MARKET_NOT_TRADABLE", "World Cup combo legs require approved mapping and fresh reference pricing.", 400);
+  }
+}
 
 const calculateComboMath = (stakeUSDC: Prisma.Decimal, pricedLegs: ServerPricedComboLeg[]) => {
   const comboPrice = pricedLegs

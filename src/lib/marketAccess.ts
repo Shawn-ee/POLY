@@ -1,6 +1,7 @@
-﻿import { Market, PrismaClient } from "@prisma/client";
+import { Market, PrismaClient } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { MarketGuardError } from "@/lib/marketGuards";
+import { worldCupEligibleMarketWhere, worldCupFreshReferenceCutoff } from "@/server/services/worldCupPublicEligibility";
 
 type DbLike = PrismaClient | typeof prisma;
 
@@ -12,7 +13,23 @@ export const assertMarketVisibleToUser = async (params: {
   const db = params.db ?? prisma;
 
   if (params.market.visibility === "PUBLIC") {
-    return;
+    const worldCupMarket = await db.market.findFirst({
+      where: { id: params.market.id, event: { sportKey: "soccer", leagueKey: "world_cup" } },
+      select: { id: true },
+    });
+    if (!worldCupMarket) {
+      return;
+    }
+
+    const eligibleWorldCupMarket = await db.market.findFirst({
+      where: { id: params.market.id, ...worldCupEligibleMarketWhere(worldCupFreshReferenceCutoff()) },
+      select: { id: true },
+    });
+    if (eligibleWorldCupMarket) {
+      return;
+    }
+
+    throw new MarketGuardError("Market not found.", 404);
   }
 
   if (!params.userId) {

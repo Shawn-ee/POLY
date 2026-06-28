@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { MarketStatus, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
+import { publicEventMarketWhere, worldCupFreshReferenceCutoff } from "@/server/services/worldCupPublicEligibility";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -33,6 +34,7 @@ export async function GET(request: NextRequest) {
   const where: Prisma.MarketWhereInput = {
     visibility: "PUBLIC",
     isListed: true,
+    AND: [publicEventMarketWhere(worldCupFreshReferenceCutoff())],
     ...statusFilter,
     ...(search
       ? {

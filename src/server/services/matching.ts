@@ -1,5 +1,6 @@
 import { Prisma, type OrderStatus, type TradeSide } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { assertMarketVisibleToUser } from "@/lib/marketAccess";
 import { MarketGuardError } from "@/lib/marketGuards";
 import { assertPublicOrderbookCollateralInvariant } from "@/server/services/orderbookCollateral";
 
@@ -508,6 +509,7 @@ export const placeOrderAndMatch = async (params: {
   if (!market) {
     throw new MarketGuardError("Market not found", 404);
   }
+  await assertMarketVisibleToUser({ market, userId: params.userId });
   ensurePublicOrderbookLive(market);
   if (!market.outcomes.some((o) => o.id === params.outcomeId)) {
     throw new MarketGuardError("Invalid outcome", 400);

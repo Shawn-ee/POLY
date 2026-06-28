@@ -19,6 +19,7 @@ jest.mock("@/server/services/polymarketReferenceImport", () => ({
 }));
 
 jest.mock("@/server/services/referenceQuoteSnapshots", () => ({
+  referenceSnapshotConfig: { staleMs: 30_000 },
   getReferenceSummaryForMarket: jest.fn().mockResolvedValue(null),
 }));
 
@@ -181,8 +182,8 @@ describe("public market list API no-leak checks", () => {
     mockPrisma.market.findMany.mockReset();
     jest.mocked(getOutcomeQuotes).mockResolvedValue(
       new Map([
-        ["yes", { bestBid: 0.51, bestAsk: 0.53, mid: 0.52, spread: 0.02 }],
-        ["no", { bestBid: 0.47, bestAsk: 0.49, mid: 0.48, spread: 0.02 }],
+        ["yes", { bestBid: 0.51, bestAsk: 0.53, mid: 0.52, spread: 0.02, hasQuote: true }],
+        ["no", { bestBid: 0.47, bestAsk: 0.49, mid: 0.48, spread: 0.02, hasQuote: true }],
       ]),
     );
     jest.mocked(parseReferenceReview).mockReturnValue({});
@@ -202,6 +203,7 @@ describe("public market list API no-leak checks", () => {
         where: expect.objectContaining({
           visibility: "PUBLIC",
           isListed: true,
+          AND: expect.any(Array),
           status: "LIVE",
           category: { slug: "sports" },
           tags: { some: { tag: { slug: { in: ["world-cup"] } } } },
@@ -239,6 +241,7 @@ describe("public market list API no-leak checks", () => {
         where: expect.objectContaining({
           visibility: "PUBLIC",
           isListed: true,
+          AND: expect.any(Array),
           status: "RESOLVED",
         }),
         orderBy: [{ resolveTime: "desc" }, { createdAt: "desc" }],
@@ -290,6 +293,7 @@ describe("public market list API no-leak checks", () => {
         where: expect.objectContaining({
           visibility: "PUBLIC",
           isListed: true,
+          AND: expect.any(Array),
           category: { slug: "sports" },
         }),
       }),
@@ -326,6 +330,7 @@ describe("public market list API no-leak checks", () => {
         where: expect.objectContaining({
           visibility: "PUBLIC",
           isListed: true,
+          AND: expect.any(Array),
         }),
       }),
     );
