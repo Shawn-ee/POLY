@@ -318,6 +318,8 @@ model Market {
   trades                  Trade[]
   fills                   Fill[]
   orders                  Order[]
+  botQuoteConfigs         BotQuoteConfig[]
+  botOrderIntents         BotOrderIntent[]
   comboOrderLegs          ComboOrderLeg[]
   tags                    MarketTag[]
   poolBets                PoolBet[]
@@ -394,6 +396,8 @@ model Outcome {
   trades                  Trade[]
   fills                   Fill[]
   orders                  Order[]
+  botQuoteConfigs         BotQuoteConfig[]
+  botOrderIntents         BotOrderIntent[]
   comboOrderLegs          ComboOrderLeg[]
   poolBets                PoolBet[]
   referenceQuoteSnapshots ReferenceQuoteSnapshot[]
@@ -437,6 +441,52 @@ model ReferenceQuoteSnapshot {
   @@index([marketId, updatedAt])
   @@index([outcomeId, updatedAt])
   @@index([source, updatedAt])
+}
+
+model BotQuoteConfig {
+  id                      String   @id @default(uuid())
+  marketId                String
+  outcomeId               String?
+  enabled                 Boolean  @default(false)
+  dryRun                  Boolean  @default(true)
+  source                  String   @default("polymarket")
+  edgeTicks               Int      @default(2)
+  tickSize                Decimal  @default(0.01) @db.Decimal(20, 8)
+  baseOrderSize           Decimal  @default(1) @db.Decimal(36, 6)
+  maxOrderSize            Decimal  @default(1) @db.Decimal(36, 6)
+  maxOutcomeExposure      Decimal  @default(10) @db.Decimal(36, 6)
+  maxMarketExposure       Decimal  @default(25) @db.Decimal(36, 6)
+  maxDailyNotional        Decimal  @default(50) @db.Decimal(36, 6)
+  staleAfterSeconds       Int      @default(15)
+  minQuoteLifetimeSeconds Int      @default(5)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  market                  Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  outcome                 Outcome? @relation(fields: [outcomeId], references: [id], onDelete: Cascade)
+
+  @@index([enabled, source])
+  @@index([marketId, enabled])
+  @@index([outcomeId])
+}
+
+model BotOrderIntent {
+  id        String   @id @default(uuid())
+  marketId  String
+  outcomeId String
+  side      TradeSide
+  price     Decimal  @db.Decimal(20, 8)
+  size      Decimal  @db.Decimal(36, 6)
+  reason    String
+  status    String   @default("DRY_RUN")
+  dryRun    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  market    Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  outcome   Outcome  @relation(fields: [outcomeId], references: [id], onDelete: Cascade)
+
+  @@index([marketId, createdAt])
+  @@index([outcomeId, createdAt])
+  @@index([status, createdAt])
+  @@index([dryRun, createdAt])
 }
 
 model Position {
