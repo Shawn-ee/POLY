@@ -11,9 +11,32 @@ export type RefreshReferenceSnapshotsOptions = {
   marketId?: string | null;
   eventSlug?: string | null;
   onlyMmEnabled?: boolean;
+  includePendingReview?: boolean;
+};
+
+export type NormalizedPolymarketReferenceMarket = Awaited<ReturnType<typeof fetchGammaMarketBySlug>>;
+
+export type SyncablePolymarketReferenceMarket = {
+  id: string;
+  title: string;
+  externalSlug: string | null;
+  externalMarketId: string | null;
+  conditionId: string | null;
+  referenceMetadata: unknown;
+  outcomes: Array<{
+    id: string;
+    name: string;
+    referenceTokenId: string | null;
+    referenceOutcomeLabel: string | null;
+  }>;
 };
 
 export async function refreshPolymarketReferenceSnapshots(options: RefreshReferenceSnapshotsOptions = {}) {
+  const statusFilters = options.includePendingReview ? ["approved", "pending_review"] : ["approved"];
+  const andFilters = [
+    ...(options.onlyMmEnabled ? [{ referenceMetadata: { path: ["mmEnabled"], equals: true } }] : []),
+    { OR: statusFilters.map((status) => ({ referenceMetadata: { path: ["importStatus"], equals: status } })) },
+  ];
   const markets = await prisma.market.findMany({
     where: {
       referenceSource: "polymarket",
@@ -21,8 +44,7 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
       externalSlug: options.slug ?? { not: null },
       ...(options.slug ? { externalSlug: options.slug } : {}),
       ...(options.eventSlug ? { event: { slug: options.eventSlug } } : {}),
-      ...(options.onlyMmEnabled ? { referenceMetadata: { path: ["mmEnabled"], equals: true } } : {}),
-      referenceMetadata: { path: ["importStatus"], equals: "approved" },
+      AND: andFilters,
     },
     include: {
       outcomes: {
@@ -55,49 +77,7 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
     }
 
     const fetchedAt = new Date().toISOString();
-    const inputs = market.outcomes.map((outcome) => {
-      const matchedOutcome =
-        gamma.outcomes.find((entry) => outcome.referenceTokenId && entry.tokenId === outcome.referenceTokenId) ??
-        gamma.outcomes.find(
-          (entry) =>
-            typeof outcome.referenceOutcomeLabel === "string" &&
-            entry.label.toLowerCase() === outcome.referenceOutcomeLabel.toLowerCase(),
-        ) ??
-        gamma.outcomes.find((entry) => entry.label.toLowerCase() === outcome.name.toLowerCase()) ??
-        null;
-
-      const quality = evaluateSnapshotQuality({
-        acceptingOrders: gamma.acceptingOrders,
-        bestBid: gamma.bestBid,
-        bestAsk: gamma.bestAsk,
-        spread: gamma.spread,
-      });
-
-      return {
-        marketId: market.id,
-        outcomeId: outcome.id,
-        source: "polymarket",
-        externalSlug: market.externalSlug,
-        externalMarketId: market.externalMarketId,
-        conditionId: market.conditionId,
-        tokenId: outcome.referenceTokenId,
-        outcomeLabel: outcome.referenceOutcomeLabel ?? outcome.name,
-        outcomePrice: matchedOutcome?.outcomePrice ?? null,
-        bestBid: gamma.bestBid,
-        bestAsk: gamma.bestAsk,
-        spread: gamma.spread,
-        lastTradePrice: gamma.lastTradePrice,
-        volume: gamma.volume,
-        volume24hr: gamma.volume24hr,
-        liquidity: gamma.liquidity,
-        liquidityClob: gamma.liquidityClob,
-        acceptingOrders: gamma.acceptingOrders,
-        qualityStatus: quality.qualityStatus,
-        mmEligible: quality.mmEligible,
-        reason: quality.reason,
-        fetchedAt,
-      };
-    });
+    const inputs = buildReferenceSnapshotInputsForMarket(market, gamma, fetchedAt);
 
     await upsertReferenceQuoteSnapshots(inputs);
     refreshed.push({
@@ -131,11 +111,61 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
   };
 }
 
+export function buildReferenceSnapshotInputsForMarket(
+  market: SyncablePolymarketReferenceMarket,
+  gamma: NormalizedPolymarketReferenceMarket,
+  fetchedAt: string,
+) {
+  const quality = evaluateSnapshotQuality({
+    acceptingOrders: gamma.acceptingOrders,
+    bestBid: gamma.bestBid,
+    bestAsk: gamma.bestAsk,
+    spread: gamma.spread,
+  });
+
+  return market.outcomes.map((outcome) => {
+    const matchedOutcome =
+      gamma.outcomes.find((entry) => outcome.referenceTokenId && entry.tokenId === outcome.referenceTokenId) ??
+      gamma.outcomes.find(
+        (entry) =>
+          typeof outcome.referenceOutcomeLabel === "string" &&
+          entry.label.toLowerCase() === outcome.referenceOutcomeLabel.toLowerCase(),
+      ) ??
+      gamma.outcomes.find((entry) => entry.label.toLowerCase() === outcome.name.toLowerCase()) ??
+      null;
+
+    return {
+      marketId: market.id,
+      outcomeId: outcome.id,
+      source: "polymarket",
+      externalSlug: market.externalSlug,
+      externalMarketId: market.externalMarketId,
+      conditionId: market.conditionId,
+      tokenId: outcome.referenceTokenId,
+      outcomeLabel: outcome.referenceOutcomeLabel ?? outcome.name,
+      outcomePrice: matchedOutcome?.outcomePrice ?? null,
+      bestBid: gamma.bestBid,
+      bestAsk: gamma.bestAsk,
+      spread: gamma.spread,
+      lastTradePrice: gamma.lastTradePrice,
+      volume: gamma.volume,
+      volume24hr: gamma.volume24hr,
+      liquidity: gamma.liquidity,
+      liquidityClob: gamma.liquidityClob,
+      acceptingOrders: gamma.acceptingOrders,
+      qualityStatus: quality.qualityStatus,
+      mmEligible: quality.mmEligible,
+      reason: quality.reason,
+      fetchedAt,
+    };
+  });
+}
+
 async function fetchReferenceMarketForSync(market: {
   externalSlug: string | null;
   referenceMetadata: unknown;
 }) {
-  const fixture = readFixtureGammaMarket(market.referenceMetadata);
+  const fixture = readFixtureGammaMarketFromMetadata(market.referenceMetadata);
   if (process.env.POLYMARKET_REFERENCE_FIXTURE_MODE === "true" && fixture) {
     return fixture;
   }
@@ -145,7 +175,7 @@ async function fetchReferenceMarketForSync(market: {
   return fetchGammaMarketBySlug(market.externalSlug);
 }
 
-function readFixtureGammaMarket(metadata: unknown): Awaited<ReturnType<typeof fetchGammaMarketBySlug>> | null {
+export function readFixtureGammaMarketFromMetadata(metadata: unknown): Awaited<ReturnType<typeof fetchGammaMarketBySlug>> | null {
   if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
     return null;
   }

@@ -3,8 +3,9 @@ import { syncPolymarketReferencePricesOnce } from "@/server/services/polymarket"
 const marketId = readArg("--marketId");
 const eventSlug = readArg("--eventSlug");
 const onlyMmEnabled = process.argv.includes("--onlyMmEnabled");
+const includePendingReview = process.argv.includes("--includePendingReview");
 
-syncPolymarketReferencePricesOnce({ marketId, eventSlug, onlyMmEnabled })
+syncPolymarketReferencePricesOnce({ marketId, eventSlug, onlyMmEnabled, includePendingReview })
   .then((result) => {
     console.log(JSON.stringify(result, null, 2));
   })

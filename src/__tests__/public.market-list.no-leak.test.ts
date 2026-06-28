@@ -53,6 +53,13 @@ const forbiddenFieldNames = [
   "positionId",
   "balanceId",
   "orderOwnerId",
+  "externalMarketId",
+  "conditionId",
+  "externalSlug",
+  "externalEventId",
+  "referenceTokenId",
+  "referenceOutcomeLabel",
+  "referenceMetadata",
 ];
 
 const collectKeys = (value: unknown): string[] => {
@@ -80,12 +87,9 @@ const expectOnlyKeys = (value: Record<string, unknown>, allowedKeys: string[]) =
 
 const expectedMarketKeys = [
   "category",
-  "conditionId",
   "createdAt",
   "description",
   "event",
-  "externalMarketId",
-  "externalSlug",
   "id",
   "importStatus",
   "kind",
@@ -97,7 +101,6 @@ const expectedMarketKeys = [
   "prices",
   "pricesByOutcome",
   "referenceOnly",
-  "referenceSource",
   "referenceSummary",
   "resolveTime",
   "status",
@@ -245,6 +248,62 @@ describe("public market list API no-leak checks", () => {
     const body = await response.json();
     expectOnlyKeys(body, ["markets"]);
     expect(body).toEqual({ markets: [] });
+    expectNoForbiddenKeys(body);
+  });
+
+  test("GET /api/markets hides draft imports by query and omits mapping fields for enabled imports", async () => {
+    mockPrisma.market.findMany.mockResolvedValue([
+      {
+        ...market,
+        id: "imported-enabled",
+        title: "Will France win the 2026 FIFA World Cup?",
+        externalMarketId: "pm-worldcup-france-win",
+        conditionId: "cond-worldcup-france-win",
+        externalSlug: "will-france-win-2026-fifa-world-cup",
+        referenceSource: "polymarket",
+        referenceMetadata: {
+          importStatus: "approved",
+          referenceOnly: true,
+          tradable: false,
+          mmEnabled: true,
+          fixtureReferencePrice: { bestBid: 0.3, bestAsk: 0.32 },
+        },
+        outcomes: market.outcomes.map((outcome, index) => ({
+          ...outcome,
+          referenceTokenId: index === 0 ? "tok-france-yes" : "tok-france-no",
+          referenceOutcomeLabel: index === 0 ? "Yes" : "No",
+        })),
+      },
+    ]);
+    jest.mocked(parseReferenceReview).mockReturnValue({
+      importStatus: "approved",
+      referenceOnly: true,
+      tradable: false,
+      mmEnabled: true,
+    });
+
+    const response = await listMarkets(new NextRequest("http://localhost/api/markets?category=sports&tags=world-cup"));
+
+    expect(response.status).toBe(200);
+    expect(mockPrisma.market.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          visibility: "PUBLIC",
+          isListed: true,
+          category: { slug: "sports" },
+        }),
+      }),
+    );
+
+    const body = await response.json();
+    expect(body.markets).toHaveLength(1);
+    expect(body.markets[0]).toMatchObject({
+      id: "imported-enabled",
+      importStatus: "approved",
+      referenceOnly: true,
+      tradable: false,
+      mmEnabled: true,
+    });
     expectNoForbiddenKeys(body);
   });
 

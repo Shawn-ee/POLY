@@ -55,6 +55,13 @@ const forbiddenFieldNames = [
   "withdrawalApproval",
   "riskLimit",
   "killSwitch",
+  "externalMarketId",
+  "conditionId",
+  "externalSlug",
+  "externalEventId",
+  "referenceTokenId",
+  "referenceOutcomeLabel",
+  "referenceMetadata",
 ];
 
 const collectKeys = (value: unknown): string[] => {
@@ -82,12 +89,9 @@ const expectOnlyKeys = (value: Record<string, unknown>, allowedKeys: string[]) =
 
 const expectedMarketKeys = [
   "category",
-  "conditionId",
   "createdAt",
   "description",
   "event",
-  "externalMarketId",
-  "externalSlug",
   "id",
   "importStatus",
   "kind",
@@ -99,7 +103,6 @@ const expectedMarketKeys = [
   "prices",
   "pricesByOutcome",
   "referenceOnly",
-  "referenceSource",
   "referenceSummary",
   "resolveTime",
   "status",
@@ -224,8 +227,6 @@ describe("public event market API no-leak checks", () => {
       "metadata",
       "name",
       "price",
-      "referenceOutcomeLabel",
-      "referenceTokenId",
       "spread",
       "status",
     ]);
@@ -257,6 +258,59 @@ describe("public event market API no-leak checks", () => {
     const body = await response.json();
     expectOnlyKeys(body, ["error"]);
     expect(body).toEqual({ error: "Event not found." });
+    expectNoForbiddenKeys(body);
+  });
+
+  test("GET /api/events/[slug]/markets hides draft imports by query and omits mapping fields for enabled imports", async () => {
+    mockPrisma.event.findUnique.mockResolvedValue({ id: "event-1" });
+    mockPrisma.market.findMany.mockResolvedValue([
+      {
+        ...market,
+        id: "imported-enabled",
+        externalMarketId: "pm-worldcup-france-win",
+        conditionId: "cond-worldcup-france-win",
+        externalSlug: "will-france-win-2026-fifa-world-cup",
+        referenceSource: "polymarket",
+        referenceMetadata: {
+          importStatus: "approved",
+          referenceOnly: true,
+          tradable: false,
+          mmEnabled: true,
+        },
+        outcomes: market.outcomes.map((outcome, index) => ({
+          ...outcome,
+          referenceTokenId: index === 0 ? "tok-france-yes" : "tok-france-no",
+          referenceOutcomeLabel: index === 0 ? "Yes" : "No",
+        })),
+      },
+    ]);
+    jest.mocked(parseReferenceReview).mockReturnValue({
+      importStatus: "approved",
+      referenceOnly: true,
+      tradable: false,
+      mmEnabled: true,
+    });
+
+    const response = await listEventMarkets(new Request("http://localhost/api/events/france-vs-argentina/markets"), {
+      params: Promise.resolve({ slug: "france-vs-argentina" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(mockPrisma.market.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { eventId: "event-1", visibility: "PUBLIC", isListed: true },
+      }),
+    );
+
+    const body = await response.json();
+    expect(body.markets).toHaveLength(1);
+    expect(body.markets[0]).toMatchObject({
+      id: "imported-enabled",
+      importStatus: "approved",
+      referenceOnly: true,
+      tradable: false,
+      mmEnabled: true,
+    });
     expectNoForbiddenKeys(body);
   });
 

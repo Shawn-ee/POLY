@@ -15,6 +15,7 @@ export async function GET(_request: Request, context: Ctx) {
         select: { markets: true },
       },
       markets: {
+        where: { visibility: "PUBLIC", isListed: true },
         include: marketReadInclude,
         orderBy: [{ marketGroupKey: "asc" }, { displayOrder: "asc" }, { createdAt: "asc" }],
       },
@@ -44,7 +45,6 @@ export async function GET(_request: Request, context: Ctx) {
             !Array.isArray(event.metadata) &&
             "referenceGroup" in (event.metadata as Record<string, unknown>),
         ),
-      metadata: event.metadata,
     },
     markets,
   });
