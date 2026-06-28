@@ -1,0 +1,94 @@
+# Known Failures
+
+- 2026-06-28: World Cup discovery/import lifecycle is not implemented end to end. Missing harnesses: `world_cup_market_discovery_check.sh`, `world_cup_market_import_check.sh`, `world_cup_mapping_validation_check.sh`, `world_cup_market_promotion_check.sh`, and `world_cup_discovery_to_trading_e2e_check.sh`.
+- 2026-06-28 WC-DISC-001 audit: `reference:sync:once` only syncs already mapped/approved markets. Discovery candidate persistence, draft import command, mapping validator command, promotion command, and discovery/import harnesses remain missing.
+- 2026-06-28 WC-DISC-002: discovery fixture/harness now exists. Remaining discovery gap: no `polymarket:discover:once` script and no persisted candidate/report command.
+- 2026-06-28 WC-DISC-003: `polymarket:discover:once` now exists and writes fixture reports. Remaining gap: no draft import command/model and no persisted candidate lifecycle.
+- 2026-06-28 WC-DISC-004: `polymarket:import:draft` now exists and writes draft-only dry-run reports. Remaining gaps: duplicate prevention hardening, mapping validator command, persisted candidate lifecycle, promotion command, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-005: duplicate prevention is now harnessed for discovery/import planning. Remaining gaps: mapping validator command, persisted candidate lifecycle, promotion command, public listing/no-leak harness, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-006: mapping validator is now harnessed for fixture candidates. Remaining gaps: reference sync for imported drafts, two-tick pricing after import, promotion command, public listing/no-leak harness, admin review surface, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-007: imported-draft reference sync fixture path is now harnessed. Remaining gaps: two-tick pricing after import, promotion command, public listing/no-leak harness, admin review surface, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-008: imported-draft two-tick pricing is now harnessed. Remaining gaps: promotion command, market-maker dry-run after import, public listing/no-leak harness, admin review surface, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-009: dry-run promotion guardrails are now harnessed. Remaining gaps: DB-backed lifecycle mutation, market-maker dry-run command integration for imported markets, public listing/no-leak harness, admin review surface, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-010: imported-market MM dry-run planning is now harnessed. Remaining gaps: DB-backed lifecycle mutation, public listing/no-leak harness, admin review surface, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-011: public no-leak/listing checks are now harnessed. Remaining gaps: DB-backed lifecycle mutation, admin review surface, and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-012: admin review report is now harnessed. Remaining gaps: DB-backed lifecycle mutation and discovery-to-trading E2E.
+- 2026-06-28 WC-DISC-013: discovery-to-trading fixture E2E is now harnessed. Remaining gaps: optional read-only live Polymarket discovery smoke and DB-backed lifecycle mutation.
+- 2026-06-28 WC-DISC-014: optional live smoke gating is harnessed and skipped by default; no live API result is claimed. Remaining gap: DB-backed lifecycle mutation/local DB E2E validation.
+- 2026-06-28 follow-up task generation: created targeted pending tasks for DB-backed lifecycle mutation, local DB discovery/import/promotion E2E, and optional read-only live smoke.
+- 2026-06-28 WC-DISC-DB-001: guarded DB-backed lifecycle mutation is implemented and tested with a mocked DB. Remaining gaps: local DB E2E validation and optional read-only live smoke execution.
+- 2026-06-28 WC-DISC-DB-002: local DB E2E validation is now passing. Remaining discovery/import gap: optional read-only live Polymarket smoke execution and persisted discovery-candidate DB table if desired later.
+- 2026-06-28 WC-DISC-LIVE-001: optional read-only live Polymarket smoke is now passing. Remaining discovery/import enhancement: persisted discovery-candidate DB table/review queue if desired later.
+
+- 2026-06-25: No local loop harness failures recorded at bootstrap.
+- 2026-06-26T04:19:22Z: Harness `route_security_check.sh` failed. See `agent-orchestrator/runs/20260626T041912Z-harness_only/route_security_check.log`.
+- 2026-06-26T04:22:56Z: SEC-001 resolved the route-security failure by documenting/allowlisting public market `line` display metadata in the two no-leak tests. `route_security_check.sh` passed.
+- 2026-06-26T04:23:09Z: `full_check.sh` failed outside SEC-001 scope at `npx prisma generate` with Windows `EPERM` while renaming `node_modules/.prisma/client/query_engine-windows.dll.node`; Prisma validate passed. Track separately as harness/environment reliability.
+- 2026-06-26T04:23:38Z: Harness `full_check.sh` failed. See `agent-orchestrator/runs/20260626T042309Z-harness_only/full_check.log`.
+- 2026-06-26T04:42:21Z: Harness `bot_inventory_check.sh` failed. See `agent-orchestrator/runs/20260626T044220Z-harness_only/bot_inventory_check.log`.
+- 2026-06-26T04:42:59Z: Harness `bot_inventory_check.sh` failed. See `agent-orchestrator/runs/20260626T044258Z-harness_only/bot_inventory_check.log`.
+- 2026-06-26T04:43:38Z: Resolved transient `bot_inventory_check.sh` failure by allowing the harness to use documented display names and a `grep` fallback when `rg` is unavailable in bash. `bot_inventory_check.sh` passed in `agent-orchestrator/runs/20260626T044338Z-harness_only/`.
+- 2026-06-26T05:04:10Z: Task `BETA-003.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050400Z-BETA-003/REPORT.md`.
+- 2026-06-26T05:04:23Z: Task `BETA-004.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050416Z-BETA-004/REPORT.md`.
+- 2026-06-26T05:04:49Z: Task `WC-001-spec-scorecard-review.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050448Z-WC-001-spec-scorecard-review/REPORT.md`.
+- 2026-06-26T05:05:40Z: Task `WC-003-trading-engine-audit.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050535Z-WC-003-trading-engine-audit/REPORT.md`.
+- 2026-06-26T05:05:54Z: Task `WC-005-reference-sync-dry-run-harness.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050548Z-WC-005-reference-sync-dry-run-harness/REPORT.md`.
+- 2026-06-26T05:05:58Z: Task `WC-006-two-tick-pricing-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050556Z-WC-006-two-tick-pricing-tests/REPORT.md`.
+- 2026-06-26T05:06:05Z: Task `WC-007-combo-model-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050600Z-WC-007-combo-model-tests/REPORT.md`.
+- 2026-06-26T05:07:45Z: Task `WC-008-cashout-estimate-design-test.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T050744Z-WC-008-cashout-estimate-design-test/REPORT.md`.
+- 2026-06-26T05:10:49Z: Task `FIX-BETA-003.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051039Z-FIX-BETA-003/REPORT.md`.
+- 2026-06-26T05:10:59Z: Task `FIX-BETA-004.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051052Z-FIX-BETA-004/REPORT.md`.
+- 2026-06-26T05:11:15Z: Task `FIX-WC-001-spec-scorecard-review.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051114Z-FIX-WC-001-spec-scorecard-review/REPORT.md`.
+- 2026-06-26T05:11:22Z: Task `FIX-WC-003-trading-engine-audit.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051117Z-FIX-WC-003-trading-engine-audit/REPORT.md`.
+- 2026-06-26T05:11:28Z: Task `FIX-WC-005-reference-sync-dry-run-harness.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051125Z-FIX-WC-005-reference-sync-dry-run-harness/REPORT.md`.
+- 2026-06-26T05:11:32Z: Task `FIX-WC-006-two-tick-pricing-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051131Z-FIX-WC-006-two-tick-pricing-tests/REPORT.md`.
+- 2026-06-26T05:11:40Z: Task `FIX-WC-007-combo-model-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051134Z-FIX-WC-007-combo-model-tests/REPORT.md`.
+- 2026-06-26T05:11:42Z: Task `FIX-WC-008-cashout-estimate-design-test.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051142Z-FIX-WC-008-cashout-estimate-design-test/REPORT.md`.
+- 2026-06-26T05:11:58Z: Task `FIX-FIX-BETA-003.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051147Z-FIX-FIX-BETA-003/REPORT.md`.
+- 2026-06-26T05:12:11Z: Task `FIX-FIX-BETA-004.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051202Z-FIX-FIX-BETA-004/REPORT.md`.
+- 2026-06-26T05:12:26Z: Task `FIX-FIX-WC-001-spec-scorecard-review.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051226Z-FIX-FIX-WC-001-spec-scorecard-review/REPORT.md`.
+- 2026-06-26T05:12:37Z: Task `FIX-FIX-WC-003-trading-engine-audit.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051232Z-FIX-FIX-WC-003-trading-engine-audit/REPORT.md`.
+- 2026-06-26T05:12:46Z: Task `FIX-FIX-WC-005-reference-sync-dry-run-harness.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051240Z-FIX-FIX-WC-005-reference-sync-dry-run-harness/REPORT.md`.
+- 2026-06-26T05:12:49Z: Task `FIX-FIX-WC-006-two-tick-pricing-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051248Z-FIX-FIX-WC-006-two-tick-pricing-tests/REPORT.md`.
+- 2026-06-26T05:12:54Z: Task `FIX-FIX-WC-007-combo-model-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051250Z-FIX-FIX-WC-007-combo-model-tests/REPORT.md`.
+- 2026-06-26T05:12:57Z: Task `FIX-FIX-WC-008-cashout-estimate-design-test.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051257Z-FIX-FIX-WC-008-cashout-estimate-design-test/REPORT.md`.
+- 2026-06-26T05:13:12Z: Task `FIX-FIX-FIX-BETA-003.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051302Z-FIX-FIX-FIX-BETA-003/REPORT.md`.
+- 2026-06-26T05:13:21Z: Task `FIX-FIX-FIX-BETA-004.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051314Z-FIX-FIX-FIX-BETA-004/REPORT.md`.
+- 2026-06-26T05:13:37Z: Task `FIX-FIX-FIX-WC-001-spec-scorecard-review.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051337Z-FIX-FIX-FIX-WC-001-spec-scorecard-review/REPORT.md`.
+- 2026-06-26T05:13:45Z: Task `FIX-FIX-FIX-WC-003-trading-engine-audit.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051340Z-FIX-FIX-FIX-WC-003-trading-engine-audit/REPORT.md`.
+- 2026-06-26T05:13:52Z: Task `FIX-FIX-FIX-WC-005-reference-sync-dry-run-harness.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051346Z-FIX-FIX-FIX-WC-005-reference-sync-dry-run-harness/REPORT.md`.
+- 2026-06-26T05:13:55Z: Task `FIX-FIX-FIX-WC-006-two-tick-pricing-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051354Z-FIX-FIX-FIX-WC-006-two-tick-pricing-tests/REPORT.md`.
+- 2026-06-26T05:14:02Z: Task `FIX-FIX-FIX-WC-007-combo-model-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051357Z-FIX-FIX-FIX-WC-007-combo-model-tests/REPORT.md`.
+- 2026-06-26T05:14:04Z: Task `FIX-FIX-FIX-WC-008-cashout-estimate-design-test.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051404Z-FIX-FIX-FIX-WC-008-cashout-estimate-design-test/REPORT.md`.
+- 2026-06-26T05:14:18Z: Task `FIX-FIX-FIX-FIX-BETA-003.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051410Z-FIX-FIX-FIX-FIX-BETA-003/REPORT.md`.
+- 2026-06-26T05:14:29Z: Task `FIX-FIX-FIX-FIX-BETA-004.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051420Z-FIX-FIX-FIX-FIX-BETA-004/REPORT.md`.
+- 2026-06-26T05:14:44Z: Task `FIX-FIX-FIX-FIX-WC-001-spec-scorecard-review.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051443Z-FIX-FIX-FIX-FIX-WC-001-spec-scorecard-review/REPORT.md`.
+- 2026-06-26T05:14:51Z: Task `FIX-FIX-FIX-FIX-WC-003-trading-engine-audit.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051446Z-FIX-FIX-FIX-FIX-WC-003-trading-engine-audit/REPORT.md`.
+- 2026-06-26T05:15:00Z: Task `FIX-FIX-FIX-FIX-WC-005-reference-sync-dry-run-harness.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051454Z-FIX-FIX-FIX-FIX-WC-005-reference-sync-dry-run-harness/REPORT.md`.
+- 2026-06-26T05:15:04Z: Task `FIX-FIX-FIX-FIX-WC-006-two-tick-pricing-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051502Z-FIX-FIX-FIX-FIX-WC-006-two-tick-pricing-tests/REPORT.md`.
+- 2026-06-26T05:15:09Z: Task `FIX-FIX-FIX-FIX-WC-007-combo-model-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051506Z-FIX-FIX-FIX-FIX-WC-007-combo-model-tests/REPORT.md`.
+- 2026-06-26T05:15:11Z: Task `FIX-FIX-FIX-FIX-WC-008-cashout-estimate-design-test.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051511Z-FIX-FIX-FIX-FIX-WC-008-cashout-estimate-design-test/REPORT.md`.
+- 2026-06-26T05:15:27Z: Task `FIX-FIX-FIX-FIX-FIX-BETA-003.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051517Z-FIX-FIX-FIX-FIX-FIX-BETA-003/REPORT.md`.
+- 2026-06-26T05:15:38Z: Task `FIX-FIX-FIX-FIX-FIX-BETA-004.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051529Z-FIX-FIX-FIX-FIX-FIX-BETA-004/REPORT.md`.
+- 2026-06-26T05:15:57Z: Task `FIX-FIX-FIX-FIX-FIX-WC-001-spec-scorecard-review.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051556Z-FIX-FIX-FIX-FIX-FIX-WC-001-spec-scorecard-review/REPORT.md`.
+- 2026-06-26T05:16:04Z: Task `FIX-FIX-FIX-FIX-FIX-WC-003-trading-engine-audit.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051559Z-FIX-FIX-FIX-FIX-FIX-WC-003-trading-engine-audit/REPORT.md`.
+- 2026-06-26T05:16:10Z: Task `FIX-FIX-FIX-FIX-FIX-WC-005-reference-sync-dry-run-harness.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051607Z-FIX-FIX-FIX-FIX-FIX-WC-005-reference-sync-dry-run-harness/REPORT.md`.
+- 2026-06-26T05:16:14Z: Task `FIX-FIX-FIX-FIX-FIX-WC-006-two-tick-pricing-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T051613Z-FIX-FIX-FIX-FIX-FIX-WC-006-two-tick-pricing-tests/REPORT.md`.
+- 2026-06-26T05:24:33Z: Failed-task analyzer classified domains: cashout_model combo_model deployment market_making_bot order_ticket reference_sync two_tick_pricing world_cup_product. Report: `agent-orchestrator/runs/20260626T052432Z-analyze_failures/REPORT.md`.
+- 2026-06-26T05:25:46Z: Task `WC-FIX-001-sports-ux-preview-contract.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052536Z-WC-FIX-001-sports-ux-preview-contract/REPORT.md`.
+- 2026-06-26T05:26:24Z: Task `WC-FIX-002-bot-safety-env-token-evidence.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052618Z-WC-FIX-002-bot-safety-env-token-evidence/REPORT.md`.
+- 2026-06-26T05:26:54Z: Task `WC-FIX-003-deployment-env-documentation.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052653Z-WC-FIX-003-deployment-env-documentation/REPORT.md`.
+- 2026-06-26T05:27:27Z: Task `WC-FIX-004-world-cup-order-ticket-smoke.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052723Z-WC-FIX-004-world-cup-order-ticket-smoke/REPORT.md`.
+- 2026-06-26T05:28:02Z: Task `WC-FIX-005-reference-sync-token-contract.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052757Z-WC-FIX-005-reference-sync-token-contract/REPORT.md`.
+- 2026-06-26T05:28:33Z: Task `WC-FIX-006-two-tick-pricing-policy-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052832Z-WC-FIX-006-two-tick-pricing-policy-tests/REPORT.md`.
+- 2026-06-26T05:29:07Z: Task `WC-FIX-007-combo-validation-model-tokens.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052903Z-WC-FIX-007-combo-validation-model-tokens/REPORT.md`.
+- 2026-06-26T05:29:37Z: Task `WC-FIX-008-cashout-estimate-model-references.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T052937Z-WC-FIX-008-cashout-estimate-model-references/REPORT.md`.
+- 2026-06-26T05:30:19Z: Task `FIX-WC-FIX-001-sports-ux-preview-contract.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053009Z-FIX-WC-FIX-001-sports-ux-preview-contract/REPORT.md`.
+- 2026-06-26T05:30:55Z: Task `FIX-WC-FIX-002-bot-safety-env-token-evidence.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053048Z-FIX-WC-FIX-002-bot-safety-env-token-evidence/REPORT.md`.
+- 2026-06-26T05:31:25Z: Task `FIX-WC-FIX-003-deployment-env-documentation.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053125Z-FIX-WC-FIX-003-deployment-env-documentation/REPORT.md`.
+- 2026-06-26T05:32:00Z: Task `FIX-WC-FIX-004-world-cup-order-ticket-smoke.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053155Z-FIX-WC-FIX-004-world-cup-order-ticket-smoke/REPORT.md`.
+- 2026-06-26T05:32:33Z: Task `FIX-WC-FIX-005-reference-sync-token-contract.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053229Z-FIX-WC-FIX-005-reference-sync-token-contract/REPORT.md`.
+- 2026-06-26T05:33:03Z: Task `FIX-WC-FIX-006-two-tick-pricing-policy-tests.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053302Z-FIX-WC-FIX-006-two-tick-pricing-policy-tests/REPORT.md`.
+- 2026-06-26T05:33:37Z: Task `FIX-WC-FIX-007-combo-validation-model-tokens.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053332Z-FIX-WC-FIX-007-combo-validation-model-tokens/REPORT.md`.
+- 2026-06-26T05:34:08Z: Task `FIX-WC-FIX-008-cashout-estimate-model-references.md` failed harness processing. Report: `agent-orchestrator/runs/20260626T053407Z-FIX-WC-FIX-008-cashout-estimate-model-references/REPORT.md`.
+- 2026-06-26T05:40:16Z: Task `WC-CODEX-001-bot-safety-env-token-evidence.md` failed Codex worker/harness processing. Report: `agent-orchestrator/runs/20260626T054008Z-WC-CODEX-001-bot-safety-env-token-evidence/REPORT.md`.
