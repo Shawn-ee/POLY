@@ -210,7 +210,7 @@ function MarketFamilyCard({
               <div className="text-xs text-[var(--poly-muted)]">{SOURCE_LABEL[outcome.source]}</div>
             </div>
             <div className="text-sm tabular-nums text-[var(--poly-muted)]">
-              {formatBidAsk(outcome.bid, outcome.ask)}
+              {formatBidAsk(outcome)}
             </div>
           </button>
         ))}
@@ -235,7 +235,7 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
           <div className="mt-3 rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] p-3 text-sm">
             <Row label="Source" value={SOURCE_LABEL[outcome.source]} />
             <Row label="Price" value={formatOutcomePrice(outcome)} />
-            <Row label="Bid / Ask" value={formatBidAsk(outcome.bid, outcome.ask)} />
+            <Row label="Bid / Ask" value={formatBidAsk(outcome)} />
           </div>
           <label className="mt-4 block">
             <span className="text-xs font-semibold uppercase text-[var(--poly-muted)]">Amount</span>
@@ -307,7 +307,9 @@ function formatOutcomePrice(outcome: WorldCupEventOutcome) {
   return `${Math.round(price * 100)}c`;
 }
 
-function formatBidAsk(bid: number | null, ask: number | null) {
+function formatBidAsk(outcome: WorldCupEventOutcome) {
+  const { bid, ask } = outcome;
+  if (bid == null && ask == null && outcome.source === "reference_price") return "Reference only";
   if (bid == null && ask == null) return "No local book";
   const left = bid == null ? "No bid" : `${Math.round(bid * 100)}c`;
   const right = ask == null ? "No ask" : `${Math.round(ask * 100)}c`;

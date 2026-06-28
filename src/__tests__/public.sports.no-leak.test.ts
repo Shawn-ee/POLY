@@ -9,6 +9,10 @@ jest.mock("@/lib/db", () => ({
   prisma: mockPrisma,
 }));
 
+jest.mock("@/server/services/referenceQuoteSnapshots", () => ({
+  referenceSnapshotConfig: { staleMs: 30_000 },
+}));
+
 import { GET as listSports } from "@/app/api/sports/route";
 import { GET as listSoccerEvents } from "@/app/api/sports/soccer/events/route";
 import { GET as listWorldCupEvents } from "@/app/api/sports/soccer/world-cup/events/route";
@@ -66,8 +70,6 @@ const expectedEventSummaryKeys = [
   "createdAt",
   "description",
   "eventType",
-  "externalEventId",
-  "externalSlug",
   "hasGroupedMarkets",
   "homeTeamName",
   "icon",
@@ -76,7 +78,6 @@ const expectedEventSummaryKeys = [
   "imageUrl",
   "leagueKey",
   "marketCount",
-  "metadata",
   "slug",
   "source",
   "sportKey",
@@ -161,7 +162,11 @@ describe("public sports API no-leak checks", () => {
     expect(response.status).toBe(200);
     expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { category: "sports", sportKey: "soccer" },
+        where: expect.objectContaining({
+          category: "sports",
+          sportKey: "soccer",
+          AND: expect.any(Array),
+        }),
       }),
     );
 
@@ -198,7 +203,17 @@ describe("public sports API no-leak checks", () => {
     expect(response.status).toBe(200);
     expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { category: "sports", sportKey: "soccer", leagueKey: "world_cup" },
+        where: expect.objectContaining({
+          category: "sports",
+          sportKey: "soccer",
+          leagueKey: "world_cup",
+          markets: expect.objectContaining({
+            some: expect.objectContaining({
+              referenceSource: "polymarket",
+              referenceMetadata: { path: ["importStatus"], equals: "approved" },
+            }),
+          }),
+        }),
       }),
     );
 

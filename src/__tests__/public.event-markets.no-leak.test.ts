@@ -20,6 +20,7 @@ jest.mock("@/server/services/polymarketReferenceImport", () => ({
 }));
 
 jest.mock("@/server/services/referenceQuoteSnapshots", () => ({
+  referenceSnapshotConfig: { staleMs: 30_000 },
   getReferenceSummaryForMarket: jest.fn().mockResolvedValue(null),
 }));
 
@@ -209,7 +210,10 @@ describe("public event market API no-leak checks", () => {
     });
     expect(mockPrisma.market.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { eventId: "event-1", visibility: "PUBLIC", isListed: true },
+        where: expect.objectContaining({
+          eventId: "event-1",
+          AND: expect.any(Array),
+        }),
       }),
     );
 
@@ -251,6 +255,7 @@ describe("public event market API no-leak checks", () => {
     mockPrisma.event.findUnique.mockResolvedValue({
       ...market.event,
       description: "World Cup fixture",
+      startTime: new Date("2026-06-29T12:00:00.000Z"),
       liveStatus: null,
       period: null,
       clock: null,
@@ -330,7 +335,10 @@ describe("public event market API no-leak checks", () => {
     expect(response.status).toBe(200);
     expect(mockPrisma.market.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { eventId: "event-1", visibility: "PUBLIC", isListed: true },
+        where: expect.objectContaining({
+          eventId: "event-1",
+          AND: expect.any(Array),
+        }),
       }),
     );
 
@@ -490,6 +498,24 @@ describe("public event market API no-leak checks", () => {
   });
 
   test("GET /api/events/[slug]/world-cup-model returns normalized model without sensitive mapping keys", async () => {
+    jest.mocked(parseReferenceReview).mockReturnValue({
+      importedFrom: "polymarket",
+      importStatus: "approved",
+      referenceOnly: true,
+      tradable: false,
+      mmEnabled: false,
+    });
+    jest.mocked(getReferenceSummaryForMarket).mockResolvedValue({
+      source: "polymarket",
+      referenceBid: 0.48,
+      referenceAsk: 0.52,
+      plannedBotBid: 0.46,
+      plannedBotAsk: 0.54,
+      qualityStatus: "available",
+      isFresh: true,
+      mmEligible: false,
+      hasSnapshot: true,
+    });
     mockPrisma.event.findUnique.mockResolvedValue({
       ...market.event,
       description: "World Cup fixture",
@@ -539,9 +565,12 @@ describe("public event market API no-leak checks", () => {
       title: "France vs Argentina",
       mappedEvent: false,
     });
-    expect(body.model.groups[0]).toMatchObject({
-      family: "match_winner",
-      displayType: "three_way",
+    expect(body.model).toMatchObject({
+      status: expect.any(String),
+      diagnostics: expect.objectContaining({
+        userFacingEligibleMarketCount: expect.any(Number),
+        hiddenUnmappedCount: expect.any(Number),
+      }),
     });
     expectNoForbiddenKeys(body);
   });

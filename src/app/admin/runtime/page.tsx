@@ -11,7 +11,20 @@ type RuntimeStatus = {
   serviceHealth: { referenceSyncHeartbeat: string | null; status: string };
   referenceSync: { latestSnapshotAt: string | null; totalSnapshots: number; freshSnapshots: number; staleSnapshots: number };
   marketMaker: { enabledConfigCount: number; dryRunConfigCount: number; openInternalOrders: number; dryRunIntentCount: number; liveLocalIntentCount: number };
-  worldCup: { events: number; mappedMarkets: number; verifiedMappings: number; unmappedMarkets: number; hiddenStaleEvents: number; publicDraftLeakCount: number };
+  worldCup: {
+    events: number;
+    mappedMarkets: number;
+    verifiedMappings: number;
+    unmappedMarkets: number;
+    eligibleUserFacingMarkets: number;
+    hiddenUnmappedMarkets: number;
+    hiddenNoReferenceMarkets: number;
+    hiddenDraftMarkets: number;
+    eventsWithEligibleMarkets: number;
+    eventsWithZeroEligibleMarkets: number;
+    hiddenStaleEvents: number;
+    publicDraftLeakCount: number;
+  };
   risk: { alerts: number; unsafeFlags: string[] };
   safety: Record<string, boolean>;
   ownerTesting: { canOwnerTrade: boolean; ownerTestBalanceRecords: number; activeLiquidityMarkets: number };
@@ -72,7 +85,13 @@ export default function AdminRuntimePage() {
           <Row label="Events" value={status.worldCup.events} />
           <Row label="Mapped markets" value={status.worldCup.mappedMarkets} />
           <Row label="Verified mappings" value={status.worldCup.verifiedMappings} />
+          <Row label="User-facing eligible markets" value={status.worldCup.eligibleUserFacingMarkets} />
+          <Row label="Events with eligible markets" value={status.worldCup.eventsWithEligibleMarkets} />
+          <Row label="Events with zero eligible markets" value={status.worldCup.eventsWithZeroEligibleMarkets} />
           <Row label="Unmapped markets" value={status.worldCup.unmappedMarkets} />
+          <Row label="Hidden unmapped markets" value={status.worldCup.hiddenUnmappedMarkets} />
+          <Row label="Hidden no-reference markets" value={status.worldCup.hiddenNoReferenceMarkets} />
+          <Row label="Hidden draft/admin markets" value={status.worldCup.hiddenDraftMarkets} />
           <Row label="Hidden stale events" value={status.worldCup.hiddenStaleEvents} />
           <Row label="Public draft leak count" value={status.worldCup.publicDraftLeakCount} />
         </RuntimeCard>

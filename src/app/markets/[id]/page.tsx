@@ -1,5 +1,7 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { getUserId } from "@/lib/auth";
+import { assertMarketVisibleToUser } from "@/lib/marketAccess";
 import MarketView from "@/components/market/MarketView";
 
 export default async function MarketPage({
@@ -36,6 +38,11 @@ export default async function MarketPage({
     notFound();
   }
 
+  try {
+    await assertMarketVisibleToUser({ market, userId: await getUserId() });
+  } catch {
+    notFound();
+  }
+
   return <MarketView market={market} />;
 }
-

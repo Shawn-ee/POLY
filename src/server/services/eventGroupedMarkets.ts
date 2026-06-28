@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { getLatestReferenceQuotePlansForMarket } from "@/server/services/referenceQuoteSnapshots";
 import { parseReferenceReview } from "@/server/services/polymarketReferenceImport";
+import { eventWithWorldCupEligibilityWhere, worldCupFreshReferenceCutoff } from "@/server/services/worldCupPublicEligibility";
 
 type GroupMetadata = {
   title: string;
@@ -64,11 +65,17 @@ export type GroupedEventReadModel = {
 };
 
 export async function getGroupedEventMarkets(eventSlug: string): Promise<GroupedEventReadModel | null> {
-  const event = await prisma.event.findUnique({
-    where: { slug: eventSlug },
+  const staleCutoff = worldCupFreshReferenceCutoff();
+  const event = await prisma.event.findFirst({
+    where: { slug: eventSlug, AND: [eventWithWorldCupEligibilityWhere(staleCutoff)] },
     include: {
       markets: {
-        where: { visibility: "PUBLIC", isListed: true, referenceSource: "polymarket" },
+        where: {
+          visibility: "PUBLIC",
+          isListed: true,
+          referenceSource: "polymarket",
+          referenceMetadata: { path: ["importStatus"], equals: "approved" },
+        },
         include: {
           outcomes: {
             where: { isActive: true },
@@ -121,6 +128,12 @@ export async function getGroupedEventMarkets(eventSlug: string): Promise<Grouped
       const noOutcome = market.outcomes.find(
         (outcome) => outcome.name.trim().toUpperCase() === "NO",
       );
+      if (review.importedFrom !== "polymarket" || review.importStatus !== "approved" || review.referenceOnly !== true) {
+        return null;
+      }
+      if (!yesPlan?.isFresh || (yesPlan.referenceBid == null && yesPlan.referenceAsk == null && yesPlan.gammaOutcomePrice == null)) {
+        return null;
+      }
       return {
         marketId: market.id,
         yesOutcomeId: yesOutcome?.id ?? null,
@@ -151,16 +164,21 @@ export async function getGroupedEventMarkets(eventSlug: string): Promise<Grouped
       };
     }),
   );
+  const visibleRows = rows.filter((row): row is NonNullable<typeof row> => row !== null);
 
-  rows.sort((left, right) => (right.probability ?? -1) - (left.probability ?? -1));
+  visibleRows.sort((left, right) => (right.probability ?? -1) - (left.probability ?? -1));
 
-  const sumYes = rows.reduce((sum, row) => sum + (row.probability ?? 0), 0);
-  const freshCount = rows.filter((row) => row.isFresh).length;
-  const staleCount = rows.length - freshCount;
-  const ages = rows.map((row) => row.ageMs).filter((age): age is number => typeof age === "number");
+  if (visibleRows.length === 0) {
+    return null;
+  }
+
+  const sumYes = visibleRows.reduce((sum, row) => sum + (row.probability ?? 0), 0);
+  const freshCount = visibleRows.filter((row) => row.isFresh).length;
+  const staleCount = visibleRows.length - freshCount;
+  const ages = visibleRows.map((row) => row.ageMs).filter((age): age is number => typeof age === "number");
   const averageAgeMs = ages.length ? Math.round(ages.reduce((sum, age) => sum + age, 0) / ages.length) : null;
-  const importedCount = rows.length;
-  const expectedCount = event.markets.length;
+  const importedCount = visibleRows.length;
+  const expectedCount = groupedMarkets.length;
 
   return {
     event: {
@@ -175,7 +193,7 @@ export async function getGroupedEventMarkets(eventSlug: string): Promise<Grouped
       icon: event.icon,
     },
     marketGroup: group,
-    rows: rows.map(({ ageMs: _ageMs, ...row }) => row),
+    rows: visibleRows.map(({ ageMs: _ageMs, ...row }) => row),
     sumYes,
     importedOutcomeCount: importedCount,
     allOutcomesImported: importedCount === expectedCount,

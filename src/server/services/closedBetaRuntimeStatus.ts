@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { referenceSnapshotConfig } from "@/server/services/referenceQuoteSnapshots";
 
@@ -22,6 +23,11 @@ export async function getClosedBetaRuntimeStatus() {
     riskAlerts,
     publicDraftLeakCount,
     worldCupEvents,
+    eligibleWorldCupMarkets,
+    hiddenUnmappedWorldCupMarkets,
+    hiddenNoReferenceWorldCupMarkets,
+    hiddenDraftWorldCupMarkets,
+    worldCupEventsWithEligibleMarkets,
     hiddenStaleEvents,
     ownerBalanceCount,
   ] = await Promise.all([
@@ -57,6 +63,38 @@ export async function getClosedBetaRuntimeStatus() {
       },
     }),
     prisma.event.count({ where: { sportKey: "soccer", leagueKey: "world_cup" } }),
+    prisma.market.count({ where: eligibleWorldCupMarketWhere(staleCutoff) }),
+    prisma.market.count({
+      where: {
+        event: { sportKey: "soccer", leagueKey: "world_cup" },
+        OR: [
+          { referenceSource: null },
+          { referenceSource: { not: "polymarket" } },
+          { referenceMetadata: { path: ["importStatus"], not: "approved" } },
+        ],
+      },
+    }),
+    prisma.market.count({
+      where: {
+        event: { sportKey: "soccer", leagueKey: "world_cup" },
+        referenceSource: "polymarket",
+        referenceMetadata: { path: ["importStatus"], equals: "approved" },
+        referenceQuoteSnapshots: { none: { source: "polymarket", fetchedAt: { gte: staleCutoff } } },
+      },
+    }),
+    prisma.market.count({
+      where: {
+        event: { sportKey: "soccer", leagueKey: "world_cup" },
+        OR: [{ visibility: { not: "PUBLIC" } }, { isListed: false }, { referenceMetadata: { path: ["importStatus"], equals: "pending_review" } }],
+      },
+    }),
+    prisma.event.count({
+      where: {
+        sportKey: "soccer",
+        leagueKey: "world_cup",
+        markets: { some: eligibleWorldCupMarketWhere(staleCutoff) },
+      },
+    }),
     prisma.event.count({
       where: {
         sportKey: "soccer",
@@ -114,6 +152,12 @@ export async function getClosedBetaRuntimeStatus() {
       mappedMarkets,
       verifiedMappings,
       unmappedMarkets: unmappedWorldCupMarkets,
+      eligibleUserFacingMarkets: eligibleWorldCupMarkets,
+      hiddenUnmappedMarkets: hiddenUnmappedWorldCupMarkets,
+      hiddenNoReferenceMarkets: hiddenNoReferenceWorldCupMarkets,
+      hiddenDraftMarkets: hiddenDraftWorldCupMarkets,
+      eventsWithEligibleMarkets: worldCupEventsWithEligibleMarkets,
+      eventsWithZeroEligibleMarkets: Math.max(0, worldCupEvents - worldCupEventsWithEligibleMarkets),
       hiddenStaleEvents,
       publicDraftLeakCount,
     },
@@ -127,5 +171,22 @@ export async function getClosedBetaRuntimeStatus() {
       ownerTestBalanceRecords: ownerBalanceCount,
       activeLiquidityMarkets: enabledMmConfigs,
     },
+  };
+}
+
+function eligibleWorldCupMarketWhere(staleCutoff: Date): Prisma.MarketWhereInput {
+  return {
+    event: {
+      sportKey: "soccer",
+      leagueKey: "world_cup",
+      OR: [{ startTime: null }, { startTime: { gte: new Date(Date.now() - 6 * 60 * 60 * 1000) } }],
+      NOT: [{ status: { in: ["closed", "resolved", "ended", "canceled", "cancelled"] } }],
+    },
+    visibility: "PUBLIC" as const,
+    isListed: true,
+    referenceSource: "polymarket",
+    referenceMetadata: { path: ["importStatus"], equals: "approved" },
+    status: { in: ["LIVE", "UPCOMING"] },
+    referenceQuoteSnapshots: { some: { source: "polymarket", fetchedAt: { gte: staleCutoff } } },
   };
 }
