@@ -299,6 +299,18 @@ Next recommended command:
 bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-007-scheduler-policy-and-safe-runtime-playbook.md
 ```
 
+## 2026-06-28 WC-DISC-OPS-007 Complete
+
+Completed `agent-orchestrator/docs/SERVER_RUNTIME_SERVICES_PLAYBOOK.md` with closed internal beta service inventory, env flags, startup phases, pause commands, rollback procedure, monitoring, and readiness checklist. Discovery/import score remains 99/100 until candidate-queue E2E passes.
+
+Next recommended task: `WC-DISC-OPS-008 End-To-End DB Candidate Queue Harness`.
+
+Next recommended command:
+
+```sh
+bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-008-end-to-end-db-candidate-queue-harness.md
+```
+
 ## 2026-06-26 SEC-001
 
 Route-security failure from `20260626T041912Z-harness_only` was investigated. `line` is safe public sports display metadata from `serializeMarketReadModel`, exposed only after public/listed route filters in the checked routes. The two public no-leak tests now allow `line` narrowly with documentation. `route_security_check.sh` passed in `20260626T042256Z-harness_only`.

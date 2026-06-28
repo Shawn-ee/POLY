@@ -118,3 +118,7 @@ Added DB-backed mapping validation for imported `PolymarketDiscoveryCandidate` r
 ## 2026-06-28 WC-DISC-OPS-006
 
 Added `polymarket:imports:rollback`, dry-run-first rollback planning, confirmed rollback disable behavior, and tests. Confirmed rollback sets candidates `rollback_disabled`, markets private/unlisted/paused, outcomes non-tradable, bot quote configs disabled/dry-run, and rollback metadata. Score remains 99/100 until scheduler playbook and candidate-queue E2E pass.
+
+## 2026-06-28 WC-DISC-OPS-007
+
+Added `agent-orchestrator/docs/SERVER_RUNTIME_SERVICES_PLAYBOOK.md` for closed internal beta server operation, safe env flags, service inventory, startup phases, disabled services, pause commands, rollback procedure, monitoring, and readiness checklist. Score remains 99/100 until candidate-queue E2E passes.
