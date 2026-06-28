@@ -180,18 +180,25 @@ export async function generateResolutionProposalsOnce(options: { store?: boolean
 
   let storedCount = 0;
   if (options.store !== false && proposals.length > 0) {
-    await prisma.canonicalEvent.createMany({
-      data: proposals.map((proposal) => ({
-        stream: CanonicalEventStream.MARKET,
-        topicKey: `market:${proposal.marketId}`,
-        eventType: "resolution_proposal",
-        marketId: proposal.marketId,
-        outcomeId: proposal.proposedOutcomeId ?? null,
-        userId: null,
-        payload: proposal as unknown as Prisma.InputJsonValue,
-      })),
+    const existingKeys = await loadExistingProposalKeys(proposals.map((proposal) => proposal.marketId));
+    const newProposals = proposals.filter((proposal) => {
+      const key = proposalKey(proposal);
+      return key == null || !existingKeys.has(key);
     });
-    storedCount = proposals.length;
+    if (newProposals.length > 0) {
+      await prisma.canonicalEvent.createMany({
+        data: newProposals.map((proposal) => ({
+          stream: CanonicalEventStream.MARKET,
+          topicKey: `market:${proposal.marketId}`,
+          eventType: "resolution_proposal",
+          marketId: proposal.marketId,
+          outcomeId: proposal.proposedOutcomeId ?? null,
+          userId: null,
+          payload: proposal as unknown as Prisma.InputJsonValue,
+        })),
+      });
+    }
+    storedCount = newProposals.length;
   }
 
   return {
@@ -215,6 +222,31 @@ export async function listResolutionProposals(limit = 50) {
       createdAt: true,
     },
   });
+}
+
+async function loadExistingProposalKeys(marketIds: string[]) {
+  if (marketIds.length === 0) return new Set<string>();
+  const rows = await prisma.canonicalEvent.findMany({
+    where: { eventType: "resolution_proposal", marketId: { in: Array.from(new Set(marketIds)) } },
+    select: { payload: true },
+    take: 1000,
+    orderBy: { createdAt: "desc" },
+  });
+  return new Set(rows.map((row) => proposalKey(row.payload)).filter((key): key is string => key != null));
+}
+
+function proposalKey(value: unknown) {
+  const object = asObject(value);
+  const reasons = Array.isArray(object.reasons) ? object.reasons.map((reason) => `${reason}`).sort().join(",") : "";
+  const keyParts = [
+    object.marketId,
+    object.action,
+    object.resultCode,
+    object.proposedOutcomeId,
+    reasons,
+  ];
+  if (!keyParts[0]) return null;
+  return keyParts.map((part) => `${part ?? ""}`).join("|");
 }
 
 function baseProposal(market: ResolutionProposalMarket): ResolutionProposal {
