@@ -39,5 +39,11 @@ describe("Polymarket MM safe basket planner", () => {
       configured: "already_configured",
     });
   });
-});
 
+  test("empty candidate list proves no basket can be selected", () => {
+    const plan = planSafeBasket([], 5);
+
+    expect(plan.selected).toEqual([]);
+    expect(plan.skipped).toEqual([]);
+  });
+});

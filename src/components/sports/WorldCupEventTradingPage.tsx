@@ -222,10 +222,10 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
 
   return (
     <Card className="p-5">
-      <div className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Trade Ticket</div>
+      <h2 className="text-xs font-semibold uppercase text-[var(--poly-teal)]">Trade Ticket</h2>
       {outcome ? (
         <>
-          <h2 className="mt-2 text-xl font-semibold text-[var(--poly-text)]">{outcome.label}</h2>
+          <div className="mt-2 text-xl font-semibold text-[var(--poly-text)]">{outcome.label}</div>
           <div className="mt-3 rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] p-3 text-sm">
             <Row label="Source" value={SOURCE_LABEL[outcome.source]} />
             <Row label="Price" value={formatOutcomePrice(outcome)} />
@@ -244,17 +244,22 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
             <Row label="Estimated shares" value={shares ? shares.toFixed(2) : "Unavailable"} />
             <Row label="Potential profit" value={shares ? `$${potentialProfit.toFixed(2)}` : "Unavailable"} />
           </div>
-          <button
-            type="button"
-            disabled={!outcome.tradeable}
-            className={`mt-4 w-full rounded-lg border px-4 py-3 text-sm font-semibold transition ${
-              outcome.tradeable
-                ? "border-[var(--poly-primary)] bg-[var(--poly-primary)] text-white hover:bg-[var(--poly-primary-hover)]"
-                : "cursor-not-allowed border-[var(--poly-border)] bg-[var(--poly-surface-muted)] text-[var(--poly-muted)]"
-            }`}
-          >
-            {outcome.tradeable ? "Open internal order ticket" : "Trading unavailable"}
-          </button>
+          {outcome.tradeable ? (
+            <Link
+              href={`/markets/${outcome.marketId}`}
+              className="mt-4 block w-full rounded-lg border border-[var(--poly-primary)] bg-[var(--poly-primary)] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[var(--poly-primary-hover)]"
+            >
+              Open internal order ticket
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="mt-4 w-full cursor-not-allowed rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] px-4 py-3 text-sm font-semibold text-[var(--poly-muted)]"
+            >
+              Trading unavailable
+            </button>
+          )}
           <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
             {outcome.tradeable
               ? "Closed beta: test credits only. Final order review remains gated by server checks."
@@ -314,4 +319,3 @@ function formatCompact(value: number | null) {
   if (typeof value !== "number" || !Number.isFinite(value)) return "Unavailable";
   return new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
-

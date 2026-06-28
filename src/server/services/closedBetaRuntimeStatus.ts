@@ -12,6 +12,7 @@ export async function getClosedBetaRuntimeStatus() {
     freshReferenceSnapshots,
     staleReferenceSnapshots,
     mappedMarkets,
+    verifiedMappings,
     unmappedWorldCupMarkets,
     enabledMmConfigs,
     dryRunMmConfigs,
@@ -32,6 +33,7 @@ export async function getClosedBetaRuntimeStatus() {
     prisma.referenceQuoteSnapshot.count({ where: { source: "polymarket" } }),
     prisma.referenceQuoteSnapshot.count({ where: { source: "polymarket", fetchedAt: { gte: staleCutoff } } }),
     prisma.referenceQuoteSnapshot.count({ where: { source: "polymarket", fetchedAt: { lt: staleCutoff } } }),
+    prisma.market.count({ where: { referenceSource: "polymarket" } }),
     prisma.market.count({ where: { referenceSource: "polymarket", referenceMetadata: { path: ["importStatus"], equals: "approved" } } }),
     prisma.market.count({
       where: {
@@ -110,6 +112,7 @@ export async function getClosedBetaRuntimeStatus() {
     worldCup: {
       events: worldCupEvents,
       mappedMarkets,
+      verifiedMappings,
       unmappedMarkets: unmappedWorldCupMarkets,
       hiddenStaleEvents,
       publicDraftLeakCount,

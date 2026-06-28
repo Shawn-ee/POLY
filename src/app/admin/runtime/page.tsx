@@ -11,7 +11,7 @@ type RuntimeStatus = {
   serviceHealth: { referenceSyncHeartbeat: string | null; status: string };
   referenceSync: { latestSnapshotAt: string | null; totalSnapshots: number; freshSnapshots: number; staleSnapshots: number };
   marketMaker: { enabledConfigCount: number; dryRunConfigCount: number; openInternalOrders: number; dryRunIntentCount: number; liveLocalIntentCount: number };
-  worldCup: { events: number; mappedMarkets: number; unmappedMarkets: number; hiddenStaleEvents: number; publicDraftLeakCount: number };
+  worldCup: { events: number; mappedMarkets: number; verifiedMappings: number; unmappedMarkets: number; hiddenStaleEvents: number; publicDraftLeakCount: number };
   risk: { alerts: number; unsafeFlags: string[] };
   safety: Record<string, boolean>;
   ownerTesting: { canOwnerTrade: boolean; ownerTestBalanceRecords: number; activeLiquidityMarkets: number };
@@ -71,6 +71,7 @@ export default function AdminRuntimePage() {
         <RuntimeCard title="World Cup">
           <Row label="Events" value={status.worldCup.events} />
           <Row label="Mapped markets" value={status.worldCup.mappedMarkets} />
+          <Row label="Verified mappings" value={status.worldCup.verifiedMappings} />
           <Row label="Unmapped markets" value={status.worldCup.unmappedMarkets} />
           <Row label="Hidden stale events" value={status.worldCup.hiddenStaleEvents} />
           <Row label="Public draft leak count" value={status.worldCup.publicDraftLeakCount} />
@@ -121,4 +122,3 @@ function Row({ label, value }: { label: string; value: string | number | boolean
     </div>
   );
 }
-

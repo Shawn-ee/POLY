@@ -12,7 +12,7 @@ Updated: 2026-06-28
 
 ## 3. Final Commit
 
-`cd25dfc`
+Superseded by continuous-loop follow-up commits on `agent/world-cup-polymarket-structure-refactor`.
 
 ## 4. Files Changed
 

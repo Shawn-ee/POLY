@@ -319,7 +319,7 @@ export default function EventPage() {
     );
   }
 
-  if (event.category === "sports") {
+  if (event.category === "sports" && event.sportKey === "soccer" && event.leagueKey === "world_cup") {
     const model = buildWorldCupEventPageModel({
       event,
       markets,
@@ -329,6 +329,19 @@ export default function EventPage() {
     });
     return (
       <WorldCupEventTradingPage model={model} />
+    );
+  }
+
+  if (event.category === "sports") {
+    return (
+      <SportsEventView
+        event={event}
+        markets={markets}
+        marketGroup={marketGroup}
+        onMarketGroupChange={setMarketGroup}
+        marketSearch={marketSearch}
+        onMarketSearchChange={setMarketSearch}
+      />
     );
   }
 
