@@ -15,6 +15,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "\
 \$env:POLYMARKET_LOCAL_DB_PROMOTION = 'true'; \
 \$env:POLYMARKET_AUTO_PROMOTE_ENABLED = 'true'; \
 \$env:POLYMARKET_REFERENCE_FIXTURE_MODE = 'true'; \
+\$env:NODE_OPTIONS = '--max-old-space-size=4096'; \
 npm exec prisma generate --schema=prisma/schema.prisma; if (\$LASTEXITCODE -ne 0) { exit \$LASTEXITCODE }; \
 npm exec prisma validate --schema=prisma/schema.prisma; if (\$LASTEXITCODE -ne 0) { exit \$LASTEXITCODE }; \
 npm exec prisma migrate deploy --schema=prisma/schema.prisma; if (\$LASTEXITCODE -ne 0) { exit \$LASTEXITCODE }; \
