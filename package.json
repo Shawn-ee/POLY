@@ -56,6 +56,8 @@
     "reference:sync:loop": "tsx scripts/reference_sync_loop.ts",
     "mm:polymarket:dry-run": "tsx scripts/mm_polymarket_dry_run.ts",
     "mm:polymarket:once": "tsx scripts/mm_polymarket_once.ts",
+    "seed:polymarket-mm-fixture": "tsx scripts/seed_polymarket_mm_runtime_fixture.ts",
+    "verify:polymarket-mm-dry-run": "tsx scripts/verify_polymarket_mm_dry_run_runtime.ts",
     "deposits:monitor": "tsx scripts/run_polygon_deposit_monitor.ts",
     "test:polygon-deposits": "tsx scripts/test_polygon_deposits.ts",
     "test:reference-bot-initialization": "tsx scripts/test_reference_bot_initialization.ts",

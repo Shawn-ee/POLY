@@ -46,7 +46,7 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
       continue;
     }
 
-    const gamma = await fetchGammaMarketBySlug(market.externalSlug).catch((error) => ({
+    const gamma = await fetchReferenceMarketForSync(market).catch((error) => ({
       error: error instanceof Error ? error.message : String(error),
     }));
     if ("error" in gamma) {
@@ -128,6 +128,53 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
     skippedCount: skipped.length,
     refreshed,
     skipped,
+  };
+}
+
+async function fetchReferenceMarketForSync(market: {
+  externalSlug: string | null;
+  referenceMetadata: unknown;
+}) {
+  const fixture = readFixtureGammaMarket(market.referenceMetadata);
+  if (process.env.POLYMARKET_REFERENCE_FIXTURE_MODE === "true" && fixture) {
+    return fixture;
+  }
+  if (!market.externalSlug) {
+    throw new Error("Missing external slug.");
+  }
+  return fetchGammaMarketBySlug(market.externalSlug);
+}
+
+function readFixtureGammaMarket(metadata: unknown): Awaited<ReturnType<typeof fetchGammaMarketBySlug>> | null {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return null;
+  }
+  const fixture = (metadata as Record<string, unknown>).fixtureReferencePrice;
+  if (!fixture || typeof fixture !== "object" || Array.isArray(fixture)) {
+    return null;
+  }
+  const data = fixture as Record<string, unknown>;
+  const bestBid = asNumber(data.bestBid);
+  const bestAsk = asNumber(data.bestAsk);
+  return {
+    bestBid,
+    bestAsk,
+    spread: asNumber(data.spread) ?? computeSpread(bestBid, bestAsk),
+    lastTradePrice: asNumber(data.lastTradePrice),
+    volume: asNumber(data.volume),
+    volume24hr: asNumber(data.volume24hr),
+    liquidity: asNumber(data.liquidity),
+    liquidityClob: asNumber(data.liquidityClob),
+    acceptingOrders: data.acceptingOrders !== false,
+    outcomes: Array.isArray(data.outcomes)
+      ? data.outcomes
+          .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === "object" && !Array.isArray(item)))
+          .map((item) => ({
+            label: asString(item.label) ?? "Unknown",
+            tokenId: asString(item.tokenId) ?? "",
+            outcomePrice: asNumber(item.outcomePrice) ?? 0,
+          }))
+      : [],
   };
 }
 
@@ -249,6 +296,12 @@ function asNumber(value: unknown): number | null {
     return Number.isFinite(parsed) ? parsed : null;
   }
   return null;
+}
+
+function asString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 function asBoolean(value: unknown) {
