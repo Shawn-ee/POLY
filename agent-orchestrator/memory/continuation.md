@@ -239,6 +239,18 @@ Next recommended command:
 bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-002-candidate-review-api.md
 ```
 
+## 2026-06-28 WC-DISC-OPS-002 Complete
+
+Completed admin-only candidate review APIs for persisted discovery candidates. Added list/filter, detail, and status-transition routes with tests. Discovery/import score is now 97/100.
+
+Next recommended task: `WC-DISC-OPS-003 Candidate Review UI Or Report Upgrade`.
+
+Next recommended command:
+
+```sh
+bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-003-candidate-review-ui-or-report-upgrade.md
+```
+
 ## 2026-06-26 SEC-001
 
 Route-security failure from `20260626T041912Z-harness_only` was investigated. `line` is safe public sports display metadata from `serializeMarketReadModel`, exposed only after public/listed route filters in the checked routes. The two public no-leak tests now allow `line` narrowly with documentation. `route_security_check.sh` passed in `20260626T042256Z-harness_only`.

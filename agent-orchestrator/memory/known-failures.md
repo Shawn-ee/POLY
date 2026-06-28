@@ -20,6 +20,7 @@
 - 2026-06-28 WC-DISC-DB-002: local DB E2E validation is now passing. Remaining discovery/import gap: optional read-only live Polymarket smoke execution and persisted discovery-candidate DB table if desired later.
 - 2026-06-28 WC-DISC-LIVE-001: optional read-only live Polymarket smoke is now passing. Remaining discovery/import enhancement: persisted discovery-candidate DB table/review queue if desired later.
 - 2026-06-28 WC-DISC-OPS-001: persisted discovery-candidate DB table and store are implemented. Remaining v2 ops gaps: admin candidate review API/UI, draft import from DB candidate queue, DB-backed imported-record validation, rollback tooling, scheduler playbook, and candidate-queue E2E harness.
+- 2026-06-28 WC-DISC-OPS-002: admin candidate review API is implemented and tested. Remaining v2 ops gaps: candidate review UI/report upgrade, draft import from DB candidate queue, DB-backed imported-record validation, rollback tooling, scheduler playbook, and candidate-queue E2E harness.
 
 - 2026-06-25: No local loop harness failures recorded at bootstrap.
 - 2026-06-26T04:19:22Z: Harness `route_security_check.sh` failed. See `agent-orchestrator/runs/20260626T041912Z-harness_only/route_security_check.log`.

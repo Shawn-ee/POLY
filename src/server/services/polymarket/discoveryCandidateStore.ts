@@ -46,9 +46,28 @@ export type DiscoveryCandidatePersistenceResult = {
   candidateIds: string[];
 };
 
+export type DiscoveryCandidateListParams = {
+  source?: string | null;
+  status?: string | null;
+  batchId?: string | null;
+  page?: number;
+  pageSize?: number;
+};
+
+export type DiscoveryCandidateStatusAction =
+  | "approve"
+  | "mark_import_ready"
+  | "ignore"
+  | "reject"
+  | "block"
+  | "mark_review_required";
+
 type CandidateStoreDb = {
   polymarketDiscoveryCandidate: {
+    count?: (args: unknown) => Promise<number>;
+    findMany?: (args: unknown) => Promise<unknown[]>;
     findFirst: (args: unknown) => Promise<{ id: string; status: string; firstSeenAt: Date } | null>;
+    findUnique?: (args: unknown) => Promise<unknown | null>;
     create: (args: unknown) => Promise<{ id: string }>;
     update: (args: unknown) => Promise<{ id: string }>;
   };
@@ -183,6 +202,53 @@ export async function persistDiscoveryCandidateInputs(
   };
 }
 
+export async function listDiscoveryCandidates(params: DiscoveryCandidateListParams = {}) {
+  const page = Math.max(params.page ?? 1, 1);
+  const pageSize = Math.min(Math.max(params.pageSize ?? 25, 1), 100);
+  const where = buildCandidateFilter(params);
+  const [total, rows] = await Promise.all([
+    prisma.polymarketDiscoveryCandidate.count({ where }),
+    prisma.polymarketDiscoveryCandidate.findMany({
+      where,
+      orderBy: [{ lastSeenAt: "desc" }, { createdAt: "desc" }],
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+  ]);
+
+  return {
+    items: rows.map(serializeDiscoveryCandidate),
+    page,
+    pageSize,
+    total,
+    totalPages: Math.max(Math.ceil(total / pageSize), 1),
+  };
+}
+
+export async function getDiscoveryCandidate(id: string) {
+  const candidate = await prisma.polymarketDiscoveryCandidate.findUnique({ where: { id } });
+  return candidate ? serializeDiscoveryCandidate(candidate) : null;
+}
+
+export async function updateDiscoveryCandidateReviewStatus(params: {
+  id: string;
+  action: DiscoveryCandidateStatusAction;
+  reason?: string | null;
+  reviewedBy: string;
+}) {
+  const status = statusForAction(params.action);
+  const candidate = await prisma.polymarketDiscoveryCandidate.update({
+    where: { id: params.id },
+    data: {
+      status,
+      reviewNotes: params.reason?.trim() || null,
+      reviewedBy: params.reviewedBy,
+      reviewedAt: new Date(),
+    },
+  });
+  return serializeDiscoveryCandidate(candidate);
+}
+
 function statusForCandidate(candidate: PolymarketImportCandidate): PolymarketDiscoveryCandidateStatus {
   if (candidate.reasons.includes("unsupported_market_type") || candidate.reasons.includes("not_world_cup_soccer")) {
     return "ignored";
@@ -194,6 +260,69 @@ function statusForCandidate(candidate: PolymarketImportCandidate): PolymarketDis
     return "admin_review_required";
   }
   return "discovered";
+}
+
+export function isDiscoveryCandidateStatus(value: string): value is PolymarketDiscoveryCandidateStatus {
+  return POLYMARKET_DISCOVERY_CANDIDATE_STATUSES.includes(value as PolymarketDiscoveryCandidateStatus);
+}
+
+export function isDiscoveryCandidateStatusAction(value: string): value is DiscoveryCandidateStatusAction {
+  return ["approve", "mark_import_ready", "ignore", "reject", "block", "mark_review_required"].includes(value);
+}
+
+function statusForAction(action: DiscoveryCandidateStatusAction): PolymarketDiscoveryCandidateStatus {
+  switch (action) {
+    case "approve":
+    case "mark_import_ready":
+      return "draft_import_ready";
+    case "ignore":
+      return "ignored";
+    case "reject":
+      return "rejected";
+    case "block":
+      return "blocked";
+    case "mark_review_required":
+      return "admin_review_required";
+  }
+}
+
+function buildCandidateFilter(params: DiscoveryCandidateListParams): Prisma.PolymarketDiscoveryCandidateWhereInput {
+  return {
+    ...(params.source ? { source: params.source } : {}),
+    ...(params.status && isDiscoveryCandidateStatus(params.status) ? { status: params.status } : {}),
+    ...(params.batchId ? { batchId: params.batchId } : {}),
+  };
+}
+
+function serializeDiscoveryCandidate(candidate: Prisma.PolymarketDiscoveryCandidateGetPayload<Record<string, never>>) {
+  return {
+    id: candidate.id,
+    source: candidate.source,
+    externalSlug: candidate.externalSlug,
+    externalMarketId: candidate.externalMarketId,
+    conditionId: candidate.conditionId,
+    title: candidate.title,
+    question: candidate.question,
+    eventTitle: candidate.eventTitle,
+    marketType: candidate.marketType,
+    status: candidate.status,
+    confidence: candidate.confidence,
+    reasonCodes: candidate.reasonCodes,
+    outcomes: candidate.outcomes,
+    tokenIds: candidate.tokenIds,
+    rawMetadata: candidate.rawMetadata,
+    batchId: candidate.batchId,
+    importedEventId: candidate.importedEventId,
+    importedMarketId: candidate.importedMarketId,
+    importedOutcomeIds: candidate.importedOutcomeIds,
+    reviewedBy: candidate.reviewedBy,
+    reviewedAt: candidate.reviewedAt?.toISOString() ?? null,
+    reviewNotes: candidate.reviewNotes,
+    firstSeenAt: candidate.firstSeenAt.toISOString(),
+    lastSeenAt: candidate.lastSeenAt.toISOString(),
+    createdAt: candidate.createdAt.toISOString(),
+    updatedAt: candidate.updatedAt.toISOString(),
+  };
 }
 
 function duplicateWhere(input: DiscoveryCandidatePersistenceInput) {
