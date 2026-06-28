@@ -31,7 +31,7 @@ export default defineConfig({
     },
     {
       name: "authenticated",
-      testMatch: /admin-smoke\.spec\.ts|sports-authenticated-order\.spec\.ts/,
+      testMatch: /admin-smoke\.spec\.ts|admin-polymarket-mm\.spec\.ts|sports-authenticated-order\.spec\.ts/,
       dependencies: ["setup"],
       use: {
         storageState: adminStorageState,
