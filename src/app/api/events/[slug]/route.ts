@@ -35,7 +35,7 @@ export async function GET(_request: Request, context: Ctx) {
   return NextResponse.json({
     event: {
       ...serializeEventSummary(event),
-      marketCount: event._count.markets,
+      marketCount: event.markets.length,
       activeMarketCount,
       closedMarketCount,
       hasGroupedMarkets:

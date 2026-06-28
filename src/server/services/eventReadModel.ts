@@ -71,6 +71,7 @@ export const serializeEventSummary = (
     clock: event.clock,
     homeScore: event.homeScore,
     awayScore: event.awayScore,
+    source: event.source,
     venue: event.venue,
     image: event.image,
     imageUrl: event.imageUrl,

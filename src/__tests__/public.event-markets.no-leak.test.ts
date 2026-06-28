@@ -29,6 +29,7 @@ jest.mock("@/server/services/eventGroupedMarkets", () => ({
 
 import { GET as listEventMarkets } from "@/app/api/events/[slug]/markets/route";
 import { GET as getGroupedMarkets } from "@/app/api/events/[slug]/grouped-markets/route";
+import { GET as getWorldCupModel } from "@/app/api/events/[slug]/world-cup-model/route";
 import { getOutcomeQuotes } from "@/lib/orderbookPricing";
 import { getGroupedEventMarkets } from "@/server/services/eventGroupedMarkets";
 import { parseReferenceReview } from "@/server/services/polymarketReferenceImport";
@@ -184,8 +185,8 @@ describe("public event market API no-leak checks", () => {
     mockPrisma.market.findMany.mockReset();
     jest.mocked(getOutcomeQuotes).mockResolvedValue(
       new Map([
-        ["yes", { bestBid: 0.51, bestAsk: 0.53, mid: 0.52, spread: 0.02 }],
-        ["no", { bestBid: 0.47, bestAsk: 0.49, mid: 0.48, spread: 0.02 }],
+        ["yes", { bestBid: 0.51, bestAsk: 0.53, mid: 0.52, spread: 0.02, hasQuote: true }],
+        ["no", { bestBid: 0.47, bestAsk: 0.49, mid: 0.48, spread: 0.02, hasQuote: true }],
       ]),
     );
     jest.mocked(parseReferenceReview).mockReturnValue({});
@@ -242,6 +243,37 @@ describe("public event market API no-leak checks", () => {
         { id: "no", name: "No", price: 0.48 },
       ],
     });
+    expectNoForbiddenKeys(body);
+  });
+
+  test("GET /api/events/[slug] reports only public listed market counts", async () => {
+    const { GET: getEvent } = await import("@/app/api/events/[slug]/route");
+    mockPrisma.event.findUnique.mockResolvedValue({
+      ...market.event,
+      description: "World Cup fixture",
+      liveStatus: null,
+      period: null,
+      clock: null,
+      homeScore: null,
+      awayScore: null,
+      venue: "Dallas",
+      imageUrl: null,
+      metadata: {},
+      sourceUpdatedAt: null,
+      createdAt: now,
+      updatedAt: now,
+      _count: { markets: 3 },
+      markets: [market],
+    });
+
+    const response = await getEvent(new Request("http://localhost/api/events/france-vs-argentina"), {
+      params: Promise.resolve({ slug: "france-vs-argentina" }),
+    });
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.event.marketCount).toBe(1);
+    expect(body.markets).toHaveLength(1);
     expectNoForbiddenKeys(body);
   });
 
@@ -320,14 +352,58 @@ describe("public event market API no-leak checks", () => {
         id: "event-1",
         slug: "france-vs-argentina",
         title: "France vs Argentina",
+        description: null,
+        category: "Sports / Soccer",
+        status: "active",
+        source: "polymarket",
+        image: null,
+        icon: null,
+        externalEventId: "forbidden",
+        externalSlug: "forbidden",
       },
-      groups: [
+      marketGroup: {
+        slug: "match-winner",
+        title: "Match winner",
+        groupType: "MUTUALLY_EXCLUSIVE",
+        resolutionMode: "ONE_WINNER",
+        source: "polymarket",
+        expectedSumYesAround: 1,
+        negativeRiskLike: true,
+        note: null,
+        externalSlug: "forbidden",
+      },
+      rows: [
         {
-          slug: "match-winner",
-          title: "Match winner",
-          markets: [{ id: "market-1", title: "Will France beat Argentina?", outcomes: [] }],
+          marketId: "market-1",
+          yesOutcomeId: "yes",
+          noOutcomeId: "no",
+          outcomeLabel: "France",
+          icon: null,
+          question: "Will France beat Argentina?",
+          probability: 0.52,
+          bestBid: 0.51,
+          bestAsk: 0.53,
+          buyYesPrice: 0.53,
+          buyNoPrice: 0.49,
+          plannedBotBid: 0.49,
+          plannedBotAsk: 0.55,
+          mmEligible: true,
+          botInitializationStatus: "ready",
+          tradable: false,
+          referenceOnly: true,
+          volume24hr: 100,
+          liquidity: 1000,
+          isFresh: true,
+          qualityStatus: "available",
+          teamSlug: "france",
+          externalSlug: "forbidden",
         },
       ],
+      sumYes: 0.52,
+      importedOutcomeCount: 1,
+      allOutcomesImported: true,
+      freshnessSummary: { freshCount: 1, staleCount: 0, averageAgeMs: 1000 },
+      groupStatus: "healthy",
     });
 
     const response = await getGroupedMarkets(
@@ -341,15 +417,56 @@ describe("public event market API no-leak checks", () => {
     expect(getGroupedEventMarkets).toHaveBeenCalledWith("france-vs-argentina");
 
     const body = await response.json();
-    expectOnlyKeys(body, ["event", "groups"]);
-    expectOnlyKeys(body.event, ["id", "slug", "title"]);
-    expectOnlyKeys(body.groups[0], ["markets", "slug", "title"]);
-    expectOnlyKeys(body.groups[0].markets[0], ["id", "outcomes", "title"]);
+    expectOnlyKeys(body, [
+      "allOutcomesImported",
+      "event",
+      "freshnessSummary",
+      "groupStatus",
+      "importedOutcomeCount",
+      "marketGroup",
+      "rows",
+      "sumYes",
+    ]);
+    expectOnlyKeys(body.event, ["category", "description", "icon", "id", "image", "slug", "source", "status", "title"]);
+    expectOnlyKeys(body.marketGroup, [
+      "expectedSumYesAround",
+      "groupType",
+      "negativeRiskLike",
+      "note",
+      "resolutionMode",
+      "slug",
+      "source",
+      "title",
+    ]);
+    expectOnlyKeys(body.rows[0], [
+      "bestAsk",
+      "bestBid",
+      "botInitializationStatus",
+      "buyNoPrice",
+      "buyYesPrice",
+      "icon",
+      "isFresh",
+      "liquidity",
+      "marketId",
+      "mmEligible",
+      "noOutcomeId",
+      "outcomeLabel",
+      "plannedBotAsk",
+      "plannedBotBid",
+      "probability",
+      "qualityStatus",
+      "question",
+      "referenceOnly",
+      "teamSlug",
+      "tradable",
+      "volume24hr",
+      "yesOutcomeId",
+    ]);
     expect(body.event).toMatchObject({
       slug: "france-vs-argentina",
       title: "France vs Argentina",
     });
-    expect(body.groups[0]).toMatchObject({
+    expect(body.marketGroup).toMatchObject({
       slug: "match-winner",
       title: "Match winner",
     });
@@ -369,6 +486,63 @@ describe("public event market API no-leak checks", () => {
     const body = await response.json();
     expectOnlyKeys(body, ["error"]);
     expect(body).toEqual({ error: "Grouped event not found." });
+    expectNoForbiddenKeys(body);
+  });
+
+  test("GET /api/events/[slug]/world-cup-model returns normalized model without sensitive mapping keys", async () => {
+    mockPrisma.event.findUnique.mockResolvedValue({
+      ...market.event,
+      description: "World Cup fixture",
+      liveStatus: null,
+      period: null,
+      clock: null,
+      homeScore: null,
+      awayScore: null,
+      venue: "Dallas",
+      imageUrl: null,
+      metadata: { referenceGroup: { slug: "france-argentina-world-cup" } },
+      sourceUpdatedAt: null,
+      createdAt: now,
+      updatedAt: now,
+      _count: { markets: 1 },
+      markets: [
+        {
+          ...market,
+          id: "world-cup-match-winner",
+          marketType: "match_winner_1x2",
+          marketGroupKey: "match",
+          marketGroupTitle: "Match Winner",
+          line: null,
+          sourceUpdatedAt: null,
+          createdAt: now,
+          category: null,
+          tags: [],
+          outcomes: market.outcomes.map((outcome) => ({
+            ...outcome,
+            metadata: {},
+            isActive: true,
+            createdAt: now,
+          })),
+        },
+      ],
+    });
+
+    const response = await getWorldCupModel(new Request("http://localhost/api/events/france-vs-argentina/world-cup-model"), {
+      params: Promise.resolve({ slug: "france-vs-argentina" }),
+    });
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expectOnlyKeys(body, ["model"]);
+    expect(body.model.eventHeader).toMatchObject({
+      slug: "france-vs-argentina",
+      title: "France vs Argentina",
+      mappedEvent: false,
+    });
+    expect(body.model.groups[0]).toMatchObject({
+      family: "match_winner",
+      displayType: "three_way",
+    });
     expectNoForbiddenKeys(body);
   });
 });

@@ -23,6 +23,9 @@ import {
   type WorldCupMarketLine,
   type WorldCupMarketBundle,
 } from "@/lib/worldCupMarketStructure";
+import WorldCupEventTradingPage from "@/components/sports/WorldCupEventTradingPage";
+import type { WorldCupEventPageModel } from "@/lib/sports/worldCupEventPageModel";
+import { isWorldCupSoccerEvent } from "@/lib/sports/worldCupEventDetection";
 
 type SelectedTrade = {
   marketId: string;
@@ -94,7 +97,7 @@ type EventMarket = {
   visibility: "PUBLIC" | "PRIVATE";
   mechanism: "ORDERBOOK" | "POOL";
   prices: { YES: number; NO: number } | null;
-  pricesByOutcome?: Record<string, number>;
+  pricesByOutcome?: Record<string, number | null>;
   referenceOnly?: boolean | null;
   tradable?: boolean | null;
   outcomes: {
@@ -133,7 +136,6 @@ type GroupedEventResponse = {
     groupType: string;
     resolutionMode: string;
     source: string;
-    externalSlug: string | null;
     expectedSumYesAround: number | null;
     negativeRiskLike: boolean;
     note: string | null;
@@ -161,7 +163,6 @@ type GroupedEventResponse = {
     isFresh: boolean;
     qualityStatus: string | null;
     teamSlug: string;
-    externalSlug: string | null;
   }>;
   sumYes: number;
   importedOutcomeCount: number;
@@ -189,6 +190,7 @@ export default function EventPage() {
   const [event, setEvent] = useState<EventSummary | null>(null);
   const [markets, setMarkets] = useState<EventMarket[]>([]);
   const [grouped, setGrouped] = useState<GroupedEventResponse | null>(null);
+  const [worldCupModel, setWorldCupModel] = useState<WorldCupEventPageModel | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<string>("");
   const [selectedTrade, setSelectedTrade] = useState<SelectedTrade | null>(null);
   const [marketGroup, setMarketGroup] = useState("all");
@@ -213,6 +215,24 @@ export default function EventPage() {
 
       const nextEvent = eventData.event as EventSummary;
       setEvent(nextEvent);
+
+      if (isWorldCupSoccerEvent(nextEvent)) {
+        const modelRes = await fetch(`/api/events/${encodeURIComponent(slug)}/world-cup-model`);
+        const modelData = await modelRes.json().catch(() => null);
+        if (!modelRes.ok) {
+          setError(modelData?.error ?? "Failed to load World Cup event model.");
+          setLoading(false);
+          return;
+        }
+        setWorldCupModel((modelData?.model ?? null) as WorldCupEventPageModel | null);
+        setGrouped(null);
+        setSelectedTrade(null);
+        setMarkets([]);
+        setLoading(false);
+        return;
+      }
+
+      setWorldCupModel(null);
 
       if (nextEvent.hasGroupedMarkets) {
         const groupedRes = await fetch(`/api/events/${encodeURIComponent(slug)}/grouped-markets`);
@@ -299,6 +319,12 @@ export default function EventPage() {
           </div>
         </ErrorState>
       </PageContainer>
+    );
+  }
+
+  if (worldCupModel) {
+    return (
+      <WorldCupEventTradingPage model={worldCupModel} />
     );
   }
 

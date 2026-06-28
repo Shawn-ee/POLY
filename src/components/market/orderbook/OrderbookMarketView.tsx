@@ -34,10 +34,6 @@ type ReferenceQuotePlanOutcome = {
   localOutcomeId: string;
   outcomeName: string;
   referenceSource: string;
-  polymarketSlug: string | null;
-  polymarketMarketId: string | null;
-  conditionId: string | null;
-  polymarketTokenId: string | null;
   gammaOutcomePrice: number | null;
   gammaBestBid: number | null;
   gammaBestAsk: number | null;
@@ -63,8 +59,6 @@ type ReferenceQuotePlanOutcome = {
   referenceAsk: number | null;
   activeBotBid?: number | null;
   activeBotAsk?: number | null;
-  activeBidOrderId?: string | null;
-  activeAskOrderId?: string | null;
   dryRun: boolean;
   liveOrdersEnabled: boolean;
   quotePlanEnabled: boolean;
@@ -75,8 +69,6 @@ type ReferenceQuotePlanOutcome = {
 type ReferencePlanResponse = {
   marketId: string;
   source: string | null;
-  externalSlug: string | null;
-  conditionId: string | null;
   hasSnapshot: boolean;
   reason: string | null;
   dryRun: boolean;
@@ -95,11 +87,6 @@ type ReferencePlanResponse = {
       cashReserveCents: number | null;
       autoReplenish: boolean;
       initializedAt: string | null;
-      initializedBy: string | null;
-      botUserId: string | null;
-      botUsername: string | null;
-      botApiCredentialId: string | null;
-      botApiKeyId: string | null;
       maxSingleOrderNotionalCents: number | null;
       maxOpenOrderNotionalCents: number | null;
       maxDailyLossCents: number | null;

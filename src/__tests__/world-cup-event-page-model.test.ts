@@ -1,0 +1,169 @@
+import { buildWorldCupEventPageModel, type WorldCupMarketInput } from "@/lib/sports/worldCupEventPageModel";
+
+const event = {
+  id: "event-1",
+  slug: "usa-vs-mexico",
+  title: "USA vs Mexico",
+  description: "World Cup fixture",
+  homeTeamName: "USA",
+  awayTeamName: "Mexico",
+  startTime: "2026-06-28T20:00:00.000Z",
+  venue: "Dallas",
+  status: "scheduled",
+  source: "polymarket",
+  externalSlug: "fifwc-usa-mex-2026-06-28",
+};
+
+const market = (overrides: Partial<WorldCupMarketInput>): WorldCupMarketInput => ({
+  id: overrides.id ?? "market-1",
+  title: overrides.title ?? "USA vs Mexico: Total goals 2.5",
+  description: overrides.description ?? "Total goals",
+  status: overrides.status ?? "LIVE",
+  marketGroupKey: overrides.marketGroupKey ?? "totals",
+  marketGroupTitle: overrides.marketGroupTitle ?? "Totals",
+  displayOrder: overrides.displayOrder ?? 1,
+  line: overrides.line ?? "2.5",
+  unit: overrides.unit ?? "goals",
+  period: overrides.period ?? null,
+  participantName: overrides.participantName ?? null,
+  propCategory: overrides.propCategory ?? "goals",
+  marketType: overrides.marketType ?? "total_goals",
+  referenceOnly: "referenceOnly" in overrides ? overrides.referenceOnly : true,
+  tradable: "tradable" in overrides ? overrides.tradable : false,
+  mmEnabled: "mmEnabled" in overrides ? overrides.mmEnabled : false,
+  referenceSummary: "referenceSummary" in overrides ? overrides.referenceSummary : {
+    source: "polymarket",
+    referenceBid: 0.48,
+    referenceAsk: 0.52,
+    plannedBotBid: 0.46,
+    plannedBotAsk: 0.54,
+    qualityStatus: "available",
+    isFresh: true,
+    mmEligible: false,
+    hasSnapshot: true,
+  },
+  outcomes: overrides.outcomes ?? [
+    { id: `${overrides.id ?? "market-1"}-over`, name: "Over 2.5", label: "Over", side: "over", code: "OVER", displayOrder: 0, price: null, bestBid: null, bestAsk: null, isTradable: true },
+    { id: `${overrides.id ?? "market-1"}-under`, name: "Under 2.5", label: "Under", side: "under", code: "UNDER", displayOrder: 1, price: null, bestBid: null, bestAsk: null, isTradable: true },
+  ],
+});
+
+describe("World Cup event page model", () => {
+  test("groups match winner and total goals into Polymarket-style families", () => {
+    const model = buildWorldCupEventPageModel({
+      event,
+      markets: [
+        market({
+          id: "winner",
+          title: "USA vs Mexico: Match winner",
+          marketType: "match_winner_1x2",
+          line: null,
+          outcomes: [
+            { id: "home", name: "USA", code: "HOME", side: "home", displayOrder: 0, bestBid: 0.41, bestAsk: 0.44, price: 0.425, isTradable: true },
+            { id: "draw", name: "Draw", code: "DRAW", side: "draw", displayOrder: 1, bestBid: 0.26, bestAsk: 0.29, price: 0.275, isTradable: true },
+            { id: "away", name: "Mexico", code: "AWAY", side: "away", displayOrder: 2, bestBid: 0.31, bestAsk: 0.34, price: 0.325, isTradable: true },
+          ],
+        }),
+        market({ id: "total-25", line: "2.5" }),
+      ],
+      internalTradingEnabled: true,
+      tradingKillSwitch: false,
+      realMoneyMode: false,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    expect(model.groups.map((group) => group.family)).toEqual(["match_winner", "total_goals"]);
+    expect(model.groups[0].displayType).toBe("three_way");
+    expect(model.groups[1].displayType).toBe("line_selector");
+    expect(model.tabs.find((tab) => tab.id === "match")?.count).toBe(1);
+    expect(model.tabs.find((tab) => tab.id === "goals")?.count).toBe(1);
+  });
+
+  test("uses local book before reference price and enables tradeability", () => {
+    const model = buildWorldCupEventPageModel({
+      event,
+      markets: [
+        market({
+          outcomes: [
+            { id: "over", name: "Over 2.5", side: "over", displayOrder: 0, bestBid: 0.62, bestAsk: 0.65, price: 0.635, isTradable: true },
+            { id: "under", name: "Under 2.5", side: "under", displayOrder: 1, bestBid: null, bestAsk: null, price: null, isTradable: true },
+          ],
+        }),
+      ],
+      internalTradingEnabled: true,
+      tradingKillSwitch: false,
+      realMoneyMode: false,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    const over = model.groups[0].outcomes[0];
+    expect(over.source).toBe("local_bot_book");
+    expect(over.price).toBe(0.635);
+    expect(over.tradeable).toBe(true);
+  });
+
+  test("shows reference-only reason when no local book exists", () => {
+    const model = buildWorldCupEventPageModel({
+      event,
+      markets: [market({ id: "total-25" })],
+      internalTradingEnabled: true,
+      tradingKillSwitch: false,
+      realMoneyMode: false,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    const outcome = model.groups[0].outcomes[0];
+    expect(outcome.source).toBe("reference_price");
+    expect(outcome.price).toBe(0.5);
+    expect(outcome.tradeable).toBe(false);
+    expect(outcome.reasonIfDisabled).toBe("Reference price only. No internal liquidity.");
+  });
+
+  test("line-selector outcome labels include the selected total line", () => {
+    const model = buildWorldCupEventPageModel({
+      event,
+      markets: [market({ id: "total-15", line: "1.5" }), market({ id: "total-25", line: "2.5" })],
+      internalTradingEnabled: true,
+      tradingKillSwitch: false,
+      realMoneyMode: false,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    const total = model.groups.find((group) => group.family === "total_goals");
+    expect(total?.displayType).toBe("line_selector");
+    expect(total?.lines.map((line) => line.outcomes[0].label)).toEqual(["Over 1.5", "Over 2.5"]);
+  });
+
+  test("labels stale, unmapped, and no-live-price states without fake 50", () => {
+    const stale = buildWorldCupEventPageModel({
+      event,
+      markets: [market({ referenceSummary: { source: "polymarket", referenceBid: 0.4, referenceAsk: 0.42, isFresh: false, hasSnapshot: true } })],
+      internalTradingEnabled: true,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+    expect(stale.groups[0].outcomes[0].source).toBe("stale");
+    expect(stale.groups[0].outcomes[0].price).toBeNull();
+
+    const unmapped = buildWorldCupEventPageModel({
+      event,
+      markets: [market({ referenceOnly: null, referenceSummary: null })],
+      internalTradingEnabled: true,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+    expect(unmapped.groups[0].outcomes[0].source).toBe("unmapped");
+    expect(unmapped.groups[0].outcomes[0].price).toBeNull();
+  });
+
+  test("hides closed markets on stale events and records diagnostics", () => {
+    const model = buildWorldCupEventPageModel({
+      event: { ...event, startTime: "2026-06-26T10:00:00.000Z", status: "scheduled" },
+      markets: [market({ status: "CLOSED" }), market({ id: "live", status: "LIVE" })],
+      internalTradingEnabled: true,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    expect(model.status).toBe("stale");
+    expect(model.diagnostics.hiddenStaleMarkets).toBe(1);
+    expect(model.groups[0].outcomes.every((outcome) => outcome.tradeable === false)).toBe(true);
+  });
+});
