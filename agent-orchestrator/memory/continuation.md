@@ -251,6 +251,18 @@ Next recommended command:
 bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-003-candidate-review-ui-or-report-upgrade.md
 ```
 
+## 2026-06-28 WC-DISC-OPS-003 Complete
+
+Completed DB-backed candidate review report upgrade. `polymarket:admin-review:report --fromDb=true` can summarize persisted discovery candidates with title, market type, outcomes, token IDs, confidence, blockers, duplicate status, raw metadata summary, import IDs, and recommended actions. Discovery/import score is now 98/100.
+
+Next recommended task: `WC-DISC-OPS-004 Draft Import From Candidate Queue`.
+
+Next recommended command:
+
+```sh
+bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-004-draft-import-from-candidate-queue.md
+```
+
 ## 2026-06-26 SEC-001
 
 Route-security failure from `20260626T041912Z-harness_only` was investigated. `line` is safe public sports display metadata from `serializeMarketReadModel`, exposed only after public/listed route filters in the checked routes. The two public no-leak tests now allow `line` narrowly with documentation. `route_security_check.sh` passed in `20260626T042256Z-harness_only`.

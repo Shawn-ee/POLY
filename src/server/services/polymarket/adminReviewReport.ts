@@ -70,6 +70,80 @@ export function buildWorldCupAdminReviewReport(candidates: PolymarketImportCandi
   };
 }
 
+type DiscoveryCandidateQueueReviewInput = {
+  id: string;
+  source: string;
+  externalSlug: string | null;
+  externalMarketId: string | null;
+  conditionId: string | null;
+  title: string;
+  question: string | null;
+  eventTitle: string | null;
+  marketType: string | null;
+  status: string;
+  confidence: string | null;
+  reasonCodes: unknown;
+  outcomes: unknown;
+  tokenIds: unknown;
+  rawMetadata: unknown;
+  batchId: string;
+  importedEventId: string | null;
+  importedMarketId: string | null;
+  firstSeenAt: string;
+  lastSeenAt: string;
+};
+
+export function buildDiscoveryCandidateQueueReviewReport(candidates: DiscoveryCandidateQueueReviewInput[]) {
+  const items = candidates.map((candidate) => {
+    const reasonCodes = stringArray(candidate.reasonCodes);
+    const tokenIds = stringArray(candidate.tokenIds);
+    const outcomes = outcomeSummary(candidate.outcomes);
+    const duplicateStatus = reasonCodes.includes("duplicate") || reasonCodes.some((reason) => reason.includes("duplicate"))
+      ? "duplicate"
+      : "not_detected";
+    return {
+      id: candidate.id,
+      source: candidate.source,
+      batchId: candidate.batchId,
+      status: candidate.status,
+      recommendedAction: queueRecommendedAction(candidate.status, reasonCodes),
+      title: candidate.title,
+      question: candidate.question,
+      eventTitle: candidate.eventTitle,
+      marketType: candidate.marketType,
+      confidence: candidate.confidence,
+      external: {
+        externalSlug: candidate.externalSlug,
+        externalMarketId: candidate.externalMarketId,
+        conditionId: candidate.conditionId,
+      },
+      outcomes,
+      tokenIds,
+      blockers: reasonCodes.filter((reason) => reason !== "duplicate"),
+      duplicateStatus,
+      rawMetadataSummary: summarizeRawMetadata(candidate.rawMetadata),
+      imported: {
+        eventId: candidate.importedEventId,
+        marketId: candidate.importedMarketId,
+      },
+      firstSeenAt: candidate.firstSeenAt,
+      lastSeenAt: candidate.lastSeenAt,
+    };
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "persisted_discovery_candidates",
+    candidateCount: items.length,
+    importReadyCount: items.filter((item) => item.status === "draft_import_ready").length,
+    reviewRequiredCount: items.filter((item) => item.status === "admin_review_required").length,
+    blockedCount: items.filter((item) => item.status === "blocked").length,
+    ignoredCount: items.filter((item) => item.status === "ignored").length,
+    rejectedCount: items.filter((item) => item.status === "rejected").length,
+    items,
+  };
+}
+
 function buildWorldCupAdminReviewItem(candidate: PolymarketImportCandidate): WorldCupAdminReviewItem {
   const request = buildDraftImportRequestFromCandidate(candidate);
   const validation = validatePolymarketCandidateMapping(candidate);
@@ -132,4 +206,43 @@ function recommendedAction(status: string, promotionEligible: boolean): AdminRev
   if (status === "unsupported") return "unsupported";
   if (status === "duplicate" || status === "blocked") return "reject";
   return "needs_manual_mapping";
+}
+
+function queueRecommendedAction(status: string, reasonCodes: string[]): AdminReviewAction {
+  if (status === "draft_import_ready" || status === "mapping_validated") return "approve";
+  if (status === "admin_review_required" || status === "discovered") return "hold";
+  if (status === "ignored") return "unsupported";
+  if (status === "rejected" || status === "blocked" || reasonCodes.includes("missing_token_mapping")) return "reject";
+  return "needs_manual_mapping";
+}
+
+function outcomeSummary(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.map((outcome) => {
+    if (!outcome || typeof outcome !== "object") return { label: null, tokenId: null };
+    const item = outcome as Record<string, unknown>;
+    return {
+      label: typeof item.name === "string" ? item.name : null,
+      referenceOutcomeLabel: typeof item.referenceOutcomeLabel === "string" ? item.referenceOutcomeLabel : null,
+      tokenId: typeof item.tokenId === "string" ? item.tokenId : null,
+      externalOutcomeId: typeof item.externalOutcomeId === "string" ? item.externalOutcomeId : null,
+    };
+  });
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function summarizeRawMetadata(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { keys: [], duplicateKeys: [] };
+  }
+  const record = value as Record<string, unknown>;
+  return {
+    keys: Object.keys(record).sort(),
+    candidateId: typeof record.candidateId === "string" ? record.candidateId : null,
+    duplicateKey: typeof record.duplicateKey === "string" ? record.duplicateKey : null,
+    duplicateKeys: stringArray(record.duplicateKeys).slice(0, 20),
+  };
 }

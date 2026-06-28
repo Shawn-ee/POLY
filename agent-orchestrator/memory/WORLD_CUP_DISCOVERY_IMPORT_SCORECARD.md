@@ -8,14 +8,14 @@ Updated: 2026-06-28
 | Draft import | 10 | 9 | `polymarket:import:draft` converts fixture discovery candidates into draft import requests with `visibility=PRIVATE`, `desiredStatus=draft`, non-tradable outcomes, and dry-run reporting. |
 | Duplicate prevention | 8 | 8 | Discovery and draft import planning dedupe by condition ID, external market ID, slug, title, event keys, and outcome token IDs; fixture tests cover duplicate chains and repeated candidates. |
 | Mapping validator | 12 | 9 | `polymarket:mapping:validate` validates fixture candidates with confidence, reason codes, missing fields, and lifecycle recommendations; DB-backed imported-record validation is still pending. |
-| Confidence scoring/admin review | 8 | 8 | `polymarket:admin-review:report` summarizes mapping, validation confidence, reasons, reference prices, promotion eligibility, and recommended admin action; admin-only candidate review APIs now list/detail/update persisted discovery candidates. |
+| Confidence scoring/admin review | 8 | 8 | `polymarket:admin-review:report` summarizes mapping, validation confidence, reasons, reference prices, promotion eligibility, and recommended admin action; admin-only APIs list/detail/update persisted candidates, and the report can summarize the DB candidate queue. |
 | Reference sync after import | 10 | 10 | Imported draft metadata carries fixture reference data, pending-review sync is supported, and local DB E2E stored 5 `ReferenceQuoteSnapshot` rows for eligible imported markets. |
 | Two-tick pricing after import | 10 | 9 | Imported-draft fixture snapshots now feed quote plan tests showing two-tick-worse bid/ask; full promotion/E2E integration is still pending. |
 | Promotion guardrails | 12 | 11 | `polymarket:promote:validated` evaluates required gates, guarded local DB lifecycle mutation is behind explicit safety flags, and local DB E2E promoted only 2 eligible markets while keeping 3 invalid markets private. |
 | Public no-leak safety | 8 | 8 | Public market/event serializers no longer expose mapping IDs/tokens, event detail filters to public listed markets, and route tests cover imported enabled markets without mapping leaks. |
 | Market maker dry-run after import | 7 | 7 | Imported candidates now have direct MM dry-run planning coverage for intents, stale references, closed markets, disabled mappings, and risk limits. |
 | End-to-end discovery-to-trading smoke | 5 | 5 | `world_cup_discovery_to_trading_e2e_check.sh` chains fixture discovery, draft import, validation, admin review, promotion dry-run, public no-leak, and order-ticket gates. |
-| Total | 100 | 97 | Fixture-first discovery/import through admin review, dry-run promotion, guarded DB lifecycle mutation, local DB lifecycle E2E, imported-market MM dry-run, public no-leak checks, E2E, read-only live-smoke gating, persisted discovery candidate storage, and admin-only candidate review APIs are harnessed. |
+| Total | 100 | 98 | Fixture-first discovery/import through admin review, dry-run promotion, guarded DB lifecycle mutation, local DB lifecycle E2E, imported-market MM dry-run, public no-leak checks, E2E, read-only live-smoke gating, persisted discovery candidate storage, admin-only candidate review APIs, and DB-backed review reporting are harnessed. |
 
 Targets:
 
@@ -102,3 +102,7 @@ Added the DB-backed `PolymarketDiscoveryCandidate` model, non-destructive migrat
 ## 2026-06-28 WC-DISC-OPS-002
 
 Added admin-only persisted candidate review APIs for list/filter, detail, and status transitions. Public users are rejected, filtering supports status/source/batch ID, and review actions can move candidates to ignored, rejected, blocked, admin-review-required, or draft-import-ready. Score increased to 97/100.
+
+## 2026-06-28 WC-DISC-OPS-003
+
+Upgraded the admin review report flow with a persisted candidate queue report builder and `polymarket:admin-review:report --fromDb=true`. The report shows title, market type, outcomes, token IDs, confidence, blockers, duplicate status, raw metadata summary, import IDs, and recommended actions. Score increased to 98/100.
