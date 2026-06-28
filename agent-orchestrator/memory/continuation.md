@@ -311,6 +311,12 @@ Next recommended command:
 bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-008-end-to-end-db-candidate-queue-harness.md
 ```
 
+## 2026-06-28 WC-DISC-OPS-008 Complete
+
+Completed local/test DB candidate-queue E2E harness. The harness persists fixture candidates, marks eligible rows import-ready, imports drafts from the queue, validates imported DB mappings, verifies rollback dry-run, and checks public no-leak. Discovery/import score is now 100/100.
+
+Next recommended action: final closed internal beta readiness validation and report.
+
 ## 2026-06-26 SEC-001
 
 Route-security failure from `20260626T041912Z-harness_only` was investigated. `line` is safe public sports display metadata from `serializeMarketReadModel`, exposed only after public/listed route filters in the checked routes. The two public no-leak tests now allow `line` narrowly with documentation. `route_security_check.sh` passed in `20260626T042256Z-harness_only`.

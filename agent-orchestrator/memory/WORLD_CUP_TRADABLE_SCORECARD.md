@@ -6,21 +6,21 @@ Permission note: no repository area requires separate owner approval. Dangerous 
 
 | Area | Max | Current | Evidence |
 |---|---:|---:|---|
-| World Cup discovery | 8 | 3 | Existing scanners/import previews exist; no automated discovery candidate lifecycle or fixture E2E yet. |
+| World Cup discovery | 8 | 8 | Polymarket World Cup discovery supports fixture and read-only live smoke, persisted DB candidate queue, admin review, queue import, DB mapping validation, rollback dry-run, and candidate-queue E2E. |
 | Event grouping | 8 | 6 | Event model and grouped event UI exist; grouped market contract needs hardening. |
 | Market/contract model | 8 | 5 | Market fields support line/group/participants/reference IDs; v1 scope excludes player props. |
 | Order ticket calculation | 10 | 4 | Ticket preview exists in event UI, order-ticket tests exist; unified Robinhood-like ticket needs completion. |
 | Internal test trade flow | 10 | 5 | `POST /api/orders` guarded by internal trading beta; requires full World Cup trade smoke. |
 | Position/mark value | 8 | 5 | Portfolio computes current mark/P&L from orderbook mid; needs World Cup-specific validation. |
-| Polymarket reference sync | 10 | 7 | Snapshot sync, fixture mode, reference price APIs, and harness checks exist for mapped markets; imported-draft gate is missing. |
-| Two-tick pricing policy | 10 | 7 | Quote engine/snapshot tests cover two-tick behavior; imported-market promotion harness is missing. |
-| Market-making bot safety | 10 | 7 | Dry-run/live-local guards, risk monitor, and harness checks exist; imported-market dry-run gate is missing. |
+| Polymarket reference sync | 10 | 8 | Snapshot sync, fixture mode, reference price APIs, harness checks, and imported-draft/reference-MM integration exist; server scheduler validation remains closed-beta work. |
+| Two-tick pricing policy | 10 | 8 | Quote engine/snapshot tests cover two-tick behavior and imported-market pricing gates are harnessed; broader UI display regression remains future work. |
+| Market-making bot safety | 10 | 8 | Dry-run/live-local guards, risk monitor, imported-market dry-run gate, pause commands, and rollback tooling exist; closed-beta live-local soak remains future work. |
 | Bot inventory cleanup | 5 | 2 | Initial audit created; needs verification and cleanup tasks. |
 | Combo validation/model | 5 | 2 | Combo quote/order exists but correlation/impossible combo model incomplete. |
 | Early cash-out estimate | 5 | 1 | Spec only; no safe estimate implementation verified. |
 | Public route/no-leak safety | 3 | 3 | Route security harness passed after SEC-001. |
-| Discovery/import pipeline | 5 | 5 | Discovery/import scorecard is 95/100; guarded local DB E2E imports/promotes safely and optional live read-only discovery smoke passed with DB skipped. |
-| Total | 100 | 62 | Improved reference-MM base plus fixture discovery/import/promotion guardrails, local DB lifecycle E2E, read-only live discovery smoke, public no-leak hardening, admin review, and E2E fixture smoke. |
+| Discovery/import pipeline | 5 | 5 | Discovery/import scorecard is 100/100 for operational v2: DB candidate queue, admin API/report, queue import, imported-record validation, rollback, playbook, and candidate-queue E2E pass. |
+| Total | 100 | 70 | Discovery/import operational hardening is complete for closed internal beta, lifting the platform to usable internal-demo readiness while broader trading UX, bot cleanup, combo, and cash-out work remain. |
 
 Targets:
 
@@ -64,3 +64,5 @@ WC-DISC-DB-001 note 2026-06-28: guarded DB-backed lifecycle mutation path added 
 WC-DISC-DB-002 note 2026-06-28: local DB discovery/import/promotion E2E passed with 5 imported candidates, 2 promoted eligible markets, 3 hidden invalid markets, 5 reference snapshots, 10 dry-run MM intents, and no draft public leak. Discovery/import score is now 94/100. Overall score increases to 61/100.
 
 WC-DISC-LIVE-001 note 2026-06-28: optional live read-only Polymarket discovery smoke passed with `fixtureMode=false`, `liveSmoke=true`, `dryRun=true`, and DB skipped. Discovery/import score is now 95/100. Overall score increases to 62/100.
+
+WC-DISC-OPS v2 note 2026-06-28: persisted discovery candidate queue, admin review API/report, queue-backed draft import, imported-record DB mapping validation, rollback tooling, server runtime playbook, and candidate-queue E2E harness are complete. Discovery/import score is now 100/100. Overall score increases to 70/100.

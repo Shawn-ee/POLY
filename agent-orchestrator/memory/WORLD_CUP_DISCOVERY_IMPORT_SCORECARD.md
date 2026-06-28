@@ -15,7 +15,7 @@ Updated: 2026-06-28
 | Public no-leak safety | 8 | 8 | Public market/event serializers no longer expose mapping IDs/tokens, event detail filters to public listed markets, and route tests cover imported enabled markets without mapping leaks. |
 | Market maker dry-run after import | 7 | 7 | Imported candidates now have direct MM dry-run planning coverage for intents, stale references, closed markets, disabled mappings, and risk limits. |
 | End-to-end discovery-to-trading smoke | 5 | 5 | `world_cup_discovery_to_trading_e2e_check.sh` chains fixture discovery, draft import, validation, admin review, promotion dry-run, public no-leak, and order-ticket gates. |
-| Total | 100 | 99 | Fixture-first discovery/import through admin review, dry-run promotion, guarded DB lifecycle mutation, local DB lifecycle E2E, imported-market MM dry-run, public no-leak checks, E2E, read-only live-smoke gating, persisted discovery candidate storage, admin-only candidate review APIs, DB-backed review reporting, and queue-backed draft import are harnessed. |
+| Total | 100 | 100 | Fixture-first discovery/import through admin review, dry-run promotion, guarded DB lifecycle mutation, local DB lifecycle E2E, imported-market MM dry-run, public no-leak checks, E2E, read-only live-smoke gating, persisted discovery candidate storage, admin-only candidate review APIs, DB-backed review reporting, queue-backed draft import, DB-backed imported-record validation, rollback tooling, runtime playbook, and candidate-queue E2E are harnessed. |
 
 Targets:
 
@@ -122,3 +122,7 @@ Added `polymarket:imports:rollback`, dry-run-first rollback planning, confirmed 
 ## 2026-06-28 WC-DISC-OPS-007
 
 Added `agent-orchestrator/docs/SERVER_RUNTIME_SERVICES_PLAYBOOK.md` for closed internal beta server operation, safe env flags, service inventory, startup phases, disabled services, pause commands, rollback procedure, monitoring, and readiness checklist. Score remains 99/100 until candidate-queue E2E passes.
+
+## 2026-06-28 WC-DISC-OPS-008
+
+Added `world_cup_discovery_candidate_queue_e2e_check.sh` and `scripts/polymarket_candidate_queue_e2e.ts`. The local/test DB harness persisted fixture candidates, marked eligible candidates import-ready, imported drafts from the queue, validated imported DB mappings, verified rollback dry-run, and confirmed `publicLeakCount=0`. Score increased to 100/100.

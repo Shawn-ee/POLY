@@ -257,6 +257,7 @@ export async function validateImportedPolymarketMappingsFromDb(params: {
   const candidates = await prisma.polymarketDiscoveryCandidate.findMany({
     where: {
       status: { in: ["imported_draft", "mapping_validated", "admin_review_required"] },
+      importedMarketId: { not: null },
       ...(params.batchId ? { batchId: params.batchId } : {}),
       ...(params.candidateId ? { id: params.candidateId } : {}),
     },
