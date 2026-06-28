@@ -11,3 +11,4 @@ export * from "@/server/services/polymarket/promotionGuardrails";
 export * from "@/server/services/polymarket/adminReviewReport";
 export * from "@/server/services/polymarket/lifecyclePromotion";
 export * from "@/server/services/polymarket/discoveryCandidateStore";
+export * from "@/server/services/polymarket/importRollback";

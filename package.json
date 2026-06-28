@@ -51,6 +51,7 @@
     "polymarket:import-event": "tsx scripts/import_polymarket_event.ts",
     "polymarket:discover:once": "tsx scripts/polymarket_discover_once.ts",
     "polymarket:import:draft": "tsx scripts/polymarket_import_draft.ts",
+    "polymarket:imports:rollback": "tsx scripts/polymarket_imports_rollback.ts",
     "polymarket:mapping:validate": "tsx scripts/polymarket_mapping_validate.ts",
     "polymarket:promote:validated": "tsx scripts/polymarket_promote_validated.ts",
     "polymarket:admin-review:report": "tsx scripts/polymarket_admin_review_report.ts",

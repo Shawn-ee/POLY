@@ -114,3 +114,7 @@ Updated draft import to support `polymarket:import:draft --fromDb=true`, loading
 ## 2026-06-28 WC-DISC-OPS-005
 
 Added DB-backed mapping validation for imported `PolymarketDiscoveryCandidate` records. The validator checks imported Event/Market/Outcome IDs, external mapping fields, token IDs, labels, supported market type, duplicate keys, TBD/closed/missing-token blockers, and writes candidate/market validation metadata when explicitly confirmed. Score remains 99/100 until rollback, scheduler playbook, and candidate-queue E2E are complete.
+
+## 2026-06-28 WC-DISC-OPS-006
+
+Added `polymarket:imports:rollback`, dry-run-first rollback planning, confirmed rollback disable behavior, and tests. Confirmed rollback sets candidates `rollback_disabled`, markets private/unlisted/paused, outcomes non-tradable, bot quote configs disabled/dry-run, and rollback metadata. Score remains 99/100 until scheduler playbook and candidate-queue E2E pass.

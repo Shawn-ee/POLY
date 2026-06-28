@@ -287,6 +287,18 @@ Next recommended command:
 bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-006-bulk-disable-rollback-tooling.md
 ```
 
+## 2026-06-28 WC-DISC-OPS-006 Complete
+
+Completed dry-run-first rollback tooling. `polymarket:imports:rollback` requires a batch/source/candidate selector, is dry-run by default, and with `--confirmRollback=true` disables scoped imported/promoted markets without deleting data. Discovery/import score remains 99/100 until scheduler playbook and candidate-queue E2E pass.
+
+Next recommended task: `WC-DISC-OPS-007 Scheduler Policy And Safe Runtime Playbook`.
+
+Next recommended command:
+
+```sh
+bash agent-orchestrator/scripts/loop_once.sh once agent-orchestrator/tasks/pending/WC-DISC-OPS-007-scheduler-policy-and-safe-runtime-playbook.md
+```
+
 ## 2026-06-26 SEC-001
 
 Route-security failure from `20260626T041912Z-harness_only` was investigated. `line` is safe public sports display metadata from `serializeMarketReadModel`, exposed only after public/listed route filters in the checked routes. The two public no-leak tests now allow `line` narrowly with documentation. `route_security_check.sh` passed in `20260626T042256Z-harness_only`.
