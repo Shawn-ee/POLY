@@ -23,6 +23,8 @@ import {
   type WorldCupMarketLine,
   type WorldCupMarketBundle,
 } from "@/lib/worldCupMarketStructure";
+import WorldCupEventTradingPage from "@/components/sports/WorldCupEventTradingPage";
+import { buildWorldCupEventPageModel } from "@/lib/sports/worldCupEventPageModel";
 
 type SelectedTrade = {
   marketId: string;
@@ -94,7 +96,7 @@ type EventMarket = {
   visibility: "PUBLIC" | "PRIVATE";
   mechanism: "ORDERBOOK" | "POOL";
   prices: { YES: number; NO: number } | null;
-  pricesByOutcome?: Record<string, number>;
+  pricesByOutcome?: Record<string, number | null>;
   referenceOnly?: boolean | null;
   tradable?: boolean | null;
   outcomes: {
@@ -318,15 +320,15 @@ export default function EventPage() {
   }
 
   if (event.category === "sports") {
+    const model = buildWorldCupEventPageModel({
+      event,
+      markets,
+      internalTradingEnabled: process.env.NEXT_PUBLIC_INTERNAL_TRADING_BETA_ENABLED === "true",
+      tradingKillSwitch: process.env.NEXT_PUBLIC_TRADING_KILL_SWITCH === "true",
+      realMoneyMode: process.env.NEXT_PUBLIC_REAL_MONEY_MODE === "true",
+    });
     return (
-      <SportsEventView
-        event={event}
-        markets={markets}
-        marketGroup={marketGroup}
-        onMarketGroupChange={setMarketGroup}
-        marketSearch={marketSearch}
-        onMarketSearchChange={setMarketSearch}
-      />
+      <WorldCupEventTradingPage model={model} />
     );
   }
 

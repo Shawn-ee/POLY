@@ -42,7 +42,7 @@ export type WorldCupMarketLike = {
   participantName?: string | null;
   propCategory?: string | null;
   marketType?: string | null;
-  pricesByOutcome?: Record<string, number>;
+  pricesByOutcome?: Record<string, number | null>;
   outcomes: WorldCupOutcomeLike[];
 };
 

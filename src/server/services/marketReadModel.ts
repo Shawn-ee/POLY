@@ -19,7 +19,7 @@ type MarketWithRelations = Prisma.MarketGetPayload<{
 
 const buildLegacyBinaryPrices = (
   outcomes: Array<{ id: string; name: string }>,
-  pricesByOutcome: Record<string, number>,
+  pricesByOutcome: Record<string, number | null>,
 ) => {
   if (
     outcomes.length !== 2 ||
@@ -31,9 +31,12 @@ const buildLegacyBinaryPrices = (
 
   const yesOutcome = outcomes.find((outcome) => outcome.name.trim().toUpperCase() === "YES");
   const noOutcome = outcomes.find((outcome) => outcome.name.trim().toUpperCase() === "NO");
+  const yesPrice = yesOutcome ? pricesByOutcome[yesOutcome.id] : null;
+  const noPrice = noOutcome ? pricesByOutcome[noOutcome.id] : null;
+  if (yesPrice == null || noPrice == null) return null;
   return {
-    YES: yesOutcome ? pricesByOutcome[yesOutcome.id] ?? 0.5 : 0.5,
-    NO: noOutcome ? pricesByOutcome[noOutcome.id] ?? 0.5 : 0.5,
+    YES: yesPrice,
+    NO: noPrice,
   };
 };
 
@@ -48,12 +51,15 @@ export const serializeMarketReadModel = async (market: MarketWithRelations) => {
       : new Map(
           market.outcomes.map((outcome) => [
             outcome.id,
-            { bestBid: null, bestAsk: null, mid: 0.5, spread: null },
+            { bestBid: null, bestAsk: null, mid: 0.5, spread: null, hasQuote: false },
           ]),
         );
 
   const pricesByOutcome = Object.fromEntries(
-    market.outcomes.map((outcome) => [outcome.id, outcomeQuotes.get(outcome.id)?.mid ?? 0.5]),
+    market.outcomes.map((outcome) => {
+      const quote = outcomeQuotes.get(outcome.id);
+      return [outcome.id, quote?.hasQuote ? quote.mid : null];
+    }),
   );
   const legacyPrices = buildLegacyBinaryPrices(market.outcomes, pricesByOutcome);
   const referenceSummary = await getReferenceSummaryForMarket(market.id);
@@ -83,6 +89,7 @@ export const serializeMarketReadModel = async (market: MarketWithRelations) => {
         bestAsk: null,
         mid: 0.5,
         spread: null,
+        hasQuote: false,
       };
       return {
         id: outcome.id,
@@ -95,7 +102,7 @@ export const serializeMarketReadModel = async (market: MarketWithRelations) => {
         isTradable: outcome.isTradable,
         resolvedResult: outcome.resolvedResult,
         metadata: outcome.metadata,
-        price: quote.mid,
+        price: quote.hasQuote ? quote.mid : null,
         bestBid: quote.bestBid,
         bestAsk: quote.bestAsk,
         spread: quote.spread,
