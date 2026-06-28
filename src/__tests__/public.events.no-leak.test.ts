@@ -50,6 +50,9 @@ const forbiddenFieldNames = [
   "withdrawalApproval",
   "riskLimit",
   "killSwitch",
+  "externalEventId",
+  "externalSlug",
+  "referenceMetadata",
 ];
 
 const collectKeys = (value: unknown): string[] => {
@@ -82,8 +85,6 @@ const expectedEventSummaryKeys = [
   "createdAt",
   "description",
   "eventType",
-  "externalEventId",
-  "externalSlug",
   "hasGroupedMarkets",
   "homeTeamName",
   "icon",
@@ -92,9 +93,7 @@ const expectedEventSummaryKeys = [
   "imageUrl",
   "leagueKey",
   "marketCount",
-  "metadata",
   "slug",
-  "source",
   "sportKey",
   "startTime",
   "status",

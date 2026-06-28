@@ -5,6 +5,7 @@ export type PolymarketMarketType =
   | "both_teams_to_score"
   | "team_to_qualify"
   | "correct_score_unsupported"
+  | "player_prop_unsupported"
   | "unknown";
 
 export type PolymarketOutcomeCandidate = {
@@ -78,6 +79,7 @@ export type PolymarketImportCandidate = {
   confidence: "high" | "medium" | "low";
   status: "draft" | "needs_review";
   duplicateKey: string;
+  duplicateKeys: string[];
   reasons: string[];
 };
 

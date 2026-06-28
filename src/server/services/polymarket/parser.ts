@@ -85,17 +85,26 @@ export function classifyPolymarketMarketType(input: { title: string; outcomes: s
   const title = input.title.toLowerCase();
   const outcomes = input.outcomes.map((outcome) => outcome.trim().toLowerCase());
 
-  if (title.includes("correct score")) {
-    return "correct_score_unsupported";
-  }
   if (outcomes.length === 2 && outcomes.includes("yes") && outcomes.includes("no")) {
     if (/both teams.*score|btts/.test(title)) {
       return "both_teams_to_score";
+    }
+    if (title.includes("correct score")) {
+      return "correct_score_unsupported";
+    }
+    if (/player|shots?|assists?|cards?|score a goal|to score|anytime scorer/.test(title)) {
+      return "player_prop_unsupported";
     }
     if (/qualify|advance/.test(title)) {
       return "team_to_qualify";
     }
     return "yes_no";
+  }
+  if (title.includes("correct score")) {
+    return "correct_score_unsupported";
+  }
+  if (/player|shots?|assists?|cards?|score a goal|to score|anytime scorer/.test(title)) {
+    return "player_prop_unsupported";
   }
   if (outcomes.length === 3 && hasAny(outcomes, ["draw", "tie"])) {
     return "match_winner_1x2";
@@ -126,21 +135,24 @@ export function buildPolymarketImportCandidates(params: {
   markets: PolymarketMarketCandidate[];
   existingDuplicateKeys?: Set<string>;
 }): PolymarketImportCandidate[] {
-  const seen = new Set(params.existingDuplicateKeys ?? []);
+  const seen = new Set(Array.from(params.existingDuplicateKeys ?? []).map(normalizeDuplicateKey).filter((key): key is string => key != null));
   const candidates: PolymarketImportCandidate[] = [];
 
   for (const market of params.markets) {
-    const duplicateKey = market.conditionId ?? market.externalMarketId ?? market.slug ?? market.title;
-    if (seen.has(duplicateKey)) {
+    const duplicateKeys = collectPolymarketDuplicateKeys(market);
+    const duplicateKey = duplicateKeys[0] ?? stableCandidateId(market);
+    if (duplicateKeys.some((key) => seen.has(key))) {
+      for (const key of duplicateKeys) seen.add(key);
       continue;
     }
-    seen.add(duplicateKey);
+    for (const key of duplicateKeys) seen.add(key);
 
     const reasons: string[] = [];
     if (!market.active || market.closed || market.archived) reasons.push("inactive_or_closed");
     if (market.outcomes.length === 0 || market.outcomes.some((outcome) => !outcome.tokenId)) reasons.push("missing_token_mapping");
     if (!isWorldCupSoccerCandidate(market)) reasons.push("not_world_cup_soccer");
-    if (market.marketType === "correct_score_unsupported" || market.marketType === "unknown") reasons.push("unsupported_market_type");
+    if (market.marketType.endsWith("_unsupported") || market.marketType === "unknown") reasons.push("unsupported_market_type");
+    if (isTbdMarketTitle(market.title) || market.outcomes.some((outcome) => isTbdMarketTitle(outcome.name))) reasons.push("tbd_team");
 
     const notWorldCupSoccer = reasons.includes("not_world_cup_soccer");
     const highConfidence =
@@ -158,11 +170,28 @@ export function buildPolymarketImportCandidates(params: {
       confidence: highConfidence ? "high" : notWorldCupSoccer || reasons.length > 1 ? "low" : "medium",
       status: highConfidence ? "draft" : "needs_review",
       duplicateKey,
+      duplicateKeys,
       reasons,
     });
   }
 
   return candidates;
+}
+
+export function collectPolymarketDuplicateKeys(market: PolymarketMarketCandidate): string[] {
+  const values = [
+    market.conditionId,
+    market.externalMarketId,
+    market.slug,
+    market.title,
+    ...market.outcomes.map((outcome) => outcome.tokenId),
+  ];
+  return Array.from(new Set(values.map(normalizeDuplicateKey).filter((key): key is string => key != null)));
+}
+
+export function normalizeDuplicateKey(value: string | null | undefined): string | null {
+  const normalized = value?.trim().toLowerCase();
+  return normalized && normalized.length > 0 ? normalized : null;
 }
 
 function buildOutcomes(labels: string[], tokenIds: string[], prices: number[]): PolymarketOutcomeCandidate[] {
@@ -183,6 +212,10 @@ function stableCandidateId(market: PolymarketMarketCandidate) {
 
 function hasAny(values: string[], expected: string[]) {
   return expected.some((value) => values.includes(value));
+}
+
+function isTbdMarketTitle(value: string) {
+  return /\b(tbd|to be determined|winner of|runner-up|runner up)\b/i.test(value);
 }
 
 function parseStringArray(value: unknown): string[] {

@@ -5,11 +5,13 @@ export async function syncPolymarketReferencePricesOnce(options: {
   marketId?: string | null;
   eventSlug?: string | null;
   onlyMmEnabled?: boolean;
+  includePendingReview?: boolean;
 } = {}) {
   return refreshPolymarketReferenceSnapshots({
     marketId: options.marketId,
     eventSlug: options.eventSlug,
     onlyMmEnabled: options.onlyMmEnabled,
+    includePendingReview: options.includePendingReview,
   });
 }
 
