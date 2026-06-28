@@ -31,6 +31,7 @@ export type PolymarketImportMarketInput = {
   resolveTime?: string | null;
   type?: "BINARY" | "MULTI_WINNER";
   desiredStatus?: "draft" | "paused" | "live";
+  visibility?: "PUBLIC" | "PRIVATE";
   externalMarketId?: string | null;
   conditionId?: string | null;
   externalSlug?: string | null;
@@ -135,6 +136,8 @@ export async function upsertPolymarketReferenceMarket(
               categoryLegacy: input.market.category ?? existingMarket.categoryLegacy,
               type: marketType,
               status: desiredStatus,
+              ...(input.market.visibility ? { visibility: input.market.visibility } : {}),
+              ...(input.market.visibility === "PRIVATE" ? { isListed: false } : {}),
               resolveTime,
               eventId,
               externalMarketId: input.market.externalMarketId ?? null,
@@ -151,7 +154,7 @@ export async function upsertPolymarketReferenceMarket(
               description: input.market.description ?? input.market.title,
               categoryLegacy: input.market.category ?? null,
               type: marketType,
-              visibility: "PUBLIC",
+              visibility: input.market.visibility ?? "PUBLIC",
               mechanism: "ORDERBOOK",
               status: desiredStatus,
               isListed: false,
