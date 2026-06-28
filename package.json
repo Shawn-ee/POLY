@@ -59,6 +59,7 @@
     "mm:polymarket:live-local-once": "tsx scripts/mm_polymarket_live_local_once.ts",
     "mm:polymarket:pause-all": "tsx scripts/mm_polymarket_pause_all.ts",
     "risk:polymarket:once": "tsx scripts/polymarket_risk_monitor_once.ts",
+    "resolution:proposal:once": "tsx scripts/resolution_proposal_once.ts",
     "seed:polymarket-mm-fixture": "tsx scripts/seed_polymarket_mm_runtime_fixture.ts",
     "seed:polymarket-mm-live-local-fixture": "tsx scripts/seed_polymarket_mm_live_local_fixture.ts",
     "verify:polymarket-mm-dry-run": "tsx scripts/verify_polymarket_mm_dry_run_runtime.ts",
