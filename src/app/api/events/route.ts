@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { serializeEventSummary } from "@/server/services/eventReadModel";
+import { eventWithWorldCupEligibilityWhere, publicEventMarketWhere, worldCupFreshReferenceCutoff } from "@/server/services/worldCupPublicEligibility";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -28,12 +29,13 @@ export async function GET(request: NextRequest) {
     ...(status ? { status } : {}),
   };
 
+  const staleCutoff = worldCupFreshReferenceCutoff();
   const events = await prisma.event.findMany({
-    where,
+    where: { ...where, AND: [eventWithWorldCupEligibilityWhere(staleCutoff)] },
     orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
     include: {
       markets: {
-        where: { visibility: "PUBLIC", isListed: true },
+        where: publicEventMarketWhere(staleCutoff),
         select: { status: true, title: true, referenceMetadata: true },
       },
     },

@@ -9,6 +9,8 @@ const candidate = (overrides: Partial<SafeBasketCandidate>): SafeBasketCandidate
   freshReferenceCount: overrides.freshReferenceCount ?? 3,
   outcomeCount: overrides.outcomeCount ?? 3,
   existingConfig: overrides.existingConfig ?? false,
+  mappingApproved: "mappingApproved" in overrides ? overrides.mappingApproved : true,
+  referenceOnly: "referenceOnly" in overrides ? overrides.referenceOnly : true,
 });
 
 describe("Polymarket MM safe basket planner", () => {
@@ -34,7 +36,7 @@ describe("Polymarket MM safe basket planner", () => {
     expect(plan.selected).toHaveLength(0);
     expect(Object.fromEntries(plan.skipped.map((item) => [item.marketId, item.reason]))).toEqual({
       player: "unsupported_market_type",
-      unmapped: "not_mapped",
+      unmapped: "mapping_not_validated",
       "missing-ref": "missing_fresh_reference",
       configured: "already_configured",
     });

@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { parseReferenceReview } from "@/server/services/polymarketReferenceImport";
 
 export type SafeBasketCandidate = {
   marketId: string;
@@ -10,6 +11,8 @@ export type SafeBasketCandidate = {
   freshReferenceCount: number;
   outcomeCount: number;
   existingConfig: boolean;
+  mappingApproved?: boolean;
+  referenceOnly?: boolean;
 };
 
 export type SafeBasketSelection = SafeBasketCandidate & {
@@ -88,7 +91,9 @@ export async function loadWorldCupSafeBasketCandidates() {
     title: market.title,
     marketType: market.marketType,
     status: market.status,
-    mapped: market.referenceMetadata != null,
+    mapped: isApprovedPolymarketReference(market.referenceMetadata),
+    mappingApproved: isApprovedPolymarketReference(market.referenceMetadata),
+    referenceOnly: parseReferenceReview(market.referenceMetadata).referenceOnly === true,
     freshReferenceCount: market.referenceQuoteSnapshots.length,
     outcomeCount: market.outcomes.length,
     existingConfig: market.botQuoteConfigs.some((config) => config.enabled),
@@ -140,8 +145,13 @@ export async function enableSafeBasketDryRunConfigs(selected: SafeBasketSelectio
 function getCandidateReason(candidate: SafeBasketCandidate, priority: number) {
   if (!CORE_MARKET_PRIORITIES.has(candidate.marketType) || priority >= 999) return "unsupported_market_type";
   if (!["LIVE", "ACTIVE", "UPCOMING"].includes(candidate.status)) return "market_not_open";
-  if (!candidate.mapped) return "not_mapped";
+  if (!candidate.mapped || candidate.mappingApproved === false || candidate.referenceOnly === false) return "mapping_not_validated";
   if (candidate.freshReferenceCount < candidate.outcomeCount) return "missing_fresh_reference";
   if (candidate.existingConfig) return "already_configured";
   return "eligible";
+}
+
+function isApprovedPolymarketReference(value: Prisma.JsonValue | null) {
+  const review = parseReferenceReview(value);
+  return review.importedFrom === "polymarket" && review.importStatus === "approved" && review.referenceOnly === true;
 }

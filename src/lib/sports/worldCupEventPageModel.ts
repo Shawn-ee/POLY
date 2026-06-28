@@ -1,3 +1,8 @@
+import {
+  classifyWorldCupMarketVisibility,
+  type WorldCupEligibilityReasonCode,
+} from "@/lib/sports/worldCupMarketEligibility";
+
 export type WorldCupEventPageStatus = "scheduled" | "live" | "closed" | "settled" | "stale" | "unknown";
 
 export type WorldCupPriceSource =
@@ -105,6 +110,11 @@ export type WorldCupEventDiagnostics = {
   openBotOrderCount: number;
   localBotLiquidityMarkets: number;
   hiddenStaleMarkets: number;
+  hiddenUnmappedCount: number;
+  hiddenNoReferenceCount: number;
+  hiddenDraftCount: number;
+  userFacingEligibleMarketCount: number;
+  hiddenReasonCounts: Partial<Record<WorldCupEligibilityReasonCode, number>>;
   publicDraftLeakCount: number;
 };
 
@@ -138,9 +148,13 @@ export type WorldCupMarketInput = {
   participantName?: string | null;
   propCategory?: string | null;
   marketType?: string | null;
+  referenceSource?: string | null;
+  importStatus?: string | null;
   referenceOnly?: boolean | null;
   tradable?: boolean | null;
   mmEnabled?: boolean | null;
+  visibility?: string | null;
+  isListed?: boolean | null;
   referenceSummary?: {
     source?: string | null;
     referenceBid?: number | null;
@@ -210,7 +224,19 @@ export function buildWorldCupEventPageModel(params: {
 }): WorldCupEventPageModel {
   const now = params.now ?? new Date();
   const eventStatus = normalizeEventStatus(params.event, now);
-  const visibleMarkets = params.markets.filter((market) => !isHiddenStaleMarket(market, eventStatus));
+  const classifiedMarkets = params.markets.map((market) => ({
+    market,
+    eligibility: classifyWorldCupMarketVisibility({
+      market,
+      eventStatus,
+      internalTradingEnabled: params.internalTradingEnabled ?? false,
+      tradingKillSwitch: params.tradingKillSwitch ?? false,
+      realMoneyMode: params.realMoneyMode ?? false,
+    }),
+  }));
+  const visibleMarkets = classifiedMarkets
+    .filter((entry) => entry.eligibility.eligible && entry.eligibility.visibility === "user_facing")
+    .map((entry) => entry.market);
   const groups = buildGroups({
     markets: visibleMarkets,
     eventStatus,
@@ -219,7 +245,7 @@ export function buildWorldCupEventPageModel(params: {
     realMoneyMode: params.realMoneyMode ?? false,
   });
   const tabs = buildTabs(groups);
-  const diagnostics = buildDiagnostics(params.markets, visibleMarkets);
+  const diagnostics = buildDiagnostics(params.markets, classifiedMarkets);
   const volume = sumNumbers(groups.map((group) => group.volume));
 
   return {
@@ -441,10 +467,22 @@ function buildTabs(groups: WorldCupEventGroup[]): WorldCupEventTab[] {
   });
 }
 
-function buildDiagnostics(allMarkets: WorldCupMarketInput[], visibleMarkets: WorldCupMarketInput[]): WorldCupEventDiagnostics {
+function buildDiagnostics(
+  allMarkets: WorldCupMarketInput[],
+  classifiedMarkets: Array<{
+    market: WorldCupMarketInput;
+    eligibility: ReturnType<typeof classifyWorldCupMarketVisibility>;
+  }>,
+): WorldCupEventDiagnostics {
+  const hiddenReasonCounts: Partial<Record<WorldCupEligibilityReasonCode, number>> = {};
+  for (const entry of classifiedMarkets) {
+    if (entry.eligibility.eligible && entry.eligibility.visibility === "user_facing") continue;
+    hiddenReasonCounts[entry.eligibility.reasonCode] = (hiddenReasonCounts[entry.eligibility.reasonCode] ?? 0) + 1;
+  }
+
   return {
-    mappedMarketsCount: allMarkets.filter((market) => market.referenceOnly || market.referenceSummary).length,
-    unmappedMarketsCount: allMarkets.filter((market) => !market.referenceOnly && !market.referenceSummary).length,
+    mappedMarketsCount: allMarkets.filter((market) => market.importStatus === "approved" && (market.referenceOnly || market.referenceSummary)).length,
+    unmappedMarketsCount: allMarkets.filter((market) => market.importStatus !== "approved" || (!market.referenceOnly && !market.referenceSummary)).length,
     freshReferenceCount: allMarkets.filter((market) => market.referenceSummary?.isFresh).length,
     staleReferenceCount: allMarkets.filter((market) => market.referenceSummary?.hasSnapshot && market.referenceSummary?.isFresh === false).length,
     openBotOrderCount: allMarkets.reduce(
@@ -454,7 +492,12 @@ function buildDiagnostics(allMarkets: WorldCupMarketInput[], visibleMarkets: Wor
     localBotLiquidityMarkets: allMarkets.filter((market) =>
       market.outcomes.some((outcome) => outcome.bestBid != null || outcome.bestAsk != null),
     ).length,
-    hiddenStaleMarkets: allMarkets.length - visibleMarkets.length,
+    hiddenStaleMarkets: hiddenReasonCounts.stale_event ?? 0,
+    hiddenUnmappedCount: (hiddenReasonCounts.missing_polymarket_mapping ?? 0) + (hiddenReasonCounts.mapping_not_validated ?? 0),
+    hiddenNoReferenceCount: hiddenReasonCounts.no_fresh_reference ?? 0,
+    hiddenDraftCount: (hiddenReasonCounts.draft_only ?? 0) + (hiddenReasonCounts.admin_review_only ?? 0),
+    userFacingEligibleMarketCount: classifiedMarkets.filter((entry) => entry.eligibility.eligible && entry.eligibility.visibility === "user_facing").length,
+    hiddenReasonCounts,
     publicDraftLeakCount: 0,
   };
 }

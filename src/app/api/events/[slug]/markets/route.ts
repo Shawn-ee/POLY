@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
+import { publicEventMarketWhere, worldCupFreshReferenceCutoff } from "@/server/services/worldCupPublicEligibility";
 
 type Ctx = { params: Promise<{ slug: string }> };
 
@@ -17,7 +18,7 @@ export async function GET(_request: Request, context: Ctx) {
   }
 
   const markets = await prisma.market.findMany({
-    where: { eventId: event.id, visibility: "PUBLIC", isListed: true },
+    where: { eventId: event.id, AND: [publicEventMarketWhere(worldCupFreshReferenceCutoff())] },
     orderBy: [{ marketGroupKey: "asc" }, { displayOrder: "asc" }, { marketType: "asc" }, { createdAt: "asc" }],
     include: marketReadInclude,
   });

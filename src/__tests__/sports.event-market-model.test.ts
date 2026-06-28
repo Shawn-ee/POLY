@@ -24,6 +24,7 @@ jest.mock("@/server/services/polymarketReferenceImport", () => ({
 
 jest.mock("@/server/services/referenceQuoteSnapshots", () => ({
   getReferenceSummaryForMarket: jest.fn().mockResolvedValue(null),
+  referenceSnapshotConfig: { staleMs: 30_000 },
 }));
 
 import { GET as listEvents } from "@/app/api/events/route";

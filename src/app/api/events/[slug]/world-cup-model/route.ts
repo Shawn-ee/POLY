@@ -31,7 +31,12 @@ export async function GET(_request: Request, context: Ctx) {
     return NextResponse.json({ error: "World Cup event not found." }, { status: 404 });
   }
 
-  const markets = await Promise.all(event.markets.map((market) => serializeMarketReadModel(market)));
+  const markets = await Promise.all(
+    event.markets.map(async (market) => ({
+      ...(await serializeMarketReadModel(market)),
+      referenceSource: market.referenceSource,
+    })),
+  );
   const model = buildWorldCupEventPageModel({
     event: summary,
     markets,

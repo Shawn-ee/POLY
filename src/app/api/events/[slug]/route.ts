@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
 import { serializeEventSummary } from "@/server/services/eventReadModel";
+import { publicEventMarketWhere, worldCupFreshReferenceCutoff } from "@/server/services/worldCupPublicEligibility";
 
 type Ctx = { params: Promise<{ slug: string }> };
 
 export async function GET(_request: Request, context: Ctx) {
   const { slug } = await context.params;
+  const staleCutoff = worldCupFreshReferenceCutoff();
 
   const event = await prisma.event.findUnique({
     where: { slug },
@@ -15,7 +17,7 @@ export async function GET(_request: Request, context: Ctx) {
         select: { markets: true },
       },
       markets: {
-        where: { visibility: "PUBLIC", isListed: true },
+        where: publicEventMarketWhere(staleCutoff),
         include: marketReadInclude,
         orderBy: [{ marketGroupKey: "asc" }, { displayOrder: "asc" }, { createdAt: "asc" }],
       },

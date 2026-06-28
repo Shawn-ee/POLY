@@ -28,9 +28,13 @@ const market = (overrides: Partial<WorldCupMarketInput>): WorldCupMarketInput =>
   participantName: overrides.participantName ?? null,
   propCategory: overrides.propCategory ?? "goals",
   marketType: overrides.marketType ?? "total_goals",
+  referenceSource: "referenceSource" in overrides ? overrides.referenceSource : "polymarket",
+  importStatus: "importStatus" in overrides ? overrides.importStatus : "approved",
   referenceOnly: "referenceOnly" in overrides ? overrides.referenceOnly : true,
   tradable: "tradable" in overrides ? overrides.tradable : false,
   mmEnabled: "mmEnabled" in overrides ? overrides.mmEnabled : false,
+  visibility: "visibility" in overrides ? overrides.visibility : "PUBLIC",
+  isListed: "isListed" in overrides ? overrides.isListed : true,
   referenceSummary: "referenceSummary" in overrides ? overrides.referenceSummary : {
     source: "polymarket",
     referenceBid: 0.48,
@@ -134,24 +138,24 @@ describe("World Cup event page model", () => {
     expect(total?.lines.map((line) => line.outcomes[0].label)).toEqual(["Over 1.5", "Over 2.5"]);
   });
 
-  test("labels stale, unmapped, and no-live-price states without fake 50", () => {
+  test("hides stale, unmapped, and no-live-price states from user-facing groups without fake 50", () => {
     const stale = buildWorldCupEventPageModel({
       event,
       markets: [market({ referenceSummary: { source: "polymarket", referenceBid: 0.4, referenceAsk: 0.42, isFresh: false, hasSnapshot: true } })],
       internalTradingEnabled: true,
       now: new Date("2026-06-27T20:00:00.000Z"),
     });
-    expect(stale.groups[0].outcomes[0].source).toBe("stale");
-    expect(stale.groups[0].outcomes[0].price).toBeNull();
+    expect(stale.groups).toEqual([]);
+    expect(stale.diagnostics.hiddenNoReferenceCount).toBe(1);
 
     const unmapped = buildWorldCupEventPageModel({
       event,
-      markets: [market({ referenceOnly: null, referenceSummary: null })],
+      markets: [market({ importStatus: null, referenceOnly: null, referenceSummary: null })],
       internalTradingEnabled: true,
       now: new Date("2026-06-27T20:00:00.000Z"),
     });
-    expect(unmapped.groups[0].outcomes[0].source).toBe("unmapped");
-    expect(unmapped.groups[0].outcomes[0].price).toBeNull();
+    expect(unmapped.groups).toEqual([]);
+    expect(unmapped.diagnostics.hiddenUnmappedCount).toBe(1);
   });
 
   test("hides closed markets on stale events and records diagnostics", () => {
@@ -163,7 +167,20 @@ describe("World Cup event page model", () => {
     });
 
     expect(model.status).toBe("stale");
-    expect(model.diagnostics.hiddenStaleMarkets).toBe(1);
-    expect(model.groups[0].outcomes.every((outcome) => outcome.tradeable === false)).toBe(true);
+    expect(model.diagnostics.hiddenStaleMarkets).toBe(2);
+    expect(model.groups).toEqual([]);
+  });
+
+  test("keeps draft/admin-review markets out of the user-facing model", () => {
+    const model = buildWorldCupEventPageModel({
+      event,
+      markets: [market({ importStatus: "pending_review", visibility: "PRIVATE", isListed: false })],
+      internalTradingEnabled: true,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    expect(model.groups).toEqual([]);
+    expect(model.diagnostics.hiddenDraftCount).toBe(1);
+    expect(model.diagnostics.userFacingEligibleMarketCount).toBe(0);
   });
 });
