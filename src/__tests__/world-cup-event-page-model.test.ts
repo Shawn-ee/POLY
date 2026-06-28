@@ -119,6 +119,21 @@ describe("World Cup event page model", () => {
     expect(outcome.reasonIfDisabled).toBe("Reference price only. No internal liquidity.");
   });
 
+  test("line-selector outcome labels include the selected total line", () => {
+    const model = buildWorldCupEventPageModel({
+      event,
+      markets: [market({ id: "total-15", line: "1.5" }), market({ id: "total-25", line: "2.5" })],
+      internalTradingEnabled: true,
+      tradingKillSwitch: false,
+      realMoneyMode: false,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    const total = model.groups.find((group) => group.family === "total_goals");
+    expect(total?.displayType).toBe("line_selector");
+    expect(total?.lines.map((line) => line.outcomes[0].label)).toEqual(["Over 1.5", "Over 2.5"]);
+  });
+
   test("labels stale, unmapped, and no-live-price states without fake 50", () => {
     const stale = buildWorldCupEventPageModel({
       event,

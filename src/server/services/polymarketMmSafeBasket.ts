@@ -51,6 +51,21 @@ export function planSafeBasket(candidates: SafeBasketCandidate[], maxMarkets: nu
   };
 }
 
+export function getSafeBasketBlockers(params: {
+  candidateCount: number;
+  selectedCount: number;
+  maxMarkets: number;
+}) {
+  const blockers: string[] = [];
+  if (params.candidateCount === 0) {
+    blockers.push("no_world_cup_polymarket_markets_found");
+  }
+  if (params.selectedCount < 3) {
+    blockers.push(`selected_${params.selectedCount}_markets_less_than_target_3`);
+  }
+  return blockers;
+}
+
 export async function loadWorldCupSafeBasketCandidates() {
   const freshnessCutoff = new Date(Date.now() - 30_000);
   const markets = await prisma.market.findMany({

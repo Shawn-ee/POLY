@@ -27,6 +27,12 @@ export default function WorldCupEventTradingPage({ model }: { model: WorldCupEve
     [model.groups, selectedTab],
   );
 
+  function handleSelectLine(group: WorldCupEventGroup, lineId: string) {
+    setSelectedLines((current) => ({ ...current, [group.id]: lineId }));
+    const selectedLine = group.lines.find((line) => line.id === lineId) ?? group.lines[0] ?? null;
+    setSelectedOutcome(selectedLine?.outcomes[0] ?? group.outcomes[0] ?? null);
+  }
+
   return (
     <div className="mx-auto grid max-w-[1440px] gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <main className="min-w-0 space-y-5">
@@ -45,7 +51,7 @@ export default function WorldCupEventTradingPage({ model }: { model: WorldCupEve
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone="primary">{model.eventHeader.status}</Badge>
                 {model.eventHeader.source ? <Badge tone="teal">{model.eventHeader.source}</Badge> : null}
-                {model.eventHeader.externalSlug ? <Badge>Mapped event</Badge> : <Badge tone="warning">No event slug mapping</Badge>}
+                {model.eventHeader.mappedEvent ? <Badge>Mapped event</Badge> : <Badge tone="warning">No event mapping</Badge>}
               </div>
               <div className="mt-3 grid gap-2 text-sm text-[var(--poly-muted)] sm:grid-cols-2">
                 <div>
@@ -118,7 +124,7 @@ export default function WorldCupEventTradingPage({ model }: { model: WorldCupEve
               group={group}
               selectedLineId={selectedLines[group.id] ?? group.selectedLine}
               selectedOutcomeId={selectedOutcome?.outcomeId ?? null}
-              onSelectLine={(lineId) => setSelectedLines((current) => ({ ...current, [group.id]: lineId }))}
+              onSelectLine={(lineId) => handleSelectLine(group, lineId)}
               onSelectOutcome={setSelectedOutcome}
             />
           ))}

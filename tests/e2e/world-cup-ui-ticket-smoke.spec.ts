@@ -29,7 +29,9 @@ test("World Cup event renders grouped markets and gated ticket estimates", async
 
   await expect(page.getByText(/estimated shares/i).first()).toBeVisible();
   await expect(page.getByText(/potential profit/i).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: /trading unavailable|open internal order ticket/i }).first()).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /trading unavailable/i }).or(page.getByRole("link", { name: /open internal order ticket/i })).first(),
+  ).toBeVisible();
 
   const amountInput = page.getByLabel(/amount/i).first();
   await amountInput.fill("25");
@@ -37,8 +39,10 @@ test("World Cup event renders grouped markets and gated ticket estimates", async
 
   const lineButtons = page.locator("button").filter({ hasText: /^(0\.5|1\.5|2\.5|3\.5|4\.5|5\.5)$/ });
   if ((await lineButtons.count()) > 1) {
+    const ticketBeforeLineChange = await page.locator("aside").innerText();
     await lineButtons.nth(1).click();
     await expect(page.getByText(/trade ticket/i).first()).toBeVisible();
+    await expect.poll(async () => page.locator("aside").innerText()).not.toBe(ticketBeforeLineChange);
   } else {
     test.info().annotations.push({
       type: "line-selector-limited",

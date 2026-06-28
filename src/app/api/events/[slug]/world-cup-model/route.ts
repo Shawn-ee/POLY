@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { buildWorldCupEventPageModel } from "@/lib/sports/worldCupEventPageModel";
+import { isWorldCupSoccerEvent } from "@/lib/sports/worldCupEventDetection";
 import { serializeEventSummary } from "@/server/services/eventReadModel";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
 
@@ -25,13 +26,14 @@ export async function GET(_request: Request, context: Ctx) {
     return NextResponse.json({ error: "Event not found." }, { status: 404 });
   }
 
-  if (event.category !== "sports" || event.sportKey !== "soccer" || event.leagueKey !== "world_cup") {
+  const summary = serializeEventSummary(event);
+  if (!isWorldCupSoccerEvent(summary)) {
     return NextResponse.json({ error: "World Cup event not found." }, { status: 404 });
   }
 
   const markets = await Promise.all(event.markets.map((market) => serializeMarketReadModel(market)));
   const model = buildWorldCupEventPageModel({
-    event: serializeEventSummary(event),
+    event: summary,
     markets,
     internalTradingEnabled: process.env.INTERNAL_TRADING_BETA_ENABLED === "true",
     tradingKillSwitch: process.env.TRADING_KILL_SWITCH === "true",
@@ -40,4 +42,3 @@ export async function GET(_request: Request, context: Ctx) {
 
   return NextResponse.json({ model });
 }
-

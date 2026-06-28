@@ -1,4 +1,4 @@
-import { planSafeBasket, type SafeBasketCandidate } from "@/server/services/polymarketMmSafeBasket";
+import { getSafeBasketBlockers, planSafeBasket, type SafeBasketCandidate } from "@/server/services/polymarketMmSafeBasket";
 
 const candidate = (overrides: Partial<SafeBasketCandidate>): SafeBasketCandidate => ({
   marketId: overrides.marketId ?? "market-1",
@@ -45,5 +45,24 @@ describe("Polymarket MM safe basket planner", () => {
 
     expect(plan.selected).toEqual([]);
     expect(plan.skipped).toEqual([]);
+    expect(getSafeBasketBlockers({ candidateCount: 0, selectedCount: plan.selected.length, maxMarkets: 5 })).toEqual([
+      "no_world_cup_polymarket_markets_found",
+      "selected_0_markets_less_than_target_3",
+    ]);
+  });
+
+  test("confirm guard blocks mutation when fewer than three markets are eligible", () => {
+    const plan = planSafeBasket([
+      candidate({ marketId: "winner", title: "Match Winner", marketType: "match_winner_1x2" }),
+      candidate({ marketId: "total", title: "Total Goals", marketType: "total_goals", freshReferenceCount: 2, outcomeCount: 2 }),
+    ], 5);
+
+    expect(plan.selected).toHaveLength(2);
+    expect(getSafeBasketBlockers({ candidateCount: 2, selectedCount: plan.selected.length, maxMarkets: 5 })).toEqual([
+      "selected_2_markets_less_than_target_3",
+    ]);
+    expect(getSafeBasketBlockers({ candidateCount: 2, selectedCount: plan.selected.length, maxMarkets: 2 })).toEqual([
+      "selected_2_markets_less_than_target_3",
+    ]);
   });
 });

@@ -8,7 +8,6 @@ type GroupMetadata = {
   groupType: string;
   resolutionMode: string;
   source: string;
-  externalSlug: string | null;
   expectedSumYesAround: number | null;
   negativeRiskLike: boolean;
   note: string | null;
@@ -37,7 +36,6 @@ export type GroupedEventRow = {
   isFresh: boolean;
   qualityStatus: string | null;
   teamSlug: string;
-  externalSlug: string | null;
 };
 
 export type GroupedEventReadModel = {
@@ -49,8 +47,6 @@ export type GroupedEventReadModel = {
     category: string | null;
     status: string | null;
     source: string | null;
-    externalEventId: string | null;
-    externalSlug: string | null;
     image: string | null;
     icon: string | null;
   };
@@ -151,7 +147,6 @@ export async function getGroupedEventMarkets(eventSlug: string): Promise<Grouped
         isFresh: yesPlan?.isFresh ?? false,
         qualityStatus: yesPlan?.qualityStatus ?? null,
         teamSlug: slugify(label),
-        externalSlug: market.externalSlug,
         ageMs: yesPlan?.ageMs ?? null,
       };
     }),
@@ -176,8 +171,6 @@ export async function getGroupedEventMarkets(eventSlug: string): Promise<Grouped
       category: event.category,
       status: event.status,
       source: event.source,
-      externalEventId: event.externalEventId,
-      externalSlug: event.externalSlug,
       image: event.image,
       icon: event.icon,
     },
@@ -245,7 +238,6 @@ function inferWinnerGroup<T extends { id: string; title: string; referenceMetada
       groupType: "MUTUALLY_EXCLUSIVE",
       resolutionMode: "ONE_WINNER",
       source: "polymarket",
-      externalSlug: null,
       expectedSumYesAround: 1,
       negativeRiskLike: true,
       note: "Inferred from winner-style market title patterns.",
@@ -270,7 +262,6 @@ function parseGroupMetadata(value: unknown): GroupMetadata | null {
     groupType: typeof referenceGroup.groupType === "string" ? referenceGroup.groupType : "MUTUALLY_EXCLUSIVE",
     resolutionMode: typeof referenceGroup.resolutionMode === "string" ? referenceGroup.resolutionMode : "ONE_WINNER",
     source: typeof referenceGroup.source === "string" ? referenceGroup.source : "polymarket",
-    externalSlug: typeof referenceGroup.externalSlug === "string" ? referenceGroup.externalSlug : null,
     expectedSumYesAround:
       typeof referenceGroup.expectedSumYesAround === "number" ? referenceGroup.expectedSumYesAround : 1,
     negativeRiskLike: referenceGroup.negativeRiskLike === true,

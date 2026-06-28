@@ -17,11 +17,11 @@ This report is not final until reviewer and auditor verdicts are `MERGE READY` o
 
 ## Latest Commit
 
-Pending final cycle-1 commit after report update.
+Pending final cycle-5 commit after report update.
 
 ## Remaining Blockers
 
-No blockers before merge.
+No blockers before merge after cycles 1-5.
 
 Blockers before inviting users:
 
@@ -35,6 +35,18 @@ Blockers before inviting users:
 - `cycle-1/REVIEW_REPORT.md`
 - `cycle-1/AUDIT_REPORT.md`
 - `cycle-1/VALIDATION_REPORT.md`
+- `cycle-2/REVIEW_REPORT.md`
+- `cycle-2/AUDIT_REPORT.md`
+- `cycle-2/VALIDATION_REPORT.md`
+- `cycle-3/REVIEW_REPORT.md`
+- `cycle-3/AUDIT_REPORT.md`
+- `cycle-3/VALIDATION_REPORT.md`
+- `cycle-4/REVIEW_REPORT.md`
+- `cycle-4/AUDIT_REPORT.md`
+- `cycle-4/VALIDATION_REPORT.md`
+- `cycle-5/REVIEW_REPORT.md`
+- `cycle-5/AUDIT_REPORT.md`
+- `cycle-5/VALIDATION_REPORT.md`
 
 ## PR
 

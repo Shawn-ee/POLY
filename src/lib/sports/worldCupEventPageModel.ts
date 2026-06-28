@@ -28,7 +28,7 @@ export type WorldCupEventPageModel = {
     venue: string | null;
     status: WorldCupEventPageStatus;
     source: string | null;
-    externalSlug: string | null;
+    mappedEvent: boolean;
     volume: number | null;
   };
   status: WorldCupEventPageStatus;
@@ -234,7 +234,7 @@ export function buildWorldCupEventPageModel(params: {
       venue: params.event.venue ?? null,
       status: eventStatus,
       source: params.event.source ?? null,
-      externalSlug: params.event.externalSlug ?? null,
+      mappedEvent: Boolean(params.event.externalSlug || params.event.source),
       volume,
     },
     status: eventStatus,
@@ -521,6 +521,11 @@ function formatOutcomeLabel(market: WorldCupMarketInput, outcome: WorldCupOutcom
   if (market.marketType === "spread" && normalizeToken(outcome.name) === "yes") {
     return [market.participantName, signedLine(market.line)].filter(Boolean).join(" ");
   }
+  if (["total_goals", "team_total_goals", "total"].includes(normalizeToken(market.marketType))) {
+    const base = outcome.label ?? outcome.name;
+    const line = lineValue(market.line);
+    return line === "default" || base.includes(line) ? base : `${base} ${line}`;
+  }
   return outcome.label ?? outcome.name;
 }
 
@@ -589,4 +594,3 @@ function toIso(value: string | Date | null | undefined) {
   const date = value instanceof Date ? value : new Date(value);
   return Number.isFinite(date.getTime()) ? date.toISOString() : null;
 }
-
