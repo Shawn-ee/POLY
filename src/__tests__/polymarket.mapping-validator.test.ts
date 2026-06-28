@@ -4,6 +4,7 @@ import {
   buildWorldCupDiscoveryReport,
   parsePolymarketMarketCandidate,
   validatePolymarketCandidateMapping,
+  validateImportedPolymarketMappingRecord,
 } from "@/server/services/polymarket";
 import { PolymarketGammaWire } from "@/server/services/polymarket/types";
 
@@ -92,6 +93,113 @@ describe("validatePolymarketCandidateMapping", () => {
       status: "duplicate",
       reasonCodes: expect.arrayContaining(["duplicate_mapping"]),
       eligibleForAutoPromotion: false,
+    });
+  });
+
+  test("validates imported DB records from candidate queue metadata", () => {
+    const candidate = report.candidates.find((item) => item.market.externalMarketId === "pm-worldcup-france-win");
+    expect(candidate).toBeDefined();
+
+    const result = validateImportedPolymarketMappingRecord({
+      candidate: {
+        id: "candidate-row-1",
+        status: "imported_draft",
+        importedEventId: "event-1",
+        importedMarketId: "market-1",
+        importedOutcomeIds: ["outcome-yes", "outcome-no"],
+        rawMetadata: {
+          market: candidate!.market.raw,
+        },
+      },
+      market: {
+        id: "market-1",
+        eventId: "event-1",
+        externalMarketId: "pm-worldcup-france-win",
+        conditionId: "cond-worldcup-france-win",
+        externalSlug: "will-france-win-2026-fifa-world-cup",
+        referenceSource: "polymarket",
+        referenceMetadata: {},
+        status: "UPCOMING",
+        visibility: "PRIVATE",
+        isListed: false,
+        outcomes: [
+          {
+            id: "outcome-yes",
+            name: "Yes",
+            isTradable: false,
+            referenceTokenId: "tok-france-yes",
+            referenceOutcomeLabel: "Yes",
+          },
+          {
+            id: "outcome-no",
+            name: "No",
+            isTradable: false,
+            referenceTokenId: "tok-france-no",
+            referenceOutcomeLabel: "No",
+          },
+        ],
+      },
+    });
+
+    expect(result).toMatchObject({
+      status: "validated",
+      confidence: 1,
+      eligibleForAutoPromotion: true,
+      marketPrivate: true,
+      outcomesTradable: false,
+      reasonCodes: [],
+    });
+  });
+
+  test("blocks imported DB records with mismatched outcome tokens", () => {
+    const candidate = report.candidates.find((item) => item.market.externalMarketId === "pm-worldcup-france-win");
+    expect(candidate).toBeDefined();
+
+    const result = validateImportedPolymarketMappingRecord({
+      candidate: {
+        id: "candidate-row-1",
+        status: "imported_draft",
+        importedEventId: "event-1",
+        importedMarketId: "market-1",
+        importedOutcomeIds: ["outcome-yes", "outcome-no"],
+        rawMetadata: {
+          market: candidate!.market.raw,
+        },
+      },
+      market: {
+        id: "market-1",
+        eventId: "event-1",
+        externalMarketId: "pm-worldcup-france-win",
+        conditionId: "cond-worldcup-france-win",
+        externalSlug: "will-france-win-2026-fifa-world-cup",
+        referenceSource: "polymarket",
+        referenceMetadata: {},
+        status: "UPCOMING",
+        visibility: "PRIVATE",
+        isListed: false,
+        outcomes: [
+          {
+            id: "outcome-yes",
+            name: "Yes",
+            isTradable: false,
+            referenceTokenId: "wrong-token",
+            referenceOutcomeLabel: "Yes",
+          },
+          {
+            id: "outcome-no",
+            name: "No",
+            isTradable: false,
+            referenceTokenId: "tok-france-no",
+            referenceOutcomeLabel: "No",
+          },
+        ],
+      },
+    });
+
+    expect(result).toMatchObject({
+      status: "blocked",
+      eligibleForAutoPromotion: false,
+      reasonCodes: expect.arrayContaining(["outcome_token_mismatch"]),
     });
   });
 });

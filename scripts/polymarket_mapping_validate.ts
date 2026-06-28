@@ -1,6 +1,6 @@
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { validatePolymarketCandidateMapping } from "@/server/services/polymarket";
+import { validateImportedPolymarketMappingsFromDb, validatePolymarketCandidateMapping } from "@/server/services/polymarket";
 import { PolymarketImportCandidate } from "@/server/services/polymarket/types";
 
 const DEFAULT_INPUT = path.resolve(process.cwd(), "test-logs", "polymarket-world-cup-discovery-candidates.json");
@@ -10,10 +10,52 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const inputPath = args.input ?? DEFAULT_INPUT;
   const outputPath = args.output ?? DEFAULT_OUTPUT;
+  const fromDb = argFlag(args.fromDb, false);
+  const result = fromDb
+    ? {
+        generatedAt: new Date().toISOString(),
+        inputPath: null,
+        fromDb: true,
+        autoPromoteEnabled: false,
+        ...(await validateImportedPolymarketMappingsFromDb({
+          batchId: args.batchId,
+          candidateId: args.candidateId,
+          confirmUpdate: argFlag(args.confirmUpdate, false),
+        })),
+      }
+    : await validateFromFile(inputPath);
+
+  await mkdir(path.dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, `${JSON.stringify(result, null, 2)}\n`, "utf8");
+  process.stdout.write(`${JSON.stringify({ ...result, outputPath }, null, 2)}\n`);
+}
+
+function parseArgs(argv: string[]) {
+  const args: Record<string, string> = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const part = argv[index];
+    if (!part.startsWith("--")) continue;
+    const [key, inlineValue] = part.slice(2).split("=", 2);
+    if (inlineValue != null) {
+      args[key] = inlineValue;
+      continue;
+    }
+    const next = argv[index + 1];
+    if (!next || next.startsWith("--")) {
+      args[key] = "true";
+      continue;
+    }
+    args[key] = next;
+    index += 1;
+  }
+  return args;
+}
+
+async function validateFromFile(inputPath: string) {
   const report = JSON.parse(await readFile(inputPath, "utf8")) as { candidates?: PolymarketImportCandidate[] };
   const candidates = Array.isArray(report.candidates) ? report.candidates : [];
   const validations = candidates.map((candidate) => validatePolymarketCandidateMapping(candidate));
-  const result = {
+  return {
     generatedAt: new Date().toISOString(),
     inputPath,
     dryRun: true,
@@ -26,27 +68,11 @@ async function main() {
     duplicateCount: validations.filter((item) => item.status === "duplicate").length,
     validations,
   };
-
-  await mkdir(path.dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, `${JSON.stringify(result, null, 2)}\n`, "utf8");
-  process.stdout.write(`${JSON.stringify({ ...result, outputPath }, null, 2)}\n`);
 }
 
-function parseArgs(argv: string[]) {
-  const args: Record<string, string> = {};
-  for (let index = 0; index < argv.length; index += 1) {
-    const part = argv[index];
-    if (!part.startsWith("--")) continue;
-    const key = part.slice(2);
-    const next = argv[index + 1];
-    if (!next || next.startsWith("--")) {
-      args[key] = "true";
-      continue;
-    }
-    args[key] = next;
-    index += 1;
-  }
-  return args;
+function argFlag(value: string | undefined, fallback: boolean) {
+  if (value == null || value.trim() === "") return fallback;
+  return value.trim().toLowerCase() === "true";
 }
 
 main().catch((error) => {

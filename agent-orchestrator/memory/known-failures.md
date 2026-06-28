@@ -23,6 +23,7 @@
 - 2026-06-28 WC-DISC-OPS-002: admin candidate review API is implemented and tested. Remaining v2 ops gaps: candidate review UI/report upgrade, draft import from DB candidate queue, DB-backed imported-record validation, rollback tooling, scheduler playbook, and candidate-queue E2E harness.
 - 2026-06-28 WC-DISC-OPS-003: DB-backed candidate review report is implemented and tested. Remaining v2 ops gaps: draft import from DB candidate queue, DB-backed imported-record validation, rollback tooling, scheduler playbook, and candidate-queue E2E harness. A richer UI remains optional.
 - 2026-06-28 WC-DISC-OPS-004: draft import from `draft_import_ready` DB candidates is implemented and tested. Remaining v2 ops gaps: DB-backed imported-record validation, rollback tooling, scheduler playbook, and candidate-queue E2E harness.
+- 2026-06-28 WC-DISC-OPS-005: DB-backed imported-record mapping validation is implemented and tested. Remaining v2 ops gaps: rollback tooling, scheduler playbook, and candidate-queue E2E harness.
 
 - 2026-06-25: No local loop harness failures recorded at bootstrap.
 - 2026-06-26T04:19:22Z: Harness `route_security_check.sh` failed. See `agent-orchestrator/runs/20260626T041912Z-harness_only/route_security_check.log`.

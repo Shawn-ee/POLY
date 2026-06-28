@@ -110,3 +110,7 @@ Upgraded the admin review report flow with a persisted candidate queue report bu
 ## 2026-06-28 WC-DISC-OPS-004
 
 Updated draft import to support `polymarket:import:draft --fromDb=true`, loading only persisted candidates marked `draft_import_ready`. Confirmed imports mark candidates `imported_draft` and store imported Event/Market/Outcome IDs. Score increased to 99/100.
+
+## 2026-06-28 WC-DISC-OPS-005
+
+Added DB-backed mapping validation for imported `PolymarketDiscoveryCandidate` records. The validator checks imported Event/Market/Outcome IDs, external mapping fields, token IDs, labels, supported market type, duplicate keys, TBD/closed/missing-token blockers, and writes candidate/market validation metadata when explicitly confirmed. Score remains 99/100 until rollback, scheduler playbook, and candidate-queue E2E are complete.
