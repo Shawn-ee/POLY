@@ -1,13 +1,13 @@
 # Polymarket Reference MM Status
 
-Generated: 2026-06-28T04:40:25.719Z
+Generated: 2026-06-28T04:42:32.353Z
 
 | Area | Value |
 | --- | ---: |
 | Imported Polymarket markets | 1 |
 | Verified mappings | 1 |
 | Reference snapshots | 2 |
-| Stale prices | 2 |
+| Stale prices | 0 |
 | Active bot configs | 0 |
 | Total bot configs | 1 |
 | Dry-run intents | 4 |
