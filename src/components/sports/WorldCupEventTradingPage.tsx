@@ -150,6 +150,18 @@ function MarketFamilyCard({
   const showLineSelector = group.displayType === "line_selector" && group.lines.length > 1;
   const outcomes = showLineSelector ? selectedLine?.outcomes ?? [] : group.outcomes;
 
+  if (group.family === "spread") {
+    return (
+      <SpreadMarketCard
+        group={group}
+        selectedLineId={selectedLineId}
+        selectedOutcomeId={selectedOutcomeId}
+        onSelectLine={onSelectLine}
+        onSelectOutcome={onSelectOutcome}
+      />
+    );
+  }
+
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-col gap-3 border-b border-[var(--poly-border)] bg-white p-4 sm:flex-row sm:items-start sm:justify-between">
@@ -188,29 +200,146 @@ function MarketFamilyCard({
 
       <div className="divide-y divide-[var(--poly-border)]">
         {outcomes.map((outcome) => (
-          <button
+          <OutcomeSelectionButton
             key={outcome.outcomeId}
-            type="button"
-            onClick={() => onSelectOutcome(outcome)}
-            className={`grid w-full gap-3 px-4 py-3 text-left transition sm:grid-cols-[minmax(0,1fr)_150px_130px] sm:items-center ${
-              selectedOutcomeId === outcome.outcomeId ? "bg-[var(--poly-surface-muted)]" : "hover:bg-[var(--poly-surface-muted)]"
-            }`}
-          >
-            <div className="min-w-0">
-              <div className="truncate text-sm font-semibold text-[var(--poly-text)]">{outcome.label}</div>
-              <div className="mt-1 text-xs text-[var(--poly-muted)]">{outcome.reasonIfDisabled ?? "Internal orderbook trading available"}</div>
-            </div>
-            <div className="text-sm">
-              <div className="font-semibold tabular-nums text-[var(--poly-text)]">{formatOutcomePrice(outcome)}</div>
-              <div className="text-xs text-[var(--poly-muted)]">{SOURCE_LABEL[outcome.source]}</div>
-            </div>
-            <div className="text-sm tabular-nums text-[var(--poly-muted)]">
-              {formatBidAsk(outcome)}
-            </div>
-          </button>
+            outcome={outcome}
+            selected={selectedOutcomeId === outcome.outcomeId}
+            onSelect={onSelectOutcome}
+            variant="row"
+          />
         ))}
       </div>
     </Card>
+  );
+}
+
+function SpreadMarketCard({
+  group,
+  selectedLineId,
+  selectedOutcomeId,
+  onSelectLine,
+  onSelectOutcome,
+}: {
+  group: WorldCupEventGroup;
+  selectedLineId: string | null;
+  selectedOutcomeId: string | null;
+  onSelectLine: (lineId: string) => void;
+  onSelectOutcome: (outcome: WorldCupEventOutcome) => void;
+}) {
+  const selectedLine = group.lines.find((line) => line.id === selectedLineId) ?? group.lines[0] ?? null;
+  const outcomes = selectedLine?.outcomes ?? group.outcomes;
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex flex-col gap-2 border-b border-[var(--poly-border)] bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-base font-semibold text-[var(--poly-text)]">Spread</h2>
+            <Badge tone={group.tradeability.tradeable ? "positive" : "warning"}>
+              {group.tradeability.tradeable ? "Tradeable" : group.tradeability.reasonIfDisabled ?? "Disabled"}
+            </Badge>
+          </div>
+          <p className="mt-1 text-sm text-[var(--poly-muted)]">
+            {selectedLine ? `Handicap ${selectedLine.label}` : "Handicap"}
+          </p>
+        </div>
+        <div className="text-sm font-semibold tabular-nums text-[var(--poly-muted)]">
+          {selectedLine ? `${outcomes.length} selections` : `${group.outcomes.length} selections`}
+        </div>
+      </div>
+
+      <div className="grid gap-2 p-3 sm:grid-cols-2">
+        {outcomes.map((outcome) => (
+          <OutcomeSelectionButton
+            key={outcome.outcomeId}
+            outcome={outcome}
+            selected={selectedOutcomeId === outcome.outcomeId}
+            onSelect={onSelectOutcome}
+            variant="spread"
+          />
+        ))}
+      </div>
+
+      {group.lines.length > 1 ? (
+        <div className="border-t border-[var(--poly-border)] px-4 py-3">
+          <div className="mb-2 text-xs font-semibold uppercase text-[var(--poly-muted)]">Line</div>
+          <div className="flex gap-2 overflow-x-auto">
+            {group.lines.map((line) => (
+              <button
+                key={line.id}
+                type="button"
+                onClick={() => onSelectLine(line.id)}
+                className={`min-w-14 rounded-md border px-3 py-2 text-sm font-semibold tabular-nums transition ${
+                  selectedLine?.id === line.id
+                    ? "border-[var(--poly-primary)] bg-[var(--poly-primary)] text-white"
+                    : "border-[var(--poly-border)] bg-white text-[var(--poly-muted)] hover:border-[var(--poly-primary)] hover:text-[var(--poly-text)]"
+                }`}
+              >
+                {line.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </Card>
+  );
+}
+
+function OutcomeSelectionButton({
+  outcome,
+  selected,
+  onSelect,
+  variant,
+}: {
+  outcome: WorldCupEventOutcome;
+  selected: boolean;
+  onSelect: (outcome: WorldCupEventOutcome) => void;
+  variant: "row" | "spread";
+}) {
+  if (variant === "spread") {
+    return (
+      <button
+        type="button"
+        onClick={() => onSelect(outcome)}
+        className={`rounded-lg border p-3 text-left transition ${
+          selected
+            ? "border-[var(--poly-primary)] bg-[var(--poly-surface-muted)] ring-2 ring-[var(--poly-ring)]"
+            : "border-[var(--poly-border)] bg-white hover:border-[var(--poly-primary)] hover:bg-[var(--poly-surface-muted)]"
+        }`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold text-[var(--poly-text)]">{outcome.label}</div>
+            <div className="mt-1 text-xs text-[var(--poly-muted)]">
+              {outcome.tradeable ? formatBidAsk(outcome) : outcome.reasonIfDisabled ?? SOURCE_LABEL[outcome.source]}
+            </div>
+          </div>
+          <div className="shrink-0 rounded-md bg-[var(--poly-surface-muted)] px-3 py-2 text-sm font-semibold tabular-nums text-[var(--poly-text)]">
+            {formatOutcomePrice(outcome)}
+          </div>
+        </div>
+      </button>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(outcome)}
+      className={`grid w-full gap-3 px-4 py-3 text-left transition sm:grid-cols-[minmax(0,1fr)_150px_130px] sm:items-center ${
+        selected ? "bg-[var(--poly-surface-muted)]" : "hover:bg-[var(--poly-surface-muted)]"
+      }`}
+    >
+      <div className="min-w-0">
+        <div className="truncate text-sm font-semibold text-[var(--poly-text)]">{outcome.label}</div>
+        <div className="mt-1 text-xs text-[var(--poly-muted)]">{outcome.reasonIfDisabled ?? "Internal orderbook trading available"}</div>
+      </div>
+      <div className="text-sm">
+        <div className="font-semibold tabular-nums text-[var(--poly-text)]">{formatOutcomePrice(outcome)}</div>
+        <div className="text-xs text-[var(--poly-muted)]">{SOURCE_LABEL[outcome.source]}</div>
+      </div>
+      <div className="text-sm tabular-nums text-[var(--poly-muted)]">{formatBidAsk(outcome)}</div>
+    </button>
   );
 }
 
