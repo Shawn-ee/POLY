@@ -4,7 +4,7 @@ import { placeOrderAndMatch } from "@/server/services/matching";
 const prisma = new PrismaClient();
 const EVENT_SLUG = "brazil-vs-japan";
 const BOT_USERNAME = "system-liquidity-bot";
-const TEST_USER_EMAIL = "admin.test@poly.local";
+const TEST_USER_EMAIL = process.env.TEST_USER_EMAIL?.trim() || "csychenshangyi@gmail.com";
 
 async function main() {
   assertClosedBetaInternalOnly();
