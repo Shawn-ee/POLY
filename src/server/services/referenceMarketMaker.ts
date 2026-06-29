@@ -71,6 +71,18 @@ export async function runReferenceMarketMakerOnce(options: { dryRun?: boolean } 
     now: Date.now(),
   });
 
+  if (!forceDryRun && plan.intents.length > 0) {
+    const bot = await loadBotUserForLiveLocal();
+    const livePlan = await filterLiveIntentsForQuoteLifetime({
+      botUserId: bot.id,
+      configs: configs.map(configFromPrisma),
+      intents: plan.intents,
+      now: Date.now(),
+    });
+    plan.intents = livePlan.intents;
+    plan.skipped = [...plan.skipped, ...livePlan.skipped];
+  }
+
   if (plan.intents.length > 0) {
     await prisma.botOrderIntent.createMany({
       data: plan.intents.map((intent) => ({
@@ -244,6 +256,72 @@ export function planReferenceMarketMakerIntents(params: {
   }
 
   return { dryRun: params.dryRun, intents, skipped };
+}
+
+async function filterLiveIntentsForQuoteLifetime(params: {
+  botUserId: string;
+  configs: ReferenceMarketMakerConfig[];
+  intents: PlannedBotOrderIntent[];
+  now: number;
+}) {
+  const marketIds = Array.from(new Set(params.intents.map((intent) => intent.marketId)));
+  if (marketIds.length === 0) {
+    return { intents: params.intents, skipped: [] as ReferenceMarketMakerPlan["skipped"] };
+  }
+  const minLifetimeByMarket = new Map<string, number>();
+  for (const config of params.configs) {
+    const current = minLifetimeByMarket.get(config.marketId) ?? 0;
+    minLifetimeByMarket.set(config.marketId, Math.max(current, config.minQuoteLifetimeSeconds));
+  }
+  const openOrders = await prisma.order.findMany({
+    where: {
+      userId: params.botUserId,
+      marketId: { in: marketIds },
+      status: { in: ["OPEN", "PARTIAL"] },
+      remaining: { gt: new Prisma.Decimal(0) },
+    },
+    select: { marketId: true, updatedAt: true },
+  });
+  const oldestOpenByMarket = new Map<string, Date>();
+  for (const order of openOrders) {
+    const current = oldestOpenByMarket.get(order.marketId);
+    if (!current || order.updatedAt < current) {
+      oldestOpenByMarket.set(order.marketId, order.updatedAt);
+    }
+  }
+  return filterIntentsForQuoteLifetimeWindow({
+    intents: params.intents,
+    minLifetimeByMarket,
+    oldestOpenByMarket,
+    now: params.now,
+  });
+}
+
+export function filterIntentsForQuoteLifetimeWindow(params: {
+  intents: PlannedBotOrderIntent[];
+  minLifetimeByMarket: Map<string, number>;
+  oldestOpenByMarket: Map<string, Date>;
+  now: number;
+}) {
+  const skippedMarkets = new Set<string>();
+  for (const marketId of new Set(params.intents.map((intent) => intent.marketId))) {
+    const minLifetimeSeconds = params.minLifetimeByMarket.get(marketId) ?? 0;
+    const oldestOpen = params.oldestOpenByMarket.get(marketId);
+    if (!oldestOpen || minLifetimeSeconds <= 0) {
+      continue;
+    }
+    const ageMs = params.now - oldestOpen.getTime();
+    if (ageMs < minLifetimeSeconds * 1000) {
+      skippedMarkets.add(marketId);
+    }
+  }
+  return {
+    intents: params.intents.filter((intent) => !skippedMarkets.has(intent.marketId)),
+    skipped: Array.from(skippedMarkets).map((marketId) => ({
+      marketId,
+      reason: "quote_lifetime_active",
+    })),
+  };
 }
 
 function assertLocalBotOperationAllowed() {

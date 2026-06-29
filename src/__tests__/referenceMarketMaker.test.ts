@@ -1,4 +1,7 @@
-import { planReferenceMarketMakerIntents } from "@/server/services/referenceMarketMaker";
+import {
+  filterIntentsForQuoteLifetimeWindow,
+  planReferenceMarketMakerIntents,
+} from "@/server/services/referenceMarketMaker";
 
 const now = Date.parse("2026-06-28T00:00:00.000Z");
 
@@ -121,5 +124,23 @@ describe("reference market maker dry-run planner", () => {
 
     expect(plan.intents).toHaveLength(0);
     expect(plan.skipped).toContainEqual({ marketId: "market-1", outcomeId: null, reason: "mode_mismatch" });
+  });
+
+  test("live quote lifetime suppresses cancel-replace churn while orders are fresh", () => {
+    const plan = planReferenceMarketMakerIntents({
+      dryRun: false,
+      configs: [{ ...baseConfig, dryRun: false, minQuoteLifetimeSeconds: 60 }],
+      references: [baseReference],
+      now,
+    });
+    const filtered = filterIntentsForQuoteLifetimeWindow({
+      intents: plan.intents,
+      minLifetimeByMarket: new Map([["market-1", 60]]),
+      oldestOpenByMarket: new Map([["market-1", new Date(now - 10_000)]]),
+      now,
+    });
+
+    expect(filtered.intents).toHaveLength(0);
+    expect(filtered.skipped).toEqual([{ marketId: "market-1", reason: "quote_lifetime_active" }]);
   });
 });
