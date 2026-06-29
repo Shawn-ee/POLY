@@ -35,6 +35,9 @@ const market = (overrides: Partial<WorldCupMarketInput>): WorldCupMarketInput =>
   mmEnabled: "mmEnabled" in overrides ? overrides.mmEnabled : false,
   visibility: "visibility" in overrides ? overrides.visibility : "PUBLIC",
   isListed: "isListed" in overrides ? overrides.isListed : true,
+  externalMarketId: "externalMarketId" in overrides ? overrides.externalMarketId : `${overrides.id ?? "market-1"}-gamma`,
+  externalSlug: "externalSlug" in overrides ? overrides.externalSlug : `${overrides.id ?? "market-1"}-external`,
+  conditionId: "conditionId" in overrides ? overrides.conditionId : `${overrides.id ?? "market-1"}-condition`,
   referenceSummary: "referenceSummary" in overrides ? overrides.referenceSummary : {
     source: "polymarket",
     referenceBid: 0.48,
@@ -150,12 +153,51 @@ describe("World Cup event page model", () => {
 
     const unmapped = buildWorldCupEventPageModel({
       event,
-      markets: [market({ importStatus: null, referenceOnly: null, referenceSummary: null })],
+      markets: [market({ importStatus: null, referenceOnly: null, referenceSummary: null, referenceSource: null, externalMarketId: null, externalSlug: null, conditionId: null })],
       internalTradingEnabled: true,
       now: new Date("2026-06-27T20:00:00.000Z"),
     });
     expect(unmapped.groups).toEqual([]);
     expect(unmapped.diagnostics.hiddenUnmappedCount).toBe(1);
+  });
+
+  test("does not count FIFA schedule fixture markets as Polymarket mapped", () => {
+    const model = buildWorldCupEventPageModel({
+      event: {
+        ...event,
+        source: "fifa_schedule",
+        externalSlug: "world-cup-2026-japan-vs-sweden-2026-06-25",
+      },
+      markets: [
+        market({
+          id: "japan-sweden-winner",
+          title: "Japan vs Sweden: Match Winner",
+          marketType: "match_winner_1x2",
+          line: null,
+          referenceOnly: null,
+          referenceSummary: null,
+          referenceSource: "fifa_schedule",
+          externalMarketId: "M57-match-winner",
+          externalSlug: "world-cup-2026-japan-vs-sweden-2026-06-25-match-winner",
+          conditionId: null,
+          outcomes: [
+            { id: "japan", name: "Japan", code: "HOME", side: "home", displayOrder: 0, bestBid: null, bestAsk: null, price: null, isTradable: true },
+            { id: "draw", name: "Draw", code: "DRAW", side: "draw", displayOrder: 1, bestBid: null, bestAsk: null, price: null, isTradable: true },
+            { id: "sweden", name: "Sweden", code: "AWAY", side: "away", displayOrder: 2, bestBid: null, bestAsk: null, price: null, isTradable: true },
+          ],
+        }),
+      ],
+      internalTradingEnabled: true,
+      tradingKillSwitch: false,
+      realMoneyMode: false,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    expect(model.eventHeader.mappedEvent).toBe(false);
+    expect(model.diagnostics.mappedMarketsCount).toBe(0);
+    expect(model.diagnostics.unmappedMarketsCount).toBe(1);
+    expect(model.groups).toEqual([]);
+    expect(model.diagnostics.hiddenUnmappedCount).toBe(1);
   });
 
   test("hides closed markets on stale events and records diagnostics", () => {

@@ -155,6 +155,9 @@ export type WorldCupMarketInput = {
   mmEnabled?: boolean | null;
   visibility?: string | null;
   isListed?: boolean | null;
+  externalMarketId?: string | null;
+  externalSlug?: string | null;
+  conditionId?: string | null;
   referenceSummary?: {
     source?: string | null;
     referenceBid?: number | null;
@@ -260,7 +263,7 @@ export function buildWorldCupEventPageModel(params: {
       venue: params.event.venue ?? null,
       status: eventStatus,
       source: params.event.source ?? null,
-      mappedEvent: Boolean(params.event.externalSlug || params.event.source),
+      mappedEvent: params.event.source === "polymarket" || params.markets.some(isPolymarketMappedMarket),
       volume,
     },
     status: eventStatus,
@@ -417,6 +420,7 @@ function deriveOutcomeSource(params: {
   market: WorldCupMarketInput;
 }): WorldCupPriceSource {
   if (params.hasLocalBook) return "local_bot_book";
+  if (!isPolymarketMappedMarket(params.market)) return "unmapped";
   if (!params.market.referenceSummary && !params.market.referenceOnly && params.market.referenceOnly !== false) return "unmapped";
   if (params.reference?.hasSnapshot && params.reference.isFresh === false) return "stale";
   if (params.reference?.isFresh && (params.reference.referenceBid != null || params.reference.referenceAsk != null)) {
@@ -481,8 +485,8 @@ function buildDiagnostics(
   }
 
   return {
-    mappedMarketsCount: allMarkets.filter((market) => market.importStatus === "approved" && (market.referenceOnly || market.referenceSummary)).length,
-    unmappedMarketsCount: allMarkets.filter((market) => market.importStatus !== "approved" || (!market.referenceOnly && !market.referenceSummary)).length,
+    mappedMarketsCount: allMarkets.filter(isPolymarketMappedMarket).length,
+    unmappedMarketsCount: allMarkets.filter((market) => !isPolymarketMappedMarket(market)).length,
     freshReferenceCount: allMarkets.filter((market) => market.referenceSummary?.isFresh).length,
     staleReferenceCount: allMarkets.filter((market) => market.referenceSummary?.hasSnapshot && market.referenceSummary?.isFresh === false).length,
     openBotOrderCount: allMarkets.reduce(
@@ -500,6 +504,10 @@ function buildDiagnostics(
     hiddenReasonCounts,
     publicDraftLeakCount: 0,
   };
+}
+
+function isPolymarketMappedMarket(market: WorldCupMarketInput) {
+  return market.referenceSource === "polymarket" && Boolean(market.externalMarketId || market.conditionId || market.externalSlug);
 }
 
 function classifyFamily(market: WorldCupMarketInput | undefined) {

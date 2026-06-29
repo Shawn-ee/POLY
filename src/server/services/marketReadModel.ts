@@ -62,7 +62,9 @@ export const serializeMarketReadModel = async (market: MarketWithRelations) => {
     }),
   );
   const legacyPrices = buildLegacyBinaryPrices(market.outcomes, pricesByOutcome);
-  const referenceSummary = await getReferenceSummaryForMarket(market.id);
+  const referenceSummary = market.referenceSource === "polymarket"
+    ? await getReferenceSummaryForMarket(market.id)
+    : null;
 
   return {
     id: market.id,

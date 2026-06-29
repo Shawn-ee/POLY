@@ -35,6 +35,9 @@ export async function GET(_request: Request, context: Ctx) {
     event.markets.map(async (market) => ({
       ...(await serializeMarketReadModel(market)),
       referenceSource: market.referenceSource,
+      externalMarketId: market.externalMarketId,
+      externalSlug: market.externalSlug,
+      conditionId: market.conditionId,
     })),
   );
   const model = buildWorldCupEventPageModel({

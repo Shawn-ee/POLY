@@ -8,8 +8,8 @@ import { generateResolutionProposalsOnce } from "@/server/services/resolutionPro
 
 export const POLYMARKET_MM_STATUS_REPORT_PATH = path.join(
   process.cwd(),
-  "docs",
-  "reports",
+  ".runtime",
+  "polymarket",
   "POLYMARKET_REFERENCE_MM_STATUS.md",
 );
 
