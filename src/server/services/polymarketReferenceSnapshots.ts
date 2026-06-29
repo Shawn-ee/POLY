@@ -28,6 +28,7 @@ export type SyncablePolymarketReferenceMarket = {
     name: string;
     referenceTokenId: string | null;
     referenceOutcomeLabel: string | null;
+    referenceMetadata?: unknown;
   }>;
 };
 
@@ -68,18 +69,20 @@ export async function refreshPolymarketReferenceSnapshots(options: RefreshRefere
       continue;
     }
 
-    const gamma = await fetchReferenceMarketForSync(market).catch((error) => ({
-      error: error instanceof Error ? error.message : String(error),
-    }));
-    if ("error" in gamma) {
-      skipped.push({ marketId: market.id, title: market.title, slug: market.externalSlug, reason: gamma.error });
-      continue;
-    }
-
     const fetchedAt = new Date().toISOString();
-    const inputs = buildReferenceSnapshotInputsForMarket(market, gamma, fetchedAt);
+    const inputs = await buildReferenceSnapshotInputsForSyncableMarket(market, fetchedAt).catch((error) => {
+      skipped.push({
+        marketId: market.id,
+        title: market.title,
+        slug: market.externalSlug,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      return null;
+    });
+    if (!inputs) continue;
 
     await upsertReferenceQuoteSnapshots(inputs);
+    await appendMarketOutcomeSnapshotHistory(inputs);
     refreshed.push({
       marketId: market.id,
       title: market.title,
@@ -161,6 +164,115 @@ export function buildReferenceSnapshotInputsForMarket(
   });
 }
 
+async function buildReferenceSnapshotInputsForSyncableMarket(
+  market: SyncablePolymarketReferenceMarket,
+  fetchedAt: string,
+) {
+  const hasPerOutcomeExternalMappings = market.outcomes.some(
+    (outcome) => readOutcomeReferenceLink(outcome.referenceMetadata).externalSlug,
+  );
+
+  if (!hasPerOutcomeExternalMappings) {
+    const gamma = await fetchReferenceMarketForSync(market);
+    return buildReferenceSnapshotInputsForMarket(market, gamma, fetchedAt);
+  }
+
+  const inputs = [];
+  for (const outcome of market.outcomes) {
+    const link = readOutcomeReferenceLink(outcome.referenceMetadata);
+    const externalSlug = link.externalSlug ?? market.externalSlug;
+    if (!externalSlug) {
+      throw new Error(`Missing external slug for outcome ${outcome.name}.`);
+    }
+    const gamma = await fetchReferenceMarketForSync({
+      externalSlug,
+      referenceMetadata: market.referenceMetadata,
+    });
+    inputs.push(buildReferenceSnapshotInputForOutcome({
+      market,
+      outcome,
+      gamma,
+      fetchedAt,
+      externalSlug,
+      externalMarketId: link.externalMarketId ?? market.externalMarketId,
+      conditionId: link.conditionId ?? market.conditionId,
+    }));
+  }
+  return inputs;
+}
+
+function buildReferenceSnapshotInputForOutcome(params: {
+  market: SyncablePolymarketReferenceMarket;
+  outcome: SyncablePolymarketReferenceMarket["outcomes"][number];
+  gamma: NormalizedPolymarketReferenceMarket;
+  fetchedAt: string;
+  externalSlug: string | null;
+  externalMarketId: string | null;
+  conditionId: string | null;
+}) {
+  const quality = evaluateSnapshotQuality({
+    acceptingOrders: params.gamma.acceptingOrders,
+    bestBid: params.gamma.bestBid,
+    bestAsk: params.gamma.bestAsk,
+    spread: params.gamma.spread,
+  });
+  const matchedOutcome =
+    params.gamma.outcomes.find((entry) => params.outcome.referenceTokenId && entry.tokenId === params.outcome.referenceTokenId) ??
+    params.gamma.outcomes.find(
+      (entry) =>
+        typeof params.outcome.referenceOutcomeLabel === "string" &&
+        entry.label.toLowerCase() === params.outcome.referenceOutcomeLabel.toLowerCase(),
+    ) ??
+    params.gamma.outcomes.find((entry) => entry.label.toLowerCase() === params.outcome.name.toLowerCase()) ??
+    null;
+
+  return {
+    marketId: params.market.id,
+    outcomeId: params.outcome.id,
+    source: "polymarket",
+    externalSlug: params.externalSlug,
+    externalMarketId: params.externalMarketId,
+    conditionId: params.conditionId,
+    tokenId: params.outcome.referenceTokenId,
+    outcomeLabel: params.outcome.referenceOutcomeLabel ?? params.outcome.name,
+    outcomePrice: matchedOutcome?.outcomePrice ?? null,
+    bestBid: params.gamma.bestBid,
+    bestAsk: params.gamma.bestAsk,
+    spread: params.gamma.spread,
+    lastTradePrice: params.gamma.lastTradePrice,
+    volume: params.gamma.volume,
+    volume24hr: params.gamma.volume24hr,
+    liquidity: params.gamma.liquidity,
+    liquidityClob: params.gamma.liquidityClob,
+    acceptingOrders: params.gamma.acceptingOrders,
+    qualityStatus: quality.qualityStatus,
+    mmEligible: quality.mmEligible,
+    reason: quality.reason,
+    fetchedAt: params.fetchedAt,
+  };
+}
+
+async function appendMarketOutcomeSnapshotHistory(inputs: ReturnType<typeof buildReferenceSnapshotInputsForMarket>) {
+  const rows = inputs
+    .map((input) => {
+      const price =
+        input.outcomePrice ??
+        (input.bestBid != null && input.bestAsk != null ? Number(((input.bestBid + input.bestAsk) / 2).toFixed(6)) : null);
+      if (price == null) return null;
+      return {
+        marketId: input.marketId,
+        outcomeId: input.outcomeId,
+        ts: new Date(input.fetchedAt),
+        price,
+        volumeDelta: input.volume24hr ?? null,
+      };
+    })
+    .filter((row): row is NonNullable<typeof row> => row != null);
+
+  if (rows.length === 0) return;
+  await prisma.marketOutcomeSnapshot.createMany({ data: rows });
+}
+
 async function fetchReferenceMarketForSync(market: {
   externalSlug: string | null;
   referenceMetadata: unknown;
@@ -205,6 +317,18 @@ export function readFixtureGammaMarketFromMetadata(metadata: unknown): Awaited<R
             outcomePrice: asNumber(item.outcomePrice) ?? 0,
           }))
       : [],
+  };
+}
+
+function readOutcomeReferenceLink(metadata: unknown) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return { externalSlug: null, externalMarketId: null, conditionId: null };
+  }
+  const data = metadata as Record<string, unknown>;
+  return {
+    externalSlug: asString(data.externalSlug),
+    externalMarketId: asString(data.externalMarketId),
+    conditionId: asString(data.conditionId),
   };
 }
 

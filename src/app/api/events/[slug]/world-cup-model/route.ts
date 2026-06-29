@@ -33,7 +33,7 @@ export async function GET(_request: Request, context: Ctx) {
 
   const markets = await Promise.all(
     event.markets.map(async (market) => ({
-      ...(await serializeMarketReadModel(market)),
+      ...(await serializeMarketReadModel(market, { includeOutcomeReferenceSummary: true })),
       referenceSource: market.referenceSource,
       externalMarketId: market.externalMarketId,
       externalSlug: market.externalSlug,

@@ -16,6 +16,9 @@ function option(name: string, fallback: string) {
 
 async function main() {
   const confirm = flag("confirm");
+  const confirmDryRun = flag("confirmDryRun");
+  const allowBelowTarget = flag("allowBelowTarget");
+  const replaceExisting = flag("replaceExisting");
   if (process.env.REAL_MONEY_MODE === "true") {
     throw new Error("Safe basket setup refuses REAL_MONEY_MODE=true.");
   }
@@ -31,13 +34,19 @@ async function main() {
 
   const maxMarkets = Number.parseInt(option("maxMarkets", "5"), 10);
   const safeMaxMarkets = Number.isFinite(maxMarkets) ? maxMarkets : 5;
-  const candidates = await loadWorldCupSafeBasketCandidates();
+  const loadedCandidates = await loadWorldCupSafeBasketCandidates();
+  const candidates = replaceExisting
+    ? loadedCandidates.map((candidate) => ({ ...candidate, existingConfig: false }))
+    : loadedCandidates;
   const plan = planSafeBasket(candidates, safeMaxMarkets);
-  const blockers = getSafeBasketBlockers({
+  const rawBlockers = getSafeBasketBlockers({
     candidateCount: candidates.length,
     selectedCount: plan.selected.length,
     maxMarkets: safeMaxMarkets,
   });
+  const blockers = allowBelowTarget
+    ? rawBlockers.filter((blocker) => !blocker.includes("less_than_target_3"))
+    : rawBlockers;
   const result = {
     generatedAt: new Date().toISOString(),
     dryRun: !confirm,
@@ -46,15 +55,16 @@ async function main() {
     selected: plan.selected,
     skipped: plan.skipped,
     blockers,
+    ignoredBlockers: rawBlockers.filter((blocker) => !blockers.includes(blocker)),
   };
 
-  if (confirm && blockers.length > 0) {
+  if ((confirm || confirmDryRun) && blockers.length > 0) {
     console.log(JSON.stringify(result, null, 2));
     throw new Error("Safe basket confirm refused because the selected basket does not meet minimum coverage.");
   }
 
-  if (confirm && plan.selected.length > 0) {
-    await enableSafeBasketConfigs(plan.selected, { dryRun: false });
+  if ((confirm || confirmDryRun) && plan.selected.length > 0) {
+    await enableSafeBasketConfigs(plan.selected, { dryRun: confirmDryRun });
   }
 
   console.log(JSON.stringify(result, null, 2));

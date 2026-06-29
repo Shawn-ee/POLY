@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { parseReferenceReview } from "@/server/services/polymarketReferenceImport";
 import { referenceSnapshotConfig } from "@/server/services/referenceQuoteSnapshots";
+import { publicEventMarketWhere } from "@/server/services/worldCupPublicEligibility";
 
 type HiddenReason =
   | "eligible"
@@ -66,9 +67,24 @@ async function main() {
   const hiddenReasons = countBy(marketRows.filter((row) => !row.eligible).map((row) => row.reason));
   const eligibleMarkets = marketRows.filter((row) => row.eligible);
   const eventsWithEligibleMarkets = new Set(eligibleMarkets.map((row) => row.eventId));
-  const incorrectlyVisibleWithoutMapping = marketRows.filter(
+  const rawUnmappedOpenRows = marketRows.filter(
     (row) => row.reason === "missing_polymarket_mapping" || row.reason === "mapping_not_validated",
   );
+  const userFacingLeakWithoutMapping = await prisma.market.count({
+    where: {
+      event: { sportKey: "soccer", leagueKey: "world_cup" },
+      AND: [
+        publicEventMarketWhere(staleCutoff),
+        {
+          OR: [
+            { referenceSource: { not: "polymarket" } },
+            { referenceSource: null },
+            { referenceMetadata: { path: ["importStatus"], not: "approved" } },
+          ],
+        },
+      ],
+    },
+  });
 
   const result = {
     generatedAt: now.toISOString(),
@@ -83,7 +99,8 @@ async function main() {
       hiddenFromUserFacing: marketRows.length - eligibleMarkets.length,
       eventsWithEligibleMarkets: eventsWithEligibleMarkets.size,
       eventsWithZeroEligibleMarkets: events.filter((event) => !eventsWithEligibleMarkets.has(event.id)).length,
-      marketsIncorrectlyVisibleWithoutMapping: incorrectlyVisibleWithoutMapping.length,
+      userFacingLeakWithoutMapping,
+      rawUnmappedOpenRows: rawUnmappedOpenRows.length,
     },
     hiddenReasons,
     sampleEligibleMarkets: eligibleMarkets.slice(0, 10),

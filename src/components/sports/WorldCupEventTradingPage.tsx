@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
+import MarketOutcomeChart from "@/components/MarketOutcomeChart";
 import { BetaNotice, PageHeader } from "@/components/ui/PageHeader";
 import type { WorldCupEventPageModel, WorldCupEventGroup, WorldCupEventOutcome } from "@/lib/sports/worldCupEventPageModel";
 
@@ -46,13 +47,9 @@ export default function WorldCupEventTradingPage({ model }: { model: WorldCupEve
               World Cup
             </Link>
           </div>
-          <div className="grid gap-4 rounded-lg border border-[var(--poly-border)] bg-white p-4 md:grid-cols-[1fr_auto]">
+          <div className="rounded-lg border border-[var(--poly-border)] bg-white p-4">
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge tone="primary">{model.eventHeader.status}</Badge>
-                {model.eventHeader.source ? <Badge tone="teal">{model.eventHeader.source}</Badge> : null}
-                {model.eventHeader.mappedEvent ? <Badge>Mapped event</Badge> : <Badge tone="warning">No event mapping</Badge>}
-              </div>
+              <Badge tone="primary">{model.eventHeader.status}</Badge>
               <div className="mt-3 grid gap-2 text-sm text-[var(--poly-muted)] sm:grid-cols-2">
                 <div>
                   <span className="font-semibold text-[var(--poly-text)]">Teams: </span>
@@ -72,17 +69,15 @@ export default function WorldCupEventTradingPage({ model }: { model: WorldCupEve
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-center text-xs sm:grid-cols-4 md:grid-cols-2">
-              <Diagnostic label="Mapped" value={model.diagnostics.mappedMarketsCount} />
-              <Diagnostic label="Fresh refs" value={model.diagnostics.freshReferenceCount} />
-              <Diagnostic label="Bot books" value={model.diagnostics.localBotLiquidityMarkets} />
-              <Diagnostic label="Stale hidden" value={model.diagnostics.hiddenStaleMarkets} />
-            </div>
           </div>
           <BetaNotice tone="info" className="mt-4">
-            Closed internal beta: test balances only. Prices are labeled by source; unavailable outcomes explain why trading is disabled.
+            Closed internal beta: test balances only. Deposits and withdrawals are disabled.
           </BetaNotice>
         </PageHeader>
+
+        {model.groups[0]?.outcomes[0]?.marketId ? (
+          <MarketOutcomeChart marketId={model.groups[0].outcomes[0].marketId} />
+        ) : null}
 
         <section className="rounded-lg border border-[var(--poly-border)] bg-white">
           <div className="flex gap-2 overflow-x-auto border-b border-[var(--poly-border)] px-3 py-3">
@@ -221,10 +216,47 @@ function MarketFamilyCard({
 
 function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
   const [amount, setAmount] = useState("10");
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ tone: "success" | "error"; text: string } | null>(null);
   const numericAmount = Number(amount);
   const price = outcome?.ask ?? outcome?.price ?? null;
   const shares = price && Number.isFinite(numericAmount) && numericAmount > 0 ? numericAmount / price : 0;
   const potentialProfit = shares > 0 ? Math.max(0, shares - numericAmount) : 0;
+  const canSubmit = Boolean(outcome?.tradeable && outcome.ask != null && numericAmount > 0 && !submitting);
+
+  async function submitInternalOrder() {
+    if (!outcome || !canSubmit || outcome.ask == null) return;
+    setSubmitting(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": `football:${outcome.marketId}:${outcome.outcomeId}:${Date.now()}:${crypto.randomUUID()}`,
+        },
+        body: JSON.stringify({
+          marketId: outcome.marketId,
+          side: "BUY",
+          type: "MARKET",
+          outcomeId: outcome.outcomeId,
+          size: shares.toFixed(6),
+          maxSpend: numericAmount.toFixed(6),
+          timeInForce: "IOC",
+          executionMode: "MARKET",
+        }),
+      });
+      const body = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(body?.error?.message ?? body?.message ?? "Order rejected.");
+      }
+      setMessage({ tone: "success", text: `Internal test order submitted: ${body?.order?.id ?? "accepted"}` });
+    } catch (error) {
+      setMessage({ tone: "error", text: error instanceof Error ? error.message : "Order failed." });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <Card className="p-5">
@@ -251,12 +283,18 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
             <Row label="Potential profit" value={shares ? `$${potentialProfit.toFixed(2)}` : "Unavailable"} />
           </div>
           {outcome.tradeable ? (
-            <Link
-              href={`/markets/${outcome.marketId}`}
-              className="mt-4 block w-full rounded-lg border border-[var(--poly-primary)] bg-[var(--poly-primary)] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[var(--poly-primary-hover)]"
+            <button
+              type="button"
+              disabled={!canSubmit}
+              onClick={submitInternalOrder}
+              className={`mt-4 block w-full rounded-lg border px-4 py-3 text-center text-sm font-semibold transition ${
+                canSubmit
+                  ? "border-[var(--poly-primary)] bg-[var(--poly-primary)] text-white hover:bg-[var(--poly-primary-hover)]"
+                  : "cursor-not-allowed border-[var(--poly-border)] bg-[var(--poly-surface-muted)] text-[var(--poly-muted)]"
+              }`}
             >
-              Open internal order ticket
-            </Link>
+              {submitting ? "Submitting" : `Buy ${outcome.label}`}
+            </button>
           ) : (
             <button
               type="button"
@@ -271,20 +309,20 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
               ? "Closed beta: test credits only. Final order review remains gated by server checks."
               : outcome.reasonIfDisabled ?? "Trading is disabled for this outcome."}
           </div>
+          {message ? (
+            <div className={`mt-3 rounded-lg border px-3 py-2 text-sm ${
+              message.tone === "success"
+                ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                : "border-red-200 bg-red-50 text-red-900"
+            }`}>
+              {message.text}
+            </div>
+          ) : null}
         </>
       ) : (
         <p className="mt-3 text-sm text-[var(--poly-muted)]">Select an outcome to preview source, price, and tradeability.</p>
       )}
     </Card>
-  );
-}
-
-function Diagnostic({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] px-3 py-2">
-      <div className="text-lg font-semibold text-[var(--poly-text)]">{value}</div>
-      <div className="text-[var(--poly-muted)]">{label}</div>
-    </div>
   );
 }
 
@@ -310,7 +348,7 @@ function formatOutcomePrice(outcome: WorldCupEventOutcome) {
 function formatBidAsk(outcome: WorldCupEventOutcome) {
   const { bid, ask } = outcome;
   if (bid == null && ask == null && outcome.source === "reference_price") return "Reference only";
-  if (bid == null && ask == null) return "No local book";
+  if (bid == null && ask == null) return "No internal liquidity";
   const left = bid == null ? "No bid" : `${Math.round(bid * 100)}c`;
   const right = ask == null ? "No ask" : `${Math.round(ask * 100)}c`;
   return `${left} / ${right}`;
