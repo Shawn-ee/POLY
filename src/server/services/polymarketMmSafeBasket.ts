@@ -100,7 +100,7 @@ export async function loadWorldCupSafeBasketCandidates() {
   }));
 }
 
-export async function enableSafeBasketDryRunConfigs(selected: SafeBasketSelection[]) {
+export async function enableSafeBasketConfigs(selected: SafeBasketSelection[], options: { dryRun: boolean }) {
   return prisma.$transaction(
     selected.map((selection) =>
       prisma.botQuoteConfig.upsert({
@@ -112,7 +112,7 @@ export async function enableSafeBasketDryRunConfigs(selected: SafeBasketSelectio
           marketId: selection.marketId,
           outcomeId: null,
           enabled: true,
-          dryRun: true,
+          dryRun: options.dryRun,
           source: "polymarket",
           edgeTicks: 2,
           tickSize: new Prisma.Decimal("0.01"),
@@ -121,12 +121,12 @@ export async function enableSafeBasketDryRunConfigs(selected: SafeBasketSelectio
           maxOutcomeExposure: new Prisma.Decimal("5"),
           maxMarketExposure: new Prisma.Decimal("10"),
           maxDailyNotional: new Prisma.Decimal("25"),
-          staleAfterSeconds: 15,
+          staleAfterSeconds: 45,
           minQuoteLifetimeSeconds: 5,
         },
         update: {
           enabled: true,
-          dryRun: true,
+          dryRun: options.dryRun,
           edgeTicks: 2,
           tickSize: new Prisma.Decimal("0.01"),
           baseOrderSize: new Prisma.Decimal("1"),
@@ -134,12 +134,16 @@ export async function enableSafeBasketDryRunConfigs(selected: SafeBasketSelectio
           maxOutcomeExposure: new Prisma.Decimal("5"),
           maxMarketExposure: new Prisma.Decimal("10"),
           maxDailyNotional: new Prisma.Decimal("25"),
-          staleAfterSeconds: 15,
+          staleAfterSeconds: 45,
           minQuoteLifetimeSeconds: 5,
         },
       }),
     ),
   );
+}
+
+export async function enableSafeBasketDryRunConfigs(selected: SafeBasketSelection[]) {
+  return enableSafeBasketConfigs(selected, { dryRun: true });
 }
 
 function getCandidateReason(candidate: SafeBasketCandidate, priority: number) {

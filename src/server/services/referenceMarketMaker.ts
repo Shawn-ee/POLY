@@ -318,6 +318,7 @@ async function loadReferenceRows(marketIds: string[]): Promise<ReferenceMarketMa
       const snapshot = snapshots.get(outcome.id);
       const bid = decimalToNumber(snapshot?.bestBid);
       const ask = decimalToNumber(snapshot?.bestAsk);
+      const outcomePrice = decimalToNumber(snapshot?.outcomePrice);
       return {
         marketId: market.id,
         outcomeId: outcome.id,
@@ -325,7 +326,7 @@ async function loadReferenceRows(marketIds: string[]): Promise<ReferenceMarketMa
         marketType,
         referenceBid: bid,
         referenceAsk: ask,
-        referenceMid: bid != null && ask != null ? Number(((bid + ask) / 2).toFixed(6)) : decimalToNumber(snapshot?.outcomePrice),
+        referenceMid: outcomePrice ?? (bid != null && ask != null ? Number(((bid + ask) / 2).toFixed(6)) : null),
         fetchedAt: snapshot?.fetchedAt ?? null,
         mappingEnabled: isPolymarketMappingEnabled(market.referenceMetadata),
       };

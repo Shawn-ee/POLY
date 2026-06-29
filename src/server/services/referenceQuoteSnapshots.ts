@@ -2,7 +2,7 @@ import { Prisma, ReferenceQuoteSnapshot } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
 const DEFAULT_REFERENCE_POLL_MS = intFromEnv("REFERENCE_POLL_MS", 5000);
-const DEFAULT_REFERENCE_STALE_MS = intFromEnv("REFERENCE_STALE_MS", 15000);
+const DEFAULT_REFERENCE_STALE_MS = intFromEnv("REFERENCE_STALE_MS", 45000);
 const DEFAULT_QUOTE_OFFSET_TICKS = intFromEnv("QUOTE_OFFSET_TICKS", 2);
 const DEFAULT_TICK_SIZE = process.env.TICK_SIZE?.trim() || "0.01";
 const DEFAULT_MAX_REFERENCE_SPREAD = numberFromEnv("MAX_REFERENCE_SPREAD", 0.1);

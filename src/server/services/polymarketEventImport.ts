@@ -48,6 +48,7 @@ export type PolymarketGroupedEvent = {
   active: boolean;
   closed: boolean;
   archived: boolean;
+  startTime: string | null;
   endDate: string | null;
   volume: number | null;
   volume24hr: number | null;
@@ -156,8 +157,15 @@ export async function importPolymarketGroupedEvent(
     update: {
       title: groupedEvent.title.trim(),
       description: groupedEvent.description,
-      category: groupedEvent.category ?? "Sports / Soccer",
+      category: "sports",
       status: groupedEvent.active ? "active" : groupedEvent.closed ? "closed" : "upcoming",
+      sportKey: "soccer",
+      leagueKey: "world_cup",
+      eventType: "match",
+      homeTeamName: parseMatchTeams(groupedEvent.title)?.home ?? null,
+      awayTeamName: parseMatchTeams(groupedEvent.title)?.away ?? null,
+      startTime: groupedEvent.startTime ?? groupedEvent.endDate,
+      liveStatus: groupedEvent.active ? "pre_match" : groupedEvent.closed ? "closed" : "scheduled",
       source: "polymarket",
       externalEventId: groupedEvent.externalEventId,
       externalSlug: groupedEvent.externalSlug,
@@ -169,8 +177,15 @@ export async function importPolymarketGroupedEvent(
       slug: localEventSlug,
       title: groupedEvent.title.trim(),
       description: groupedEvent.description,
-      category: groupedEvent.category ?? "Sports / Soccer",
+      category: "sports",
       status: groupedEvent.active ? "active" : groupedEvent.closed ? "closed" : "upcoming",
+      sportKey: "soccer",
+      leagueKey: "world_cup",
+      eventType: "match",
+      homeTeamName: parseMatchTeams(groupedEvent.title)?.home ?? null,
+      awayTeamName: parseMatchTeams(groupedEvent.title)?.away ?? null,
+      startTime: groupedEvent.startTime ?? groupedEvent.endDate,
+      liveStatus: groupedEvent.active ? "pre_match" : groupedEvent.closed ? "closed" : "scheduled",
       source: "polymarket",
       externalEventId: groupedEvent.externalEventId,
       externalSlug: groupedEvent.externalSlug,
@@ -184,6 +199,7 @@ export async function importPolymarketGroupedEvent(
   for (const market of filteredMarkets) {
     const teamLabel = market.groupItemTitle ?? extractTeamLabel(market.question);
     const qualityStatus = deriveQualityStatus(market);
+    const classification = classifyGroupedMarket(market);
     try {
       const result = await upsertPolymarketReferenceMarket(
         {
@@ -195,6 +211,15 @@ export async function importPolymarketGroupedEvent(
             category: groupedEvent.category ?? "Sports / Soccer",
             resolveTime: market.endDate,
             type: "BINARY",
+            marketType: classification.marketType,
+            marketGroupKey: classification.marketGroupKey,
+            marketGroupTitle: classification.marketGroupTitle,
+            line: classification.line,
+            unit: classification.unit,
+            period: classification.period,
+            participantType: classification.participantType,
+            participantName: classification.participantName ?? teamLabel,
+            propCategory: classification.propCategory,
             desiredStatus: "live",
             externalMarketId: market.marketId,
             conditionId: market.conditionId,
@@ -339,6 +364,7 @@ function normalizeGammaEvent(input: GammaWire): PolymarketGroupedEvent {
     active: asBoolean(input.active),
     closed: asBoolean(input.closed),
     archived: asBoolean(input.archived),
+    startTime: asIsoString(input.startTime),
     endDate: asIsoString(input.endDate),
     volume: asNumber(input.volume),
     volume24hr: asNumber(input.volume24hr),
@@ -446,6 +472,101 @@ function deriveEventCategory(input: GammaWire) {
     return "Sports / Soccer";
   }
   return asString(input.category) ?? "Sports";
+}
+
+function parseMatchTeams(title: string) {
+  const cleanTitle = title.replace(/\s+-\s+More Markets$/i, "").trim();
+  const match = cleanTitle.match(/^(.+?)\s+vs\.?\s+(.+)$/i);
+  if (!match) return null;
+  return {
+    home: match[1].trim(),
+    away: match[2].trim(),
+  };
+}
+
+function classifyGroupedMarket(market: PolymarketGroupedEventMarket) {
+  const rawMarketType = asString(market.raw.sportsMarketType);
+  const rawMetadata =
+    market.raw.marketMetadata && typeof market.raw.marketMetadata === "object" && !Array.isArray(market.raw.marketMetadata)
+      ? (market.raw.marketMetadata as GammaWire)
+      : {};
+  const opticMarketId = asString(rawMetadata.opticOddsMarketId);
+  const haystack = `${market.slug} ${market.question} ${rawMarketType ?? ""} ${opticMarketId ?? ""}`.toLowerCase();
+  const line = parseMarketLine(market.groupItemTitle) ?? parseMarketLine(market.slug) ?? parseMarketLine(market.question);
+
+  if (haystack.includes("team-to-advance") || haystack.includes("team_to_advance") || haystack.includes("to advance")) {
+    return {
+      marketType: "team_to_qualify",
+      marketGroupKey: "team_to_qualify",
+      marketGroupTitle: "Team to Advance",
+      line: null,
+      unit: null,
+      period: null,
+      participantType: "team",
+      participantName: market.groupItemTitle,
+      propCategory: "advance",
+    };
+  }
+  if (haystack.includes("btts") || haystack.includes("both_teams_to_score") || haystack.includes("both teams to score")) {
+    return {
+      marketType: "both_teams_to_score",
+      marketGroupKey: "both_teams_to_score",
+      marketGroupTitle: "Both Teams To Score",
+      line: null,
+      unit: null,
+      period: null,
+      participantType: null,
+      participantName: null,
+      propCategory: "goals",
+    };
+  }
+  if (haystack.includes("spread")) {
+    return {
+      marketType: "spread",
+      marketGroupKey: "spread",
+      marketGroupTitle: "Spread",
+      line,
+      unit: "goals",
+      period: null,
+      participantType: "team",
+      participantName: market.groupItemTitle,
+      propCategory: "spread",
+    };
+  }
+  if (haystack.includes("total")) {
+    return {
+      marketType: "total_goals",
+      marketGroupKey: "total_goals",
+      marketGroupTitle: "Total Goals",
+      line,
+      unit: "goals",
+      period: null,
+      participantType: null,
+      participantName: null,
+      propCategory: "goals",
+    };
+  }
+
+  return {
+    marketType: "generic",
+    marketGroupKey: null,
+    marketGroupTitle: null,
+    line: null,
+    unit: null,
+    period: null,
+    participantType: null,
+    participantName: market.groupItemTitle,
+    propCategory: null,
+  };
+}
+
+function parseMarketLine(value: string | null | undefined) {
+  if (!value) return null;
+  const normalized = value.replace(/pt/g, ".");
+  const match = normalized.match(/([+-]?\d+(?:\.\d+)?)/);
+  if (!match) return null;
+  const parsed = Number(match[1]);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 function extractTeamLabel(question: string) {

@@ -15,6 +15,13 @@ export type PolymarketImportEventInput = {
   slug?: string | null;
   description?: string | null;
   category?: string | null;
+  sportKey?: string | null;
+  leagueKey?: string | null;
+  eventType?: string | null;
+  homeTeamName?: string | null;
+  awayTeamName?: string | null;
+  startTime?: string | null;
+  liveStatus?: string | null;
   status?: string | null;
   source?: string | null;
   externalEventId?: string | null;
@@ -30,6 +37,16 @@ export type PolymarketImportMarketInput = {
   category?: string | null;
   resolveTime?: string | null;
   type?: "BINARY" | "MULTI_WINNER";
+  marketType?: string | null;
+  marketGroupKey?: string | null;
+  marketGroupTitle?: string | null;
+  displayOrder?: number | null;
+  line?: number | string | null;
+  unit?: string | null;
+  period?: string | null;
+  participantType?: string | null;
+  participantName?: string | null;
+  propCategory?: string | null;
   desiredStatus?: "draft" | "paused" | "live";
   visibility?: "PUBLIC" | "PRIVATE";
   externalMarketId?: string | null;
@@ -87,7 +104,14 @@ export async function upsertPolymarketReferenceMarket(
             title: input.event.title,
             description: input.event.description ?? null,
             category: input.event.category ?? null,
+            sportKey: input.event.sportKey ?? null,
+            leagueKey: input.event.leagueKey ?? null,
+            eventType: input.event.eventType ?? null,
+            homeTeamName: input.event.homeTeamName ?? null,
+            awayTeamName: input.event.awayTeamName ?? null,
+            startTime: parseOptionalDate(input.event.startTime),
             status: input.event.status ?? null,
+            liveStatus: input.event.liveStatus ?? null,
             source: input.event.source ?? "polymarket",
             externalEventId: input.event.externalEventId ?? null,
             externalSlug: input.event.externalSlug ?? null,
@@ -104,7 +128,14 @@ export async function upsertPolymarketReferenceMarket(
             title: input.event.title,
             description: input.event.description ?? null,
             category: input.event.category ?? null,
+            sportKey: input.event.sportKey ?? null,
+            leagueKey: input.event.leagueKey ?? null,
+            eventType: input.event.eventType ?? null,
+            homeTeamName: input.event.homeTeamName ?? null,
+            awayTeamName: input.event.awayTeamName ?? null,
+            startTime: parseOptionalDate(input.event.startTime),
             status: input.event.status ?? null,
+            liveStatus: input.event.liveStatus ?? null,
             source: input.event.source ?? "polymarket",
             externalEventId: input.event.externalEventId ?? null,
             externalSlug: input.event.externalSlug ?? null,
@@ -135,6 +166,16 @@ export async function upsertPolymarketReferenceMarket(
               description: input.market.description ?? existingMarket.description,
               categoryLegacy: input.market.category ?? existingMarket.categoryLegacy,
               type: marketType,
+              marketType: input.market.marketType ?? existingMarket.marketType,
+              marketGroupKey: input.market.marketGroupKey ?? existingMarket.marketGroupKey,
+              marketGroupTitle: input.market.marketGroupTitle ?? existingMarket.marketGroupTitle,
+              displayOrder: input.market.displayOrder ?? existingMarket.displayOrder,
+              line: parseOptionalDecimal(input.market.line),
+              unit: input.market.unit ?? existingMarket.unit,
+              period: input.market.period ?? existingMarket.period,
+              participantType: input.market.participantType ?? existingMarket.participantType,
+              participantName: input.market.participantName ?? existingMarket.participantName,
+              propCategory: input.market.propCategory ?? existingMarket.propCategory,
               status: desiredStatus,
               ...(input.market.visibility ? { visibility: input.market.visibility } : {}),
               ...(input.market.visibility === "PRIVATE" ? { isListed: false } : {}),
@@ -154,6 +195,16 @@ export async function upsertPolymarketReferenceMarket(
               description: input.market.description ?? input.market.title,
               categoryLegacy: input.market.category ?? null,
               type: marketType,
+              marketType: input.market.marketType ?? "generic",
+              marketGroupKey: input.market.marketGroupKey ?? null,
+              marketGroupTitle: input.market.marketGroupTitle ?? null,
+              displayOrder: input.market.displayOrder ?? 0,
+              line: parseOptionalDecimal(input.market.line),
+              unit: input.market.unit ?? null,
+              period: input.market.period ?? null,
+              participantType: input.market.participantType ?? null,
+              participantName: input.market.participantName ?? null,
+              propCategory: input.market.propCategory ?? null,
               visibility: input.market.visibility ?? "PUBLIC",
               mechanism: "ORDERBOOK",
               status: desiredStatus,
@@ -423,11 +474,23 @@ function normalizeImportedMarketStatus(status: string | undefined): MarketStatus
 }
 
 function parseResolveTime(value: string | null | undefined) {
+  return parseOptionalDate(value);
+}
+
+function parseOptionalDate(value: string | null | undefined) {
   if (!value) {
     return null;
   }
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function parseOptionalDecimal(value: string | number | null | undefined) {
+  if (value == null || value === "") {
+    return null;
+  }
+  const decimal = new Prisma.Decimal(value);
+  return decimal.isFinite() ? decimal : null;
 }
 
 function uniqueImportSlug(externalSlug: string | null | undefined, title: string) {

@@ -1,5 +1,5 @@
 import {
-  enableSafeBasketDryRunConfigs,
+  enableSafeBasketConfigs,
   getSafeBasketBlockers,
   loadWorldCupSafeBasketCandidates,
   planSafeBasket,
@@ -15,16 +15,22 @@ function option(name: string, fallback: string) {
 }
 
 async function main() {
+  const confirm = flag("confirm");
   if (process.env.REAL_MONEY_MODE === "true") {
     throw new Error("Safe basket setup refuses REAL_MONEY_MODE=true.");
   }
   if (process.env.LOCAL_BOT_TRADING_ONLY !== "true") {
     throw new Error("Safe basket setup requires LOCAL_BOT_TRADING_ONLY=true.");
   }
+  if (confirm && process.env.ALLOW_BOT_TRADING !== "true") {
+    throw new Error("Safe basket confirm requires ALLOW_BOT_TRADING=true.");
+  }
+  if (confirm && process.env.POLYMARKET_MM_LIVE_LOCAL !== "true") {
+    throw new Error("Safe basket confirm requires POLYMARKET_MM_LIVE_LOCAL=true.");
+  }
 
   const maxMarkets = Number.parseInt(option("maxMarkets", "5"), 10);
   const safeMaxMarkets = Number.isFinite(maxMarkets) ? maxMarkets : 5;
-  const confirm = flag("confirm");
   const candidates = await loadWorldCupSafeBasketCandidates();
   const plan = planSafeBasket(candidates, safeMaxMarkets);
   const blockers = getSafeBasketBlockers({
@@ -48,7 +54,7 @@ async function main() {
   }
 
   if (confirm && plan.selected.length > 0) {
-    await enableSafeBasketDryRunConfigs(plan.selected);
+    await enableSafeBasketConfigs(plan.selected, { dryRun: false });
   }
 
   console.log(JSON.stringify(result, null, 2));
