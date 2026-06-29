@@ -3,6 +3,8 @@ import { resetPublicSchema } from "@/server/services/__tests__/dbTestUtils";
 import { generateUsedEnvironment } from "@/server/services/seedUsedEnvironment";
 
 describe("seedUsedEnvironment", () => {
+  jest.setTimeout(30_000);
+
   beforeEach(async () => {
     await resetPublicSchema();
   });
@@ -73,7 +75,7 @@ describe("seedUsedEnvironment", () => {
     });
     expect(a.reconciliation.pass).toBe(true);
     expect(b.reconciliation.pass).toBe(true);
-  }, 30_000);
+  });
 
   test("resolved public markets are collateral finalized", async () => {
     const summary = await generateUsedEnvironment({

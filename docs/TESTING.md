@@ -41,7 +41,11 @@ Subagents must include the commands run and their results in PR bodies. High-ris
 
 ## Known Non-CI-Safe Suites
 
-Do not treat broad `npm run test:jest` as a green baseline yet. It currently mixes:
+`npm run test:jest` creates a disposable migrated Jest database by default, runs Jest against it, and drops it afterward. `npm run test:phase3` uses the same isolation wrapper for the ledger Vitest suite. This prevents DB-resetting integration tests from touching the server/runtime database. To use a pre-created test database, set `TEST_DATABASE_URL`; its database name must include `test`, `jest`, or `ci`.
+
+Do not point broad Jest runs at a live/runtime database. Destructive test helpers refuse to reset databases unless `NODE_ENV=test`, `POLY_ALLOW_TEST_DB_RESET=true`, and the database name is test-like.
+
+Historical note: broad `npm run test:jest` used to be unsafe because it mixed:
 
 - Jest smoke tests
 - DB-backed integration tests
