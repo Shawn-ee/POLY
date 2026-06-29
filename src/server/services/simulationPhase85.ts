@@ -400,6 +400,7 @@ export const runPhase85Simulation = async (
       m.includes("insufficient shares") ||
       m.includes("insufficient available shares") ||
       m.includes("order cannot be canceled") ||
+      m.includes("self-crossing order would cross existing own order") ||
       m.includes("binary invariant violation")
     );
   };

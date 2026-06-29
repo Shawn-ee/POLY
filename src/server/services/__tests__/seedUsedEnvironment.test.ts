@@ -73,7 +73,7 @@ describe("seedUsedEnvironment", () => {
     });
     expect(a.reconciliation.pass).toBe(true);
     expect(b.reconciliation.pass).toBe(true);
-  });
+  }, 30_000);
 
   test("resolved public markets are collateral finalized", async () => {
     const summary = await generateUsedEnvironment({

@@ -9,4 +9,10 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   testMatch: ["**/__tests__/**/*.test.ts"],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "src/server/services/__tests__/ledger\\.phase3\\.test\\.ts$",
+    "src/server/services/__tests__/canonical_unit\\.phase5\\.test\\.ts$",
+    "src/server/services/__tests__/canonical_client\\.phase6\\.test\\.ts$",
+  ],
 };

@@ -10,27 +10,23 @@ describe("order rate limiting", () => {
     jest.useRealTimers();
   });
 
-  test("3.1 >5 place per second returns 429 error", () => {
-    for (let i = 0; i < 5; i += 1) {
-      expect(() => enforceOrderRateLimit("u1", "place")).not.toThrow();
-    }
+  test("3.1 >1 place per second returns 429 error", () => {
+    expect(() => enforceOrderRateLimit("u1", "place")).not.toThrow();
     expect(() => enforceOrderRateLimit("u1", "place")).toThrow(
-      "Rate limit exceeded for place orders. Limit is 5/second."
+      "Rate limit exceeded for place orders. Limit is 1/second."
     );
   });
 
-  test("3.2 >10 cancel per second returns 429 error", () => {
-    for (let i = 0; i < 10; i += 1) {
-      expect(() => enforceOrderRateLimit("u1", "cancel")).not.toThrow();
-    }
+  test("3.2 >1 cancel per second returns 429 error", () => {
+    expect(() => enforceOrderRateLimit("u1", "cancel")).not.toThrow();
     expect(() => enforceOrderRateLimit("u1", "cancel")).toThrow(
-      "Rate limit exceeded for cancel orders. Limit is 10/second."
+      "Rate limit exceeded for cancel orders. Limit is 1/second."
     );
   });
 
   test("6.2 rapid place/cancel actions enforce limits independently", () => {
-    for (let i = 0; i < 5; i += 1) enforceOrderRateLimit("u2", "place");
-    for (let i = 0; i < 10; i += 1) enforceOrderRateLimit("u2", "cancel");
+    enforceOrderRateLimit("u2", "place");
+    enforceOrderRateLimit("u2", "cancel");
     expect(() => enforceOrderRateLimit("u2", "place")).toThrow();
     expect(() => enforceOrderRateLimit("u2", "cancel")).toThrow();
   });

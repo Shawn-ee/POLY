@@ -21,6 +21,13 @@ jest.mock("@/server/services/polymarketReferenceImport", () => ({
 
 jest.mock("@/server/services/referenceQuoteSnapshots", () => ({
   getReferenceSummaryForMarket: jest.fn().mockResolvedValue(null),
+  referenceSnapshotConfig: {
+    pollMs: 5000,
+    staleMs: 45000,
+    quoteOffsetTicks: 2,
+    tickSize: "0.01",
+    maxReferenceSpread: 0.1,
+  },
 }));
 
 import { GET as listEvents } from "@/app/api/events/route";
@@ -94,6 +101,7 @@ const expectedEventSummaryKeys = [
   "leagueKey",
   "marketCount",
   "slug",
+  "source",
   "sportKey",
   "startTime",
   "status",

@@ -326,8 +326,17 @@ const generatePublicMarketActivity = async (params: {
     price: "0.600000",
     size: "1.000000",
   });
-  if (makerSell.order.status === "OPEN" || makerSell.order.status === "PARTIAL") {
-    await cancelOrderAndUnlock({ orderId: makerSell.order.id, userId: sellerA.id });
+  const cancellableMakerSell = await prisma.order.findFirst({
+    where: {
+      id: makerSell.order.id,
+      userId: sellerA.id,
+      status: { in: ["OPEN", "PARTIAL"] },
+      remaining: { gt: ZERO },
+    },
+    select: { id: true },
+  });
+  if (cancellableMakerSell) {
+    await cancelOrderAndUnlock({ orderId: cancellableMakerSell.id, userId: sellerA.id });
   }
 
   await placeOrderAndMatch({

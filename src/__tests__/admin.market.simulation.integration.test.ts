@@ -11,7 +11,7 @@ import { POST as mintCompleteSet } from "@/app/api/orderbook/[marketId]/mint/rou
 import { POST as resolveMarket } from "@/app/api/admin/markets/resolve/route";
 
 const requireAdmin = jest.fn();
-const getUserId = jest.fn();
+const requireCanonicalActor = jest.fn();
 const enforceSensitiveRateLimit = jest.fn();
 const emitMarketUpdate = jest.fn();
 const emitUserUpdate = jest.fn();
@@ -20,8 +20,8 @@ jest.mock("@/lib/admin", () => ({
   requireAdmin: () => requireAdmin(),
 }));
 
-jest.mock("@/lib/auth", () => ({
-  getUserId: () => getUserId(),
+jest.mock("@/lib/canonicalAuth", () => ({
+  requireCanonicalActor: (...args: unknown[]) => requireCanonicalActor(...args),
 }));
 
 jest.mock("@/server/services/orderRateLimiter", () => ({
@@ -56,7 +56,14 @@ describe("admin market simulation harness", () => {
     const trader = await createDeterministicUser();
 
     requireAdmin.mockResolvedValue({ user: admin });
-    getUserId.mockResolvedValue(trader.id);
+    requireCanonicalActor.mockResolvedValue({
+      userId: trader.id,
+      authType: "session",
+      apiCredentialId: null,
+      apiKeyId: null,
+      scopes: null,
+      apiCredential: null,
+    });
 
     await applyDeposit({
       eventKey: `admin-sim-deposit:${trader.id}`,
