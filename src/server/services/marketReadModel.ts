@@ -1,7 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { getOutcomeQuotes } from "@/lib/orderbookPricing";
 import { parseReferenceReview } from "@/server/services/polymarketReferenceImport";
-import { getReferenceSummaryForMarket } from "@/server/services/referenceQuoteSnapshots";
+import {
+  getLatestReferenceQuotePlansForMarket,
+  getReferenceSummaryForMarket,
+} from "@/server/services/referenceQuoteSnapshots";
 
 export const marketReadInclude = Prisma.validator<Prisma.MarketInclude>()({
   outcomes: {
@@ -40,7 +43,10 @@ const buildLegacyBinaryPrices = (
   };
 };
 
-export const serializeMarketReadModel = async (market: MarketWithRelations) => {
+export const serializeMarketReadModel = async (
+  market: MarketWithRelations,
+  options: { includeOutcomeReferenceSummary?: boolean } = {},
+) => {
   const referenceReview = parseReferenceReview(market.referenceMetadata);
   const outcomeQuotes =
     market.mechanism === "ORDERBOOK"
@@ -65,6 +71,10 @@ export const serializeMarketReadModel = async (market: MarketWithRelations) => {
   const referenceSummary = market.referenceSource === "polymarket"
     ? await getReferenceSummaryForMarket(market.id)
     : null;
+  const referencePlans = options.includeOutcomeReferenceSummary && market.referenceSource === "polymarket"
+    ? await getLatestReferenceQuotePlansForMarket(market.id)
+    : [];
+  const referencePlanByOutcome = new Map(referencePlans.map((plan) => [plan.localOutcomeId, plan]));
 
   return {
     id: market.id,
@@ -108,6 +118,26 @@ export const serializeMarketReadModel = async (market: MarketWithRelations) => {
         bestBid: quote.bestBid,
         bestAsk: quote.bestAsk,
         spread: quote.spread,
+        ...(options.includeOutcomeReferenceSummary
+          ? {
+              referenceSummary: (() => {
+                const plan = referencePlanByOutcome.get(outcome.id);
+                if (!plan) return null;
+                return {
+                  source: plan.referenceSource,
+                  outcomePrice: plan.gammaOutcomePrice,
+                  referenceBid: plan.referenceBid,
+                  referenceAsk: plan.referenceAsk,
+                  plannedBotBid: plan.plannedBotBid,
+                  plannedBotAsk: plan.plannedBotAsk,
+                  qualityStatus: plan.qualityStatus,
+                  isFresh: plan.isFresh,
+                  mmEligible: plan.mmEligible,
+                  hasSnapshot: plan.hasSnapshot,
+                };
+              })(),
+            }
+          : {}),
       };
     }),
     event: market.event

@@ -160,6 +160,7 @@ export type WorldCupMarketInput = {
   conditionId?: string | null;
   referenceSummary?: {
     source?: string | null;
+    outcomePrice?: number | null;
     referenceBid?: number | null;
     referenceAsk?: number | null;
     plannedBotBid?: number | null;
@@ -185,6 +186,7 @@ export type WorldCupOutcomeInput = {
   bestBid?: number | null;
   bestAsk?: number | null;
   spread?: number | null;
+  referenceSummary?: WorldCupMarketInput["referenceSummary"] | null;
 };
 
 const TABS = [
@@ -379,10 +381,10 @@ function buildOutcome(params: {
   const bid = finiteOrNull(params.outcome.bestBid);
   const ask = finiteOrNull(params.outcome.bestAsk);
   const localMid = finiteOrNull(params.outcome.price);
-  const reference = params.market.referenceSummary ?? null;
-  const referencePrice = reference?.referenceBid != null && reference.referenceAsk != null
+  const reference = params.outcome.referenceSummary ?? params.market.referenceSummary ?? null;
+  const referencePrice = finiteOrNull(reference?.outcomePrice) ?? (reference?.referenceBid != null && reference.referenceAsk != null
     ? roundPrice((reference.referenceBid + reference.referenceAsk) / 2)
-    : finiteOrNull(reference?.referenceAsk) ?? finiteOrNull(reference?.referenceBid);
+    : finiteOrNull(reference?.referenceAsk) ?? finiteOrNull(reference?.referenceBid));
   const hasLocalBook = bid != null || ask != null;
   const source = deriveOutcomeSource({ hasLocalBook, reference, market: params.market });
   const price = hasLocalBook ? localMid : source === "reference_price" ? referencePrice : null;

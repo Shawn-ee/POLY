@@ -14,7 +14,7 @@ async function main() {
   await mkdir(path.dirname(rawOutputPath), { recursive: true });
   await writeFile(rawOutputPath, `${JSON.stringify(event, null, 2)}\n`, "utf8");
 
-  const actorUserId = await getAdminUserId();
+  const actorUserId = options.dryRun ? "dry-run" : await getAdminUserId();
   const result = await importPolymarketGroupedEvent(options.eventSlug, {
     dryRun: options.dryRun,
     confirmImport: options.confirmImport,

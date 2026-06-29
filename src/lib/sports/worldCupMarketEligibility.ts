@@ -120,12 +120,15 @@ export function hasValidatedMapping(market: WorldCupMarketInput) {
 }
 
 export function hasFreshReference(market: WorldCupMarketInput) {
+  const outcomeSummaries = market.outcomes
+    .map((outcome) => outcome.referenceSummary)
+    .filter((summary): summary is NonNullable<WorldCupOutcomeInput["referenceSummary"]> => summary != null);
+  if (outcomeSummaries.length > 0) {
+    return outcomeSummaries.every(hasFreshReferenceSummary);
+  }
+
   const summary = market.referenceSummary;
-  return Boolean(
-    summary?.hasSnapshot &&
-      summary.isFresh &&
-      (summary.referenceBid != null || summary.referenceAsk != null || summary.plannedBotBid != null || summary.plannedBotAsk != null),
-  );
+  return hasFreshReferenceSummary(summary);
 }
 
 export function marketHasLocalBook(market: WorldCupMarketInput) {
@@ -142,6 +145,18 @@ function isDraftOnly(market: WorldCupMarketInput) {
 function isOutcomeTradeableWithLocalBook(outcome: WorldCupOutcomeInput) {
   const hasLocalBook = outcome.bestBid != null || outcome.bestAsk != null;
   return hasLocalBook && outcome.isTradable !== false && (!outcome.status || outcome.status.toLowerCase() === "active");
+}
+
+function hasFreshReferenceSummary(summary: WorldCupMarketInput["referenceSummary"] | null | undefined) {
+  return Boolean(
+    summary?.hasSnapshot &&
+      summary.isFresh &&
+      (summary.outcomePrice != null ||
+        summary.referenceBid != null ||
+        summary.referenceAsk != null ||
+        summary.plannedBotBid != null ||
+        summary.plannedBotAsk != null),
+  );
 }
 
 function classifyEventBlock(status: WorldCupEventPageStatus): WorldCupEligibilityResult | null {

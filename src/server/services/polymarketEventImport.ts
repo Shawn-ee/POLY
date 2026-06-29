@@ -118,15 +118,27 @@ export async function importPolymarketGroupedEvent(
   }
 
   const groupedEvent = await fetchPolymarketEventBySlug(eventSlug);
-  const filteredMarkets = groupedEvent.markets
+  const activeImportableMarkets = groupedEvent.markets
     .filter((market) => market.active && !market.closed && !market.archived)
-    .filter((market) => market.outcomes.length === 2 && market.clobTokenIds.length >= 2)
+    .filter((market) => market.outcomes.length === 2 && market.clobTokenIds.length >= 2);
+  const moneyline3WayMarkets = collectMoneyline3WayMarkets(activeImportableMarkets);
+  const filteredMarkets = activeImportableMarkets
+    .filter((market) => !isMoneyline3WayMarket(market))
     .slice(0, options.maxMarkets && options.maxMarkets > 0 ? options.maxMarkets : undefined);
 
   const imported: ImportPolymarketEventResult["imported"] = [];
   const skipped: ImportPolymarketEventResult["skipped"] = [];
 
   if (options.dryRun) {
+    if (moneyline3WayMarkets.length === 3) {
+      imported.push({
+        team: "Match Winner",
+        slug: `${eventSlug}-moneyline-3-way`,
+        marketId: deriveMoneyline3WayExternalMarketId(groupedEvent),
+        localMarketId: null,
+        importStatus: moneyline3WayMarkets.every((market) => deriveQualityStatus(market) === "approved") ? "approved" : "pending_review",
+      });
+    }
     for (const market of filteredMarkets) {
       const qualityStatus = deriveQualityStatus(market);
       imported.push({
@@ -145,7 +157,7 @@ export async function importPolymarketGroupedEvent(
       localEventSlug: deriveLocalEventSlug(groupedEvent),
       importedCount: imported.length,
       skippedCount: skipped.length,
-      groupedMarketCount: filteredMarkets.length,
+      groupedMarketCount: filteredMarkets.length + (moneyline3WayMarkets.length === 3 ? 1 : 0),
       imported,
       skipped,
     };
@@ -195,6 +207,35 @@ export async function importPolymarketGroupedEvent(
       createdBy: options.actorUserId,
     },
   });
+
+  if (moneyline3WayMarkets.length === 3) {
+    try {
+      const qualityStatus = moneyline3WayMarkets.every((market) => deriveQualityStatus(market) === "approved")
+        ? "approved"
+        : "pending_review";
+      const result = await upsertMoneyline3WayMarket({
+        groupedEvent,
+        localEventId: localEvent.id,
+        localEventSlug,
+        markets: moneyline3WayMarkets,
+        importStatus: qualityStatus,
+        actorUserId: options.actorUserId,
+      });
+      imported.push({
+        team: "Match Winner",
+        slug: `${eventSlug}-moneyline-3-way`,
+        marketId: deriveMoneyline3WayExternalMarketId(groupedEvent),
+        localMarketId: result.marketId,
+        importStatus: qualityStatus,
+      });
+    } catch (error) {
+      skipped.push({
+        team: "Match Winner",
+        slug: `${eventSlug}-moneyline-3-way`,
+        reason: error instanceof Error ? error.message : "Import failed",
+      });
+    }
+  }
 
   for (const market of filteredMarkets) {
     const teamLabel = market.groupItemTitle ?? extractTeamLabel(market.question);
@@ -333,7 +374,7 @@ export async function importPolymarketGroupedEvent(
     localEventSlug,
     importedCount: imported.length,
     skippedCount: skipped.length,
-    groupedMarketCount: filteredMarkets.length,
+    groupedMarketCount: filteredMarkets.length + (moneyline3WayMarkets.length === 3 ? 1 : 0),
     imported,
     skipped,
   };
@@ -448,6 +489,171 @@ function buildListedReferenceMetadata(params: {
   };
 }
 
+async function upsertMoneyline3WayMarket(params: {
+  groupedEvent: PolymarketGroupedEvent;
+  localEventId: string;
+  localEventSlug: string;
+  markets: PolymarketGroupedEventMarket[];
+  importStatus: "approved" | "pending_review";
+  actorUserId: string;
+}) {
+  const ordered = orderMoneyline3WayMarkets(params.markets);
+  if (ordered.length !== 3) {
+    throw new Error("Moneyline 3-way import requires Brazil/draw/Japan style three-outcome mapping.");
+  }
+  const result = await upsertPolymarketReferenceMarket(
+    {
+      createEvents: false,
+      event: null,
+      market: {
+        title: "Match Winner",
+        description: params.groupedEvent.description,
+        category: params.groupedEvent.category ?? "Sports / Soccer",
+        resolveTime: params.groupedEvent.endDate,
+        type: "MULTI_WINNER",
+        marketType: "match_winner_1x2",
+        marketGroupKey: "match_winner",
+        marketGroupTitle: "Match Winner",
+        displayOrder: 0,
+        desiredStatus: "live",
+        visibility: "PUBLIC",
+        externalMarketId: deriveMoneyline3WayExternalMarketId(params.groupedEvent),
+        conditionId: asString(params.groupedEvent.raw.negRiskMarketID) ?? deriveMoneyline3WayExternalMarketId(params.groupedEvent),
+        externalSlug: `${params.groupedEvent.externalSlug}-moneyline-3-way`,
+        referenceSource: "polymarket",
+        referenceMetadata: {
+          importedFrom: "polymarket",
+          importStatus: params.importStatus,
+          referenceOnly: true,
+          tradable: false,
+          mmEnabled: false,
+          reviewedAt: params.importStatus === "approved" ? new Date().toISOString() : null,
+          reviewedBy: params.importStatus === "approved" ? params.actorUserId : null,
+          reviewNotes:
+            params.importStatus === "approved"
+              ? "Imported as local 1X2 projection from Polymarket moneyline_3-way child markets."
+              : "Moneyline 3-way imported pending review.",
+          groupedProjection: {
+            projectionType: "moneyline_3_way",
+            sportsMarketType: "moneyline",
+            opticOddsMarketId: "moneyline_3-way",
+            sourceEventSlug: params.groupedEvent.externalSlug,
+            childMarketSlugs: ordered.map((market) => market.slug),
+          },
+          sourceEvent: {
+            externalEventId: params.groupedEvent.externalEventId,
+            externalSlug: params.groupedEvent.externalSlug,
+            title: params.groupedEvent.title,
+          },
+        },
+        outcomes: ordered.map((market, index) => {
+          const label = getMoneylineOutcomeLabel(market);
+          return {
+            name: label,
+            displayOrder: index,
+            isTradable: true,
+            referenceTokenId: market.clobTokenIds[0] ?? null,
+            referenceOutcomeLabel: "Yes",
+            referenceMetadata: {
+              importedOutcomeLabel: label,
+              externalSlug: market.slug,
+              externalMarketId: market.marketId,
+              conditionId: market.conditionId,
+              sourceQuestion: market.question,
+              opticOddsSelection: readMarketMetadataString(market, "opticOddsSelection"),
+              opticOddsSelectionLine: readMarketMetadataString(market, "opticOddsSelectionLine"),
+              outcomePrice: market.outcomePrices[0] ?? null,
+              yesTokenId: market.clobTokenIds[0] ?? null,
+              noTokenId: market.clobTokenIds[1] ?? null,
+            },
+          };
+        }),
+      },
+    },
+    params.actorUserId,
+  );
+
+  await prisma.market.update({
+    where: { id: result.marketId },
+    data: {
+      eventId: params.localEventId,
+      isListed: params.importStatus === "approved",
+      referenceMetadata: {
+        importedFrom: "polymarket",
+        importStatus: params.importStatus,
+        referenceOnly: true,
+        tradable: false,
+        mmEnabled: false,
+        reviewedAt: params.importStatus === "approved" ? new Date().toISOString() : null,
+        reviewedBy: params.importStatus === "approved" ? params.actorUserId : null,
+        reviewNotes:
+          params.importStatus === "approved"
+            ? "Imported as local 1X2 projection from Polymarket moneyline_3-way child markets."
+            : "Moneyline 3-way imported pending review.",
+        groupedProjection: {
+          projectionType: "moneyline_3_way",
+          sportsMarketType: "moneyline",
+          opticOddsMarketId: "moneyline_3-way",
+          sourceEventSlug: params.groupedEvent.externalSlug,
+          localEventSlug: params.localEventSlug,
+          childMarketSlugs: ordered.map((market) => market.slug),
+        },
+      },
+    },
+  });
+
+  return result;
+}
+
+function collectMoneyline3WayMarkets(markets: PolymarketGroupedEventMarket[]) {
+  const candidates = markets.filter(isMoneyline3WayMarket);
+  const bySelection = new Map<string, PolymarketGroupedEventMarket>();
+  for (const market of candidates) {
+    const line = readMarketMetadataString(market, "opticOddsSelectionLine") ?? getMoneylineOutcomeLabel(market).toLowerCase();
+    if (!bySelection.has(line)) {
+      bySelection.set(line, market);
+    }
+  }
+  return orderMoneyline3WayMarkets(Array.from(bySelection.values()));
+}
+
+function orderMoneyline3WayMarkets(markets: PolymarketGroupedEventMarket[]) {
+  const rank = (market: PolymarketGroupedEventMarket) => {
+    const line = readMarketMetadataString(market, "opticOddsSelectionLine")?.toLowerCase();
+    if (line === "home") return 0;
+    if (line === "draw") return 1;
+    if (line === "away") return 2;
+    const label = getMoneylineOutcomeLabel(market).toLowerCase();
+    if (label.includes("draw")) return 1;
+    return 3;
+  };
+  return [...markets].sort((left, right) => rank(left) - rank(right));
+}
+
+function isMoneyline3WayMarket(market: PolymarketGroupedEventMarket) {
+  return (
+    asString(market.raw.sportsMarketType)?.toLowerCase() === "moneyline" &&
+    readMarketMetadataString(market, "opticOddsMarketId")?.toLowerCase() === "moneyline_3-way"
+  );
+}
+
+function getMoneylineOutcomeLabel(market: PolymarketGroupedEventMarket) {
+  const selection = readMarketMetadataString(market, "opticOddsSelection");
+  if (selection) return selection;
+  const groupTitle = market.groupItemTitle?.replace(/\(.+\)$/, "").trim();
+  return groupTitle || extractTeamLabel(market.question);
+}
+
+function readMarketMetadataString(market: PolymarketGroupedEventMarket, key: string) {
+  const metadata = market.raw.marketMetadata;
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return null;
+  return asString((metadata as GammaWire)[key]);
+}
+
+function deriveMoneyline3WayExternalMarketId(event: PolymarketGroupedEvent) {
+  return `${event.externalEventId}:moneyline_3-way`;
+}
+
 function deriveLocalEventSlug(event: PolymarketGroupedEvent) {
   if (event.externalSlug === "2026-fifa-world-cup-winner-595") {
     return "2026-fifa-world-cup-winner";
@@ -494,6 +700,19 @@ function classifyGroupedMarket(market: PolymarketGroupedEventMarket) {
   const haystack = `${market.slug} ${market.question} ${rawMarketType ?? ""} ${opticMarketId ?? ""}`.toLowerCase();
   const line = parseMarketLine(market.groupItemTitle) ?? parseMarketLine(market.slug) ?? parseMarketLine(market.question);
 
+  if (rawMarketType?.toLowerCase() === "moneyline" && opticMarketId?.toLowerCase() === "moneyline_3-way") {
+    return {
+      marketType: "match_winner_1x2",
+      marketGroupKey: "match_winner",
+      marketGroupTitle: "Match Winner",
+      line: null,
+      unit: null,
+      period: null,
+      participantType: "team",
+      participantName: market.groupItemTitle,
+      propCategory: "moneyline",
+    };
+  }
   if (haystack.includes("team-to-advance") || haystack.includes("team_to_advance") || haystack.includes("to advance")) {
     return {
       marketType: "team_to_qualify",
