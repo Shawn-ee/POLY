@@ -93,6 +93,8 @@ export type WorldCupEventOutcome = {
   bid: number | null;
   ask: number | null;
   referencePrice: number | null;
+  referenceBid: number | null;
+  referenceAsk: number | null;
   botPrice: number | null;
   source: WorldCupPriceSource;
   marketId: string;
@@ -406,6 +408,8 @@ function buildOutcome(params: {
     bid,
     ask,
     referencePrice,
+    referenceBid: finiteOrNull(reference?.referenceBid),
+    referenceAsk: finiteOrNull(reference?.referenceAsk),
     botPrice: finiteOrNull(reference?.plannedBotAsk) ?? finiteOrNull(reference?.plannedBotBid),
     source,
     marketId: params.market.id,

@@ -16,6 +16,17 @@ const SOURCE_LABEL: Record<WorldCupEventOutcome["source"], string> = {
   stale: "Stale",
 };
 
+type ExecutionSummary = {
+  filledShares?: string | number | null;
+  averageFillPrice?: string | number | null;
+  actualNotionalUSDC?: string | number | null;
+  priceImprovementUSDC?: string | number | null;
+  remainingUnfilledShares?: string | number | null;
+  submittedLimitPrice?: string | number | null;
+  maxCostUSDC?: string | number | null;
+  status?: string | null;
+};
+
 export default function WorldCupEventTradingPage({ model }: { model: WorldCupEventPageModel }) {
   const [selectedTab, setSelectedTab] = useState("all");
   const [selectedOutcome, setSelectedOutcome] = useState<WorldCupEventOutcome | null>(() => firstOutcome(model));
@@ -347,16 +358,19 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
   const [amount, setAmount] = useState("10");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ tone: "success" | "error"; text: string } | null>(null);
+  const [lastExecution, setLastExecution] = useState<ExecutionSummary | null>(null);
   const numericAmount = Number(amount);
   const price = outcome?.ask ?? outcome?.price ?? null;
   const shares = price && Number.isFinite(numericAmount) && numericAmount > 0 ? numericAmount / price : 0;
   const potentialProfit = shares > 0 ? Math.max(0, shares - numericAmount) : 0;
+  const liquidityShares = outcome?.ask != null && numericAmount > 0 ? shares : 0;
   const canSubmit = Boolean(outcome?.tradeable && outcome.ask != null && numericAmount > 0 && !submitting);
 
   async function submitInternalOrder() {
     if (!outcome || !canSubmit || outcome.ask == null) return;
     setSubmitting(true);
     setMessage(null);
+    setLastExecution(null);
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -379,7 +393,9 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
       if (!response.ok) {
         throw new Error(body?.error?.message ?? body?.message ?? "Order rejected.");
       }
-      setMessage({ tone: "success", text: `Internal test order submitted: ${body?.order?.id ?? "accepted"}` });
+      const execution = body?.execution as ExecutionSummary | undefined;
+      setLastExecution(execution ?? null);
+      setMessage({ tone: "success", text: formatExecutionMessage(execution, body?.order?.id) });
     } catch (error) {
       setMessage({ tone: "error", text: error instanceof Error ? error.message : "Order failed." });
     } finally {
@@ -395,8 +411,9 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
           <div className="mt-2 text-xl font-semibold text-[var(--poly-text)]">{outcome.label}</div>
           <div className="mt-3 rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] p-3 text-sm">
             <Row label="Source" value={SOURCE_LABEL[outcome.source]} />
-            <Row label="Price" value={formatOutcomePrice(outcome)} />
-            <Row label="Bid / Ask" value={formatBidAsk(outcome)} />
+            <Row label="Reference" value={formatReference(outcome)} />
+            <Row label="Best bid / ask" value={formatBidAsk(outcome)} />
+            <Row label="Executable buy price" value={outcome.ask == null ? "Unavailable" : `${Math.round(outcome.ask * 100)}c`} />
           </div>
           <label className="mt-4 block">
             <span className="text-xs font-semibold uppercase text-[var(--poly-muted)]">Amount</span>
@@ -409,8 +426,22 @@ function TradeTicket({ outcome }: { outcome: WorldCupEventOutcome | null }) {
           </label>
           <div className="mt-4 rounded-lg border border-[var(--poly-border)] bg-[var(--poly-surface-muted)] p-3 text-sm">
             <Row label="Estimated shares" value={shares ? shares.toFixed(2) : "Unavailable"} />
+            <Row label="Estimated cost" value={shares ? `$${numericAmount.toFixed(2)}` : "Unavailable"} />
+            <Row label="Max cost / limit" value={outcome.ask == null ? "Unavailable" : `$${numericAmount.toFixed(2)} @ ${Math.round(outcome.ask * 100)}c`} />
+            <Row label="Expected average" value={outcome.ask == null ? "Unavailable" : `${Math.round(outcome.ask * 100)}c`} />
+            <Row label="Liquidity available" value={liquidityShares ? `${liquidityShares.toFixed(2)} shares at current ask` : "Unavailable"} />
             <Row label="Potential profit" value={shares ? `$${potentialProfit.toFixed(2)}` : "Unavailable"} />
           </div>
+          {lastExecution ? (
+            <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-950">
+              <Row label="Submitted limit" value={formatMaybePrice(lastExecution.submittedLimitPrice)} />
+              <Row label="Filled shares" value={formatMaybeNumber(lastExecution.filledShares)} />
+              <Row label="Average fill" value={formatMaybePrice(lastExecution.averageFillPrice)} />
+              <Row label="Actual cost" value={formatMaybeMoney(lastExecution.actualNotionalUSDC)} />
+              <Row label="Price improvement" value={formatMaybeMoney(lastExecution.priceImprovementUSDC)} />
+              <Row label="Unfilled" value={formatMaybeNumber(lastExecution.remainingUnfilledShares)} />
+            </div>
+          ) : null}
           {outcome.tradeable ? (
             <button
               type="button"
@@ -481,6 +512,49 @@ function formatBidAsk(outcome: WorldCupEventOutcome) {
   const left = bid == null ? "No bid" : `${Math.round(bid * 100)}c`;
   const right = ask == null ? "No ask" : `${Math.round(ask * 100)}c`;
   return `${left} / ${right}`;
+}
+
+function formatReference(outcome: WorldCupEventOutcome) {
+  if (outcome.referenceBid != null || outcome.referenceAsk != null) {
+    const bid = outcome.referenceBid == null ? "No bid" : `${Math.round(outcome.referenceBid * 100)}c`;
+    const ask = outcome.referenceAsk == null ? "No ask" : `${Math.round(outcome.referenceAsk * 100)}c`;
+    return `${bid} / ${ask}`;
+  }
+  return outcome.referencePrice == null ? "Unavailable" : `${Math.round(outcome.referencePrice * 100)}c`;
+}
+
+function formatExecutionMessage(execution: ExecutionSummary | undefined, orderId: string | undefined) {
+  if (!execution) {
+    return `Internal test order submitted: ${orderId ?? "accepted"}`;
+  }
+  const filledShares = Number(execution.filledShares ?? 0);
+  const averageFillPrice = Number(execution.averageFillPrice ?? 0);
+  const actualCost = Number(execution.actualNotionalUSDC ?? 0);
+  const priceImprovement = Number(execution.priceImprovementUSDC ?? 0);
+  const unfilled = Number(execution.remainingUnfilledShares ?? 0);
+  const fillText = filledShares > 0 && averageFillPrice > 0
+    ? `${filledShares.toFixed(2)} shares filled @ ${Math.round(averageFillPrice * 100)}c`
+    : "No shares filled";
+  const improvementText = priceImprovement > 0.000001
+    ? ` Price improvement: $${priceImprovement.toFixed(2)}.`
+    : "";
+  const unfilledText = unfilled > 0.000001 ? ` ${unfilled.toFixed(2)} shares unfilled.` : "";
+  return `${fillText}. Actual cost: $${actualCost.toFixed(2)}.${improvementText}${unfilledText}`;
+}
+
+function formatMaybeMoney(value: string | number | null | undefined) {
+  const numeric = Number(value ?? 0);
+  return Number.isFinite(numeric) ? `$${numeric.toFixed(2)}` : "Unavailable";
+}
+
+function formatMaybeNumber(value: string | number | null | undefined) {
+  const numeric = Number(value ?? 0);
+  return Number.isFinite(numeric) ? numeric.toFixed(2) : "Unavailable";
+}
+
+function formatMaybePrice(value: string | number | null | undefined) {
+  const numeric = Number(value ?? 0);
+  return Number.isFinite(numeric) && numeric > 0 ? `${Math.round(numeric * 100)}c` : "Unavailable";
 }
 
 function formatDateTime(value: string | null) {

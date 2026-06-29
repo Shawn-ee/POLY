@@ -55,6 +55,22 @@ type StoredOrderResponse = {
     notionalUSDC: string;
     feeUSDC: string;
   }>;
+  execution: {
+    side: CanonicalOrderSide;
+    orderType: CanonicalOrderType;
+    submittedLimitPrice: string;
+    requestedShares: string;
+    requestedNotionalUSDC: string;
+    maxCostUSDC: string | null;
+    filledShares: string;
+    averageFillPrice: string | null;
+    actualNotionalUSDC: string;
+    actualFeesUSDC: string;
+    actualProceedsUSDC: string | null;
+    priceImprovementUSDC: string;
+    remainingUnfilledShares: string;
+    status: string;
+  };
   balance: {
     availableUSDC: string;
     lockedUSDC: string;
@@ -461,6 +477,7 @@ export const submitCanonicalOrder = async (params: {
         apiKeyId: params.apiKeyId,
       },
       fills: result.fills,
+      execution: result.execution,
       balance: result.balance,
       position: result.position,
     };

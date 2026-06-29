@@ -429,14 +429,31 @@ export default function OrderbookMarketView({
       throw new Error(data?.error?.message ?? data?.error ?? "Failed to place order");
     }
     const order = data?.order;
+    const execution = data?.execution;
+    const filledShares = Number(execution?.filledShares ?? 0);
+    const averageFillPrice = Number(execution?.averageFillPrice ?? 0);
+    const actualNotional = Number(execution?.actualNotionalUSDC ?? 0);
+    const actualProceeds = Number(execution?.actualProceedsUSDC ?? 0);
+    const priceImprovement = Number(execution?.priceImprovementUSDC ?? 0);
+    const remainingUnfilled = Number(execution?.remainingUnfilledShares ?? 0);
+    const fillText = filledShares > 0 && averageFillPrice > 0
+      ? `${filledShares.toFixed(2)} filled @ ${averageFillPrice.toFixed(2)}`
+      : `${Number(order?.size ?? payload.size).toFixed(2)} submitted`;
+    const cashText = payload.side === "BUY"
+      ? `Actual cost $${actualNotional.toFixed(2)}`
+      : `Actual proceeds $${actualProceeds.toFixed(2)}`;
+    const improvementText = priceImprovement > 0.000001
+      ? `, price improvement $${priceImprovement.toFixed(2)}`
+      : "";
+    const partialText = remainingUnfilled > 0.000001
+      ? `, ${remainingUnfilled.toFixed(2)} unfilled`
+      : "";
     const successMessage =
-      payload.type === "LIMIT"
+      payload.type === "LIMIT" && filledShares <= 0
         ? `Order placed: ${payload.side} ${Number(order?.size ?? payload.size).toFixed(2)} @ ${Number(
             order?.price ?? payload.price ?? 0,
           ).toFixed(2)} (${order?.status ?? "OPEN"})`
-        : `Order submitted: ${payload.side} ${Number(order?.size ?? payload.size).toFixed(2)} ${
-            selectedOutcome?.name ?? ""
-          } IOC (${order?.status ?? "OPEN"})`;
+        : `${payload.side} ${selectedOutcome?.name ?? ""}: ${fillText}. ${cashText}${improvementText}${partialText}.`;
     setMessage(successMessage);
     await loadAll();
     return successMessage;

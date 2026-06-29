@@ -116,6 +116,54 @@ describe("Phase 7 Kalshi-style public model", () => {
     ).rejects.toThrow("Insufficient shares");
   });
 
+  test("execution summary reports best-price fills and buy-side price improvement", async () => {
+    const sellerOne = await createUser("summary_seller_one");
+    const sellerTwo = await createUser("summary_seller_two");
+    const buyer = await createUser("summary_buyer");
+    const market = await createPublicOrderbookMarket();
+    const yesId = market.outcomes[0].id;
+    await fundUser(sellerOne.id, "10");
+    await fundUser(sellerTwo.id, "10");
+    await fundUser(buyer.id, "10");
+    await mintCompleteSetForPublicOrderbook({ marketId: market.id, userId: sellerOne.id, quantity: "1" });
+    await mintCompleteSetForPublicOrderbook({ marketId: market.id, userId: sellerTwo.id, quantity: "1" });
+
+    await placeOrderAndMatch({
+      marketId: market.id,
+      userId: sellerOne.id,
+      outcomeId: yesId,
+      side: "SELL",
+      price: "0.55",
+      size: "1",
+    });
+    await placeOrderAndMatch({
+      marketId: market.id,
+      userId: sellerTwo.id,
+      outcomeId: yesId,
+      side: "SELL",
+      price: "0.50",
+      size: "1",
+    });
+
+    const result = await placeOrderAndMatch({
+      marketId: market.id,
+      userId: buyer.id,
+      outcomeId: yesId,
+      side: "BUY",
+      price: "0.60",
+      size: "2",
+    });
+
+    expect(result.order.status).toBe("FILLED");
+    expect(result.fills.map((fill) => fill.price)).toEqual(["0.5", "0.55"]);
+    expect(result.execution.submittedLimitPrice).toBe("0.6");
+    expect(result.execution.filledShares).toBe("2");
+    expect(result.execution.averageFillPrice).toBe("0.525");
+    expect(result.execution.actualNotionalUSDC).toBe("1.05");
+    expect(result.execution.priceImprovementUSDC).toBe("0.15");
+    expect(result.execution.remainingUnfilledShares).toBe("0");
+  });
+
   test("cannot sell more than owned shares", async () => {
     const user = await createUser("oversell");
     const market = await createPublicOrderbookMarket();

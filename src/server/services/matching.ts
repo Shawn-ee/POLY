@@ -52,6 +52,8 @@ const normalizeSize = (value: Prisma.Decimal) => value.div(DECIMAL_SCALE).floor(
 const toUsdcDown = (value: Prisma.Decimal) => value.toDecimalPlaces(6, Prisma.Decimal.ROUND_DOWN);
 const toUsdcUp = (value: Prisma.Decimal) => value.toDecimalPlaces(6, Prisma.Decimal.ROUND_UP);
 const notionalFor = (qty: Prisma.Decimal, price: Prisma.Decimal) => qty.mul(price);
+const sumDecimalStrings = (values: string[], fallback = ZERO) =>
+  values.reduce((sum, value) => sum.add(value), fallback);
 
 const clampPrice = (value: Prisma.Decimal) => {
   if (value.lt(PRICE_MIN) || value.gt(PRICE_MAX)) {
@@ -976,6 +978,25 @@ export const placeOrderAndMatch = async (params: {
     await enforceBinaryPriceSumInvariant(tx, params.marketId);
     await assertPublicOrderbookCollateralInvariant(tx, params.marketId);
 
+    const filledShares = sumDecimalStrings(fills.map((fill) => fill.size));
+    const actualNotionalUSDC = sumDecimalStrings(fills.map((fill) => fill.notionalUSDC));
+    const actualFeesUSDC = sumDecimalStrings(fills.map((fill) => fill.feeUSDC));
+    const averageFillPrice = filledShares.gt(0)
+      ? actualNotionalUSDC.div(filledShares).toDecimalPlaces(8, Prisma.Decimal.ROUND_HALF_UP)
+      : null;
+    const estimatedNotionalAtLimit = filledShares.gt(0)
+      ? toUsdcUp(notionalFor(filledShares, price))
+      : ZERO;
+    const priceImprovementUSDC = filledShares.gt(0)
+      ? params.side === "BUY"
+        ? Prisma.Decimal.max(ZERO, estimatedNotionalAtLimit.sub(actualNotionalUSDC))
+        : Prisma.Decimal.max(ZERO, actualNotionalUSDC.sub(estimatedNotionalAtLimit))
+      : ZERO;
+    const requestedNotionalUSDC = params.side === "BUY"
+      ? incomingReservedInitial
+      : toUsdcUp(notionalFor(size, price));
+    const remainingUnfilledShares = Prisma.Decimal.max(ZERO, size.sub(filledShares));
+
     return {
       order: {
         id: updatedIncoming.id,
@@ -989,6 +1010,22 @@ export const placeOrderAndMatch = async (params: {
         status: updatedIncoming.status,
       },
       fills,
+      execution: {
+        side: params.side,
+        orderType,
+        submittedLimitPrice: price.toString(),
+        requestedShares: size.toString(),
+        requestedNotionalUSDC: requestedNotionalUSDC.toString(),
+        maxCostUSDC: params.side === "BUY" ? incomingReservedInitial.toString() : null,
+        filledShares: filledShares.toString(),
+        averageFillPrice: averageFillPrice?.toString() ?? null,
+        actualNotionalUSDC: actualNotionalUSDC.toString(),
+        actualFeesUSDC: actualFeesUSDC.toString(),
+        actualProceedsUSDC: params.side === "SELL" ? actualNotionalUSDC.sub(actualFeesUSDC).toString() : null,
+        priceImprovementUSDC: priceImprovementUSDC.toString(),
+        remainingUnfilledShares: remainingUnfilledShares.toString(),
+        status: updatedIncoming.status,
+      },
       balance: balance
         ? {
             availableUSDC: balance.availableUSDC.toString(),
