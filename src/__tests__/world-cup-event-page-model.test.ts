@@ -141,6 +141,69 @@ describe("World Cup event page model", () => {
     expect(total?.lines.map((line) => line.outcomes[0].label)).toEqual(["Over 1.5", "Over 2.5"]);
   });
 
+  test("groups opposite spread markets into a Polymarket-style handicap line", () => {
+    const model = buildWorldCupEventPageModel({
+      event: { ...event, title: "Brazil vs Japan", homeTeamName: "Brazil", awayTeamName: "Japan" },
+      markets: [
+        market({
+          id: "brazil-spread-15",
+          title: "Brazil -1.5",
+          marketType: "spread",
+          marketGroupKey: "spread",
+          line: "-1.5",
+          participantName: "Brazil",
+          outcomes: [
+            { id: "brazil-spread-15-yes", name: "Yes", side: "home", displayOrder: 0, bestBid: 0.44, bestAsk: 0.47, price: 0.455, isTradable: true },
+          ],
+        }),
+        market({
+          id: "japan-spread-15",
+          title: "Japan +1.5",
+          marketType: "spread",
+          marketGroupKey: "spread",
+          line: "1.5",
+          participantName: "Japan",
+          outcomes: [
+            { id: "japan-spread-15-yes", name: "Yes", side: "away", displayOrder: 0, bestBid: 0.53, bestAsk: 0.56, price: 0.545, isTradable: true },
+          ],
+        }),
+        market({
+          id: "brazil-spread-25",
+          title: "Brazil -2.5",
+          marketType: "spread",
+          marketGroupKey: "spread",
+          line: "-2.5",
+          participantName: "Brazil",
+          outcomes: [
+            { id: "brazil-spread-25-yes", name: "Yes", side: "home", displayOrder: 0, bestBid: 0.3, bestAsk: 0.33, price: 0.315, isTradable: true },
+          ],
+        }),
+        market({
+          id: "japan-spread-25",
+          title: "Japan +2.5",
+          marketType: "spread",
+          marketGroupKey: "spread",
+          line: "2.5",
+          participantName: "Japan",
+          outcomes: [
+            { id: "japan-spread-25-yes", name: "Yes", side: "away", displayOrder: 0, bestBid: 0.67, bestAsk: 0.7, price: 0.685, isTradable: true },
+          ],
+        }),
+      ],
+      internalTradingEnabled: true,
+      tradingKillSwitch: false,
+      realMoneyMode: false,
+      now: new Date("2026-06-27T20:00:00.000Z"),
+    });
+
+    const spread = model.groups.find((group) => group.family === "spread");
+    expect(spread?.displayType).toBe("line_selector");
+    expect(spread?.selectedLine).toBe("spread:1_5");
+    expect(spread?.lines.map((line) => line.label)).toEqual(["1.5", "2.5"]);
+    expect(spread?.lines[0].outcomes.map((outcome) => outcome.label)).toEqual(["Brazil -1.5", "Japan +1.5"]);
+    expect(spread?.lines[0].outcomes.every((outcome) => outcome.source === "local_bot_book")).toBe(true);
+  });
+
   test("hides stale, unmapped, and no-live-price states from user-facing groups without fake 50", () => {
     const stale = buildWorldCupEventPageModel({
       event,

@@ -21,4 +21,11 @@ describe("World Cup football event UI static checks", () => {
     expect(source).not.toContain("Bot books");
     expect(source).not.toContain("No local book");
   });
+
+  test("renders spread markets with a dedicated handicap card instead of generic line-selector copy", () => {
+    expect(source).toContain("function SpreadMarketCard");
+    expect(source).toContain('group.family === "spread"');
+    expect(source).toContain("Handicap");
+    expect(source).toContain("Line</div>");
+  });
 });
