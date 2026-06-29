@@ -28,6 +28,41 @@ type RuntimeStatus = {
   risk: { alerts: number; unsafeFlags: string[] };
   safety: Record<string, boolean>;
   ownerTesting: { canOwnerTrade: boolean; ownerTestBalanceRecords: number; activeLiquidityMarkets: number };
+  execution: {
+    recent: Array<{
+      fillId: string;
+      createdAt: string;
+      marketTitle: string;
+      outcomeName: string;
+      taker: string;
+      maker: string;
+      makerIsBot: boolean;
+      side: "BUY" | "SELL";
+      submittedLimit: string;
+      actualFillPrice: string;
+      shares: string;
+      notionalUSDC: string;
+      feeUSDC: string;
+      priceImprovementUSDC: string;
+      ledgerEntryCount: number;
+    }>;
+  };
+  quoteExplanations: Array<{
+    marketTitle: string;
+    outcomeName: string;
+    referenceBid: string | null;
+    referenceAsk: string | null;
+    referenceMid: string | null;
+    localBotBid: string | null;
+    localBotAsk: string | null;
+    bidSize: string | null;
+    askSize: string | null;
+    lastReferenceAt: string | null;
+    lastBotRefreshAt: string;
+    stale: boolean;
+    riskStatus: string;
+    skipReason: string | null;
+  }>;
 };
 
 export default function AdminRuntimePage() {
@@ -111,6 +146,88 @@ export default function AdminRuntimePage() {
           <Row label="Unsafe flags" value={status.risk.unsafeFlags.length ? status.risk.unsafeFlags.join(", ") : "none"} />
         </RuntimeCard>
       </div>
+      <div className="mt-6 grid gap-4 xl:grid-cols-2">
+        <RuntimeCard title="Recent Executions">
+          {status.execution.recent.length ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-xs">
+                <thead className="text-[var(--poly-muted)]">
+                  <tr>
+                    <th className="px-2 py-2">Time</th>
+                    <th className="px-2 py-2">Market</th>
+                    <th className="px-2 py-2">Side</th>
+                    <th className="px-2 py-2">Limit</th>
+                    <th className="px-2 py-2">Fill</th>
+                    <th className="px-2 py-2">Improve</th>
+                    <th className="px-2 py-2">Ledger</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {status.execution.recent.map((fill) => (
+                    <tr key={fill.fillId} className="border-t border-[var(--poly-border)]">
+                      <td className="px-2 py-2">{formatTime(fill.createdAt)}</td>
+                      <td className="px-2 py-2">
+                        <div className="font-semibold">{fill.outcomeName}</div>
+                        <div className="text-[var(--poly-muted)]">{fill.marketTitle}</div>
+                        <div className="text-[var(--poly-muted)]">Maker: {fill.makerIsBot ? "local bot" : fill.maker}</div>
+                      </td>
+                      <td className="px-2 py-2">{fill.side}</td>
+                      <td className="px-2 py-2">{formatPrice(fill.submittedLimit)}</td>
+                      <td className="px-2 py-2">
+                        {fill.shares} @ {formatPrice(fill.actualFillPrice)}
+                        <div className="text-[var(--poly-muted)]">${Number(fill.notionalUSDC).toFixed(2)}</div>
+                      </td>
+                      <td className="px-2 py-2">${Number(fill.priceImprovementUSDC).toFixed(2)}</td>
+                      <td className="px-2 py-2">{fill.ledgerEntryCount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-sm text-[var(--poly-muted)]">No recent fills.</div>
+          )}
+        </RuntimeCard>
+        <RuntimeCard title="MM Quote Explanation">
+          {status.quoteExplanations.length ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-xs">
+                <thead className="text-[var(--poly-muted)]">
+                  <tr>
+                    <th className="px-2 py-2">Outcome</th>
+                    <th className="px-2 py-2">Reference</th>
+                    <th className="px-2 py-2">Local bot</th>
+                    <th className="px-2 py-2">Size</th>
+                    <th className="px-2 py-2">Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {status.quoteExplanations.map((quote) => (
+                    <tr key={`${quote.marketTitle}:${quote.outcomeName}`} className="border-t border-[var(--poly-border)]">
+                      <td className="px-2 py-2">
+                        <div className="font-semibold">{quote.outcomeName}</div>
+                        <div className="text-[var(--poly-muted)]">{quote.marketTitle}</div>
+                      </td>
+                      <td className="px-2 py-2">
+                        {formatPrice(quote.referenceBid)} / {formatPrice(quote.referenceAsk)}
+                        <div className="text-[var(--poly-muted)]">mid {formatPrice(quote.referenceMid)}</div>
+                      </td>
+                      <td className="px-2 py-2">
+                        {formatPrice(quote.localBotBid)} / {formatPrice(quote.localBotAsk)}
+                        <div className="text-[var(--poly-muted)]">{formatTime(quote.lastBotRefreshAt)}</div>
+                      </td>
+                      <td className="px-2 py-2">{quote.bidSize ?? "-"} / {quote.askSize ?? "-"}</td>
+                      <td className="px-2 py-2">{quote.riskStatus}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-sm text-[var(--poly-muted)]">No active local bot quotes.</div>
+          )}
+        </RuntimeCard>
+      </div>
     </PageContainer>
   );
 }
@@ -140,4 +257,15 @@ function Row({ label, value }: { label: string; value: string | number | boolean
       <span className="text-right font-semibold text-[var(--poly-text)]">{value}</span>
     </div>
   );
+}
+
+function formatPrice(value: string | number | null | undefined) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? `${Math.round(numeric * 100)}c` : "-";
+}
+
+function formatTime(value: string | null | undefined) {
+  if (!value) return "-";
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? date.toLocaleTimeString() : "-";
 }

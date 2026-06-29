@@ -164,6 +164,42 @@ describe("Phase 7 Kalshi-style public model", () => {
     expect(result.execution.remainingUnfilledShares).toBe("0");
   });
 
+  test("market buy execution summary reports maxSpend-derived limit instead of sweep price", async () => {
+    const seller = await createUser("market_summary_seller");
+    const buyer = await createUser("market_summary_buyer");
+    const market = await createPublicOrderbookMarket();
+    const yesId = market.outcomes[0].id;
+    await fundUser(seller.id, "10");
+    await fundUser(buyer.id, "10");
+    await mintCompleteSetForPublicOrderbook({ marketId: market.id, userId: seller.id, quantity: "1" });
+
+    await placeOrderAndMatch({
+      marketId: market.id,
+      userId: seller.id,
+      outcomeId: yesId,
+      side: "SELL",
+      price: "0.50",
+      size: "1",
+    });
+
+    const result = await placeOrderAndMatch({
+      marketId: market.id,
+      userId: buyer.id,
+      outcomeId: yesId,
+      side: "BUY",
+      type: "MARKET",
+      price: "1",
+      size: "1",
+      maxSpend: "0.60",
+    });
+
+    expect(result.order.status).toBe("FILLED");
+    expect(result.execution.submittedLimitPrice).toBe("0.6");
+    expect(result.execution.averageFillPrice).toBe("0.5");
+    expect(result.execution.actualNotionalUSDC).toBe("0.5");
+    expect(result.execution.priceImprovementUSDC).toBe("0.1");
+  });
+
   test("cannot sell more than owned shares", async () => {
     const user = await createUser("oversell");
     const market = await createPublicOrderbookMarket();

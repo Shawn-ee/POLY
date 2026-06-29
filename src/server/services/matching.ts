@@ -978,6 +978,10 @@ export const placeOrderAndMatch = async (params: {
     await enforceBinaryPriceSumInvariant(tx, params.marketId);
     await assertPublicOrderbookCollateralInvariant(tx, params.marketId);
 
+    const effectiveLimitPrice =
+      orderType === "MARKET" && params.side === "BUY" && maxSpend && size.gt(0)
+        ? Prisma.Decimal.min(PRICE_MAX, maxSpend.div(size)).toDecimalPlaces(8, Prisma.Decimal.ROUND_DOWN)
+        : price;
     const filledShares = sumDecimalStrings(fills.map((fill) => fill.size));
     const actualNotionalUSDC = sumDecimalStrings(fills.map((fill) => fill.notionalUSDC));
     const actualFeesUSDC = sumDecimalStrings(fills.map((fill) => fill.feeUSDC));
@@ -985,7 +989,7 @@ export const placeOrderAndMatch = async (params: {
       ? actualNotionalUSDC.div(filledShares).toDecimalPlaces(8, Prisma.Decimal.ROUND_HALF_UP)
       : null;
     const estimatedNotionalAtLimit = filledShares.gt(0)
-      ? toUsdcUp(notionalFor(filledShares, price))
+      ? toUsdcUp(notionalFor(filledShares, effectiveLimitPrice))
       : ZERO;
     const priceImprovementUSDC = filledShares.gt(0)
       ? params.side === "BUY"
@@ -1013,7 +1017,7 @@ export const placeOrderAndMatch = async (params: {
       execution: {
         side: params.side,
         orderType,
-        submittedLimitPrice: price.toString(),
+        submittedLimitPrice: effectiveLimitPrice.toString(),
         requestedShares: size.toString(),
         requestedNotionalUSDC: requestedNotionalUSDC.toString(),
         maxCostUSDC: params.side === "BUY" ? incomingReservedInitial.toString() : null,
