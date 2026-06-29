@@ -200,6 +200,54 @@ describe("Phase 7 Kalshi-style public model", () => {
     expect(result.execution.priceImprovementUSDC).toBe("0.1");
   });
 
+  test("execution summary reports best-price fills and sell-side price improvement", async () => {
+    const buyerOne = await createUser("summary_buyer_one");
+    const buyerTwo = await createUser("summary_buyer_two");
+    const seller = await createUser("summary_seller");
+    const market = await createPublicOrderbookMarket();
+    const yesId = market.outcomes[0].id;
+    await fundUser(buyerOne.id, "10");
+    await fundUser(buyerTwo.id, "10");
+    await fundUser(seller.id, "10");
+    await mintCompleteSetForPublicOrderbook({ marketId: market.id, userId: seller.id, quantity: "2" });
+
+    await placeOrderAndMatch({
+      marketId: market.id,
+      userId: buyerOne.id,
+      outcomeId: yesId,
+      side: "BUY",
+      price: "0.50",
+      size: "1",
+    });
+    await placeOrderAndMatch({
+      marketId: market.id,
+      userId: buyerTwo.id,
+      outcomeId: yesId,
+      side: "BUY",
+      price: "0.55",
+      size: "1",
+    });
+
+    const result = await placeOrderAndMatch({
+      marketId: market.id,
+      userId: seller.id,
+      outcomeId: yesId,
+      side: "SELL",
+      price: "0.45",
+      size: "2",
+    });
+
+    expect(result.order.status).toBe("FILLED");
+    expect(result.fills.map((fill) => fill.price)).toEqual(["0.55", "0.5"]);
+    expect(result.execution.submittedLimitPrice).toBe("0.45");
+    expect(result.execution.filledShares).toBe("2");
+    expect(result.execution.averageFillPrice).toBe("0.525");
+    expect(result.execution.actualNotionalUSDC).toBe("1.05");
+    expect(result.execution.actualProceedsUSDC).toBe("1.0395");
+    expect(result.execution.priceImprovementUSDC).toBe("0.15");
+    expect(result.execution.remainingUnfilledShares).toBe("0");
+  });
+
   test("cannot sell more than owned shares", async () => {
     const user = await createUser("oversell");
     const market = await createPublicOrderbookMarket();
