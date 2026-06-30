@@ -245,6 +245,7 @@ export function buildWorldCupEventPageModel(params: {
     .filter((entry) => entry.eligibility.eligible && entry.eligibility.visibility === "user_facing")
     .map((entry) => entry.market);
   const groups = buildGroups({
+    event: params.event,
     markets: visibleMarkets,
     eventStatus,
     internalTradingEnabled: params.internalTradingEnabled ?? false,
@@ -281,6 +282,7 @@ export function buildWorldCupEventPageModel(params: {
 }
 
 function buildGroups(params: {
+  event: WorldCupEventInput;
   markets: WorldCupMarketInput[];
   eventStatus: WorldCupEventPageStatus;
   internalTradingEnabled: boolean;
@@ -299,6 +301,7 @@ function buildGroups(params: {
       const sortedMarkets = [...markets].sort(compareMarkets);
       const displayType = getDisplayType(family.id, sortedMarkets);
       const lines = buildLines({
+        event: params.event,
         familyId,
         markets: sortedMarkets,
         eventStatus: params.eventStatus,
@@ -332,6 +335,7 @@ function buildGroups(params: {
 }
 
 function buildLines(params: {
+  event: WorldCupEventInput;
   familyId: string;
   markets: WorldCupMarketInput[];
   eventStatus: WorldCupEventPageStatus;
@@ -353,6 +357,7 @@ function buildLines(params: {
           .slice()
           .sort(compareOutcomes)
           .map((outcome) => buildOutcome({
+            event: params.event,
             market,
             outcome,
             eventStatus: params.eventStatus,
@@ -373,6 +378,7 @@ function buildLines(params: {
 }
 
 function buildOutcome(params: {
+  event: WorldCupEventInput;
   market: WorldCupMarketInput;
   outcome: WorldCupOutcomeInput;
   eventStatus: WorldCupEventPageStatus;
@@ -401,7 +407,7 @@ function buildOutcome(params: {
   });
 
   return {
-    label: formatOutcomeLabel(params.market, params.outcome),
+    label: formatOutcomeLabel(params.event, params.market, params.outcome),
     code: params.outcome.code ?? null,
     teamSide: params.outcome.side ?? null,
     price,
@@ -574,9 +580,20 @@ function isHiddenStaleMarket(market: WorldCupMarketInput, eventStatus: WorldCupE
   return ["CLOSED", "RESOLVED", "CANCELED"].includes(market.status.toUpperCase());
 }
 
-function formatOutcomeLabel(market: WorldCupMarketInput, outcome: WorldCupOutcomeInput) {
-  if (market.marketType === "spread" && normalizeToken(outcome.name) === "yes") {
-    return [market.participantName, signedLine(market.line)].filter(Boolean).join(" ");
+function formatOutcomeLabel(event: WorldCupEventInput, market: WorldCupMarketInput, outcome: WorldCupOutcomeInput) {
+  if (market.marketType === "spread") {
+    const yesSide = market.participantName ?? extractSpreadParticipant(market.title);
+    const noSide = opposingTeam(event, yesSide);
+    const numericLine = Number(market.line);
+    if (normalizeToken(outcome.name) === "yes") {
+      return [yesSide, signedLine(market.line)].filter(Boolean).join(" ");
+    }
+    if (normalizeToken(outcome.name) === "no") {
+      return [
+        noSide ?? (yesSide ? `Not ${yesSide}` : "Other side"),
+        signedLine(Number.isFinite(numericLine) ? -numericLine : market.line),
+      ].filter(Boolean).join(" ");
+    }
   }
   if (["total_goals", "team_total_goals", "total"].includes(normalizeToken(market.marketType))) {
     const base = outcome.label ?? outcome.name;
@@ -584,6 +601,21 @@ function formatOutcomeLabel(market: WorldCupMarketInput, outcome: WorldCupOutcom
     return line === "default" || base.includes(line) ? base : `${base} ${line}`;
   }
   return outcome.label ?? outcome.name;
+}
+
+function extractSpreadParticipant(title: string) {
+  const match = title.match(/^Spread:\s*(.+?)\s*\(/i);
+  return match?.[1]?.trim() || null;
+}
+
+function opposingTeam(event: WorldCupEventInput, team: string | null | undefined) {
+  if (!team) return null;
+  const normalized = normalizeToken(team);
+  const home = event.homeTeamName ?? null;
+  const away = event.awayTeamName ?? null;
+  if (home && normalizeToken(home) === normalized) return away;
+  if (away && normalizeToken(away) === normalized) return home;
+  return null;
 }
 
 function extractMarketVolume(market: WorldCupMarketInput) {

@@ -8,6 +8,8 @@ const SUPPORTED_REFERENCE_MARKET_TYPES = new Set([
   "match_winner_1x2",
   "total_goals",
   "both_teams_to_score",
+  "team_to_qualify",
+  "spread",
 ]);
 
 const DEFAULT_BOT_USERNAME = "system-liquidity-bot";

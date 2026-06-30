@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { referenceSnapshotConfig } from "@/server/services/referenceQuoteSnapshots";
+import { runReferenceRiskMonitorOnce } from "@/server/services/referenceRiskMonitor";
 
 export type ClosedBetaRuntimeStatus = Awaited<ReturnType<typeof getClosedBetaRuntimeStatus>>;
 
@@ -20,7 +21,14 @@ export async function getClosedBetaRuntimeStatus() {
     openBotOrders,
     dryRunIntents,
     liveLocalIntents,
+    recentDryRunIntents,
+    recentLiveLocalIntents,
+    latestDryRunIntent,
+    latestLiveLocalIntent,
+    latestOpenBotOrder,
     riskAlerts,
+    recentRiskEvents,
+    currentRisk,
     publicDraftLeakCount,
     worldCupEvents,
     eligibleWorldCupMarkets,
@@ -54,7 +62,32 @@ export async function getClosedBetaRuntimeStatus() {
     prisma.order.count({ where: { status: { in: ["OPEN", "PARTIAL"] } } }),
     prisma.botOrderIntent.count({ where: { dryRun: true } }),
     prisma.botOrderIntent.count({ where: { dryRun: false } }),
+    prisma.botOrderIntent.count({ where: { dryRun: true, createdAt: { gte: new Date(now.getTime() - 60 * 60 * 1000) } } }),
+    prisma.botOrderIntent.count({ where: { dryRun: false, createdAt: { gte: new Date(now.getTime() - 60 * 60 * 1000) } } }),
+    prisma.botOrderIntent.findFirst({ where: { dryRun: true }, orderBy: { createdAt: "desc" }, select: { createdAt: true } }),
+    prisma.botOrderIntent.findFirst({ where: { dryRun: false }, orderBy: { createdAt: "desc" }, select: { createdAt: true } }),
+    loadLatestOpenBotOrderTimestamp(),
     prisma.canonicalEvent.count({ where: { eventType: { contains: "risk" } } }).catch(() => 0),
+    prisma.canonicalEvent.findMany({
+      where: { eventType: { contains: "risk" }, createdAt: { gte: new Date(now.getTime() - 60 * 60 * 1000) } },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+      select: { payload: true, createdAt: true },
+    }).catch(() => []),
+    runReferenceRiskMonitorOnce({ pauseOnRisk: false, logEvents: false, now }).catch((error) => ({
+      generatedAt: now.toISOString(),
+      alertCount: 0,
+      pauseRequired: false,
+      paused: false,
+      eventsLogged: 0,
+      alerts: [{
+        type: "repeated_reference_error" as const,
+        severity: "warn" as const,
+        action: "skip" as const,
+        marketId: "runtime-status",
+        message: error instanceof Error ? error.message : String(error),
+      }],
+    })),
     prisma.market.count({
       where: {
         event: { sportKey: "soccer", leagueKey: "world_cup" },
@@ -129,13 +162,32 @@ export async function getClosedBetaRuntimeStatus() {
     safety.autoPromote ? "POLYMARKET_AUTO_PROMOTE_ENABLED=true" : null,
     !safety.localBotTradingOnly ? "LOCAL_BOT_TRADING_ONLY is not true" : null,
   ].filter((flag): flag is string => flag !== null);
+  const currentCriticalRiskAlerts = currentRisk.alerts.filter((alert) => alert.severity === "critical").length;
+  const currentRiskTopReasons = summarizeCurrentRiskReasons(currentRisk.alerts);
+  const historicalRiskTopReasons = summarizeHistoricalRiskReasons(recentRiskEvents.map((event) => event.payload));
+  const mmHeartbeat = latestDate(
+    latestLiveLocalIntent?.createdAt ?? null,
+    latestOpenBotOrder?.updatedAt ?? null,
+    latestDryRunIntent?.createdAt ?? null,
+  );
 
   return {
     generatedAt: now.toISOString(),
     serviceHealth: {
       referenceSyncHeartbeat: latestReference?.fetchedAt?.toISOString() ?? null,
-      mmHeartbeat: null,
-      status: unsafeFlags.length ? "unsafe_env" : "ready_for_rehearsal",
+      mmHeartbeat: mmHeartbeat?.toISOString() ?? null,
+      mmHealthSource: latestLiveLocalIntent?.createdAt
+        ? "latest_live_local_intent"
+        : latestOpenBotOrder?.updatedAt
+          ? "latest_open_bot_order"
+          : latestDryRunIntent?.createdAt
+            ? "latest_dry_run_intent"
+            : null,
+      status: unsafeFlags.length
+        ? "unsafe_env"
+        : currentCriticalRiskAlerts > 0
+          ? "risk_review_required"
+          : "ready_for_rehearsal",
     },
     referenceSync: {
       latestSnapshotAt: latestReference?.fetchedAt?.toISOString() ?? null,
@@ -150,6 +202,11 @@ export async function getClosedBetaRuntimeStatus() {
       openInternalOrders: openBotOrders,
       dryRunIntentCount: dryRunIntents,
       liveLocalIntentCount: liveLocalIntents,
+      recentDryRunIntentCount: recentDryRunIntents,
+      recentLiveLocalIntentCount: recentLiveLocalIntents,
+      latestDryRunIntentAt: latestDryRunIntent?.createdAt?.toISOString() ?? null,
+      latestLiveLocalIntentAt: latestLiveLocalIntent?.createdAt?.toISOString() ?? null,
+      latestOpenBotOrderAt: latestOpenBotOrder?.updatedAt?.toISOString() ?? null,
     },
     worldCup: {
       events: worldCupEvents,
@@ -167,6 +224,13 @@ export async function getClosedBetaRuntimeStatus() {
     },
     risk: {
       alerts: riskAlerts,
+      historicalAlerts: riskAlerts,
+      recentHistoricalAlerts: recentRiskEvents.length,
+      currentAlerts: currentRisk.alertCount,
+      currentCriticalAlerts: currentCriticalRiskAlerts,
+      currentPauseRequired: currentRisk.pauseRequired,
+      currentTopReasons: currentRiskTopReasons,
+      recentHistoricalTopReasons: historicalRiskTopReasons,
       unsafeFlags,
     },
     safety,
@@ -180,6 +244,50 @@ export async function getClosedBetaRuntimeStatus() {
     },
     quoteExplanations,
   };
+}
+
+async function loadLatestOpenBotOrderTimestamp() {
+  const botUsername = process.env.REFERENCE_MM_BOT_USERNAME ?? "system-liquidity-bot";
+  const order = await prisma.order.findFirst({
+    where: {
+      user: { username: botUsername },
+      status: { in: ["OPEN", "PARTIAL"] },
+      remaining: { gt: new Prisma.Decimal(0) },
+    },
+    orderBy: { updatedAt: "desc" },
+    select: { updatedAt: true },
+  });
+  return order;
+}
+
+function latestDate(...values: Array<Date | null | undefined>) {
+  const dates = values.filter((value): value is Date => value instanceof Date && Number.isFinite(value.getTime()));
+  if (dates.length === 0) return null;
+  return dates.reduce((latest, value) => value > latest ? value : latest, dates[0]);
+}
+
+function summarizeCurrentRiskReasons(alerts: Array<{ type: string; severity: string }>) {
+  return summarizeReasons(alerts.map((alert) => `${alert.severity}:${alert.type}`));
+}
+
+function summarizeHistoricalRiskReasons(payloads: Prisma.JsonValue[]) {
+  return summarizeReasons(payloads.map((payload) => {
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) return "unknown";
+    const type = typeof payload.type === "string" ? payload.type : "unknown";
+    const severity = typeof payload.severity === "string" ? payload.severity : "unknown";
+    return `${severity}:${type}`;
+  }));
+}
+
+function summarizeReasons(values: string[]) {
+  const counts = new Map<string, number>();
+  for (const value of values) {
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+  return Array.from(counts.entries())
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, 8)
+    .map(([reason, count]) => ({ reason, count }));
 }
 
 async function loadRecentExecutionDiagnostics() {

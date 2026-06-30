@@ -8,9 +8,20 @@ import { ErrorState, LoadingState } from "@/components/ui/States";
 
 type RuntimeStatus = {
   generatedAt: string;
-  serviceHealth: { referenceSyncHeartbeat: string | null; status: string };
+  serviceHealth: { referenceSyncHeartbeat: string | null; mmHeartbeat: string | null; mmHealthSource: string | null; status: string };
   referenceSync: { latestSnapshotAt: string | null; totalSnapshots: number; freshSnapshots: number; staleSnapshots: number };
-  marketMaker: { enabledConfigCount: number; dryRunConfigCount: number; openInternalOrders: number; dryRunIntentCount: number; liveLocalIntentCount: number };
+  marketMaker: {
+    enabledConfigCount: number;
+    dryRunConfigCount: number;
+    openInternalOrders: number;
+    dryRunIntentCount: number;
+    liveLocalIntentCount: number;
+    recentDryRunIntentCount: number;
+    recentLiveLocalIntentCount: number;
+    latestDryRunIntentAt: string | null;
+    latestLiveLocalIntentAt: string | null;
+    latestOpenBotOrderAt: string | null;
+  };
   worldCup: {
     events: number;
     mappedMarkets: number;
@@ -25,7 +36,17 @@ type RuntimeStatus = {
     hiddenStaleEvents: number;
     publicDraftLeakCount: number;
   };
-  risk: { alerts: number; unsafeFlags: string[] };
+  risk: {
+    alerts: number;
+    historicalAlerts: number;
+    recentHistoricalAlerts: number;
+    currentAlerts: number;
+    currentCriticalAlerts: number;
+    currentPauseRequired: boolean;
+    currentTopReasons: Array<{ reason: string; count: number }>;
+    recentHistoricalTopReasons: Array<{ reason: string; count: number }>;
+    unsafeFlags: string[];
+  };
   safety: Record<string, boolean>;
   ownerTesting: { canOwnerTrade: boolean; ownerTestBalanceRecords: number; activeLiquidityMarkets: number };
   execution: {
@@ -131,10 +152,16 @@ export default function AdminRuntimePage() {
           <Row label="Public draft leak count" value={status.worldCup.publicDraftLeakCount} />
         </RuntimeCard>
         <RuntimeCard title="Market Maker">
+          <Row label="MM heartbeat" value={status.serviceHealth.mmHeartbeat ? formatTime(status.serviceHealth.mmHeartbeat) : "none"} />
+          <Row label="MM health source" value={status.serviceHealth.mmHealthSource ?? "none"} />
           <Row label="Dry-run configs" value={status.marketMaker.dryRunConfigCount} />
           <Row label="Open internal orders" value={status.marketMaker.openInternalOrders} />
-          <Row label="Dry-run intents" value={status.marketMaker.dryRunIntentCount} />
-          <Row label="Live-local intents" value={status.marketMaker.liveLocalIntentCount} />
+          <Row label="Dry-run intents total" value={status.marketMaker.dryRunIntentCount} />
+          <Row label="Live-local intents total" value={status.marketMaker.liveLocalIntentCount} />
+          <Row label="Dry-run intents last hour" value={status.marketMaker.recentDryRunIntentCount} />
+          <Row label="Live-local intents last hour" value={status.marketMaker.recentLiveLocalIntentCount} />
+          <Row label="Latest live-local intent" value={status.marketMaker.latestLiveLocalIntentAt ? formatTime(status.marketMaker.latestLiveLocalIntentAt) : "none"} />
+          <Row label="Latest open bot order" value={status.marketMaker.latestOpenBotOrderAt ? formatTime(status.marketMaker.latestOpenBotOrderAt) : "none"} />
         </RuntimeCard>
         <RuntimeCard title="Safety Flags">
           {Object.entries(status.safety).map(([key, value]) => (
@@ -142,8 +169,18 @@ export default function AdminRuntimePage() {
           ))}
         </RuntimeCard>
         <RuntimeCard title="Risk">
-          <Row label="Risk alerts" value={status.risk.alerts} />
+          <Row label="Current alerts" value={status.risk.currentAlerts} />
+          <Row label="Current critical alerts" value={status.risk.currentCriticalAlerts} />
+          <Row label="Pause required now" value={String(status.risk.currentPauseRequired)} />
+          <Row label="Historical risk events" value={status.risk.historicalAlerts} />
+          <Row label="Historical risk events last hour" value={status.risk.recentHistoricalAlerts} />
           <Row label="Unsafe flags" value={status.risk.unsafeFlags.length ? status.risk.unsafeFlags.join(", ") : "none"} />
+          <div className="mt-3 border-t border-[var(--poly-border)] pt-3">
+            <div className="mb-2 text-xs font-semibold uppercase text-[var(--poly-muted)]">Current top reasons</div>
+            {status.risk.currentTopReasons.length ? status.risk.currentTopReasons.map((item) => (
+              <Row key={item.reason} label={item.reason} value={item.count} />
+            )) : <div className="text-sm text-[var(--poly-muted)]">none</div>}
+          </div>
         </RuntimeCard>
       </div>
       <div className="mt-6 grid gap-4 xl:grid-cols-2">

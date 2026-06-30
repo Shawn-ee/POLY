@@ -161,7 +161,7 @@ function MarketFamilyCard({
   const showLineSelector = group.displayType === "line_selector" && group.lines.length > 1;
   const outcomes = showLineSelector ? selectedLine?.outcomes ?? [] : group.outcomes;
 
-  if (group.family === "spread") {
+  if (group.family === "spread" || group.family === "total_goals") {
     return (
       <SpreadMarketCard
         group={group}
@@ -239,19 +239,23 @@ function SpreadMarketCard({
 }) {
   const selectedLine = group.lines.find((line) => line.id === selectedLineId) ?? group.lines[0] ?? null;
   const outcomes = selectedLine?.outcomes ?? group.outcomes;
+  const title = group.family === "total_goals" ? "Total Goals" : "Spread";
+  const subtitle = group.family === "total_goals"
+    ? selectedLine ? `Goals line ${selectedLine.label}` : "Goals line"
+    : selectedLine ? `Handicap ${selectedLine.label}` : "Handicap";
 
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-col gap-2 border-b border-[var(--poly-border)] bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base font-semibold text-[var(--poly-text)]">Spread</h2>
+            <h2 className="text-base font-semibold text-[var(--poly-text)]">{title}</h2>
             <Badge tone={group.tradeability.tradeable ? "positive" : "warning"}>
               {group.tradeability.tradeable ? "Tradeable" : group.tradeability.reasonIfDisabled ?? "Disabled"}
             </Badge>
           </div>
           <p className="mt-1 text-sm text-[var(--poly-muted)]">
-            {selectedLine ? `Handicap ${selectedLine.label}` : "Handicap"}
+            {subtitle}
           </p>
         </div>
         <div className="text-sm font-semibold tabular-nums text-[var(--poly-muted)]">

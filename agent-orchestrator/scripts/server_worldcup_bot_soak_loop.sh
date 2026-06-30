@@ -142,6 +142,17 @@ MD
 - Local event: $LOCAL_EVENT_SLUG
 - Status: RUNNING
 MD
+
+  cat >"$RUN_DIR/CLEANUP_POLICY.md" <<'MD'
+# Cleanup Policy
+
+- Runtime reports stay under `agent-orchestrator/runs/server-worldcup-bot-soak-loop/`.
+- Screenshots stay under `agent-orchestrator/runs/server-worldcup-bot-soak-loop/screenshots/`.
+- DB backups, if needed, stay under `test-logs/server-loop-backups/`.
+- `.env`, secrets, wallet/private-key material, DB dumps, and generated noise must not be committed.
+- Per-cycle git status must classify files as source change, intended report, runtime artifact, generated noise, or unsafe/secret.
+- Only meaningful source fixes and intentional orchestrator reports may be committed.
+MD
 }
 
 safe_env_summary() {
@@ -219,6 +230,10 @@ write_report_headers() {
   local cycle_dir="$1"
   local cycle_name="$2"
   for report in \
+    ROOT_CAUSE_REPORT \
+    SERVICE_STATUS_REPORT \
+    BOT_HEALTH_REPORT \
+    RISK_ALERT_REPORT \
     OBSERVATION_REPORT \
     POLYMARKET_GAP_REPORT \
     BOT_SOAK_REPORT \
@@ -235,6 +250,107 @@ Started: $(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 MD
   done
+}
+
+service_active() {
+  systemctl --user is-active --quiet "$1"
+}
+
+ensure_safe_services() {
+  local outfile="$1"
+  {
+    echo "## Safe Service Verification"
+    echo
+  } >>"$outfile"
+  for service in poly-web.service poly-reference-sync.service poly-reference-market-maker.service; do
+    if service_active "$service"; then
+      append_note "$outfile" "- $service: active"
+    else
+      append_note "$outfile" "- $service: inactive; restarting safe service"
+      append_cmd "$outfile" systemctl --user restart "$service"
+    fi
+    append_cmd "$outfile" systemctl --user status "$service" --no-pager
+  done
+}
+
+write_service_inventory() {
+  local outfile="$RUN_DIR/SERVICE_INVENTORY.md"
+  cat >"$outfile" <<MD
+# Service Inventory
+
+Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+## Safe Services
+
+MD
+  for service in poly-web.service poly-reference-sync.service poly-reference-market-maker.service; do
+    {
+      echo "### $service"
+      echo
+      echo "- status: $(systemctl --user is-active "$service" 2>/dev/null || echo unknown)"
+      echo
+      echo '```text'
+      systemctl --user status "$service" --no-pager 2>&1 || true
+      echo '```'
+      echo
+    } >>"$outfile"
+  done
+
+  cat >>"$outfile" <<'MD'
+## Safe Commands Run Manually
+
+- `systemctl --user status poly-web.service --no-pager`
+- `systemctl --user status poly-reference-sync.service --no-pager`
+- `systemctl --user status poly-reference-market-maker.service --no-pager`
+- Safe restarts are allowed only for the three services above.
+
+## Unsafe Services Intentionally Disabled
+
+- Real deposits
+- Real withdrawals
+- Wallet/private-key custody workers
+- Real cash-out
+- External-fund bots
+- External Polymarket order submission
+- Real-money mode
+- Auto public import without admin gate
+- Auto promote without admin gate
+
+## Owner Action Required
+
+- None unless the loop reports `OWNER DECISION REQUIRED`.
+MD
+}
+
+classify_git_status() {
+  local outfile="$1"
+  {
+    echo "## Git Status Classification"
+    echo
+    if [[ -z "$(git status --short)" ]]; then
+      echo "- clean"
+    else
+      git status --short | while read -r status path; do
+        case "$path" in
+          agent-orchestrator/runs/server-worldcup-bot-soak-loop/*)
+            echo "- $status $path: intended report/runtime artifact"
+            ;;
+          test-logs/server-loop-backups/*)
+            echo "- $status $path: runtime backup artifact"
+            ;;
+          .env|*.env)
+            echo "- $status $path: unsafe/secret; do not commit"
+            ;;
+          *.log|*.png|*.db|*.sqlite|*.sqlite3)
+            echo "- $status $path: generated noise/runtime artifact"
+            ;;
+          *)
+            echo "- $status $path: source change or intentional tracked file; review before commit"
+            ;;
+        esac
+      done
+    fi
+  } >>"$outfile"
 }
 
 capture_screenshots() {
@@ -294,6 +410,8 @@ run_cycle() {
   mkdir -p "$cycle_dir"
   write_report_headers "$cycle_dir" "$cycle"
   log "Starting $cycle"
+  ensure_safe_services "$cycle_dir/SERVICE_STATUS_REPORT.md"
+  write_service_inventory
 
   {
     echo "## Git"
@@ -305,17 +423,27 @@ run_cycle() {
     echo
     echo "## Health"
   } >>"$cycle_dir/OBSERVATION_REPORT.md"
+  classify_git_status "$cycle_dir/OBSERVATION_REPORT.md"
 
   safe_env_summary "$cycle_dir/AUDIT_REPORT.md"
   append_cmd "$cycle_dir/OBSERVATION_REPORT.md" curl -sS "$LOCAL_BASE_URL/api/health"
   append_cmd "$cycle_dir/OBSERVATION_REPORT.md" systemctl --user status poly-web.service --no-pager
   append_cmd "$cycle_dir/OBSERVATION_REPORT.md" systemctl --user status poly-reference-sync.service --no-pager
   append_cmd "$cycle_dir/OBSERVATION_REPORT.md" systemctl --user status poly-reference-market-maker.service --no-pager
-  append_cmd "$cycle_dir/OBSERVATION_REPORT.md" journalctl --user -u poly-reference-sync.service -n 100 --no-pager
-  append_cmd "$cycle_dir/OBSERVATION_REPORT.md" journalctl --user -u poly-reference-market-maker.service -n 100 --no-pager
+  append_cmd "$cycle_dir/OBSERVATION_REPORT.md" journalctl --user -u poly-reference-sync.service -n 150 --no-pager
+  append_cmd "$cycle_dir/OBSERVATION_REPORT.md" journalctl --user -u poly-reference-market-maker.service -n 150 --no-pager
   append_cmd "$cycle_dir/OBSERVATION_REPORT.md" journalctl --user -u poly-web.service -n 100 --no-pager
   append_cmd "$cycle_dir/OBSERVATION_REPORT.md" npm run runtime:closed-beta:status
   append_cmd "$cycle_dir/OBSERVATION_REPORT.md" npm run worldcup:mapping:audit
+
+  {
+    echo "## Root Cause Focus"
+    echo
+    echo "- mmHeartbeat/null or equivalent MM health is diagnosed from runtime status, latest live-local intent, latest open bot order, and MM service logs."
+    echo "- Risk alert counts are split between current risk monitor output and historical canonical risk events."
+    echo "- liveLocalIntentCount is treated as historical unless recent intent counters show sustained high churn."
+    echo "- Brazil/Japan is checked through runtime/mapping output and Polymarket API; if completed, England/DR Congo or the next fresh Polymarket-backed World Cup event becomes the active target."
+  } >>"$cycle_dir/ROOT_CAUSE_REPORT.md"
 
   write_polymarket_gap_report "$cycle_dir"
 
@@ -327,11 +455,16 @@ run_cycle() {
     echo "- Runtime status below is the source of truth for active liquidity markets, open bot orders, risk, and skipped reasons."
   } >>"$cycle_dir/BOT_SOAK_REPORT.md"
   append_cmd "$cycle_dir/BOT_SOAK_REPORT.md" npm run runtime:closed-beta:status
+  append_cmd "$cycle_dir/BOT_HEALTH_REPORT.md" npm run runtime:closed-beta:status
+  append_cmd "$cycle_dir/BOT_HEALTH_REPORT.md" npm run polymarket-mm:status
+  append_cmd "$cycle_dir/RISK_ALERT_REPORT.md" npm run risk:polymarket:once
+  append_cmd "$cycle_dir/RISK_ALERT_REPORT.md" npm run runtime:closed-beta:status
 
   {
     echo "## Builder"
     echo
-    echo "No automatic code/data mutation is performed by the soak script. Fixes should be made by the loop engineer after reviewing the gap and validation reports."
+    echo "The enhanced loop records root-cause reports and validates source/runtime fixes made by the loop engineer between cycles."
+    echo "Safe service restarts are automatic for the approved World Cup runtime services only."
   } >>"$cycle_dir/BUILDER_REPORT.md"
 
   append_cmd "$cycle_dir/VALIDATION_REPORT.md" git diff --check
@@ -498,7 +631,9 @@ main() {
   fi
 
   local cycles_completed=0
-  local index=1
+  local index
+  index="$(find "$RUN_DIR" -maxdepth 1 -type d -name 'cycle-[0-9][0-9][0-9]' -printf '%f\n' 2>/dev/null | sed 's/cycle-//' | sort -n | tail -n 1)"
+  index="$((10#${index:-0} + 1))"
   while [[ "$index" -le "$MAX_CYCLES" ]]; do
     local now
     now="$(date +%s)"
