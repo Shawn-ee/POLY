@@ -12,6 +12,7 @@ async function main() {
   assertLocalOnly();
   const marketId = option("marketId");
   const eventSlug = option("eventSlug");
+  const marketType = option("marketType", "match_winner_1x2");
   const username = option("botUsername", DEFAULT_BOT_USERNAME) ?? DEFAULT_BOT_USERNAME;
   const quantity = option("quantity", "3") ?? "3";
 
@@ -20,15 +21,28 @@ async function main() {
       ...(marketId ? { id: marketId } : {}),
       ...(eventSlug ? { event: { slug: eventSlug } } : {}),
       referenceSource: "polymarket",
-      marketType: "match_winner_1x2",
+      ...(marketId ? {} : { marketType }),
       status: "LIVE",
       visibility: "PUBLIC",
       isListed: true,
     },
-    include: { outcomes: { where: { isActive: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] } },
+    include: {
+      event: { select: { slug: true } },
+      outcomes: { where: { isActive: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }] },
+    },
   });
   if (!market) {
-    throw new Error("No live public Polymarket match_winner_1x2 market found for the selector.");
+    throw new Error("No live public Polymarket market found for the selector.");
+  }
+  const review =
+    market.referenceMetadata && typeof market.referenceMetadata === "object" && !Array.isArray(market.referenceMetadata)
+      ? (market.referenceMetadata as Record<string, unknown>)
+      : {};
+  if (review.importStatus !== "approved") {
+    throw new Error("Market must be approved before bot inventory seeding.");
+  }
+  if (!market.outcomes.every((outcome) => outcome.referenceTokenId)) {
+    throw new Error("All active outcomes must have reference token ids before bot inventory seeding.");
   }
   const bot = await prisma.user.findUnique({ where: { username }, include: { balance: true } });
   if (!bot?.balance) {
@@ -40,7 +54,8 @@ async function main() {
       {
         ok: true,
         marketId: market.id,
-        eventSlug: market.eventId ? eventSlug : null,
+        eventSlug: market.event?.slug ?? eventSlug ?? null,
+        marketType: market.marketType,
         botUserId: bot.id,
         quantity,
         outcomes: market.outcomes.map((outcome) => ({ id: outcome.id, name: outcome.name })),

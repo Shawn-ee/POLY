@@ -29,8 +29,11 @@ cd "$ROOT_DIR" || exit 1
 RUN_DIR="agent-orchestrator/runs/server-worldcup-bot-soak-loop"
 SCREENSHOT_DIR="$RUN_DIR/screenshots"
 LOG_FILE="$RUN_DIR/loop.out.log"
-TARGET_EVENT_SLUG="fifwc-bra-jpn-2026-06-29"
-LOCAL_EVENT_SLUG="brazil-vs-japan"
+TARGET_EVENT_SLUG="${TARGET_EVENT_SLUG:-fifwc-fra-swe-2026-06-30-more-markets}"
+LOCAL_EVENT_SLUG="${LOCAL_EVENT_SLUG:-france-vs-sweden-more-markets}"
+SECONDARY_TARGET_EVENT_SLUG="${SECONDARY_TARGET_EVENT_SLUG:-fifwc-civ-nor-2026-06-30-more-markets}"
+SECONDARY_LOCAL_EVENT_SLUG="${SECONDARY_LOCAL_EVENT_SLUG:-cte-divoire-vs-norway-more-markets}"
+STALE_REGRESSION_LOCAL_EVENT_SLUG="${STALE_REGRESSION_LOCAL_EVENT_SLUG:-brazil-vs-japan}"
 PUBLIC_BASE_URL="${PUBLIC_BASE_URL:-https://holiwyn.online}"
 LOCAL_BASE_URL="${LOCAL_BASE_URL:-http://127.0.0.1:3001}"
 START_EPOCH="$(date +%s)"
@@ -140,6 +143,9 @@ MD
 - Public base URL: $PUBLIC_BASE_URL
 - Target Polymarket event: $TARGET_EVENT_SLUG
 - Local event: $LOCAL_EVENT_SLUG
+- Secondary Polymarket event: $SECONDARY_TARGET_EVENT_SLUG
+- Secondary local event: $SECONDARY_LOCAL_EVENT_SLUG
+- Stale regression local event: $STALE_REGRESSION_LOCAL_EVENT_SLUG
 - Status: RUNNING
 MD
 
@@ -367,10 +373,14 @@ capture_screenshots() {
   append_note "$cycle_dir/UI_SCREENSHOT_REPORT.md" "## Screenshot Targets"
   append_note "$cycle_dir/UI_SCREENSHOT_REPORT.md" "- $LOCAL_BASE_URL/sports/soccer/world-cup"
   append_note "$cycle_dir/UI_SCREENSHOT_REPORT.md" "- $LOCAL_BASE_URL/events/$LOCAL_EVENT_SLUG"
+  append_note "$cycle_dir/UI_SCREENSHOT_REPORT.md" "- $LOCAL_BASE_URL/events/$SECONDARY_LOCAL_EVENT_SLUG"
+  append_note "$cycle_dir/UI_SCREENSHOT_REPORT.md" "- $LOCAL_BASE_URL/events/$STALE_REGRESSION_LOCAL_EVENT_SLUG"
   append_note "$cycle_dir/UI_SCREENSHOT_REPORT.md" "- $LOCAL_BASE_URL/admin/runtime"
 
   timeout 90s npx playwright screenshot --full-page "$LOCAL_BASE_URL/sports/soccer/world-cup" "$out_dir/world-cup-list.png" >>"$cycle_dir/UI_SCREENSHOT_REPORT.md" 2>&1 || true
-  timeout 90s npx playwright screenshot --full-page "$LOCAL_BASE_URL/events/$LOCAL_EVENT_SLUG" "$out_dir/brazil-japan-event.png" >>"$cycle_dir/UI_SCREENSHOT_REPORT.md" 2>&1 || true
+  timeout 90s npx playwright screenshot --full-page "$LOCAL_BASE_URL/events/$LOCAL_EVENT_SLUG" "$out_dir/active-event.png" >>"$cycle_dir/UI_SCREENSHOT_REPORT.md" 2>&1 || true
+  timeout 90s npx playwright screenshot --full-page "$LOCAL_BASE_URL/events/$SECONDARY_LOCAL_EVENT_SLUG" "$out_dir/secondary-event.png" >>"$cycle_dir/UI_SCREENSHOT_REPORT.md" 2>&1 || true
+  timeout 90s npx playwright screenshot --full-page "$LOCAL_BASE_URL/events/$STALE_REGRESSION_LOCAL_EVENT_SLUG" "$out_dir/stale-regression-event.png" >>"$cycle_dir/UI_SCREENSHOT_REPORT.md" 2>&1 || true
   timeout 90s npx playwright screenshot --full-page "$LOCAL_BASE_URL/admin/runtime" "$out_dir/admin-runtime.png" >>"$cycle_dir/UI_SCREENSHOT_REPORT.md" 2>&1 || true
 
   {
@@ -387,6 +397,8 @@ write_polymarket_gap_report() {
     echo
     echo "- Polymarket event: https://polymarket.com/zh/sports/world-cup/$TARGET_EVENT_SLUG"
     echo "- Gamma event API: https://gamma-api.polymarket.com/events?slug=$TARGET_EVENT_SLUG"
+    echo "- Secondary Polymarket event: https://polymarket.com/zh/sports/world-cup/$SECONDARY_TARGET_EVENT_SLUG"
+    echo "- Secondary Gamma event API: https://gamma-api.polymarket.com/events?slug=$SECONDARY_TARGET_EVENT_SLUG"
     echo
     echo "## Gap Focus"
     echo
@@ -400,6 +412,7 @@ write_polymarket_gap_report() {
   } >>"$cycle_dir/POLYMARKET_GAP_REPORT.md"
   append_cmd "$cycle_dir/POLYMARKET_GAP_REPORT.md" curl -I -L "https://polymarket.com/zh/sports/world-cup/$TARGET_EVENT_SLUG"
   append_cmd "$cycle_dir/POLYMARKET_GAP_REPORT.md" curl -sS "https://gamma-api.polymarket.com/events?slug=$TARGET_EVENT_SLUG"
+  append_cmd "$cycle_dir/POLYMARKET_GAP_REPORT.md" curl -sS "https://gamma-api.polymarket.com/events?slug=$SECONDARY_TARGET_EVENT_SLUG"
 }
 
 run_cycle() {
@@ -565,6 +578,7 @@ Closed-beta flags are recorded in per-cycle AUDIT_REPORT.md files. Required stat
 
 - $PUBLIC_BASE_URL/sports/soccer/world-cup
 - $PUBLIC_BASE_URL/events/$LOCAL_EVENT_SLUG
+- $PUBLIC_BASE_URL/events/$SECONDARY_LOCAL_EVENT_SLUG
 - $PUBLIC_BASE_URL/admin/runtime
 
 ## GO/NO-GO
