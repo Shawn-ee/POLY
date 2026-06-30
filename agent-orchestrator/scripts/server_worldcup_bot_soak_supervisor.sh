@@ -5,6 +5,7 @@ ROOT_DIR="/home/shawn/projects/poly/Poly"
 RUN_DIR="agent-orchestrator/runs/server-worldcup-bot-soak-loop"
 LOOP_SCRIPT="agent-orchestrator/scripts/server_worldcup_bot_soak_loop.sh"
 SUPERVISOR_LOG="$RUN_DIR/supervisor.out.log"
+LOCK_DIR="$RUN_DIR/supervisor.lock"
 LOOP_SESSION_NAME="${WORLD_CUP_SOAK_LOOP_SESSION:-poly-worldcup-bot-soak}"
 SUPERVISOR_SLEEP_SECONDS="${WORLD_CUP_SOAK_SUPERVISOR_SLEEP_SECONDS:-60}"
 WAIT_FOR_ACTIVE_LOOP_SECONDS="${WORLD_CUP_SOAK_WAIT_FOR_ACTIVE_LOOP_SECONDS:-60}"
@@ -36,7 +37,7 @@ next_cycle_ceiling() {
 }
 
 active_loop_pids() {
-  pgrep -af "bash $LOOP_SCRIPT" 2>/dev/null | awk '{print $1}' | grep -v "^$$$" || true
+  pgrep -af "bash $LOOP_SCRIPT" 2>/dev/null | awk -v self="$$" '$1 != self {print $1}' || true
 }
 
 loop_session_active() {
@@ -110,7 +111,8 @@ write_status() {
 
 - Updated: $(date -u +%Y-%m-%dT%H:%M:%SZ)
 - Original loop state: $original_state
-- Supervisor script path: $LOOP_SCRIPT supervisor wrapper is `agent-orchestrator/scripts/server_worldcup_bot_soak_supervisor.sh`
+- Supervisor script path: agent-orchestrator/scripts/server_worldcup_bot_soak_supervisor.sh
+- Managed loop script path: $LOOP_SCRIPT
 - Supervisor tmux session: poly-worldcup-bot-soak-supervisor
 - Managed loop tmux session: $LOOP_SESSION_NAME
 - Current cycle: cycle-${latest:-000}
@@ -137,6 +139,12 @@ MD
 }
 
 main() {
+  if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    log "Supervisor already running; exiting duplicate invocation"
+    exit 0
+  fi
+  trap 'rmdir "$LOCK_DIR" 2>/dev/null || true' EXIT
+
   log "Supervisor starting"
   while true; do
     if ! assert_safe_env; then
