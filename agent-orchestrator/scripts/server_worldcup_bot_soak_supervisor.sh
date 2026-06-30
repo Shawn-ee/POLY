@@ -11,6 +11,7 @@ SUPERVISOR_SLEEP_SECONDS="${WORLD_CUP_SOAK_SUPERVISOR_SLEEP_SECONDS:-60}"
 WAIT_FOR_ACTIVE_LOOP_SECONDS="${WORLD_CUP_SOAK_WAIT_FOR_ACTIVE_LOOP_SECONDS:-60}"
 LOOP_MAX_HOURS="${WORLD_CUP_SOAK_LOOP_MAX_HOURS:-5}"
 LOOP_CYCLE_WINDOW="${WORLD_CUP_SOAK_LOOP_CYCLE_WINDOW:-50}"
+ACCEPTANCE_DIR="$RUN_DIR/supervisor-acceptance"
 
 cd "$ROOT_DIR" || exit 1
 mkdir -p "$RUN_DIR"
@@ -138,6 +139,103 @@ npm run mm:polymarket:pause-all
 MD
 }
 
+run_acceptance_check() {
+  local latest
+  latest="$(latest_cycle_number)"
+  local latest_cycle="cycle-${latest:-000}"
+  local screenshot_dir="$RUN_DIR/screenshots/$latest_cycle"
+  mkdir -p "$ACCEPTANCE_DIR"
+
+  log "Running supervisor acceptance check against $latest_cycle"
+  npm run runtime:closed-beta:status >"$ACCEPTANCE_DIR/runtime-status.txt" 2>&1 || return 1
+  npm run worldcup:mapping:audit >"$ACCEPTANCE_DIR/worldcup-mapping-audit.txt" 2>&1 || return 1
+
+  if ! node - "$ACCEPTANCE_DIR/runtime-status.txt" "$ACCEPTANCE_DIR/worldcup-mapping-audit.txt" "$screenshot_dir" <<'NODE'
+const fs = require("fs");
+const [runtimePath, auditPath, screenshotDir] = process.argv.slice(2);
+
+function loadJsonFromOutput(path) {
+  const text = fs.readFileSync(path, "utf8");
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start < 0 || end < start) throw new Error(`No JSON object found in ${path}`);
+  return JSON.parse(text.slice(start, end + 1));
+}
+
+const runtime = loadJsonFromOutput(runtimePath);
+const audit = loadJsonFromOutput(auditPath);
+const screenshots = fs.existsSync(screenshotDir)
+  ? fs.readdirSync(screenshotDir).filter((name) => name.endsWith(".png"))
+  : [];
+
+const failures = [];
+function requireOk(condition, message) {
+  if (!condition) failures.push(message);
+}
+
+requireOk(runtime.serviceHealth?.status === "ready_for_rehearsal", "runtime is not ready_for_rehearsal");
+requireOk(Boolean(runtime.serviceHealth?.referenceSyncHeartbeat), "reference sync heartbeat missing");
+requireOk(Boolean(runtime.serviceHealth?.mmHeartbeat), "MM heartbeat missing");
+requireOk(Number(runtime.risk?.currentCriticalAlerts ?? 1) === 0, "current critical risk alerts are not zero");
+requireOk(Number(runtime.risk?.currentAlerts ?? 1) === 0, "current risk alerts are not zero");
+requireOk(Array.isArray(runtime.risk?.unsafeFlags) && runtime.risk.unsafeFlags.length === 0, "unsafe flags present");
+requireOk(runtime.safety?.realMoneyMode === false, "real money mode is not false");
+requireOk(runtime.safety?.fundingEnabled === false, "funding appears enabled");
+requireOk(runtime.safety?.fundingKillSwitch === true, "funding kill switch is not true");
+requireOk(runtime.safety?.autoDepositCredit === false, "auto deposit credit is not false");
+requireOk(runtime.safety?.autoImport === false, "auto import is not false");
+requireOk(runtime.safety?.autoPromote === false, "auto promote is not false");
+requireOk(runtime.safety?.localBotTradingOnly === true, "local bot trading only is not true");
+requireOk(runtime.safety?.liveLocalMm === true, "live local MM is not true");
+requireOk(Number(runtime.marketMaker?.enabledConfigCount ?? 0) >= 10, "enabled MM configs below 10");
+requireOk(Number(runtime.marketMaker?.openInternalOrders ?? 0) >= 10, "open internal bot orders below 10");
+requireOk(Number(runtime.ownerTesting?.activeLiquidityMarkets ?? 0) >= 10, "active liquidity markets below 10");
+requireOk(runtime.ownerTesting?.canOwnerTrade === true, "owner internal trading is not available");
+requireOk(Number(runtime.worldCup?.eligibleUserFacingMarkets ?? 0) >= 10, "eligible user-facing markets below 10");
+requireOk(Number(runtime.worldCup?.eventsWithEligibleMarkets ?? 0) >= 2, "events with eligible markets below 2");
+requireOk(Number(runtime.worldCup?.publicDraftLeakCount ?? 1) === 0, "public draft leak count is not zero");
+
+requireOk(Number(audit.totals?.userFacingEligibleMarkets ?? 0) >= 10, "mapping audit eligible markets below 10");
+requireOk(Number(audit.totals?.localBotBookMarkets ?? 0) >= 10, "mapping audit local bot book markets below 10");
+requireOk(Number(audit.totals?.eventsWithEligibleMarkets ?? 0) >= 2, "mapping audit eligible events below 2");
+requireOk(Number(audit.totals?.userFacingLeakWithoutMapping ?? 1) === 0, "mapping audit user-facing leak exists");
+requireOk(screenshots.length >= 4, "latest cycle screenshot set is incomplete");
+
+if (failures.length > 0) {
+  console.error(JSON.stringify({ ok: false, failures, screenshots }, null, 2));
+  process.exit(1);
+}
+console.log(JSON.stringify({ ok: true, screenshots }, null, 2));
+NODE
+  then
+    return 1
+  fi
+
+  npm run test:jest >"$ACCEPTANCE_DIR/full-jest.txt" 2>&1 || return 1
+  write_complete_report
+  return 0
+}
+
+write_complete_report() {
+  local final_commit
+  final_commit="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+  cat >"$RUN_DIR/FINAL_REPORT.md" <<MD
+# Final Report
+
+- Finished: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+- Final commit: $final_commit
+- Branch: $(git branch --show-current 2>/dev/null || echo unknown)
+- Runtime status: $ACCEPTANCE_DIR/runtime-status.txt
+- Mapping audit: $ACCEPTANCE_DIR/worldcup-mapping-audit.txt
+- Full Jest: $ACCEPTANCE_DIR/full-jest.txt
+
+## Verdict
+
+LOOP COMPLETE — WORLDCUP BOT SOAK READY
+MD
+  echo "Status: LOOP COMPLETE — WORLDCUP BOT SOAK READY" >>"$RUN_DIR/LOOP_STATE.md"
+}
+
 main() {
   if ! mkdir "$LOCK_DIR" 2>/dev/null; then
     log "Supervisor already running; exiting duplicate invocation"
@@ -180,6 +278,13 @@ main() {
       continue
     fi
 
+    if run_acceptance_check; then
+      verdict="LOOP COMPLETE — WORLDCUP BOT SOAK READY"
+      write_status "complete" "$verdict"
+      log "$verdict"
+      exit 0
+    fi
+
     local max_cycles
     max_cycles="$(next_cycle_ceiling)"
     write_status "restarting" "$verdict"
@@ -188,6 +293,15 @@ main() {
     local status=$?
     verdict="$(read_verdict)"
     write_status "last invocation exited status=$status" "$verdict"
+
+    if [[ "$verdict" == "LOOP NOT COMPLETE — CONTINUATION REQUIRED" || "$verdict" == "UNKNOWN" ]]; then
+      if run_acceptance_check; then
+        verdict="LOOP COMPLETE — WORLDCUP BOT SOAK READY"
+        write_status "complete" "$verdict"
+        log "$verdict"
+        exit 0
+      fi
+    fi
 
     case "$verdict" in
       "LOOP COMPLETE — WORLDCUP BOT SOAK READY")
