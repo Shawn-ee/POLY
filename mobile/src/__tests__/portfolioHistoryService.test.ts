@@ -66,6 +66,46 @@ describe("portfolio history activity mapping", () => {
     ]);
   });
 
+  test("accepts terminal market statuses for resolved history activity", () => {
+    expect(
+      portfolioHistoryToActivity([
+        historyItem({
+          market: {
+            id: "world-cup-settled",
+            title: "World Cup settled winner",
+            status: "SETTLED",
+            resolveTime: "2026-07-19T22:30:00.000Z",
+            resolvedOutcomeId: "france",
+            createdAt: "2026-07-01T14:00:00.000Z",
+          },
+        }),
+      ]),
+    ).toEqual([
+      expect.objectContaining({
+        id: "history-world-cup-settled",
+        action: "closed",
+        title: "World Cup settled winner",
+      }),
+    ]);
+  });
+
+  test("rejects non-terminal market statuses before applying resolved history activity", () => {
+    expect(() =>
+      portfolioHistoryToActivity([
+        historyItem({
+          market: {
+            id: "world-cup-live",
+            title: "World Cup live winner",
+            status: "LIVE",
+            resolveTime: null,
+            resolvedOutcomeId: null,
+            createdAt: "2026-07-01T14:00:00.000Z",
+          },
+        }),
+      ]),
+    ).toThrow("Portfolio history response had invalid history[].market.status.");
+  });
+
   test("maps backend canceled orders into durable canceled activity rows", () => {
     expect(
       canceledOrdersToActivity([

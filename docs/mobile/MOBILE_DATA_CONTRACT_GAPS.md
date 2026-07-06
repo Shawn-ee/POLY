@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NP - Portfolio Resolved-History Status Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio History `history[]` rows now require terminal market status before becoming visible closed activity.
+- Terminal statuses accepted for visible closed history are `RESOLVED`, `CLOSED`, `SETTLED`, and `FINAL`.
+- Non-terminal market statuses such as `LIVE`, `ACTIVE`, or `OPEN` reject before visible History state applies.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio resolved-history status contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio/history` `history[].market.status` supports this contract.
+
+Temporary mock/static data:
+
+- Mock/local history behavior remains unchanged. Server-mode malformed resolved-history market statuses reject before visible History state applies.
+
 ## Cycle NO - Portfolio History Side Contract
 
 Closed or narrowed:

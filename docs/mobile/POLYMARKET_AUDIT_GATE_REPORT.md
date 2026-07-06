@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NP
+
+Gate status: Pass
+
+Scope: Portfolio resolved-history status contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NP-portfolio-resolved-history-status-contract/cycle-NP-portfolio-resolved-history-status-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioHistoryService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NP-portfolio-resolved-history-status-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio History `history[]` rows require terminal market status before visible closed History activity applies.
+
 ## Cycle NO
 
 Gate status: Pass

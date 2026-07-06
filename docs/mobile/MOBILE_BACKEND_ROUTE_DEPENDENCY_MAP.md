@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NP - Portfolio Resolved-History Status Contract
+
+Cycle NP hardens Portfolio History resolved-market status before visible closed activity state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NP-portfolio-resolved-history-status-contract/cycle-NP-portfolio-resolved-history-status-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_resolved_history_status_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio closed history activity status | `/api/portfolio/history` through `PolyApi.getPortfolioHistory()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | `history[].market.status`; visible closed activity requires terminal `RESOLVED`, `CLOSED`, `SETTLED`, or `FINAL` status | `Market`, `Outcome`, settlement/history projection | Mock/local history remains unchanged. Server-mode live/open history rows reject before visible closed History state applies. | None for focused Portfolio resolved-history status contract. P2 optional terminal-status-specific error copy. |
+
 ## Cycle NO - Portfolio History Side Contract
 
 Cycle NO hardens Portfolio History side fields before visible activity state applies:

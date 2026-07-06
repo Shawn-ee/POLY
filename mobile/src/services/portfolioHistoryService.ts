@@ -64,6 +64,14 @@ const requireOrderSide = (value: unknown, field: string): "BUY" | "SELL" => {
   return normalized;
 };
 
+const terminalHistoryMarketStatuses = new Set(["RESOLVED", "CLOSED", "SETTLED", "FINAL"]);
+
+const requireTerminalHistoryMarketStatus = (value: unknown) => {
+  if (typeof value !== "string" || !terminalHistoryMarketStatuses.has(value.trim().toUpperCase())) {
+    throw new Error("Portfolio history response had invalid history[].market.status.");
+  }
+};
+
 const requireExecutionPrice = (cost: number, shares: number) => {
   if (shares === 0) {
     if (cost > 0) {
@@ -80,6 +88,7 @@ const requireExecutionPrice = (cost: number, shares: number) => {
 
 export const portfolioHistoryToActivity = (history: Awaited<ReturnType<PolyApi["getPortfolioHistory"]>>["history"]): PortfolioActivity[] =>
   history.map((item) => {
+    requireTerminalHistoryMarketStatus(item.market.status);
     const payout = requireNonNegativeNumber(item.winningsTokens, "history[].winningsTokens") + requireNonNegativeNumber(item.refundsTokens, "history[].refundsTokens");
     const netInvested = requireNonNegativeNumber(item.netInvestedTokens, "history[].netInvestedTokens");
     return {

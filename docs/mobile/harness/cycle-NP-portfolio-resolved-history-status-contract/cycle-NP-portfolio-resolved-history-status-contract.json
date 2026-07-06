@@ -1,0 +1,19 @@
+{
+  "cycle": "Cycle NP",
+  "feature": "Portfolio resolved-history status contract",
+  "generatedAt": "2026-07-06T14:12:44.932Z",
+  "route": "/api/portfolio/history",
+  "contract": {
+    "validPayload": "history rows must reference terminal market statuses before becoming visible closed Portfolio History activity.",
+    "malformedPayload": "live, active, or open market statuses reject before visible closed activity applies."
+  },
+  "assertions": {
+    "acceptsResolvedStatus": true,
+    "acceptsClosedStatus": true,
+    "acceptsSettledStatus": true,
+    "acceptsFinalStatus": true,
+    "rejectsLiveStatus": true,
+    "rejectsActiveStatus": true,
+    "rejectsOpenStatus": true
+  }
+}
