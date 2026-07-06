@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KZ - Event Detail Market Availability Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail now gates synthetic line-family sections behind actual backend market availability.
+- Spread, Totals, Team Total, First Half, and Second Half sections no longer render for a route-backed event when the live-detail route does not provide a matching market.
+- Local/offline fixtures still keep deterministic synthetic line rows because they have no backend route contract.
+- Route/mobile proof verifies an event with only advance and regulation winner markets hides unsupported Spread/Totals/Team Total/Halves while keeping advance primary and regulation Home/Tie/Away.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail market availability contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing compact `Market.marketType`, `Market.period`, `Market.line`, and `Outcome.side` fields support this contract.
+
+Temporary mock/static data:
+
+- Synthetic line rows remain local/offline fallback only. Server-mode route-backed Event Detail uses backend-provided market families.
+
 ## Cycle KY - Event Detail Mixed Profile Contract
 
 Closed or narrowed:

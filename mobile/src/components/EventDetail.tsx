@@ -8,7 +8,7 @@ import {
 import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
 import { label, money } from "../presentation/formatters";
 import { resolveLineTicketTarget, ticketSelectionFromBackendMarket } from "../services/eventDetailLineTicketService";
-import { selectEventDetailPrimaryMarket, selectEventDetailRegulationMarket } from "../services/eventDetailMarketProfileService";
+import { canRenderEventDetailLineFamily, selectEventDetailPrimaryMarket, selectEventDetailRegulationMarket } from "../services/eventDetailMarketProfileService";
 import type { Position } from "./Portfolio";
 import type { TicketSelection } from "./TradeTicket";
 
@@ -644,6 +644,7 @@ export function EventDetail({
       market.outcomes.length > 0);
   const backendFirstHalfMarket = matchingBackendPeriodWinnerMarket("first-half");
   const backendSecondHalfMarket = matchingBackendPeriodWinnerMarket("second-half");
+  const canRenderSpread = canRenderEventDetailLineFamily(event, backendSpreadMarket);
   const spreadMarket = makeLineMarket(`${event.id}-spread-${spreadLine}-${linePeriodCode(spreadPeriod)}`, `Spread ${homeCode} -${spreadLine} ${linePeriodCode(spreadPeriod)}`, [], "spread", spreadLine, marketPeriodForLinePeriod(spreadPeriod));
   const spreadYesOutcome = withLineOutcome({
     id: `${spreadMarket.id}-yes`,
@@ -850,6 +851,7 @@ export function EventDetail({
       ],
     },
   ];
+  const visibleGameLineGroups = gameLineGroups.filter((group) => canRenderEventDetailLineFamily(event, group.backendMarket));
   const toggleGroup = (id: string) => {
     setExpandedMarketIds((current) => ({ ...current, [id]: !current[id] }));
   };
@@ -982,7 +984,7 @@ export function EventDetail({
 
   const renderHalves = () => (
     <View accessibilityLabel="event-detail-halves" testID="event-detail-halves">
-      {gameLineGroups.filter((group) => group.id === "first-half-winner" || group.id === "second-half-winner").map((group) => renderGroup(group))}
+      {visibleGameLineGroups.filter((group) => group.id === "first-half-winner" || group.id === "second-half-winner").map((group) => renderGroup(group))}
     </View>
   );
 
@@ -2118,84 +2120,86 @@ export function EventDetail({
                 )}
               </View>
             )}
-            <View style={styles.marketBlock}>
-              <Pressable
-                accessibilityLabel={`event-detail-market-toggle-spread Spread ${homeCode} to win by over ${spreadLine} goals ${spreadLine}`}
-                onPress={() => toggleGroup("spread")}
-                style={styles.marketHeaderRow}
-                testID="event-detail-market-toggle-spread"
-              >
-                <View style={styles.marketTitleBlock}>
-                  <Text style={styles.marketTitle}>Spread</Text>
-                  <Text style={styles.marketSubcopy}>{homeCode} to win by over {spreadLine} goals</Text>
-                </View>
-                <View style={styles.headerRightCluster}>
-                  {backendSpreadMarket?.availability && (
-                    <View
-                      accessibilityLabel={`event-detail-market-availability-spread market-availability-${backendSpreadMarket.availability.status} market-status-${backendSpreadMarket.availability.marketStatus ?? "unknown"} ${marketAvailabilityLabel(backendSpreadMarket) ?? ""}`}
-                      style={[styles.marketAvailabilityPill, backendSpreadMarket.availability.status !== "ready" && styles.marketAvailabilityPillWarning, backendSpreadMarket.availability.status === "suspended" && styles.marketAvailabilityPillSuspended]}
-                      testID="event-detail-market-availability-spread"
-                    >
-                      <Text style={[styles.marketAvailabilityText, backendSpreadMarket.availability.status !== "ready" && styles.marketAvailabilityTextWarning]}>{marketAvailabilityLabel(backendSpreadMarket)}</Text>
+            {canRenderSpread && (
+              <View style={styles.marketBlock}>
+                <Pressable
+                  accessibilityLabel={`event-detail-market-toggle-spread Spread ${homeCode} to win by over ${spreadLine} goals ${spreadLine}`}
+                  onPress={() => toggleGroup("spread")}
+                  style={styles.marketHeaderRow}
+                  testID="event-detail-market-toggle-spread"
+                >
+                  <View style={styles.marketTitleBlock}>
+                    <Text style={styles.marketTitle}>Spread</Text>
+                    <Text style={styles.marketSubcopy}>{homeCode} to win by over {spreadLine} goals</Text>
+                  </View>
+                  <View style={styles.headerRightCluster}>
+                    {backendSpreadMarket?.availability && (
+                      <View
+                        accessibilityLabel={`event-detail-market-availability-spread market-availability-${backendSpreadMarket.availability.status} market-status-${backendSpreadMarket.availability.marketStatus ?? "unknown"} ${marketAvailabilityLabel(backendSpreadMarket) ?? ""}`}
+                        style={[styles.marketAvailabilityPill, backendSpreadMarket.availability.status !== "ready" && styles.marketAvailabilityPillWarning, backendSpreadMarket.availability.status === "suspended" && styles.marketAvailabilityPillSuspended]}
+                        testID="event-detail-market-availability-spread"
+                      >
+                        <Text style={[styles.marketAvailabilityText, backendSpreadMarket.availability.status !== "ready" && styles.marketAvailabilityTextWarning]}>{marketAvailabilityLabel(backendSpreadMarket)}</Text>
+                      </View>
+                    )}
+                    {showOrderBookDebug && backendSpreadMarket && (
+                      <Pressable
+                        accessibilityLabel={`event-detail-open-order-book-spread ${backendSpreadMarket.id}`}
+                        onPress={() => openOrderBookForMarket(backendSpreadMarket)}
+                        style={styles.depthBookButton}
+                        testID="event-detail-open-order-book-spread"
+                      >
+                        <Ionicons name="book-outline" color="#dbeafe" size={14} />
+                        <Text style={styles.depthBookText}>Book</Text>
+                      </Pressable>
+                    )}
+                    <View style={styles.lineValuePill}>
+                      <Text style={styles.lineValueText}>{spreadLine}</Text>
+                      <Ionicons name="chevron-down" color="#86efac" size={16} />
                     </View>
-                  )}
-                  {showOrderBookDebug && backendSpreadMarket && (
-                    <Pressable
-                      accessibilityLabel={`event-detail-open-order-book-spread ${backendSpreadMarket.id}`}
-                      onPress={() => openOrderBookForMarket(backendSpreadMarket)}
-                      style={styles.depthBookButton}
-                      testID="event-detail-open-order-book-spread"
-                    >
-                      <Ionicons name="book-outline" color="#dbeafe" size={14} />
-                      <Text style={styles.depthBookText}>Book</Text>
-                    </Pressable>
-                  )}
-                  <View style={styles.lineValuePill}>
-                    <Text style={styles.lineValueText}>{spreadLine}</Text>
-                    <Ionicons name="chevron-down" color="#86efac" size={16} />
+                    <Ionicons name={expandedMarketIds.spread ? "chevron-up" : "chevron-down"} color="#9ca3af" size={26} />
                   </View>
-                  <Ionicons name={expandedMarketIds.spread ? "chevron-up" : "chevron-down"} color="#9ca3af" size={26} />
-                </View>
-              </Pressable>
-              {expandedMarketIds.spread && (
-                <>
-                  <View style={styles.subSegmentRow}>
-                    {linePeriods.map((period) => (
-                      <Pressable
-                        accessibilityLabel={`event-detail-spread-period-${period} chart-contract-spread ${spreadPeriod === period ? "selected-line-period" : "inactive-line-period"}`}
-                        key={period}
-                        onPress={() => {
-                          setSelectedChartContract("spread");
-                          setSpreadPeriod(period);
-                        }}
-                        style={[styles.subSegment, spreadPeriod === period && styles.subSegmentActive]}
-                        testID={`event-detail-spread-period-${period.replace(/[^A-Za-z0-9]/g, "-").toLowerCase()}`}
-                      >
-                        <Text style={[styles.subSegmentText, spreadPeriod === period && styles.subSegmentTextActive]}>{period}</Text>
-                      </Pressable>
-                    ))}
-                  </View>
-                  <View style={styles.lineRailRow}>
-                    {spreadLineOptions.map((line) => (
-                      <Pressable
-                        accessibilityLabel={`event-detail-spread-line-${line} chart-contract-spread ${spreadLine === line ? "selected-line-value" : "inactive-line-value"}`}
-                        key={line}
-                        onPress={() => {
-                          setSelectedChartContract("spread");
-                          setSpreadLine(line);
-                        }}
-                        style={[styles.lineRailOption, spreadLine === line && styles.lineRailOptionActive]}
-                        testID={`event-detail-spread-line-${line.replace(".", "-")}`}
-                      >
-                        <Text style={[styles.lineRailText, spreadLine === line && styles.lineRailTextActive]}>{line}</Text>
-                      </Pressable>
-                    ))}
-                  </View>
-                  {spreadRows.map((outcome, index) => renderParityOutcomeRow(outcome, "spread", backendSpreadMarket?.outcomes[index], backendSpreadMarket))}
-                </>
-              )}
-            </View>
-            {gameLineGroups.map((group) => renderGroup(group))}
+                </Pressable>
+                {expandedMarketIds.spread && (
+                  <>
+                    <View style={styles.subSegmentRow}>
+                      {linePeriods.map((period) => (
+                        <Pressable
+                          accessibilityLabel={`event-detail-spread-period-${period} chart-contract-spread ${spreadPeriod === period ? "selected-line-period" : "inactive-line-period"}`}
+                          key={period}
+                          onPress={() => {
+                            setSelectedChartContract("spread");
+                            setSpreadPeriod(period);
+                          }}
+                          style={[styles.subSegment, spreadPeriod === period && styles.subSegmentActive]}
+                          testID={`event-detail-spread-period-${period.replace(/[^A-Za-z0-9]/g, "-").toLowerCase()}`}
+                        >
+                          <Text style={[styles.subSegmentText, spreadPeriod === period && styles.subSegmentTextActive]}>{period}</Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                    <View style={styles.lineRailRow}>
+                      {spreadLineOptions.map((line) => (
+                        <Pressable
+                          accessibilityLabel={`event-detail-spread-line-${line} chart-contract-spread ${spreadLine === line ? "selected-line-value" : "inactive-line-value"}`}
+                          key={line}
+                          onPress={() => {
+                            setSelectedChartContract("spread");
+                            setSpreadLine(line);
+                          }}
+                          style={[styles.lineRailOption, spreadLine === line && styles.lineRailOptionActive]}
+                          testID={`event-detail-spread-line-${line.replace(".", "-")}`}
+                        >
+                          <Text style={[styles.lineRailText, spreadLine === line && styles.lineRailTextActive]}>{line}</Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                    {spreadRows.map((outcome, index) => renderParityOutcomeRow(outcome, "spread", backendSpreadMarket?.outcomes[index], backendSpreadMarket))}
+                  </>
+                )}
+              </View>
+            )}
+            {visibleGameLineGroups.map((group) => renderGroup(group))}
           </View>
         )}
         <View accessibilityLabel="event-detail-market-rules" style={styles.rulesSection} testID="event-detail-market-rules">

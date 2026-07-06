@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Event Detail market availability contract | Cycle KZ | Pass for backend/data-contract scope | 0 for focused unsupported Game Lines visibility scope | None for focused Event Detail market availability contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KZ-event-detail-market-availability-contract/cycle-KZ-event-detail-market-availability-contract.json`; tests: `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KZ-event-detail-market-availability-contract.md` | Route-backed Event Detail now hides unsupported Spread/Totals/Team Total/Halves when backend does not provide matching markets; local fixture fallback remains unchanged. |
 | Event Detail mixed profile contract | Cycle KY | Pass for backend/data-contract scope | 0 for focused mixed-profile route/rendering selection scope | None for focused mixed-profile Event Detail contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KY-event-detail-mixed-profile-contract/cycle-KY-event-detail-mixed-profile-contract.json`; tests: `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KY-event-detail-mixed-profile-contract.md` | Mixed knockout Event Detail now treats backend `to_advance` as a first-class game-line type, selects it for primary buttons, and separately selects backend regulation Home/Tie/Away for Game Lines when provided. |
 | Event Detail advance profile contract | Cycle KX | Pass for backend/data-contract scope | 0 for focused advance/no-draw route scope | None for focused advance/no-draw Event Detail contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KX-event-detail-advance-contract/cycle-KX-event-detail-advance-contract.json`; tests: `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KX-event-detail-advance-contract.md` | Event Detail hydration now has current-loop proof for a one-team-advances profile: `to_advance`, `no_draw`, `allowDraw=false`, `includesOvertime=true`, and exactly two non-draw outcomes. |
 | Event Detail hydration key contract | Cycle KW | Pass for backend/data-contract scope | 0 for focused Event Detail route-key/rules scope | None for focused Event Detail hydration key/rules contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KW-event-detail-hydration-contract/cycle-KW-event-detail-hydration-contract.json`; tests: `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KW-event-detail-hydration-contract.md` | Discovery-card Event Detail hydration now preserves and uses backend `slug` for `/api/mobile/events/:slug/live-detail`; proof verifies slug succeeds, database id fails, and hydrated regulation detail preserves draw-capable market rules. |
@@ -143,6 +144,31 @@ Fail the feature when:
 | Trade ticket | Cycle AG | Pass | 0 | P1 binary NO/share contract semantics; P1 production auth/location eligibility gates | `docs/mobile/reference/screenshots/cycle-AG-polymarket-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-amount.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-trade.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/harness/cycle-current-holiwyn-event-detail-ticket-details.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade` | Focused pass only. First view is now sparse and settings opens advanced controls. |
 | Trade ticket surface | Cycle AI | Pass | 0 | P1 production auth/location eligibility gate; P2 native motion polish | `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-start.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-france-ticket.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-after-france-row-tap.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/screenshots/cycle-current-holiwyn-future-list-buy-no-ticket.png`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade`; `cmd /c npm.cmd run smoke:tablet:future-list-buy-no` | Logged-in Polymarket World Cup selection opened a tall location-verification sheet; Holiwyn now uses a taller dimmed fake-token ticket with fixed swipe-up submit rail. |
 | Game page compact scrolled header | Cycle AJ | Pass | 0 | P1 phone visual density/sticky tab polish; P1 backend market/live data; P1 Player Props reference scope | `docs/mobile/reference/screenshots/cycle-AJ-polymarket-live-tab.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-top.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-lines-mid.png` | `docs/mobile/screenshots/cycle-current-holiwyn-game-page-full-markets.png`; `docs/mobile/harness/cycle-current-holiwyn-game-page-full-markets.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-full-page` | Logged-in Polymarket keeps compact match context when scrolled into Game Lines; Holiwyn now shows a compact match header in that state and full game-page smoke passed. |
+
+## Cycle KZ
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for route-backed Event Detail Game Lines availability.
+
+Evidence:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KZ-event-detail-market-availability-contract/cycle-KZ-event-detail-market-availability-contract.json`.
+- Cycle audit: `mobile/docs/audits/cycle-KZ-event-detail-market-availability-contract.md`.
+- Focused tests:
+  - `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`
+  - `mobile/src/__tests__/eventDetailHydrationService.test.ts`
+  - `mobile/src/__tests__/worldCupAdapter.test.ts`
+  - `mobile/src/__tests__/api.test.ts`
+- Proof script:
+  - `scripts/prove_mobile_event_detail_market_availability_contract.ts`
+
+Decision:
+
+- Pass for focused backend/data-contract scope.
+- Route-backed Event Detail no longer renders unsupported synthetic Spread, Totals, Team Total, First Half, or Second Half sections without backend markets.
+- The same proof keeps advance primary and regulation Home/Tie/Away when those backend markets exist.
+- No remaining P1/P2 gaps for the focused Event Detail market availability contract.
 
 ## Cycle KY
 

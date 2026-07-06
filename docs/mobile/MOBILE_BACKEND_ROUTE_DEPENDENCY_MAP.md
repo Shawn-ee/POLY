@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KZ - Event Detail Market Availability Contract
+
+Cycle KZ prevents route-backed Event Detail from inventing unsupported Game Lines families:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KZ-event-detail-market-availability-contract/cycle-KZ-event-detail-market-availability-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_market_availability_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail Game Lines availability gating | `/api/mobile/events/:slug/live-detail` through `PolyApi.getEvent()` | GET | Public/mobile route | Backend event slug | Route-backed event `backendSlug`, compact `markets[]`, backend market families/types/period/line; mobile renders Spread/Totals/Team Total/Halves only when a matching backend market exists | Listed public `Market` rows, `Market.marketType`, `Market.period`, `Market.line`, active `Outcome.side` | Local/offline fixtures without `backendSlug` keep deterministic synthetic line rows. Server-mode route-backed events do not show unsupported synthetic families. | None for the focused Event Detail market availability contract. |
+
 ## Cycle KY - Event Detail Mixed Profile Contract
 
 Cycle KY wires and proves the mixed knockout profile where the primary buttons are advance/no-draw while Game Lines still renders a backend-provided regulation 90-minute Home/Tie/Away market:

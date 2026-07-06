@@ -1,0 +1,59 @@
+{
+  "pass": true,
+  "cycle": "Cycle KZ",
+  "createdAt": "2026-07-06T09:23:51.325Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "seeded": {
+    "eventId": "c51159ae-7a09-4a87-a50c-a04bba23a66f",
+    "slug": "mobile-kz-live-availability-c8f90f6c"
+  },
+  "hydratedDetail": {
+    "marketProfile": "full_match_with_overtime",
+    "resultMode": "can_draw",
+    "supportedMarketTypes": [
+      "full_match_with_overtime",
+      "to_advance",
+      "regulation_90"
+    ],
+    "backendSlug": "mobile-kz-live-availability-c8f90f6c",
+    "routeMarkets": [
+      {
+        "id": "82fefafa-1f0b-400b-a37f-39d3a31af46b",
+        "marketType": "to_advance",
+        "outcomeSides": [
+          "home",
+          "away"
+        ]
+      },
+      {
+        "id": "637b4ba1-7c30-478d-b249-c6d81e61b849",
+        "marketType": "moneyline",
+        "period": "regulation",
+        "outcomeSides": [
+          "home",
+          "draw",
+          "away"
+        ]
+      }
+    ],
+    "selectedPrimaryMarket": {
+      "id": "82fefafa-1f0b-400b-a37f-39d3a31af46b",
+      "marketType": "to_advance"
+    },
+    "selectedRegulationMarket": {
+      "id": "637b4ba1-7c30-478d-b249-c6d81e61b849",
+      "outcomeSides": [
+        "home",
+        "draw",
+        "away"
+      ]
+    },
+    "unsupportedLineFamilyVisibility": {
+      "spread": false,
+      "totals": false,
+      "teamTotal": false,
+      "firstHalf": false,
+      "secondHalf": false
+    }
+  }
+}

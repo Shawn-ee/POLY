@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import type { Event, Market, Outcome } from "../mocks/worldCup";
-import { selectEventDetailPrimaryMarket, selectEventDetailRegulationMarket } from "../services/eventDetailMarketProfileService";
+import { canRenderEventDetailLineFamily, selectEventDetailPrimaryMarket, selectEventDetailRegulationMarket } from "../services/eventDetailMarketProfileService";
 
 const outcome = (id: string, side: Outcome["side"], label = id): Outcome => ({
   id,
@@ -80,5 +80,21 @@ describe("event detail market profile service", () => {
 
     expect(selectEventDetailPrimaryMarket(event, event.markets)?.id).toBe("advance-market");
     expect(selectEventDetailRegulationMarket(event, event.markets)).toBeUndefined();
+  });
+
+  test("requires backend market before rendering route-backed line families", () => {
+    const spread = market({
+      id: "spread-market",
+      title: "Spread",
+      marketType: "spread",
+      marketGroupId: "spread",
+      line: "1.5",
+      period: "regulation",
+      outcomes: [outcome("yes", "yes", "Yes"), outcome("no", "no", "No")],
+    });
+
+    expect(canRenderEventDetailLineFamily({ backendSlug: "route-event" }, undefined)).toBe(false);
+    expect(canRenderEventDetailLineFamily({ backendSlug: "route-event" }, spread)).toBe(true);
+    expect(canRenderEventDetailLineFamily({}, undefined)).toBe(true);
   });
 });

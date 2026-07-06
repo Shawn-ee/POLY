@@ -33,3 +33,11 @@ export const selectEventDetailPrimaryMarket = (event: Event, markets: Market[]) 
 
 export const selectEventDetailRegulationMarket = (_event: Event, markets: Market[]) =>
   markets.find(isRegulationWinnerMarket);
+
+export const isRouteBackedEventDetail = (event: Pick<Event, "backendSlug">) =>
+  Boolean(event.backendSlug);
+
+export const canRenderEventDetailLineFamily = (
+  event: Pick<Event, "backendSlug">,
+  backendMarket: Market | undefined,
+) => !isRouteBackedEventDetail(event) || Boolean(backendMarket);
