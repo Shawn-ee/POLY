@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MV - Market Chart Price Bounds Contract
+
+Cycle MV hardens chart route history prices before visible Event Detail/Futures chart state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MV-market-chart-price-bounds-contract/cycle-MV-market-chart-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_market_chart_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/marketChartRouteShapeService.test.ts`, `mobile/src/__tests__/marketChartService.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail/Futures chart history price bounds | `/api/markets/:id/chart?range=<range>` through `PolyApi.getMarketChart()` | GET | Public/mobile route | Market id and selected chart range | `history[].price` must be a contract price from `0` to `1`; `history[].probability` remains `0` to `100`; requested market/range identity must match | `Market`, outcome price history, provider/CLOB chart projection | Mock/local chart fallback remains unchanged. Server-mode impossible chart prices reject before visible chart state applies. | None for focused chart price bounds contract. P2 optional field-specific chart price error copy. |
+
 ## Cycle MU - Portfolio Open Order Lifecycle Contract
 
 Cycle MU hardens server-mode Portfolio open-order lifecycle quantities before visible Orders state applies:

@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MV - Market Chart Price Bounds Contract
+
+Closed or narrowed:
+
+- Market chart route validation now rejects `history[].price` values outside the contract price range `0` to `1`.
+- Event Detail and Futures chart loaders no longer accept above-one chart prices before visible chart state applies.
+- Existing chart probability validation continues to require `history[].probability` from `0` to `100`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused chart price bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/markets/:id/chart` history `price` and `probability` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local chart fallback remains unchanged. Server-mode invalid chart prices reject before visible chart state applies.
+
 ## Cycle MU - Portfolio Open Order Lifecycle Contract
 
 Closed or narrowed:

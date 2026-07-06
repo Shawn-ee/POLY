@@ -60,7 +60,7 @@ export function assertMarketChartRoutePayloadShape(
       throw new Error(`Market chart route returned history point without timestamp for market ${requestedMarketId}.`);
     }
     const price = point.price;
-    if (!isFiniteNumber(price) || price < 0) {
+    if (!isFiniteNumber(price) || price < 0 || price > 1) {
       throw new Error(`Market chart route returned invalid price for market ${requestedMarketId}.`);
     }
     const probability = point.probability;

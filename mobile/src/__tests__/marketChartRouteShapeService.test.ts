@@ -41,4 +41,11 @@ describe("market chart route shape service", () => {
 
     expect(() => assertMarketChartRoutePayloadShape(payload, "world-cup-winner", "1H")).toThrow(/invalid probability/);
   });
+
+  test("rejects chart prices above contract bounds before visible chart apply", () => {
+    const payload = chartPayload();
+    (payload.history[0] as { price: unknown }).price = 1.2;
+
+    expect(() => assertMarketChartRoutePayloadShape(payload, "world-cup-winner", "1H")).toThrow(/invalid price/);
+  });
 });

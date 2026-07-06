@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle MV
+
+Gate status: Pass
+
+Scope: Market chart price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-MV-market-chart-price-bounds-contract/cycle-MV-market-chart-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/marketChartRouteShapeService.test.ts`, `mobile/src/__tests__/marketChartService.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-MV-market-chart-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Event Detail/Futures chart routes reject negative and above-one history prices before visible chart state applies.
+
 ## Cycle MU
 
 Gate status: Pass
@@ -90,6 +104,7 @@ Decision: pass for focused backend/data-contract scope. Server-mode Event Detail
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Market chart price bounds contract | Cycle MV | Pass for backend/data-contract scope | 0 for focused chart price bounds scope | P2 optional field-specific chart price error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MV-market-chart-price-bounds-contract/cycle-MV-market-chart-price-bounds-contract.json`; tests: `mobile/src/__tests__/marketChartRouteShapeService.test.ts`, `mobile/src/__tests__/marketChartService.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`; audit: `mobile/docs/audits/cycle-MV-market-chart-price-bounds-contract.md` | Server-mode Event Detail/Futures chart routes now reject negative and above-one history prices before visible chart state applies. |
 | Portfolio open order lifecycle contract | Cycle MU | Pass for backend/data-contract scope | 0 for focused Portfolio open-order lifecycle scope | P2 optional field-specific Portfolio open-order lifecycle error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MU-portfolio-open-order-lifecycle-contract/cycle-MU-portfolio-open-order-lifecycle-contract.json`; tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`; audit: `mobile/docs/audits/cycle-MU-portfolio-open-order-lifecycle-contract.md` | Server-mode Portfolio snapshot now rejects open orders where returned remaining shares exceed original order size before visible Orders state applies. |
 | Order lifecycle consistency contract | Cycle MT | Pass for backend/data-contract scope | 0 for focused order lifecycle consistency scope | P2 optional richer inline order lifecycle error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MT-order-lifecycle-consistency-contract/cycle-MT-order-lifecycle-consistency-contract.json`; tests: `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-MT-order-lifecycle-consistency-contract.md` | Server-mode Trade Ticket submit now rejects negative lifecycle values and impossible `/api/orders` confirmations where remaining, fills, or fills plus remaining exceed order size before visible order state applies. |
 | Event list quote price bounds contract | Cycle MS | Pass for backend/data-contract scope | 0 for focused event-list quote bounds scope | P2 optional field-specific event-list quote error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MS-event-list-quote-price-bounds-contract/cycle-MS-event-list-quote-price-bounds-contract.json`; tests: `mobile/src/__tests__/eventListRouteShapeService.test.ts`, `mobile/src/__tests__/liveEventFeedService.test.ts`; audit: `mobile/docs/audits/cycle-MS-event-list-quote-price-bounds-contract.md` | Server-mode Home/Search/Live/Futures compact event-list routes now reject outcome quote prices outside `0` to `1` before frontend normalization or visible card rendering while still accepting large backend depth sizes. |

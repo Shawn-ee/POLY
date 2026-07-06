@@ -81,6 +81,26 @@ describe("market chart service", () => {
     await expect(loadMarketChartState({ getMarketChart } as unknown as PolyApi, event)).rejects.toThrow(/invalid probability/);
   });
 
+  test("rejects backend chart prices above contract bounds before applying EventDetail chart points", async () => {
+    const event = worldCupEvents.find((item) => item.status === "live")!;
+    const getMarketChart = vi.fn(async () => ({
+      marketId: "france-argentina-live",
+      source: "polymarket-clob-prices-history",
+      range: "1D" as const,
+      ranges: ["1D", "1W", "1M", "MAX"] as const,
+      generatedAt: "2026-06-15T12:00:00.000Z",
+      lastUpdated: "2026-06-15T11:59:00.000Z",
+      emptyState: null,
+      outcomes: [{ id: "australia", name: "Australia" }],
+      history: [
+        { outcomeId: "australia", timestamp: "2026-06-15T11:58:00.000Z", price: 1.2, probability: 41 },
+      ],
+      series: {},
+    }));
+
+    await expect(loadMarketChartState({ getMarketChart } as unknown as PolyApi, event)).rejects.toThrow(/invalid price/);
+  });
+
   test("preserves backend empty chart state without overwriting fallback history", async () => {
     const event = worldCupEvents.find((item) => item.status === "live")!;
     const result = {
