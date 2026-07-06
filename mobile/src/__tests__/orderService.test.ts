@@ -513,6 +513,53 @@ describe("ticket order service", () => {
     });
   });
 
+  test("rejects server-mode submit when backend returns malformed order size", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-bad-size",
+        status: "OPEN",
+        size: "not-a-number",
+        remaining: "10",
+      },
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit response had invalid order.size.");
+  });
+
+  test("rejects server-mode submit when backend returns malformed fill size", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-bad-fill",
+        status: "PARTIAL",
+        size: "100",
+        remaining: "80",
+      },
+      fills: [{ size: "bad-fill-size" }],
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit response had invalid fills[].size.");
+  });
+
   test("rejects server-mode submit when the backend does not confirm an order id", async () => {
     const placeLimitOrder = vi.fn(async () => ({ order: { status: "OPEN" } }));
     const api = { placeLimitOrder } as unknown as PolyApi;

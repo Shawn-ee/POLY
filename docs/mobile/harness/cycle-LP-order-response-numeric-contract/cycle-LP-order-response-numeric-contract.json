@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle LP",
+  "feature": "Order response numeric lifecycle contract",
+  "generatedAt": "2026-07-06T10:42:38.877Z",
+  "route": "/api/orders",
+  "contract": {
+    "legacyConfirmation": "server responses that only confirm order id remain accepted",
+    "lifecycleFields": "when size, remaining, or fills are present they must be finite numeric values",
+    "malformedLifecycle": "malformed numeric lifecycle fields reject before visible order state is applied"
+  },
+  "assertions": {
+    "idOnlyOrderRemainsAcceptedForLegacyRoute": true,
+    "validNumericLifecycleFieldsAreApplied": true,
+    "malformedOrderSizeRejects": true,
+    "malformedFillSizeRejects": true
+  }
+}

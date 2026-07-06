@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Order response numeric contract | Cycle LP | Pass for backend/data-contract scope | 0 for focused order lifecycle numeric scope | P2 optional richer inline submit error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LP-order-response-numeric-contract/cycle-LP-order-response-numeric-contract.json`; tests: `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-LP-order-response-numeric-contract.md` | Trade Ticket server submit still accepts id-only confirmations, but malformed `size`, `remaining`, or `fills[].size` values now reject before visible server order state is applied. |
 | Portfolio route shape validation contract | Cycle LO | Pass for backend/data-contract scope | 0 for focused Portfolio route-shape scope | P2 optional route-specific retry copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LO-portfolio-route-shape-validation-contract/cycle-LO-portfolio-route-shape-validation-contract.json`; tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `mobile/src/__tests__/portfolioSyncService.test.ts`; audit: `mobile/docs/audits/cycle-LO-portfolio-route-shape-validation-contract.md` | Server-mode Portfolio now rejects malformed `/api/portfolio` and `/api/portfolio/history` shapes before applying visible state/activity, causing sync error instead of false synced UI. |
 | Mobile saved event identity filter contract | Cycle LN | Pass for backend/data-contract scope | 0 for focused saved id/slug scope | P1 first-class saved/followed route if saved state outgrows profile preferences | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LN-mobile-saved-event-identity-filter-contract/cycle-LN-mobile-saved-event-identity-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LN-mobile-saved-event-identity-filter-contract.md` | `/api/events?eventIds=...` now matches both `Event.id` and `Event.slug`, aligning backend Saved filters with mobile's normalized event identity. |
 | Mobile event status group contract | Cycle LM | Pass for backend/data-contract scope | 0 for focused status-group scope | P2 optional user-local timezone semantics for Today | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LM-mobile-event-status-group-contract/cycle-LM-mobile-event-status-group-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LM-mobile-event-status-group-contract.md` | `/api/events?statusGroup=live` now includes `liveStatus=in_progress`; `statusGroup=upcoming` now excludes live/today/terminal events instead of meaning only not-live. |
@@ -4680,3 +4681,37 @@ Decision:
 - Pass/fail: Pass for focused Portfolio route shape validation contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional route-specific retry copy/action.
+
+## Cycle LP - Order Response Numeric Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure Trade Ticket server submit does not silently drop malformed lifecycle numbers from `/api/orders` responses.
+
+Reference Audit Agent: Backend/data-contract loop. Ticket visual redesign is out of scope.
+
+Implementation Agent: Added strict optional numeric response parsing for order lifecycle fields, focused tests, and harness proof.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LP-order-response-numeric-contract.md`
+- `docs/mobile/harness/cycle-LP-order-response-numeric-contract/cycle-LP-order-response-numeric-contract.json`
+- `scripts/prove_mobile_order_response_numeric_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LP-P0-01 | P0 | Pass | Id-only server confirmations remain accepted. | N/A |
+| LP-P0-02 | P0 | Pass | Valid `size`, `remaining`, and `fills[].size` values map to server order state. | N/A |
+| LP-P0-03 | P0 | Pass | Invalid `order.size` rejects before visible state apply. | N/A |
+| LP-P0-04 | P0 | Pass | Invalid `fills[].size` rejects before visible state apply. | N/A |
+| LP-P2-01 | P2 | Open | No route-field-specific inline submit copy. | Optional later copy/action pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused order response numeric contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional richer inline submit error copy.

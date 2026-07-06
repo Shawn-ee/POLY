@@ -4782,6 +4782,35 @@ Future migration concern:
 
 - If Portfolio response shapes expand, add validator coverage before applying new visible fields.
 
+## Cycle LP - Order Response Numeric Contract
+
+Closed or narrowed:
+
+- Trade Ticket server submit still accepts legacy/id-only confirmations.
+- When `/api/orders` includes lifecycle fields, mobile now validates `order.size`, `order.remaining`, and `fills[].size` before applying visible server order state.
+- Malformed lifecycle numeric fields reject instead of being silently dropped from latest-order/open-order state.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for order response lifecycle numeric validation.
+- P2: richer inline submit error copy remains optional.
+
+Schema mismatch:
+
+- No schema migration was required. Existing route response fields carry the contract.
+
+Route mismatch:
+
+- No mismatch for the focused flow. The frontend consumes backend route fields when present and rejects malformed numeric lifecycle values.
+
+Temporary mock/static data:
+
+- Mock-mode orders remain local-only and are not affected by server response validation.
+
+Future migration concern:
+
+- If partial-fill UI becomes richer, add stricter route response typing for fill price, fee, side, and trade ids before exposing them visibly.
+
 ## Cycle LB - Event Detail Line Availability Contract
 
 Closed or narrowed:

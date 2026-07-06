@@ -123,12 +123,21 @@ const numericField = (value: string | number | null | undefined) => {
   return undefined;
 };
 
+const optionalServerNumber = (value: string | number | null | undefined, field: string) => {
+  if (value === null || value === undefined || value === "") return undefined;
+  const parsed = numericField(value);
+  if (parsed === undefined) {
+    throw new Error(`Order submit response had invalid ${field}.`);
+  }
+  return parsed;
+};
+
 const filledSizeFromResponse = (response: ServerOrderResponse) => {
-  const totalFromFills = response.fills?.reduce((total, fill) => total + (numericField(fill.size) ?? 0), 0);
+  const totalFromFills = response.fills?.reduce((total, fill) => total + (optionalServerNumber(fill.size, "fills[].size") ?? 0), 0);
   if (totalFromFills && totalFromFills > 0) return totalFromFills;
 
-  const size = numericField(response.order?.size ?? response.size);
-  const remaining = numericField(response.order?.remaining ?? response.remaining);
+  const size = optionalServerNumber(response.order?.size ?? response.size, "order.size");
+  const remaining = optionalServerNumber(response.order?.remaining ?? response.remaining, "order.remaining");
   if (typeof size === "number" && typeof remaining === "number") {
     return Math.max(0, size - remaining);
   }
@@ -219,8 +228,8 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
     throw new Error("Order submit was not confirmed by the server.");
   }
   const confirmedSelection = validateServerSelectionEcho(expectedSelection, response);
-  const size = numericField(response.order?.size ?? response.size);
-  const remainingSize = numericField(response.order?.remaining ?? response.remaining);
+  const size = optionalServerNumber(response.order?.size ?? response.size, "order.size");
+  const remainingSize = optionalServerNumber(response.order?.remaining ?? response.remaining, "order.remaining");
   const status = response.order?.status ?? response.status;
 
   return {

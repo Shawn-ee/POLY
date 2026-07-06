@@ -2295,3 +2295,15 @@ Cycle LO implementation notes:
 - `loadPortfolioSnapshot` validates required arrays and finite numeric fields before mapping server state.
 - `loadPortfolioHistoryActivities` validates required arrays and finite numeric fields before mapping activity rows.
 - Rejected snapshot/history loaders feed the existing partial-sync resolver, causing visible Portfolio sync error instead of false synced state.
+
+## Cycle LP - Order Response Numeric Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket order submit lifecycle state | `/api/orders` | POST | Mobile API key with `orders:write` | Canonical limit order request with selected market/outcome/contract side/selection | `order.id`, optional `order.status`, optional `order.size`, optional `order.remaining`, optional `fills[].size`, selected line echo | `Order`, `Trade`, `Market`, `Outcome`, matching response | Mock orders remain local. Server mode accepts id-only confirmations but validates lifecycle numeric fields when present. | P2 optional richer inline submit error copy. |
+
+Cycle LP implementation notes:
+
+- Id-only server confirmations remain valid for legacy/older route responses.
+- When `/api/orders` returns lifecycle numbers, mobile now requires `size`, `remaining`, and `fills[].size` to parse as finite numbers.
+- Malformed lifecycle fields reject before visible latest-order/open-order state is updated.
