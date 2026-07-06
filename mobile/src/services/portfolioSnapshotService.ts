@@ -61,6 +61,14 @@ const requireNonNegativeNumber = (value: unknown, field: string) => {
   return parsed;
 };
 
+const requirePositiveNumber = (value: unknown, field: string) => {
+  const parsed = requireNonNegativeNumber(value, field);
+  if (parsed <= 0) {
+    throw new Error(`Portfolio snapshot response had invalid ${field}.`);
+  }
+  return parsed;
+};
+
 const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
   if (!Array.isArray(value)) {
     throw new Error(`Portfolio snapshot response had invalid ${field}.`);
@@ -126,7 +134,7 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       side: "buy",
       amount: requireNonNegativeNumber(position.costBasisTokens, "positions[].costBasisTokens"),
       probability: Math.round(requireProbabilityNumber(position.avgCost, "positions[].avgCost") * 100),
-      shares: requireNonNegativeNumber(position.shares, "positions[].shares"),
+      shares: requirePositiveNumber(position.shares, "positions[].shares"),
       currentPrice: requireProbabilityNumber(position.currentPrice, "positions[].currentPrice"),
       marketAvailability: position.market.availability,
       bestBid: toOptionalDepthProbability(position.bestBid, "positions[].bestBid"),

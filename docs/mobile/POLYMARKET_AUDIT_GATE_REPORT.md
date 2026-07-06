@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NR
+
+Gate status: Pass
+
+Scope: Portfolio position shares contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NR-portfolio-position-shares-contract/cycle-NR-portfolio-position-shares-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NR-portfolio-position-shares-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio positions require positive shares before visible position rows apply, while empty position arrays remain valid.
+
 ## Cycle NQ
 
 Gate status: Pass

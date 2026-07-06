@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NR - Portfolio Position Shares Contract
+
+Cycle NR hardens Portfolio position share quantities before visible position state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NR-portfolio-position-shares-contract/cycle-NR-portfolio-position-shares-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_position_shares_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio visible position shares | `/api/portfolio` through `PolyApi.getPortfolio()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | `positions[].shares`; visible position rows require positive shares, while empty `positions: []` remains valid | `Position`, `Market`, `Outcome`, portfolio snapshot projection | Mock/local Portfolio remains unchanged. Server-mode zero-share or negative-share position rows reject before visible Portfolio state applies. | None for focused Portfolio position shares contract. P2 optional zero-position row copy. |
+
 ## Cycle NQ - Portfolio Open-Order Side Contract
 
 Cycle NQ hardens Portfolio open-order side fields before visible Orders state applies:

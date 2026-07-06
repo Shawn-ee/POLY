@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle NR",
+  "feature": "Portfolio position shares contract",
+  "generatedAt": "2026-07-06T14:18:29.466Z",
+  "route": "/api/portfolio",
+  "contract": {
+    "validPayload": "server-mode Portfolio positions must have positive shares before becoming visible position rows; empty position arrays remain valid.",
+    "malformedPayload": "zero-share or negative-share position rows reject before visible Portfolio state applies."
+  },
+  "assertions": {
+    "acceptsPositiveShares": true,
+    "keepsEmptyPositionsRenderable": true,
+    "rejectsZeroShares": true,
+    "rejectsNegativeShares": true
+  }
+}

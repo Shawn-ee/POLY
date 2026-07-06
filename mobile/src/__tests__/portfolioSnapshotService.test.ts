@@ -225,6 +225,22 @@ describe("portfolio snapshot service", () => {
     await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid positions[].shares.");
   });
 
+  test("rejects zero-share positions before applying visible Portfolio positions", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        positions: [
+          {
+            ...snapshot().positions[0],
+            shares: 0,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid positions[].shares.");
+  });
+
   test("rejects position prices above contract bounds before applying Portfolio state", async () => {
     const invalidCurrentPrice = {
       getPortfolio: vi.fn(async () =>

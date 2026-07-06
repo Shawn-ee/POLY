@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NR - Portfolio Position Shares Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio `positions` rows now require positive `shares` before becoming visible position rows.
+- Empty `positions: []` remains valid for new or flat accounts.
+- Zero-share or negative-share position rows reject before visible Portfolio state applies.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio position shares contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` `positions[].shares` supports this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio behavior remains unchanged. Server-mode malformed position share fields reject before visible Portfolio state applies.
+
 ## Cycle NQ - Portfolio Open-Order Side Contract
 
 Closed or narrowed:
