@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KL - Search Saved Filter
+
+Cycle KL wires the visible Search Saved filter to backend event ids instead of filtering only the current client page:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KL-search-saved-filter/cycle-KL-search-saved-filter.json`.
+- Proof script: `scripts/prove_mobile_search_saved_filter.ts`.
+- Focused validation: route proof, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Search Saved filter | `/api/events?search=...&eventIds=...&includeMobileMarkets=1` | GET | Public/mobile route; saved ids are sourced from profile preferences in server mode when available | None | `events[]`, `events[].markets[]`, `nextCursor`, `page.nextCursor`; route applies text search and selected saved event ids before pagination | `Event.id`, searchable `Event`/`Market`/`Outcome` fields, listed public `Market`, `Outcome`; profile preferences still own saved ids | Mock mode keeps local Search saved filtering. Server mode sends saved ids to backend; empty Saved is handled in app as empty state. | P1: first-class saved/followed market route if saved state moves beyond profile preferences. |
+
 ## Cycle KK - Home Saved Filter
 
 Cycle KK wires visible Home Saved filtering to backend event ids instead of filtering only the current client page:

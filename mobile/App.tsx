@@ -341,6 +341,7 @@ export default function App() {
   const [isLoadingSearchEvents, setIsLoadingSearchEvents] = useState(false);
   const [searchEventError, setSearchEventError] = useState<string | null>(null);
   const [searchStatusGroup, setSearchStatusGroup] = useState<"live" | "upcoming" | null>(null);
+  const [searchSavedOnly, setSearchSavedOnly] = useState(false);
   const [savedEventIds, setSavedEventIds] = useState<Set<string>>(() => new Set());
   const [savedEventIdsHydrated, setSavedEventIdsHydrated] = useState(false);
   const [forceAccountSignedIn, setForceAccountSignedIn] = useState(false);
@@ -375,6 +376,10 @@ export default function App() {
   const homeSavedEventIds = useMemo(
     () => homeFilter === "saved" ? [...savedEventIds] : undefined,
     [homeFilter, savedEventIds],
+  );
+  const searchSavedEventIds = useMemo(
+    () => searchSavedOnly ? [...savedEventIds] : undefined,
+    [savedEventIds, searchSavedOnly],
   );
 
   useEffect(() => {
@@ -1014,7 +1019,15 @@ export default function App() {
     statusGroup: "live" | "upcoming" | null = null,
   ) => {
     try {
-      const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search, statusGroup });
+      if (searchSavedOnly && !searchSavedEventIds?.length) {
+        if (mounted.current) {
+          setSearchEvents([]);
+          setSearchNextCursor(null);
+          setSearchEventError(null);
+        }
+        return;
+      }
+      const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search, statusGroup, eventIds: searchSavedEventIds });
       const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
@@ -1060,7 +1073,7 @@ export default function App() {
       }
       setSearchEventError("Search is unavailable. Try again.");
     }
-  }, [api]);
+  }, [api, searchSavedEventIds, searchSavedOnly]);
 
   const loadMoreBackendSearchEvents = useCallback(() => {
     if (MARKET_DATA_MODE !== "server" || !searchNextCursor || isLoadingSearchEvents) return;
@@ -1086,7 +1099,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [loadBackendSearchEvents, mainTab, query, searchStatusGroup]);
+  }, [loadBackendSearchEvents, mainTab, query, searchSavedEventIds, searchStatusGroup]);
 
   useEffect(() => {
     if (ORDER_MODE !== "server") return undefined;
@@ -1666,6 +1679,7 @@ export default function App() {
                 loadMoreEvents={MARKET_DATA_MODE === "server" ? loadMoreBackendSearchEvents : undefined}
                 routeError={MARKET_DATA_MODE === "server" ? searchEventError : null}
                 setServerStatusGroup={MARKET_DATA_MODE === "server" ? setSearchStatusGroup : undefined}
+                setServerSavedOnly={MARKET_DATA_MODE === "server" ? setSearchSavedOnly : undefined}
                 savedEventIds={savedEventIds}
                 toggleSavedEvent={toggleSavedEvent}
               />

@@ -37,6 +37,7 @@ export function SearchScreen({
   loadMoreEvents,
   routeError,
   setServerStatusGroup,
+  setServerSavedOnly,
   savedEventIds,
   toggleSavedEvent,
 }: {
@@ -52,6 +53,7 @@ export function SearchScreen({
   loadMoreEvents?: () => void;
   routeError?: string | null;
   setServerStatusGroup?: (statusGroup: "live" | "upcoming" | null) => void;
+  setServerSavedOnly?: (savedOnly: boolean) => void;
   savedEventIds: Set<string>;
   toggleSavedEvent: (event: Event) => void;
 }) {
@@ -89,6 +91,7 @@ export function SearchScreen({
   const changeFilter = (value: SearchFilter) => {
     setFilter(value);
     setServerStatusGroup?.(value === "live" || value === "upcoming" ? value : null);
+    setServerSavedOnly?.(value === "saved");
   };
   const filters: Array<[SearchFilter, string]> = [
     ["all", t.searchAll],

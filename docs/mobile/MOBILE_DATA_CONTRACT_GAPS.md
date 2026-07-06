@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KL - Search Saved Filter
+
+Closed or narrowed:
+
+- Search server mode now sends visible Saved filter state to `/api/events` through `eventIds`.
+- Backend `/api/events` combines `search` and `eventIds`, so Search Saved pages are filtered before pagination instead of filtering only the current client page.
+- Empty Search Saved state is handled in-app as an empty list instead of falling back to stale unfiltered results.
+- Route proof verifies saved matching events are included, an unsaved matching event is excluded, and compact mobile markets remain present.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- First-class saved/followed market route remains future work if saved state moves beyond profile preferences.
+- Saved ids are still synchronized through the existing profile preferences contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.id`, searchable event/market/outcome fields, `Market`, `Outcome`, and profile preference `savedEventIds` support the KL contract.
+
+Temporary mock/static data:
+
+- KL proof creates disposable backend saved and unsaved events with listed public markets. It does not add frontend-only Search rows.
+
 ## Cycle KK - Home Saved Filter
 
 Closed or narrowed:
