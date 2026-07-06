@@ -2333,3 +2333,15 @@ Cycle LR implementation notes:
 - Added shared `assertEventListRoutePayloadShape` and applied it to Home, Search, Live, and Futures event-list route responses.
 - The validator rejects missing event market arrays, malformed page cursors, and non-finite outcome price/quote fields before normalization.
 - This prevents Home/Search/Futures from applying fallback odds or partial route cards when `/api/events` returns malformed compact mobile data.
+
+## Cycle LS - Quote Route Shape Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ticket/card quote refresh | `/api/markets/:id/quote` | GET | Public viewing | Path market id, optional `outcomeId` query | `marketId`, `quotes[]`, `quotes[].outcomeId`, `outcomeName`, `bestBid`, `bestAsk`, optional `bestBidSize`, optional `bestAskSize`, `midPrice`, `lastPrice` | `Market`, `Outcome`, quote/depth read model or provider quote snapshot source | Local/mock quote conversion remains tolerant for direct unit conversion. Server-mode route loading now validates payload shape before applying visible odds. | P2 optional inline retry copy for malformed quote payloads. |
+
+Cycle LS implementation notes:
+
+- `loadTicketQuotes` now validates the quote route envelope and quote rows before converting odds.
+- Required quote numeric fields must be finite, non-negative numbers or numeric strings, or `null`; optional size fields may be omitted.
+- Wrong-market quote payloads and malformed numeric fields reject. Bulk quote loading classifies those markets in `failedMarketIds`, so existing availability guards mark them unavailable instead of applying fallback odds.

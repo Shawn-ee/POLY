@@ -24,6 +24,58 @@ type QuoteableOutcome = {
   bestAskSize?: number | null;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isNullableFiniteNonNegativeNumberLike = (value: unknown, optional = false) => {
+  if (value === null || (optional && typeof value === "undefined")) return true;
+  if (typeof value === "number") return Number.isFinite(value) && value >= 0;
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0;
+  }
+  return false;
+};
+
+function assertQuoteRoutePayloadShape(
+  payload: unknown,
+  requestedMarketId: string,
+): asserts payload is { marketId: string; quotes: Quote[] } {
+  if (!isRecord(payload)) {
+    throw new Error(`Quote route returned malformed payload for market ${requestedMarketId}.`);
+  }
+  if (typeof payload.marketId !== "string" || !payload.marketId.trim()) {
+    throw new Error(`Quote route returned payload without marketId for market ${requestedMarketId}.`);
+  }
+  if (payload.marketId !== requestedMarketId) {
+    throw new Error(`Quote route returned marketId ${payload.marketId} for requested market ${requestedMarketId}.`);
+  }
+  if (!Array.isArray(payload.quotes)) {
+    throw new Error(`Quote route returned payload without quotes array for market ${requestedMarketId}.`);
+  }
+  for (const quote of payload.quotes) {
+    if (!isRecord(quote)) {
+      throw new Error(`Quote route returned malformed quote for market ${requestedMarketId}.`);
+    }
+    if (typeof quote.outcomeId !== "string" || !quote.outcomeId.trim()) {
+      throw new Error(`Quote route returned quote without outcomeId for market ${requestedMarketId}.`);
+    }
+    if (typeof quote.outcomeName !== "string") {
+      throw new Error(`Quote route returned quote ${quote.outcomeId} without outcomeName.`);
+    }
+    for (const field of ["bestBid", "bestAsk", "midPrice", "lastPrice"] as const) {
+      if (!isNullableFiniteNonNegativeNumberLike(quote[field])) {
+        throw new Error(`Quote route returned invalid ${field} for outcome ${quote.outcomeId}.`);
+      }
+    }
+    for (const field of ["bestBidSize", "bestAskSize"] as const) {
+      if (!isNullableFiniteNonNegativeNumberLike(quote[field], true)) {
+        throw new Error(`Quote route returned invalid ${field} for outcome ${quote.outcomeId}.`);
+      }
+    }
+  }
+}
+
 const toDecimal = (value: string | number | null): number | null => {
   if (value === null) return null;
   const parsed = typeof value === "number" ? value : Number(value);
@@ -76,6 +128,7 @@ export const quoteToTicketQuote = (quote: Quote): TicketQuote => {
 
 export const loadTicketQuotes = async (api: PolyApi, marketId: string, outcomeId?: string): Promise<TicketQuote[]> => {
   const payload = await api.getMarketQuote(marketId, outcomeId);
+  assertQuoteRoutePayloadShape(payload, marketId);
   return payload.quotes.map(quoteToTicketQuote);
 };
 

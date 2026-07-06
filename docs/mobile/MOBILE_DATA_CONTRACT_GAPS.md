@@ -4521,6 +4521,35 @@ Future migration concern:
 
 - If event-list cards expose additional backend-owned fields, add validator coverage in `eventListRouteShapeService` before rendering them.
 
+## Cycle LS - Quote Route Shape Contract
+
+Closed or narrowed:
+
+- Server-mode `/api/markets/:id/quote` responses now validate route identity and quote row numeric fields before visible odds are applied.
+- Malformed quote route responses reject instead of letting `quoteToTicketQuote` turn bad values into null/zero fallback odds.
+- Bulk quote refresh classifies malformed quote payloads as failed market ids, preserving the existing unavailable-market guard for Home, Live, Search, Futures, Event Detail, and Trade Ticket quote refresh.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for quote route-shape validation.
+- P2: optional route-specific retry/error copy if product wants to distinguish malformed quote payloads from normal quote route failures.
+
+Schema mismatch:
+
+- No schema migration was required. The existing quote route response shape carries `marketId` and `quotes[]` fields needed by the mobile client.
+
+Route mismatch:
+
+- No focused route mismatch remains. Server-mode quote refresh validates the backend route before visible odds are applied.
+
+Temporary mock/static data:
+
+- Direct local conversion through `quoteToTicketQuote` remains tolerant for local/unit conversion, but server-mode route loading validates before conversion.
+
+Future migration concern:
+
+- If the quote route adds visible spread, source, or freshness metadata, validate those fields before rendering or using them for submit decisions.
+
 ## Cycle LF - Portfolio Position Availability Contract
 
 Closed or narrowed:

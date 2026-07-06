@@ -180,6 +180,35 @@ describe("quote service", () => {
     expect(getMarketQuote).toHaveBeenCalledWith("winner", "usa");
   });
 
+  test("rejects malformed route quote numeric fields before applying ticket odds", async () => {
+    const getMarketQuote = vi.fn(async () => ({
+      marketId: "winner",
+      quotes: [
+        {
+          outcomeId: "usa",
+          outcomeName: "USA",
+          bestBid: "bad-bid",
+          bestAsk: 0.2,
+          midPrice: 0.19,
+          lastPrice: null,
+        },
+      ],
+    }));
+    const api = { getMarketQuote } as unknown as PolyApi;
+
+    await expect(loadTicketQuotes(api, "winner", "usa")).rejects.toThrow(/invalid bestBid/);
+  });
+
+  test("rejects quote payloads for the wrong market before applying ticket odds", async () => {
+    const getMarketQuote = vi.fn(async () => ({
+      marketId: "other-market",
+      quotes: [],
+    }));
+    const api = { getMarketQuote } as unknown as PolyApi;
+
+    await expect(loadTicketQuotes(api, "winner")).rejects.toThrow(/requested market winner/);
+  });
+
   test("loads market quotes by id while deduplicating market ids", async () => {
     const getMarketQuote = vi.fn(async () => ({
       marketId: "winner",
@@ -253,6 +282,45 @@ describe("quote service", () => {
     expect([...state.quotesByMarketId.keys()]).toEqual(["winner"]);
     expect([...state.failedMarketIds]).toEqual(["broken"]);
     expect(getMarketQuote).toHaveBeenCalledTimes(2);
+  });
+
+  test("reports malformed market quote payloads as failed market ids", async () => {
+    const getMarketQuote = vi.fn(async (marketId: string) => {
+      if (marketId === "broken") {
+        return {
+          marketId,
+          quotes: [
+            {
+              outcomeId: "france",
+              outcomeName: "France",
+              bestBid: 0.41,
+              bestAsk: -0.43,
+              midPrice: 0.42,
+              lastPrice: null,
+            },
+          ],
+        };
+      }
+      return {
+        marketId,
+        quotes: [
+          {
+            outcomeId: "france",
+            outcomeName: "France",
+            bestBid: 0.41,
+            bestAsk: 0.43,
+            midPrice: 0.42,
+            lastPrice: null,
+          },
+        ],
+      };
+    });
+    const api = { getMarketQuote } as unknown as PolyApi;
+
+    const state = await loadMarketQuoteStateById(api, ["winner", "broken"]);
+
+    expect([...state.quotesByMarketId.keys()]).toEqual(["winner"]);
+    expect([...state.failedMarketIds]).toEqual(["broken"]);
   });
 
   test("applies a matching ticket quote to an outcome by id", () => {

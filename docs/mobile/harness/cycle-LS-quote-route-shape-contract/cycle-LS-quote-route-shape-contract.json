@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle LS",
+  "feature": "Quote route shape contract",
+  "generatedAt": "2026-07-06T10:58:13.239Z",
+  "route": "/api/markets/:id/quote",
+  "contract": {
+    "validPayload": "valid quote route responses normalize into visible ticket/card odds",
+    "malformedPayload": "malformed quote identity or numeric fields reject before odds are applied",
+    "failedState": "malformed bulk quote payloads enter failedMarketIds so existing availability guards block submit"
+  },
+  "assertions": {
+    "validQuoteRouteAppliesOdds": true,
+    "malformedNumericRejects": true,
+    "wrongMarketRejects": true,
+    "malformedBulkQuoteMarksMarketFailed": true
+  }
+}
