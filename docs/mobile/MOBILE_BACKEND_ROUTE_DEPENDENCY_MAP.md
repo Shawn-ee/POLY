@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KX - Event Detail Advance Profile Contract
+
+Cycle KX proves the same Event Detail hydration path used in Cycle KW also carries backend-owned one-team-advances/no-draw rules:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KX-event-detail-advance-contract/cycle-KX-event-detail-advance-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_advance_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail advance/no-draw profile | `/api/mobile/events/:slug/live-detail` through `PolyApi.getEvent()` | GET | Public/mobile route | Backend event slug | `event.marketProfile=to_advance`, `event.resultMode=no_draw`, `event.gameRules.allowDraw=false`, `event.gameRules.includesOvertime=true`, `event.supportedMarketTypes[]`, compact advance `markets[]`, two non-draw outcomes | `Event.slug`, `Market.marketType=to_advance`, listed public `Market`, active `Outcome.side` | Local fixtures remain only non-server fallback. Server-mode route-backed advance events use backend rule fields and do not invent a draw outcome. | None for the focused advance/no-draw Event Detail contract. |
+
 ## Cycle KW - Event Detail Hydration Key Contract
 
 Cycle KW makes Home/Live/Search card-open Event Detail hydration explicitly use the backend event slug required by `/api/mobile/events/:slug/live-detail`:

@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KX - Event Detail Advance Profile Contract
+
+Closed or narrowed:
+
+- Route/mobile proof now covers the one-team-advances profile on `/api/mobile/events/:slug/live-detail`.
+- Hydrated Event Detail preserves backend `marketProfile=to_advance`, `resultMode=no_draw`, `gameRules.allowDraw=false`, and `gameRules.includesOvertime=true`.
+- Proof verifies the route-backed advance market has exactly two outcomes and no draw outcome.
+- Mobile hydration service test now covers both regulation/draw and advance/no-draw detail payloads.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused advance/no-draw Event Detail contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Market.marketType=to_advance` and active outcome sides support this contract.
+
+Temporary mock/static data:
+
+- Local fixtures remain only non-server fallback. The server-mode proof uses disposable backend rows.
+
 ## Cycle KW - Event Detail Hydration Key Contract
 
 Closed or narrowed:

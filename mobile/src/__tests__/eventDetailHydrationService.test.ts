@@ -73,4 +73,50 @@ describe("event detail hydration service", () => {
       supportedMarketTypes: ["regulation_90"],
     });
   });
+
+  test("preserves advance/no-draw route rules through hydration", async () => {
+    const getEvent = vi.fn(async () => ({
+      event: {
+        ...detailPayload.event,
+        id: "advance-db-id",
+        slug: "advance-event-slug",
+        title: "Advance Home vs Away",
+        marketProfile: "to_advance" as const,
+        resultMode: "no_draw" as const,
+        gameRules: {
+          allowDraw: false,
+          includesOvertime: true,
+          description: "One team advances; no draw outcome.",
+        },
+        supportedMarketTypes: ["to_advance" as const],
+      },
+      markets: [{
+        ...detailPayload.markets[0],
+        id: "advance-market",
+        title: "Who Advances",
+        marketGroupTitle: "Who Advances",
+        marketType: "to_advance",
+        outcomes: [
+          { id: "home", name: "Home advances", label: "Home advances", side: "home", price: 0.52, bestBid: null, bestAsk: null, isTradable: true },
+          { id: "away", name: "Away advances", label: "Away advances", side: "away", price: 0.48, bestBid: null, bestAsk: null, isTradable: true },
+        ],
+      }],
+    }));
+
+    const event = await loadEventDetailForCard({ getEvent }, { id: "advance-db-id", backendSlug: "advance-event-slug" });
+
+    expect(getEvent).toHaveBeenCalledWith("advance-event-slug");
+    expect(event).toMatchObject({
+      id: "advance-event-slug",
+      backendSlug: "advance-event-slug",
+      marketProfile: "to_advance",
+      resultMode: "no_draw",
+      gameRules: {
+        allowDraw: false,
+        includesOvertime: true,
+      },
+      supportedMarketTypes: ["to_advance"],
+    });
+    expect(event?.markets[0]?.outcomes.map((outcome) => outcome.side)).toEqual(["home", "away"]);
+  });
 });

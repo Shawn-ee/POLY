@@ -1,0 +1,48 @@
+{
+  "pass": true,
+  "cycle": "Cycle KX",
+  "createdAt": "2026-07-06T09:08:14.918Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "seeded": {
+    "eventId": "f86eb6ab-402d-4cca-92a0-a164118f1ede",
+    "slug": "mobile-kx-live-advance-32c077a1"
+  },
+  "summaryRoute": {
+    "query": {
+      "sportKey": "soccer",
+      "leagueKey": "world_cup",
+      "search": "32c077a1",
+      "includeMobileMarkets": "1",
+      "statusGroup": "live",
+      "limit": "1"
+    },
+    "eventId": "f86eb6ab-402d-4cca-92a0-a164118f1ede",
+    "slug": "mobile-kx-live-advance-32c077a1",
+    "normalizedId": "mobile-kx-live-advance-32c077a1",
+    "normalizedBackendSlug": "mobile-kx-live-advance-32c077a1"
+  },
+  "detailRoute": {
+    "slugStatus": 200,
+    "requestedKeys": [
+      "mobile-kx-live-advance-32c077a1"
+    ]
+  },
+  "hydratedDetail": {
+    "id": "mobile-kx-live-advance-32c077a1",
+    "backendSlug": "mobile-kx-live-advance-32c077a1",
+    "marketProfile": "to_advance",
+    "resultMode": "no_draw",
+    "gameRules": {
+      "allowDraw": false,
+      "includesOvertime": true,
+      "description": "One team advances; no draw outcome."
+    },
+    "supportedMarketTypes": [
+      "to_advance"
+    ],
+    "outcomeSides": [
+      "home",
+      "away"
+    ]
+  }
+}
