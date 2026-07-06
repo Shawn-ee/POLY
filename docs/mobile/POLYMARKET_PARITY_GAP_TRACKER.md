@@ -543,3 +543,10 @@ For every UI element or interaction, answer:
 - LB closes the focused P0 gap where route-backed Game Lines could still expose or default to static frontend Spread/Totals/Team Total lines.
 - Harness proof passes for a route-backed event whose only available lines differ from the old defaults: Spread `3.5` 2H, Totals `4.5` 1H, and Team Total `2.5` 2H.
 - Remaining P1: production active Polymarket provider line-family breadth and live provider liquidity.
+
+## Cycle LC Gap Tracker Update
+
+- PM-GAP-107 is opened and verified for Trade Ticket availability submit safety.
+- LC closes the focused P0 gap where a stale handler could call the server order path for a route-backed market whose backend availability was `suspended` or `unavailable`.
+- Harness proof passes for backend-shaped compact market availability normalization, unavailable/suspended zero API calls, clear backend-reason errors, and ready-market submit success.
+- Remaining P1: production active provider breadth/freshness; backend `/api/orders` remains the final safety layer for stale client state.

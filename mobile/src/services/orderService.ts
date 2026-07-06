@@ -142,6 +142,14 @@ const sharesFromAmount = (amount: number, probability: number) => {
 
 const lineSelectionFamilies: Array<TicketSelection["marketType"]> = ["spread", "totals", "team-total"];
 
+const blockedAvailabilityStatuses = new Set(["suspended", "unavailable"]);
+
+export const marketOrderBlockReason = (market: Market) => {
+  const status = market.availability?.status;
+  if (!status || !blockedAvailabilityStatuses.has(status)) return null;
+  return market.availability?.reason || `Market is ${status}.`;
+};
+
 const selectionRequiresServerEcho = (selection: TicketSelection) =>
   lineSelectionFamilies.includes(selection.marketType) ||
   Boolean(selection.line || selection.period || selection.externalMarketId || selection.conditionId || selection.referenceTokenId);
@@ -187,6 +195,11 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
 
   if (input.mode === "mock") {
     return mockOrder(input);
+  }
+
+  const blockReason = marketOrderBlockReason(input.market);
+  if (blockReason) {
+    throw new Error(`Market unavailable for orders: ${blockReason}`);
   }
 
   const expectedSelection = selectionForOrder(input);

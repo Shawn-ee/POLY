@@ -1,0 +1,70 @@
+{
+  "cycle": "LC",
+  "gate": "trade-ticket-availability-submit-contract",
+  "generatedAt": "2026-07-06T09:50:56.076Z",
+  "assertions": {
+    "backendAvailabilityPreservedByMobileNormalization": true,
+    "unavailableMarketBlockedBeforeApi": true,
+    "suspendedMarketBlockedBeforeApi": true,
+    "readyMarketStillSubmits": true
+  },
+  "probes": {
+    "unavailable": {
+      "status": "unavailable",
+      "normalizedAvailability": {
+        "source": "provider-lifecycle",
+        "status": "unavailable",
+        "marketStatus": "UNAVAILABLE",
+        "lastUpdated": null,
+        "stalenessSeconds": null,
+        "staleAfterSeconds": 90,
+        "isStale": false,
+        "isSuspended": false,
+        "isDelayed": false,
+        "reason": "Provider quote is unavailable."
+      },
+      "blockReason": "Provider quote is unavailable.",
+      "routeCallCount": 0,
+      "orderId": null,
+      "error": "Market unavailable for orders: Provider quote is unavailable."
+    },
+    "suspended": {
+      "status": "suspended",
+      "normalizedAvailability": {
+        "source": "provider-lifecycle",
+        "status": "suspended",
+        "marketStatus": "SUSPENDED",
+        "lastUpdated": null,
+        "stalenessSeconds": null,
+        "staleAfterSeconds": 90,
+        "isStale": false,
+        "isSuspended": true,
+        "isDelayed": false,
+        "reason": "Market status is suspended."
+      },
+      "blockReason": "Market status is suspended.",
+      "routeCallCount": 0,
+      "orderId": null,
+      "error": "Market unavailable for orders: Market status is suspended."
+    },
+    "ready": {
+      "status": "ready",
+      "normalizedAvailability": {
+        "source": "provider-lifecycle",
+        "status": "ready",
+        "marketStatus": "LIVE",
+        "lastUpdated": "2026-07-06T08:00:00.000Z",
+        "stalenessSeconds": 0,
+        "staleAfterSeconds": 90,
+        "isStale": false,
+        "isSuspended": false,
+        "isDelayed": false,
+        "reason": "Provider quote is ready."
+      },
+      "blockReason": null,
+      "routeCallCount": 1,
+      "orderId": "server-lc-ready",
+      "error": null
+    }
+  }
+}

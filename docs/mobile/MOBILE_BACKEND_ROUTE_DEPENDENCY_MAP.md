@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle LC - Trade Ticket Availability Submit Contract
+
+Cycle LC makes backend-provided market availability part of the Trade Ticket submit contract, not only a visual disabled state:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-LC-trade-ticket-availability-submit-contract/cycle-LC-trade-ticket-availability-submit-contract.json`.
+- Proof script: `scripts/prove_mobile_trade_ticket_availability_submit_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket submit availability guard | `/api/mobile/events/:slug/live-detail` or `/api/events?includeMobileMarkets=1` for market availability, then `/api/orders` only when orderable | GET then POST | Public/mobile event route; canonical API key/session with `orders:write` for submit | Canonical order body only after availability passes | Compact market `availability.status`, `availability.reason`, `marketStatus`; mobile blocks `suspended`/`unavailable` before `POST /api/orders`, while `ready`/`stale`/`delayed` keep existing submit path | Listed public `Market`, provider quote/depth lifecycle fields, canonical `Order` only for orderable submits | Mock mode remains unchanged. Legacy markets without availability continue to use the existing mock/server behavior; route-backed blocked statuses do not call `/api/orders`. | None for the focused Trade Ticket availability submit contract. Backend `/api/orders` still remains the final safety layer. |
+
 ## Cycle KZ - Event Detail Market Availability Contract
 
 Cycle KZ prevents route-backed Event Detail from inventing unsupported Game Lines families:

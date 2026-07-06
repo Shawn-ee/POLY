@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import type { PolyApi } from "../api";
-import { submitTicketOrder } from "../services/orderService";
+import { marketOrderBlockReason, submitTicketOrder } from "../services/orderService";
 
 const market = {
   id: "world-cup-winner",
@@ -62,6 +62,26 @@ const providerMarket = {
 };
 
 describe("ticket order service", () => {
+  test("reports backend availability blocks for unavailable markets", () => {
+    expect(
+      marketOrderBlockReason({
+        ...market,
+        availability: {
+          source: "provider-lifecycle",
+          status: "unavailable",
+          marketStatus: "CLOSED",
+          lastUpdated: null,
+          stalenessSeconds: null,
+          staleAfterSeconds: 90,
+          isStale: false,
+          isSuspended: false,
+          isDelayed: false,
+          reason: "Provider quote is unavailable.",
+        },
+      }),
+    ).toBe("Provider quote is unavailable.");
+  });
+
   test("uses prop market title for event detail prop orders", async () => {
     const result = await submitTicketOrder({
       mode: "mock",
@@ -524,5 +544,98 @@ describe("ticket order service", () => {
       }),
     ).rejects.toThrow("Order amount must be greater than zero.");
     expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("blocks server-mode submit for backend unavailable markets before calling the API", async () => {
+    const placeLimitOrder = vi.fn();
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market: {
+          ...market,
+          availability: {
+            source: "provider-lifecycle",
+            status: "unavailable",
+            marketStatus: "CLOSED",
+            lastUpdated: null,
+            stalenessSeconds: null,
+            staleAfterSeconds: 90,
+            isStale: false,
+            isSuspended: false,
+            isDelayed: false,
+            reason: "Provider quote is unavailable.",
+          },
+        },
+        outcome,
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Market unavailable for orders: Provider quote is unavailable.");
+    expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("blocks server-mode submit for backend suspended markets before calling the API", async () => {
+    const placeLimitOrder = vi.fn();
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market: {
+          ...market,
+          availability: {
+            source: "market-status",
+            status: "suspended",
+            marketStatus: "SUSPENDED",
+            lastUpdated: "2026-07-06T08:00:00.000Z",
+            stalenessSeconds: 0,
+            staleAfterSeconds: 90,
+            isStale: false,
+            isSuspended: true,
+            isDelayed: false,
+            reason: "Market status is suspended.",
+          },
+        },
+        outcome,
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Market unavailable for orders: Market status is suspended.");
+    expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("allows warning-state backend markets to continue to canonical submit", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-stale-order-1" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    const result = await submitTicketOrder({
+      mode: "server",
+      api,
+      market: {
+        ...market,
+        availability: {
+          source: "provider-lifecycle",
+          status: "stale",
+          marketStatus: "LIVE",
+          lastUpdated: "2026-07-06T08:00:00.000Z",
+          stalenessSeconds: 180,
+          staleAfterSeconds: 90,
+          isStale: true,
+          isSuspended: false,
+          isDelayed: false,
+          reason: "Latest quote is older than 90 seconds.",
+        },
+      },
+      outcome,
+      side: "buy",
+      amount: 25,
+    });
+
+    expect(placeLimitOrder).toHaveBeenCalledOnce();
+    expect(result.id).toBe("server-stale-order-1");
   });
 });

@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Trade Ticket availability submit contract | Cycle LC | Pass for backend/data-contract scope | 0 for focused blocked-market submit scope | P1 production active provider breadth/freshness | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LC-trade-ticket-availability-submit-contract/cycle-LC-trade-ticket-availability-submit-contract.json`; tests: `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-LC-trade-ticket-availability-submit-contract.md` | Trade Ticket submit now consumes backend `market.availability` as an executable guard: `suspended`/`unavailable` markets stop before `/api/orders`; ready warning-free markets still submit normally. |
 | Event Detail line availability contract | Cycle LB | Pass for backend/data-contract scope | 0 for focused backend-driven line/period availability scope | P1 production active provider breadth/liquidity | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LB-event-detail-line-availability-contract/cycle-LB-event-detail-line-availability-contract.json`; tests: `mobile/src/__tests__/eventDetailLineAvailabilityService.test.ts`, `mobile/src/__tests__/eventDetailLineTicketService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`; audit: `mobile/docs/audits/cycle-LB-event-detail-line-availability-contract.md` | Route-backed Event Detail line controls now derive Spread/Totals/Team Total lines and periods from backend markets instead of static frontend defaults. |
 | Cashout/sell safety contract | Cycle LA | Pass for backend/data-contract scope | 0 for focused no-position, zero-share, oversell, and valid sell-all scope | P1 provider-backed production close/cashout replay on live markets | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LA-cashout-sell-safety-contract/cycle-LA-cashout-sell-safety-contract.json`; tests: `mobile/src/__tests__/positionCloseService.test.ts`, `src/server/services/__tests__/phase7_kalshi_model.test.ts`; audit: `mobile/docs/audits/cycle-LA-cashout-sell-safety-contract.md` | Portfolio/Event Detail server cashout actions are disabled for zero/missing shares; mobile close service blocks invalid cashout before API; `/api/orders` rejects naked sell/oversell and accepts valid sell-all by reserving all shares. |
 | Event Detail market availability contract | Cycle KZ | Pass for backend/data-contract scope | 0 for focused unsupported Game Lines visibility scope | None for focused Event Detail market availability contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KZ-event-detail-market-availability-contract/cycle-KZ-event-detail-market-availability-contract.json`; tests: `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KZ-event-detail-market-availability-contract.md` | Route-backed Event Detail now hides unsupported Spread/Totals/Team Total/Halves when backend does not provide matching markets; local fixture fallback remains unchanged. |
@@ -80,6 +81,37 @@ Fail the feature when:
 | Current live event detail visible provider behavior and structural parity | Cycle EG integrated | Partial; PM-GAP-084 remains open | 4 P0 status/provider-lifecycle proof areas remain | P1 fresh S23 recapture, broader real provider-backed family breadth, visible provider refresh lifecycle; P2 density/chart/orderbook/status polish | Reused stale/reference-only DQ-C Samsung S23 official Polymarket evidence; gate: `docs/mobile/audits/cycle-eg-c-live-event-visible-provider-gate.md` | Backend refresh lifecycle proof: `docs/mobile/harness/cycle-EG-A-provider-refresh-lifecycle.json`; Samsung tablet visible proof: `docs/mobile/harness/cycle-EG-B-visible-live-parity/cycle-EG-B-visible-live-parity-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EG-B-visible-live-parity/` and `docs/mobile/harness/cycle-EG-B-visible-live-parity/` | EG materially closes chart, line-selector, Book ladder, and ticket carry-through gaps for the selected Mexico/Ecuador Spread path. It remains partial because the Android run used contract-shaped fallback data and did not visibly prove ready/stale/refreshing/unavailable provider lifecycle states tied to the backend route in one run. |
 | Current live game page Book-origin snapshot durability after metadata drift | Cycle EF integrated | Pass for selected EF proof; PM-GAP-083 verified for selected path | 0 for selected EF gate | P1 repeat across real provider-backed line families, provider-refresh drift regression, official production history recapture; P2 Portfolio/history visual clarity | Reused EE/ED checked-in proof and DQ-C Polymarket reference; gate: `docs/mobile/audits/cycle-ef-c-snapshot-durability-gate.md` | Backend proof: `docs/mobile/harness/cycle-EF-A-snapshot-durability.json`; Samsung tablet proof: `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/cycle-EF-snapshot-durability-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EF-integrated-snapshot-durability/` and `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/` | Integrated proof mutates current market/outcome/provider metadata after order/fill creation, then proves backend and Android Portfolio/activity still render order-time/fill-time selected Book identity with no fallback/default reconstruction and explicit fake-token labels. |
 | Current live game page Book-origin open/cancel/fill status and selection snapshots | Cycle EE integrated | Pass for selected PM-GAP-082 gate | 0 for selected EE gate | P1 real provider-backed line-family status matrix, official production confirmation/cancel/fill recapture, durability checks after metadata changes; P2 Portfolio/history visual status polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook and location-gated ticket reference; ED/DX/DO/Portfolio checked-in lifecycle baselines; gate: `docs/mobile/audits/cycle-ee-c-book-order-status-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EE-integrated-book-order-status/cycle-EE-book-order-status-proof.json`; backend snapshot proof: `docs/mobile/harness/cycle-EE-A-book-order-status-snapshots.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EE-integrated-book-order-status/` and `docs/mobile/harness/cycle-EE-integrated-book-order-status/` | EE integrated proof shows the same Book-origin selected identity through open order, cancel/canceled status, filled position, recent activity/history, guarded backend selection snapshots, visible fake-token status labels, and no-fallback assertions. |
+
+## Cycle LC
+
+Gate status: Pass
+
+Scope:
+
+- Trade Ticket server-mode submit availability guard.
+- Backend-route-shaped market availability normalization and submit behavior.
+
+Evidence:
+
+- `docs/mobile/harness/cycle-LC-trade-ticket-availability-submit-contract/cycle-LC-trade-ticket-availability-submit-contract.json`
+- `mobile/docs/audits/cycle-LC-trade-ticket-availability-submit-contract.md`
+- `mobile/src/__tests__/orderService.test.ts`
+
+Criteria:
+
+| Criterion | Result | Evidence |
+| --- | --- | --- |
+| Backend market availability survives mobile normalization | Pass | LC proof `backendAvailabilityPreservedByMobileNormalization=true` |
+| Unavailable markets do not call `/api/orders` | Pass | LC proof `unavailable.routeCallCount=0` and order service test |
+| Suspended markets do not call `/api/orders` | Pass | LC proof `suspended.routeCallCount=0` and order service test |
+| Clear backend reason is surfaced for blocked submit | Pass | LC proof includes `Provider quote is unavailable.` and `Market status is suspended.` errors |
+| Ready markets still submit normally | Pass | LC proof `ready.routeCallCount=1`, `ready.orderId=server-lc-ready` |
+
+Decision:
+
+- Pass/fail: Pass for focused Trade Ticket availability submit contract.
+- Unresolved P0 gaps: 0 for focused blocked-market submit scope.
+- Remaining P1/P2 gaps: production active provider breadth/freshness.
 
 ## Cycle LA
 

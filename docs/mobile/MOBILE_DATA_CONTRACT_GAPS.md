@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LC - Trade Ticket Availability Submit Contract
+
+Closed or narrowed:
+
+- Trade Ticket server-mode submit now treats backend `market.availability.status` as an executable order contract.
+- `suspended` and `unavailable` route-backed markets are blocked before `PolyApi.placeLimitOrder()` can call `/api/orders`.
+- The error message includes the backend-provided availability reason when present.
+- `ready`, `stale`, and `delayed` markets keep the existing submit behavior because the visible UI treats stale/delayed as warning states, not hard blocks.
+- Route/mobile proof verifies backend-shaped compact market availability survives mobile normalization, blocked statuses make zero order-route calls, and a ready market still submits.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Trade Ticket availability submit contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing compact market `availability.status`, `availability.reason`, and provider lifecycle fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/offline order mode remains unchanged. Legacy markets without backend availability continue through the existing behavior; server-mode route-backed blocked statuses do not use mock fallback or submit to `/api/orders`.
+
 ## Cycle KZ - Event Detail Market Availability Contract
 
 Closed or narrowed:
