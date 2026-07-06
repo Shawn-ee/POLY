@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { serializeEventSummary } from "@/server/services/eventReadModel";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
 import { selectCompactLiveMarkets } from "@/server/services/mobileLiveEventDetail";
+import { resolveSortedMobilePageStart } from "@/server/services/mobileEventPagination";
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
@@ -315,8 +316,13 @@ export async function GET(request: NextRequest) {
         }),
       )).filter((event) => event.marketCount > 0);
     const orderedEvents = sortBy ? sortMobileEventRows(mobileEvents, sortBy) : mobileEvents;
-    const startIndex = sortBy && cursorId ? orderedEvents.findIndex((event) => event.id === cursorId) + 1 : 0;
-    const pageStart = startIndex > 0 ? startIndex : 0;
+    const sortedPageStart = sortBy
+      ? resolveSortedMobilePageStart(orderedEvents.map((event) => event.id), cursorId)
+      : { pageStart: 0, error: null };
+    if (sortedPageStart.error) {
+      return NextResponse.json({ error: sortedPageStart.error }, { status: 400 });
+    }
+    const pageStart = sortedPageStart.pageStart;
     const pageEvents = sortBy ? orderedEvents.slice(pageStart, pageStart + limit) : orderedEvents;
     const nextCursor = sortBy
       ? orderedEvents.length > pageStart + limit ? pageEvents[pageEvents.length - 1]?.id ?? null : null

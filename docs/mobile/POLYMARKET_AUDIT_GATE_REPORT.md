@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Sorted mobile event cursor contract | Cycle LK | Pass for backend/data-contract scope | 0 for focused sorted cursor scope | None for focused sorted mobile event cursor contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md` | `/api/events?includeMobileMarkets=1&sortBy=popular/live` now rejects sorted cursors outside the backend-filtered result set instead of restarting at page one and duplicating visible discovery cards. |
 | Portfolio partial sync contract | Cycle LE | Pass for backend/data-contract scope | 0 for focused partial-sync status scope | P1 granular UI copy for snapshot-vs-history partial failures | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LE-portfolio-partial-sync-contract/cycle-LE-portfolio-partial-sync-contract.json`; tests: `mobile/src/__tests__/portfolioSyncService.test.ts`; audit: `mobile/docs/audits/cycle-LE-portfolio-partial-sync-contract.md` | Portfolio server mode now reports full `synced` only when both `/api/portfolio` and `/api/portfolio/history` succeed; partial failures show visible error while preserving successful partial data. |
 | Account preferences response contract | Cycle LD | Pass for backend/data-contract scope | 0 for focused preference response-shape scope | P1 richer retry/conflict UI if preference save fails mid-session | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LD-account-preferences-response-contract/cycle-LD-account-preferences-response-contract.json`; tests: `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-LD-account-preferences-response-contract.md` | Account preferences GET/PUT payloads are validated by mobile before visible language, saved markets, and Trade Ticket defaults are applied; malformed route-shaped fields fail clearly. |
 | Trade Ticket availability submit contract | Cycle LC | Pass for backend/data-contract scope | 0 for focused blocked-market submit scope | P1 production active provider breadth/freshness | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LC-trade-ticket-availability-submit-contract/cycle-LC-trade-ticket-availability-submit-contract.json`; tests: `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-LC-trade-ticket-availability-submit-contract.md` | Trade Ticket submit now consumes backend `market.availability` as an executable guard: `suspended`/`unavailable` markets stop before `/api/orders`; ready warning-free markets still submit normally. |
@@ -4506,3 +4507,36 @@ Decision:
 - Pass/fail: Pass for focused server cancel optimism contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional cancel-race copy/action.
+
+## Cycle LK - Sorted Event Cursor Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure sorted mobile discovery pages reject stale or filtered-out cursors instead of duplicating the first page.
+
+Reference Audit Agent: Backend/data-contract loop. Manual visual review is not required for this route contract.
+
+Implementation Agent: Added sorted mobile cursor resolver, wired it into `/api/events`, added focused route tests, and generated harness proof.
+
+Audit Gate Agent: Proof script, focused backend tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md`
+- `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`
+- `scripts/prove_mobile_sorted_event_cursor_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LK-P0-01 | P0 | Pass | First sorted page starts at `pageStart=0` without a cursor. | N/A |
+| LK-P0-02 | P0 | Pass | Valid cursor advances to the item after the cursor. | N/A |
+| LK-P0-03 | P0 | Pass | Filtered-out cursor returns `400` instead of restarting page one. | N/A |
+| LK-P0-04 | P0 | Pass | Error body is stable for mobile handling. | N/A |
+
+Decision:
+
+- Pass/fail: Pass for focused sorted mobile event cursor contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: none for this focused route/data contract.

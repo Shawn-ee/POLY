@@ -1,0 +1,36 @@
+{
+  "cycle": "Cycle LK",
+  "feature": "Sorted mobile event cursor contract",
+  "generatedAt": "2026-07-06T10:24:41.680Z",
+  "route": "/api/events?includeMobileMarkets=1&sortBy=popular|live",
+  "contract": {
+    "sortedCursorScope": "cursor must be present in the backend-filtered sorted mobile page",
+    "validCursorBehavior": "start after the cursor",
+    "invalidFilteredCursorBehavior": "reject with 400 instead of restarting from the first page"
+  },
+  "samples": {
+    "orderedEventIds": [
+      "event-most-markets",
+      "event-live-second",
+      "event-small-third"
+    ],
+    "firstPage": {
+      "pageStart": 0,
+      "error": null
+    },
+    "secondPage": {
+      "pageStart": 2,
+      "error": null
+    },
+    "staleCursor": {
+      "pageStart": 0,
+      "error": "Invalid event cursor for filtered mobile page."
+    }
+  },
+  "assertions": {
+    "firstSortedMobilePageStartsAtZero": true,
+    "validBackendCursorAdvancesPastCursor": true,
+    "filteredOutCursorIsRejected": true,
+    "routeErrorMessageIsStableForMobile": true
+  }
+}

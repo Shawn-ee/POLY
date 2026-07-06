@@ -2230,3 +2230,15 @@ Cycle LJ implementation notes:
 - Added `shouldApplyOptimisticCancel` so only mock mode applies local cancel mutation before confirmation.
 - Server-mode cancel now waits for `DELETE /api/orders/:id` confirmation and Portfolio/history refresh.
 - Failed server cancel keeps existing visible state and marks Portfolio sync error.
+
+## Cycle LK - Sorted Event Cursor Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home/Search sorted discovery pagination | `/api/events?includeMobileMarkets=1&sortBy=popular|live&limit=...&cursor=...` | GET | Public viewing | Query params: sport/league filters, optional search/status/saved ids, sort, limit, cursor | `events[]`, `nextCursor`, `page.limit`, `page.nextCursor`, `page.hasMore`, `page.sortBy`, or `400` cursor error | `Event`, `Market`, `Outcome`; compact mobile market read model | Local/offline discovery is unchanged. Server mode uses backend page/cursor metadata. | No focused P0 gap. Production ranking metrics remain governed by prior Search/Home metric P1s if product wants richer provider metrics. |
+
+Cycle LK implementation notes:
+
+- Sorted mobile event pages now require the cursor id to exist inside the filtered and sorted backend result set.
+- Valid sorted cursors start after the cursor event.
+- Stale or filtered-out sorted cursors return `400` with `Invalid event cursor for filtered mobile page.` instead of duplicating page one.

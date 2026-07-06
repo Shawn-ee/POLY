@@ -4637,6 +4637,35 @@ Future migration concern:
 
 - If partial cashout becomes a product requirement, add first-class amount/share input and proof separately. LA intentionally keeps default cashout-all behavior.
 
+## Cycle LK - Sorted Event Cursor Contract
+
+Closed or narrowed:
+
+- Sorted mobile discovery pages no longer restart from page one when the cursor exists globally but is outside the filtered/sorted result set.
+- `/api/events?includeMobileMarkets=1&sortBy=popular|live` now rejects filtered-out cursors with a clear `400` error.
+- Valid cursors still advance to the next sorted page, preserving backend-owned discovery order for Home/Search style flows.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for sorted event cursor handling.
+- P1 provider-backed popularity/ranking breadth remains under existing metrics gaps if product wants richer ranking signals.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `Event.id` is the page cursor identity.
+
+Route mismatch:
+
+- No mismatch for the focused flow. Mobile already sends backend `cursor` values from `nextCursor`; the backend now rejects stale/out-of-filter cursor reuse instead of returning duplicate cards.
+
+Temporary mock/static data:
+
+- Local/offline discovery fallback is unchanged and remains outside server-mode backend pagination.
+
+Future migration concern:
+
+- If sorted discovery can exceed the current `MAX_LIMIT` route window, replace in-memory sorted pagination with a persisted ranking cursor or database-orderable ranking key.
+
 ## Cycle LB - Event Detail Line Availability Contract
 
 Closed or narrowed:

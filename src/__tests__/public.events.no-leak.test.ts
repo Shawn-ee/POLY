@@ -477,6 +477,85 @@ describe("public event API no-leak checks", () => {
     expectNoForbiddenKeys(liveBody);
   });
 
+  test("GET /api/events advances sorted mobile pages from the backend cursor", async () => {
+    const listedMarket = (id: string) => ({
+      ...mobileListMarket,
+      id,
+      slug: id,
+      outcomes: mobileListMarket.outcomes.map((outcome, index) => ({
+        ...outcome,
+        id: `${id}-outcome-${index}`,
+      })),
+    });
+    const oneMarketEvent = {
+      ...baseEvent,
+      id: "one-market-event",
+      slug: "one-market-event",
+      status: "upcoming",
+      liveStatus: null,
+      markets: [listedMarket("one-market")],
+    };
+    const threeMarketEvent = {
+      ...baseEvent,
+      id: "three-market-event",
+      slug: "three-market-event",
+      status: "upcoming",
+      liveStatus: null,
+      markets: [listedMarket("three-market-a"), listedMarket("three-market-b"), listedMarket("three-market-c")],
+    };
+    const liveTwoMarketEvent = {
+      ...baseEvent,
+      id: "live-two-market-event",
+      slug: "live-two-market-event",
+      status: "live",
+      liveStatus: "in_progress",
+      markets: [listedMarket("live-market-a"), listedMarket("live-market-b")],
+    };
+
+    mockPrisma.event.findUnique.mockResolvedValue({ ...baseEvent, id: "live-two-market-event" });
+    mockPrisma.event.findMany.mockResolvedValue([oneMarketEvent, threeMarketEvent, liveTwoMarketEvent]);
+
+    const response = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&sortBy=popular&limit=2&cursor=live-two-market-event"),
+    );
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.events.map((event: any) => event.slug)).toEqual(["one-market-event"]);
+    expect(body.page).toEqual({ limit: 2, nextCursor: null, hasMore: false, sortBy: "popular" });
+    expectNoForbiddenKeys(body);
+  });
+
+  test("GET /api/events rejects sorted mobile cursors outside the filtered page contract", async () => {
+    const listedMarket = (id: string) => ({
+      ...mobileListMarket,
+      id,
+      slug: id,
+      outcomes: mobileListMarket.outcomes.map((outcome, index) => ({
+        ...outcome,
+        id: `${id}-outcome-${index}`,
+      })),
+    });
+    const visibleEvent = {
+      ...baseEvent,
+      id: "visible-event",
+      slug: "visible-event",
+      markets: [listedMarket("visible-market")],
+    };
+
+    mockPrisma.event.findUnique.mockResolvedValue({ ...baseEvent, id: "stale-event" });
+    mockPrisma.event.findMany.mockResolvedValue([visibleEvent]);
+
+    const response = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&sortBy=popular&limit=2&cursor=stale-event"),
+    );
+
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body).toEqual({ error: "Invalid event cursor for filtered mobile page." });
+    expectNoForbiddenKeys(body);
+  });
+
   test("GET /api/events supports backend-filtered futures markets for mobile Home", async () => {
     mockPrisma.event.findMany.mockResolvedValue([
       {
