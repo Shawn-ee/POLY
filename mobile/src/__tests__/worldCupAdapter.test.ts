@@ -22,6 +22,31 @@ const baseMarket: Market = {
 };
 
 describe("world cup adapter", () => {
+  test("classifies backend World Cup winner markets as futures", () => {
+    const normalized = normalizeMarket({
+      ...baseMarket,
+      id: "world-cup-winner",
+      title: "World Cup Winner",
+      marketGroupTitle: "World Cup Winner",
+      marketType: "future",
+      outcomes: [
+        {
+          id: "france",
+          name: "France",
+          label: "France",
+          side: "yes",
+          price: 0.21,
+          bestBid: 0.2,
+          bestAsk: 0.22,
+          isTradable: true,
+        },
+      ],
+    });
+
+    expect(normalized.type).toBe("future");
+    expect(normalized.marketType).toBe("future");
+  });
+
   test("preserves backend event row metrics without synthetic fallbacks", () => {
     const event: EventSummary = {
       id: "event-search-metrics",

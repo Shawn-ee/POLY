@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "cycle": "Cycle KQ",
+  "createdAt": "2026-07-06T08:32:58.970Z",
+  "route": "/api/events",
+  "query": {
+    "sportKey": "soccer",
+    "leagueKey": "world_cup",
+    "search": "9154c013",
+    "includeMobileMarkets": "1",
+    "marketType": "future",
+    "limit": "10"
+  },
+  "seeded": {
+    "futuresEvent": {
+      "id": "bddb0b9c-b92a-4e94-91a9-36f6d462123b",
+      "slug": "mobile-kq-futures-9154c013"
+    }
+  },
+  "routeResults": {
+    "slugs": [
+      "mobile-kq-futures-9154c013"
+    ],
+    "eventCount": 1,
+    "marketTypes": [
+      "future"
+    ]
+  },
+  "mobileFutures": [
+    {
+      "id": "693ddbf9-7e93-4d1d-876f-c66f142a088c",
+      "title": "World Cup Winner",
+      "type": "future",
+      "marketType": "future",
+      "outcomeCount": 2
+    }
+  ],
+  "mobileBehavior": {
+    "homeFuturesRouteParam": "marketType=future",
+    "fixtureFallbackIsolated": true
+  }
+}

@@ -477,6 +477,48 @@ describe("public event API no-leak checks", () => {
     expectNoForbiddenKeys(liveBody);
   });
 
+  test("GET /api/events supports backend-filtered futures markets for mobile Home", async () => {
+    mockPrisma.event.findMany.mockResolvedValue([
+      {
+        ...baseEvent,
+        id: "future-event",
+        slug: "future-event",
+        markets: [{
+          ...mobileListMarket,
+          id: "future-market",
+          marketType: "future",
+          marketGroupTitle: "World Cup Winner",
+        }],
+      },
+    ]);
+
+    const response = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&marketType=future&limit=10"),
+    );
+
+    expect(response.status).toBe(200);
+    const findManyInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
+    expect(findManyInput.where.AND).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        markets: {
+          some: expect.objectContaining({
+            visibility: "PUBLIC",
+            isListed: true,
+            marketType: { in: ["future", "outright"] },
+          }),
+        },
+      }),
+    ]));
+    expect(findManyInput.include.markets.where).toEqual({
+      visibility: "PUBLIC",
+      isListed: true,
+      marketType: { in: ["future", "outright"] },
+    });
+    const body = await response.json();
+    expect(body.events[0].markets[0]).toMatchObject({ id: "future-market", marketType: "future" });
+    expectNoForbiddenKeys(body);
+  });
+
   test("GET /api/events/[slug] returns event detail without sensitive keys", async () => {
     mockPrisma.event.findUnique.mockResolvedValue({
       ...baseEvent,

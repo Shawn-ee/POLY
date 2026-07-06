@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BackHandler, Linking, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PolyApi } from "./src/api";
-import { normalizeEventDetail, normalizeEventSummary } from "./src/adapters/worldCupAdapter";
+import { normalizeEventDetail, normalizeEventSummary, normalizeMarket } from "./src/adapters/worldCupAdapter";
 import { AccountScreen } from "./src/components/AccountScreen";
 import { BottomTabs } from "./src/components/BottomTabs";
 import { EventDetail } from "./src/components/EventDetail";
@@ -1122,14 +1122,21 @@ export default function App() {
   }, [loadBackendSearchEvents, mainTab, query, searchSavedEventIds, searchSort, searchStatusGroup]);
 
   useEffect(() => {
-    if (ORDER_MODE !== "server") return undefined;
+    if (MARKET_DATA_MODE !== "server") return undefined;
     let cancelled = false;
-    const marketIds = futures.map((market) => market.id);
-    loadMarketQuotesById(api, marketIds).then((quotesByMarketId) => {
-      if (cancelled || !mounted.current) return;
-      if (quotesByMarketId.size === 0) return;
-      setFutures((current) => applyTicketQuotesToMarkets(current, quotesByMarketId));
-    });
+    api.listWorldCupEvents({ limit: 10, marketType: "future" })
+      .then(async (payload) => {
+        if (cancelled || !mounted.current) return;
+        const backendFutures = payload.events
+          .flatMap((event) => event.markets ?? [])
+          .map(normalizeMarket)
+          .filter((market) => market.type === "future" && market.outcomes.length > 0);
+        if (backendFutures.length === 0) return;
+        const quotesByMarketId = await loadMarketQuotesById(api, backendFutures.map((market) => market.id));
+        if (cancelled || !mounted.current) return;
+        setFutures(quotesByMarketId.size > 0 ? applyTicketQuotesToMarkets(backendFutures, quotesByMarketId) : backendFutures);
+      })
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };

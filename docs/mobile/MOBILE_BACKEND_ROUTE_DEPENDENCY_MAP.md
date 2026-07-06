@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KQ - Home Futures Contract
+
+Cycle KQ wires the visible Home futures module to backend-filtered futures markets in server mode:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KQ-home-futures-contract/cycle-KQ-home-futures-contract.json`.
+- Proof script: `scripts/prove_mobile_home_futures_contract.ts`.
+- Focused validation: route proof, `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home futures discovery | `/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&marketType=future` | GET | Public/mobile route | None | `events[]`, compact `events[].markets[]`, `marketType`, `outcomes[].id`, `label`, `price`, `probability`, `providerTokenId`, `externalMarketId`, liquidity/price fields used by the futures card/list adapter | `Event`, listed public `Market` with `marketType=future` or `outright`, active `Outcome`, quote/depth helpers when available | Mock mode keeps local `worldCupFutures`. Server mode requests backend futures and replaces the module when the route returns usable futures; fixture fallback remains isolated for offline/demo mode. | P1: fuller production futures catalog breadth and provider-backed futures chart/history metrics. |
+
 ## Cycle KP - Portfolio Value History Contract
 
 Cycle KP wires the visible Portfolio value-history state to the backend route in server mode without redesigning Portfolio:

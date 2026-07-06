@@ -151,6 +151,36 @@ const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
 const eventIdsFilter = (eventIds: string[]): Prisma.EventWhereInput =>
   eventIds.length ? { id: { in: eventIds } } : {};
 
+const marketTypeAliases = (value: string) => {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "future" || normalized === "futures" || normalized === "outright") return ["future", "outright"];
+  return normalized ? [normalized] : [];
+};
+
+const listedMarketWhere = (marketType: string): Prisma.MarketWhereInput => {
+  const aliases = marketTypeAliases(marketType);
+  return {
+    visibility: "PUBLIC",
+    isListed: true,
+    ...(aliases.length ? { marketType: { in: aliases } } : {}),
+  };
+};
+
+const eventMarketTypeFilter = (marketType: string): Prisma.EventWhereInput => {
+  const aliases = marketTypeAliases(marketType);
+  return aliases.length
+    ? {
+        markets: {
+          some: {
+            visibility: "PUBLIC",
+            isListed: true,
+            marketType: { in: aliases },
+          },
+        },
+      }
+    : {};
+};
+
 const eventStatusGroupFilter = (statusGroup: string): Prisma.EventWhereInput =>
   statusGroup === "live"
     ? { status: { in: ["live", "LIVE"] } }
@@ -179,6 +209,7 @@ export async function GET(request: NextRequest) {
   const source = url.searchParams.get("source")?.trim() ?? "";
   const status = url.searchParams.get("status")?.trim() ?? "";
   const statusGroup = url.searchParams.get("statusGroup")?.trim() ?? "";
+  const marketType = url.searchParams.get("marketType")?.trim() ?? "";
   const sortBy = mobileSortBy(url.searchParams.get("sortBy"));
   const eventIds = (url.searchParams.get("eventIds") ?? "")
     .split(",")
@@ -200,14 +231,15 @@ export async function GET(request: NextRequest) {
   const eventFilters: Prisma.EventWhereInput[] = [
     useMobileSortedPage ? {} : eventCursorFilter(cursor),
     eventIdsFilter(eventIds),
+    eventMarketTypeFilter(marketType),
     {
-    ...eventSearchFilter(search),
-    ...(category ? { category } : {}),
-    ...(sportKey ? { sportKey } : {}),
-    ...(leagueKey ? { leagueKey } : {}),
-    ...(source ? { source } : {}),
-    ...(status ? { status } : {}),
-    ...(!status && statusGroup ? eventStatusGroupFilter(statusGroup) : {}),
+      ...eventSearchFilter(search),
+      ...(category ? { category } : {}),
+      ...(sportKey ? { sportKey } : {}),
+      ...(leagueKey ? { leagueKey } : {}),
+      ...(source ? { source } : {}),
+      ...(status ? { status } : {}),
+      ...(!status && statusGroup ? eventStatusGroupFilter(statusGroup) : {}),
     },
   ];
   const where: Prisma.EventWhereInput = { AND: eventFilters };
@@ -219,7 +251,7 @@ export async function GET(request: NextRequest) {
       take: useMobileSortedPage ? MAX_LIMIT : limit + 1,
       include: {
         markets: {
-          where: { visibility: "PUBLIC", isListed: true },
+          where: listedMarketWhere(marketType),
           orderBy: [{ marketGroupKey: "asc" }, { displayOrder: "asc" }, { createdAt: "asc" }],
           include: marketReadInclude,
         },
@@ -308,7 +340,7 @@ export async function GET(request: NextRequest) {
     take: limit + 1,
     include: {
       markets: {
-        where: { visibility: "PUBLIC", isListed: true },
+        where: listedMarketWhere(marketType),
         select: { status: true, title: true, referenceMetadata: true },
       },
     },

@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KQ - Home Futures Contract
+
+Closed or narrowed:
+
+- Backend `/api/events?includeMobileMarkets=1&marketType=future` now filters events by listed public futures/outrights and includes only matching compact markets.
+- Mobile `PolyApi.listWorldCupEvents()` can send `marketType=future` for Home futures discovery.
+- Server-mode Home loads backend futures from the route and only keeps local futures as an isolated mock/offline fallback.
+- Mobile market normalization now classifies backend World Cup Winner/future markets as `type=future` instead of treating them as game-line rows.
+- Route/mobile proof verifies the backend filter, compact market payload, and mobile-normalized futures shape.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Fuller production futures catalog breadth remains provider/data ingestion work.
+- Futures chart/range history still uses existing visual/demo data unless a future cycle wires provider-backed futures history.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Market.marketType`, listed/public visibility fields, `Event`, and `Outcome` support the focused route contract.
+
+Temporary mock/static data:
+
+- Mock mode keeps local `worldCupFutures`. Server mode asks `/api/events` for `marketType=future` and replaces Home futures when the route returns usable markets.
+
 ## Cycle KP - Portfolio Value History Contract
 
 Closed or narrowed:

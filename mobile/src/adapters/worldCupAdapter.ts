@@ -180,10 +180,10 @@ const normalizeOutcome = (outcome: BackendOutcome, index: number, total: number)
 
 const marketType = (market: BackendMarket): Market["type"] => {
   const key = `${market.marketType ?? ""} ${market.marketGroupTitle ?? ""} ${market.propCategory ?? ""} ${market.title}`.toLowerCase();
+  if (key.includes("future") || key.includes("cup")) return "future";
   if (key.includes("to_advance") || key.includes("to advance")) return "game-line";
   if (key.includes("winner") || key.includes("moneyline") || key.includes("match")) return "game-line";
   if (key.includes("live")) return "live";
-  if (key.includes("future") || key.includes("cup")) return "future";
   return "prop";
 };
 
