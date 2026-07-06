@@ -75,6 +75,7 @@ const asOutcomeSide = (value: string | null | undefined): Outcome["side"] | unde
 const asMarketContractType = (value: string | null | undefined): Market["marketType"] | undefined => {
   const normalized = `${value ?? ""}`.trim().toLowerCase();
   if (["moneyline", "match_winner", "match_winner_1x2", "winner"].includes(normalized)) return "moneyline";
+  if (["to_advance", "to-advance", "to_qualify", "to-qualify", "team_to_qualify", "team-to-qualify"].includes(normalized)) return "to_advance";
   if (["spread", "handicap", "asian_handicap"].includes(normalized)) return "spread";
   if (["totals", "total", "total_goals"].includes(normalized)) return "totals";
   if (["team-total", "team_total", "team_totals", "team_total_goals"].includes(normalized)) return "team-total";

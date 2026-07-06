@@ -1,0 +1,79 @@
+{
+  "pass": true,
+  "cycle": "Cycle KY",
+  "createdAt": "2026-07-06T09:15:45.441Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "seeded": {
+    "eventId": "cdb0f44c-647d-434b-b827-0461c62e032e",
+    "slug": "mobile-ky-live-mixed-9936a88a"
+  },
+  "summaryRoute": {
+    "query": {
+      "sportKey": "soccer",
+      "leagueKey": "world_cup",
+      "search": "9936a88a",
+      "includeMobileMarkets": "1",
+      "statusGroup": "live",
+      "limit": "1"
+    },
+    "slug": "mobile-ky-live-mixed-9936a88a",
+    "normalizedBackendSlug": "mobile-ky-live-mixed-9936a88a"
+  },
+  "detailRoute": {
+    "requestedKeys": [
+      "mobile-ky-live-mixed-9936a88a"
+    ]
+  },
+  "hydratedDetail": {
+    "marketProfile": "full_match_with_overtime",
+    "resultMode": "can_draw",
+    "gameRules": {
+      "allowDraw": true,
+      "includesOvertime": true,
+      "description": "Knockout match with advance market and separate regulation 90-minute winner."
+    },
+    "supportedMarketTypes": [
+      "full_match_with_overtime",
+      "to_advance",
+      "regulation_90"
+    ],
+    "routeMarketOrder": [
+      {
+        "id": "037d2e85-dd45-4212-aaf5-da45a41e8ea2",
+        "marketType": "to_advance",
+        "group": "to_advance",
+        "outcomes": [
+          "home",
+          "away"
+        ]
+      },
+      {
+        "id": "577e154b-3e49-4676-b11c-c6248c2887a3",
+        "marketType": "moneyline",
+        "group": "regulation_90",
+        "outcomes": [
+          "home",
+          "draw",
+          "away"
+        ]
+      }
+    ],
+    "selectedPrimaryMarket": {
+      "id": "037d2e85-dd45-4212-aaf5-da45a41e8ea2",
+      "marketType": "to_advance",
+      "outcomeSides": [
+        "home",
+        "away"
+      ]
+    },
+    "selectedRegulationMarket": {
+      "id": "577e154b-3e49-4676-b11c-c6248c2887a3",
+      "marketType": "moneyline",
+      "outcomeSides": [
+        "home",
+        "draw",
+        "away"
+      ]
+    }
+  }
+}

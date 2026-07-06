@@ -47,6 +47,44 @@ describe("world cup adapter", () => {
     expect(normalized.marketType).toBe("future");
   });
 
+  test("preserves backend to_advance market type as a game-line contract", () => {
+    const normalized = normalizeMarket({
+      ...baseMarket,
+      id: "who-advances",
+      title: "Who Advances",
+      marketGroupTitle: "Who Advances",
+      marketGroupKey: "to_advance",
+      marketType: "to_advance",
+      propCategory: null,
+      outcomes: [
+        {
+          id: "home",
+          name: "Home advances",
+          label: "Home advances",
+          side: "home",
+          price: 0.52,
+          bestBid: 0.51,
+          bestAsk: 0.53,
+          isTradable: true,
+        },
+        {
+          id: "away",
+          name: "Away advances",
+          label: "Away advances",
+          side: "away",
+          price: 0.48,
+          bestBid: 0.47,
+          bestAsk: 0.49,
+          isTradable: true,
+        },
+      ],
+    });
+
+    expect(normalized.type).toBe("game-line");
+    expect(normalized.marketType).toBe("to_advance");
+    expect(normalized.outcomes.map((outcome) => outcome.side)).toEqual(["home", "away"]);
+  });
+
   test("preserves backend event row metrics without synthetic fallbacks", () => {
     const event: EventSummary = {
       id: "event-search-metrics",

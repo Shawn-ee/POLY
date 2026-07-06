@@ -8,6 +8,7 @@ import {
 import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
 import { label, money } from "../presentation/formatters";
 import { resolveLineTicketTarget, ticketSelectionFromBackendMarket } from "../services/eventDetailLineTicketService";
+import { selectEventDetailPrimaryMarket, selectEventDetailRegulationMarket } from "../services/eventDetailMarketProfileService";
 import type { Position } from "./Portfolio";
 import type { TicketSelection } from "./TradeTicket";
 
@@ -398,7 +399,8 @@ export function EventDetail({
   const isLiveEvent = event.status === "live";
   const gameLineMarkets = useMemo(() => event.markets.filter((market) => market.type !== "prop" && market.type !== "future"), [event.markets]);
   const propMarkets = useMemo(() => event.markets.filter((market) => market.type === "prop"), [event.markets]);
-  const primaryMarket = gameLineMarkets[0] ?? event.markets[0];
+  const primaryMarket = selectEventDetailPrimaryMarket(event, gameLineMarkets) ?? event.markets[0];
+  const regulationWinnerMarket = selectEventDetailRegulationMarket(event, gameLineMarkets);
   const orderBookMarket = event.markets.find((market) => market.id === orderBookMarketId) ?? primaryMarket;
   const orderBookSelectedOutcome = orderBookMarket.outcomes.find((outcome) => outcome.id === orderBookOutcomeId) ?? orderBookMarket.outcomes[0];
   const primaryOutcomes = primaryMarket?.outcomes.slice(0, 2) ?? [];
@@ -577,27 +579,18 @@ export function EventDetail({
     const shouldShow = eventScroll.nativeEvent.contentOffset.y > 500;
     setCompactHeaderVisible((visible) => visible === shouldShow ? visible : shouldShow);
   };
-  const regulationWinnerRows: DisplayOutcome[] = [
-    ...(leftOutcome ? [{
-      id: leftOutcome.id,
-      label: `${label(locale, leftOutcome)} (Reg. Time)`,
-      color: leftOutcome.color,
-      probability: Math.max(1, leftOutcome.probability - 3),
-      odds: `${outcomeOdds(leftOutcome)}x`,
-      icon: teamA?.flag ?? "",
-      miniLine: Math.max(24, leftOutcome.probability),
-    }] : []),
-    makeTieOutcome(),
-    ...(rightOutcome ? [{
-      id: rightOutcome.id,
-      label: `${label(locale, rightOutcome)} (Reg. Time)`,
-      color: rightOutcome.color,
-      probability: Math.max(1, rightOutcome.probability - 21),
-      odds: "6.7x",
-      icon: teamB?.flag ?? "",
-      miniLine: Math.max(18, rightOutcome.probability),
-    }] : []),
-  ];
+  const regulationWinnerRows: DisplayOutcome[] = regulationWinnerMarket
+    ? regulationWinnerMarket.outcomes.map((outcome) => ({
+        id: outcome.id,
+        label: `${label(locale, outcome)} (Reg. Time)`,
+        color: outcome.color,
+        probability: outcome.probability,
+        odds: `${outcomeOdds(outcome)}x`,
+        icon: outcome.side === "draw" ? "%" : outcome.side === "away" ? teamB?.flag ?? "" : teamA?.flag ?? "",
+        miniLine: Math.max(18, outcome.probability),
+        ticketOutcome: outcome,
+      }))
+    : [];
   const spreadLineOptions = ["0.5", "1.5", "2.5"];
   const totalsLineOptions = ["1.5", "2.5", "3.5"];
   const homeCode = teamCode(teamA?.name ?? "Home");
@@ -2090,13 +2083,13 @@ export function EventDetail({
               {primaryMarket && <Text style={styles.hiddenStatsText}>{label(locale, primaryMarket)}</Text>}
             </View>
             {renderTeamToAdvanceCard()}
-            {primaryMarket && (
+            {regulationWinnerMarket && (
               <View style={styles.marketBlock}>
                 <Pressable
-                  accessibilityLabel={`event-detail-market-toggle-regulation-time-winner event-detail-market-toggle-${primaryMarket.id} ${providerIdentityLabel(primaryMarket)}`}
+                  accessibilityLabel={`event-detail-market-toggle-regulation-time-winner event-detail-market-toggle-${regulationWinnerMarket.id} ${providerIdentityLabel(regulationWinnerMarket)}`}
                   onPress={() => toggleGroup("regulation-time-winner")}
                   style={styles.marketHeaderRow}
-                  testID={`event-detail-market-toggle-${primaryMarket.id}`}
+                  testID={`event-detail-market-toggle-${regulationWinnerMarket.id}`}
                 >
                   <View style={styles.marketTitleBlock}>
                     <Text style={styles.marketTitle}>{isLiveEvent ? "Live Winner" : "Moneyline"}</Text>
@@ -2107,19 +2100,19 @@ export function EventDetail({
                 {expandedMarketIds["regulation-time-winner"] && (
                   <>
                     {showOrderBookDebug && (
-                      <View accessibilityLabel={`market-depth-${primaryMarket.id}`} style={styles.depthRow} testID={`market-depth-${primaryMarket.id}`}>
-                        <Text style={styles.depthText}>{t.bestBid} {marketDepth(primaryMarket).bid}</Text>
-                        <Text style={styles.depthText}>{t.bestAsk} {marketDepth(primaryMarket).ask}</Text>
-                        <Text style={styles.depthText}>{t.spread} {marketDepth(primaryMarket).spread}</Text>
-                        <Pressable accessibilityLabel={`event-detail-open-order-book ${providerIdentityLabel(primaryMarket)}`} onPress={() => openOrderBookForMarket(primaryMarket)} style={styles.depthBookButton} testID="event-detail-open-order-book">
+                      <View accessibilityLabel={`market-depth-${regulationWinnerMarket.id}`} style={styles.depthRow} testID={`market-depth-${regulationWinnerMarket.id}`}>
+                        <Text style={styles.depthText}>{t.bestBid} {marketDepth(regulationWinnerMarket).bid}</Text>
+                        <Text style={styles.depthText}>{t.bestAsk} {marketDepth(regulationWinnerMarket).ask}</Text>
+                        <Text style={styles.depthText}>{t.spread} {marketDepth(regulationWinnerMarket).spread}</Text>
+                        <Pressable accessibilityLabel={`event-detail-open-order-book ${providerIdentityLabel(regulationWinnerMarket)}`} onPress={() => openOrderBookForMarket(regulationWinnerMarket)} style={styles.depthBookButton} testID="event-detail-open-order-book">
                           <Ionicons name="book-outline" color="#dbeafe" size={14} />
                           <Text style={styles.depthBookText}>Book</Text>
                         </Pressable>
                       </View>
                     )}
                     {regulationWinnerRows.map((outcome) => {
-                      const matchingOutcome = primaryMarket.outcomes.find((item) => item.id === outcome.id);
-                      return renderParityOutcomeRow(outcome, primaryMarket.id, matchingOutcome, primaryMarket);
+                      const matchingOutcome = regulationWinnerMarket.outcomes.find((item) => item.id === outcome.id);
+                      return renderParityOutcomeRow(outcome, regulationWinnerMarket.id, matchingOutcome, regulationWinnerMarket);
                     })}
                   </>
                 )}

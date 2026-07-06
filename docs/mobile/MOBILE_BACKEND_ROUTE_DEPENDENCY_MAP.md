@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KY - Event Detail Mixed Profile Contract
+
+Cycle KY wires and proves the mixed knockout profile where the primary buttons are advance/no-draw while Game Lines still renders a backend-provided regulation 90-minute Home/Tie/Away market:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KY-event-detail-mixed-profile-contract/cycle-KY-event-detail-mixed-profile-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_mixed_profile_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Mixed knockout Event Detail primary/Game Lines split | `/api/mobile/events/:slug/live-detail` through `PolyApi.getEvent()` | GET | Public/mobile route | Backend event slug | `event.marketProfile=full_match_with_overtime`, `event.resultMode=can_draw`, `event.supportedMarketTypes` includes `to_advance` and `regulation_90`; mobile selects `to_advance` for primary outcome buttons and a draw-capable regulation market for Game Lines | `Event.slug`, listed public `Market.marketType=to_advance`, listed public `Market.marketType=moneyline`/`period=regulation`, active `Outcome.side` | Local fixtures remain non-server fallback. Server-mode route-backed mixed events use backend market availability and do not reuse the advance market as a fake Game Lines regulation row. | None for the focused mixed-profile Event Detail contract. |
+
 ## Cycle KX - Event Detail Advance Profile Contract
 
 Cycle KX proves the same Event Detail hydration path used in Cycle KW also carries backend-owned one-team-advances/no-draw rules:

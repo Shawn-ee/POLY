@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KY - Event Detail Mixed Profile Contract
+
+Closed or narrowed:
+
+- Mobile now preserves `to_advance` as a first-class market type instead of normalizing it to `prop`.
+- Event Detail has a dedicated market-profile selector for primary outcome buttons and regulation Game Lines.
+- Mixed knockout events now select the backend `to_advance` market for the top primary buttons.
+- Mixed knockout Game Lines now uses a separate backend regulation winner market with Home/Tie/Away when one exists.
+- Pure advance events do not create a fake regulation Game Lines row from the advance market.
+- Route/mobile proof verifies a mixed backend event hydrates as `full_match_with_overtime`, supports both `to_advance` and `regulation_90`, selects two-outcome advance as primary, and selects draw-capable regulation as Game Lines.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused mixed-profile Event Detail contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Market.marketType`, `Market.period`, `Market.marketGroupKey`, and active outcome sides support this contract.
+
+Temporary mock/static data:
+
+- Local fixtures remain fallback only. Server-mode mixed events use backend-provided market availability.
+
 ## Cycle KX - Event Detail Advance Profile Contract
 
 Closed or narrowed:
