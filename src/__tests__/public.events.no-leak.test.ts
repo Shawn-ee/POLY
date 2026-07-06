@@ -85,6 +85,7 @@ const expectedEventSummaryKeys = [
   "eventType",
   "externalEventId",
   "externalSlug",
+  "gameRules",
   "hasGroupedMarkets",
   "homeTeamName",
   "icon",
@@ -94,12 +95,15 @@ const expectedEventSummaryKeys = [
   "leagueKey",
   "liveStats",
   "marketCount",
+  "marketProfile",
   "metadata",
+  "resultMode",
   "slug",
   "source",
   "sportKey",
   "startTime",
   "status",
+  "supportedMarketTypes",
   "title",
   "updatedAt",
 ];
@@ -227,15 +231,23 @@ describe("public event API no-leak checks", () => {
     expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
-          category: "sports",
-          sportKey: "soccer",
-          leagueKey: "world_cup",
+          AND: expect.arrayContaining([
+            expect.objectContaining({
+              category: "sports",
+              sportKey: "soccer",
+              leagueKey: "world_cup",
+            }),
+          ]),
         }),
+        take: 51,
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
       }),
     );
 
     const body = await response.json();
-    expectOnlyKeys(body, ["events"]);
+    expectOnlyKeys(body, ["events", "nextCursor", "page"]);
+    expect(body.nextCursor).toBeNull();
+    expect(body.page).toEqual({ limit: 50, nextCursor: null, hasMore: false });
     expect(body.events).toHaveLength(1);
     expectOnlyKeys(body.events[0], [
       ...expectedEventSummaryKeys,
@@ -266,7 +278,7 @@ describe("public event API no-leak checks", () => {
 
     expect(response.status).toBe(200);
     const body = await response.json();
-    expectOnlyKeys(body, ["events"]);
+    expectOnlyKeys(body, ["events", "nextCursor", "page"]);
     expect(body.events).toHaveLength(1);
     expectOnlyKeys(body.events[0], [
       ...expectedEventSummaryKeys,
@@ -291,6 +303,48 @@ describe("public event API no-leak checks", () => {
         },
       ],
     });
+    expectNoForbiddenKeys(body);
+  });
+
+  test("GET /api/events supports cursor pagination for mobile Home", async () => {
+    const cursorEvent = { ...baseEvent, id: "cursor-event", updatedAt: now, createdAt: now };
+    mockPrisma.event.findUnique.mockResolvedValue(cursorEvent);
+    mockPrisma.event.findMany.mockResolvedValue([
+      {
+        ...baseEvent,
+        id: "page-event-1",
+        slug: "page-event-1",
+        markets: [{ status: "LIVE", title: "Match Winner", referenceMetadata: null }],
+      },
+      {
+        ...baseEvent,
+        id: "page-event-2",
+        slug: "page-event-2",
+        markets: [{ status: "LIVE", title: "Match Winner", referenceMetadata: null }],
+      },
+    ]);
+
+    const response = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&limit=1&cursor=cursor-event"),
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockPrisma.event.findUnique).toHaveBeenCalledWith({
+      where: { id: "cursor-event" },
+      select: { id: true, updatedAt: true, createdAt: true },
+    });
+    expect(mockPrisma.event.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        take: 2,
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+      }),
+    );
+
+    const body = await response.json();
+    expect(body.events).toHaveLength(1);
+    expect(body.events[0].slug).toBe("page-event-1");
+    expect(body.nextCursor).toBe("page-event-1");
+    expect(body.page).toEqual({ limit: 1, nextCursor: "page-event-1", hasMore: true });
     expectNoForbiddenKeys(body);
   });
 

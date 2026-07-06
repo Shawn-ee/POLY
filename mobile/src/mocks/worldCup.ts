@@ -33,7 +33,7 @@ export type Outcome = {
 export type Market = {
   id: string;
   marketGroupId?: string;
-  marketType?: "moneyline" | "spread" | "totals" | "team-total" | "next-goal" | "prop" | "future";
+  marketType?: "moneyline" | "to_advance" | "spread" | "totals" | "team-total" | "next-goal" | "prop" | "future";
   period?: "full-game" | "regulation" | "first-half" | "second-half";
   line?: string | null;
   referenceSource?: string | null;
@@ -48,6 +48,19 @@ export type Market = {
   availability?: AvailabilityState;
   outcomes: Outcome[];
 };
+
+export type EventMarketProfile = "to_advance" | "regulation_90" | "full_match_with_overtime";
+export type EventResultMode = "can_draw" | "no_draw";
+export type EventMarketType =
+  | "to_advance"
+  | "regulation_90"
+  | "full_match_with_overtime"
+  | "spread"
+  | "totals"
+  | "team-total"
+  | "first-half"
+  | "second-half"
+  | "player-props";
 
 export type Event = {
   id: string;
@@ -73,6 +86,14 @@ export type Event = {
   orderbookDepthLastUpdated?: string | null;
   orderbookDepthEmptyState?: "no-depth" | null;
   orderbookAvailability?: AvailabilityState;
+  marketProfile?: EventMarketProfile;
+  resultMode?: EventResultMode;
+  gameRules?: {
+    allowDraw: boolean;
+    includesOvertime: boolean;
+    description: string;
+  };
+  supportedMarketTypes?: EventMarketType[];
   markets: Market[];
 };
 

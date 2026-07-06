@@ -5,6 +5,33 @@ import { serializeEventSummary } from "@/server/services/eventReadModel";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
 import { selectCompactLiveMarkets } from "@/server/services/mobileLiveEventDetail";
 
+const DEFAULT_LIMIT = 50;
+const MAX_LIMIT = 100;
+
+const paginationLimit = (value: string | null) => {
+  const parsed = Number(value ?? DEFAULT_LIMIT);
+  if (!Number.isFinite(parsed)) return DEFAULT_LIMIT;
+  return Math.min(Math.max(Math.trunc(parsed), 1), MAX_LIMIT);
+};
+
+const eventCursorFilter = (cursor: { updatedAt: Date; createdAt: Date; id: string } | null): Prisma.EventWhereInput =>
+  cursor
+    ? {
+        OR: [
+          { updatedAt: { lt: cursor.updatedAt } },
+          {
+            updatedAt: cursor.updatedAt,
+            createdAt: { lt: cursor.createdAt },
+          },
+          {
+            updatedAt: cursor.updatedAt,
+            createdAt: cursor.createdAt,
+            id: { lt: cursor.id },
+          },
+        ],
+      }
+    : {};
+
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const search = url.searchParams.get("search")?.trim() ?? "";
@@ -14,8 +41,19 @@ export async function GET(request: NextRequest) {
   const source = url.searchParams.get("source")?.trim() ?? "";
   const status = url.searchParams.get("status")?.trim() ?? "";
   const includeMobileMarkets = url.searchParams.get("includeMobileMarkets") === "1";
+  const limit = paginationLimit(url.searchParams.get("limit"));
+  const cursorId = url.searchParams.get("cursor")?.trim() ?? "";
+  const cursor = cursorId
+    ? await prisma.event.findUnique({ where: { id: cursorId }, select: { id: true, updatedAt: true, createdAt: true } })
+    : null;
 
-  const where: Prisma.EventWhereInput = {
+  if (cursorId && !cursor) {
+    return NextResponse.json({ error: "Invalid event cursor." }, { status: 400 });
+  }
+
+  const eventFilters: Prisma.EventWhereInput[] = [
+    eventCursorFilter(cursor),
+    {
     ...(search
       ? {
           OR: [
@@ -29,12 +67,15 @@ export async function GET(request: NextRequest) {
     ...(leagueKey ? { leagueKey } : {}),
     ...(source ? { source } : {}),
     ...(status ? { status } : {}),
-  };
+    },
+  ];
+  const where: Prisma.EventWhereInput = { AND: eventFilters };
 
   if (includeMobileMarkets) {
-    const events = await prisma.event.findMany({
+    const rows = await prisma.event.findMany({
       where,
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+      take: limit + 1,
       include: {
         markets: {
           where: { visibility: "PUBLIC", isListed: true },
@@ -43,6 +84,8 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+    const events = rows.slice(0, limit);
+    const nextCursor = rows.length > limit ? events[events.length - 1]?.id ?? null : null;
 
     return NextResponse.json({
       events: (await Promise.all(
@@ -94,12 +137,19 @@ export async function GET(request: NextRequest) {
           };
         }),
       )).filter((event) => event.marketCount > 0),
+      nextCursor,
+      page: {
+        limit,
+        nextCursor,
+        hasMore: Boolean(nextCursor),
+      },
     });
   }
 
-  const events = await prisma.event.findMany({
+  const rows = await prisma.event.findMany({
     where,
-    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+    take: limit + 1,
     include: {
       markets: {
         where: { visibility: "PUBLIC", isListed: true },
@@ -107,6 +157,8 @@ export async function GET(request: NextRequest) {
       },
     },
   });
+  const events = rows.slice(0, limit);
+  const nextCursor = rows.length > limit ? events[events.length - 1]?.id ?? null : null;
 
   return NextResponse.json({
     events: events
@@ -151,5 +203,11 @@ export async function GET(request: NextRequest) {
         };
       })
       .filter((event) => event.marketCount > 0),
+    nextCursor,
+    page: {
+      limit,
+      nextCursor,
+      hasMore: Boolean(nextCursor),
+    },
   });
 }

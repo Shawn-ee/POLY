@@ -35,6 +35,9 @@ export function HomeScreen({
   setQuery,
   openEvent,
   openTicket,
+  canLoadMoreEvents,
+  isLoadingMoreEvents = false,
+  loadMoreEvents,
   futures,
   savedEventIds,
   toggleSavedEvent,
@@ -48,6 +51,9 @@ export function HomeScreen({
   setQuery: (query: string) => void;
   openEvent: (event: Event) => void;
   openTicket: (market: Market, outcome: Outcome, event?: Event) => void;
+  canLoadMoreEvents?: boolean;
+  isLoadingMoreEvents?: boolean;
+  loadMoreEvents?: () => void;
   futures: Market[];
   savedEventIds: Set<string>;
   toggleSavedEvent: (event: Event) => void;
@@ -71,6 +77,11 @@ export function HomeScreen({
     [events, homeFilter, savedEventIds],
   );
   const emptyCopy = homeFilter === "saved" ? t.noSavedMarkets : t.noResults;
+  const canLoadMore = Boolean(canLoadMoreEvents && loadMoreEvents);
+  const loadMoreMatches = () => {
+    if (!canLoadMore || isLoadingMoreEvents) return;
+    loadMoreEvents?.();
+  };
 
   return (
     <ScrollView style={styles.content} contentContainerStyle={styles.scrollPad}>
@@ -127,6 +138,18 @@ export function HomeScreen({
       ) : (
         <FutureList locale={locale} futures={futures} openTicket={openTicket} statsCopy={{ volume: t.volume, liquidity: t.liquidity }} />
       )}
+      {worldCupTab === "games" && canLoadMore && (
+        <Pressable
+          accessibilityLabel={`home-load-more-matches visible-${visibleEvents.length}-next-10`}
+          onPress={loadMoreMatches}
+          style={styles.loadMoreButton}
+          testID="home-load-more-matches"
+        >
+          <Text style={styles.loadMoreText}>
+            {isLoadingMoreEvents ? (locale === "zh" ? "\u52a0\u8f7d\u4e2d" : "Loading") : (locale === "zh" ? "\u52a0\u8f7d\u66f4\u591a\u6bd4\u8d5b" : "Load 10 more")}
+          </Text>
+        </Pressable>
+      )}
     </ScrollView>
   );
 }
@@ -143,5 +166,7 @@ const styles = StyleSheet.create({
   filterChipActive: { backgroundColor: "#1d6dff", borderColor: "#1d6dff" },
   filterText: { color: "#8ea0b8", fontWeight: "900" },
   filterTextActive: { color: "#ffffff" },
+  loadMoreButton: { minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: 12, borderRadius: 12, backgroundColor: "#101827", borderWidth: 1, borderColor: "#263247" },
+  loadMoreText: { color: "#dbeafe", fontSize: 15, fontWeight: "900" },
   savedEmptyText: { color: "#94a3b8", fontWeight: "900", textAlign: "center", marginTop: 2, marginBottom: 14 },
 });

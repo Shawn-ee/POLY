@@ -117,6 +117,25 @@ describe("Holiwyn mobile API client", () => {
     expect((init.headers as Headers).get("Authorization")).toBe("Bearer pk_live_test.secret");
   });
 
+  test("lists World Cup events with backend pagination parameters", async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse({ events: [], nextCursor: "event-2", page: { limit: 10, nextCursor: "event-2", hasMore: true } }));
+    vi.stubGlobal("fetch", fetchImpl);
+
+    const payload = await new PolyApi("https://api.example.test", "pk_live_test.secret").listWorldCupEvents({
+      limit: 10,
+      cursor: "event-1",
+      search: "mexico",
+    });
+
+    const [url] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    const parsedUrl = new URL(url);
+    expect(parsedUrl.searchParams.get("limit")).toBe("10");
+    expect(parsedUrl.searchParams.get("cursor")).toBe("event-1");
+    expect(parsedUrl.searchParams.get("search")).toBe("mexico");
+    expect(parsedUrl.searchParams.get("includeMobileMarkets")).toBe("1");
+    expect(payload.nextCursor).toBe("event-2");
+  });
+
   test("loads mobile orderbook depth contract", async () => {
     const fetchImpl = vi.fn(async () =>
       jsonResponse({

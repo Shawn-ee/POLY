@@ -2,6 +2,20 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JR - Home Event List and Pagination
+
+Cycle JR wires the visible Home event list "Load more" flow to backend cursor pagination in server market-data mode:
+
+- Route proof: `docs/mobile/harness/cycle-JR-home-event-list-pagination/cycle-JR-home-event-pagination.json`.
+- Proof script: `scripts/prove_mobile_home_event_pagination.ts`.
+- Focused route tests: selected cases in `src/__tests__/public.events.no-leak.test.ts`.
+- Focused mobile tests: `mobile/src/__tests__/api.test.ts` and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home event list initial page | `/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&limit=10` | GET | Public/mobile route | Query params only | `events[]` with compact `markets[]`, plus `nextCursor` and `page.hasMore` | Existing `Event`, `Market`, `Outcome` rows; listed public markets only | In mock market-data mode Home keeps the existing fixture behavior. In server mode the initial Home list comes from the backend page. | P1: richer server-side Home filters beyond current loaded-page filtering. |
+| Home "Load more" | `/api/events?...&limit=10&cursor=<event-id>` | GET | Public/mobile route | Query params only | Next `events[]` page, `nextCursor`, `page.limit`, `page.hasMore` | Cursor resolves against `Event.id` and stable route ordering by `updatedAt`, `createdAt`, `id` descending | Failed next-page loads do not replace loaded server events with local mocks. | P1: Android device proof for pressing Load more in server mode if visual regression evidence becomes required again. |
+
 ## Cycle JQ - Backend-Driven Event Rules and Sell Safety
 
 Cycle JQ tightens backend-owned market-rule contracts for visible Event Detail/Game Lines UI and verifies sell/cashout safety:

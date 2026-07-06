@@ -123,6 +123,24 @@ export type EventSummary = {
   liveStats?: EventLiveStat[];
   liveDataStatus?: EventLiveDataStatus;
   chartHistory?: EventChartPoint[];
+  marketProfile?: "to_advance" | "regulation_90" | "full_match_with_overtime";
+  resultMode?: "can_draw" | "no_draw";
+  gameRules?: {
+    allowDraw: boolean;
+    includesOvertime: boolean;
+    description: string;
+  };
+  supportedMarketTypes?: Array<
+    | "to_advance"
+    | "regulation_90"
+    | "full_match_with_overtime"
+    | "spread"
+    | "totals"
+    | "team-total"
+    | "first-half"
+    | "second-half"
+    | "player-props"
+  >;
   topOutcomes?: string[];
   markets?: Market[];
 };

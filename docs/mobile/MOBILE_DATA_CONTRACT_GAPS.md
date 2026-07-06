@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JR - Home Event List and Pagination
+
+Closed or narrowed:
+
+- `/api/events` now accepts `limit` and `cursor` and returns `nextCursor` plus `page.limit/page.nextCursor/page.hasMore`.
+- The route uses stable ordering by `updatedAt`, `createdAt`, and `id`, and validates invalid event cursors with a public 400 error.
+- Mobile `PolyApi.listWorldCupEvents()` can send `limit`, `cursor`, and `search` while preserving the existing structured World Cup filters and compact mobile markets.
+- In server market-data mode, Home "Load more" now requests the next backend page and appends de-duplicated events instead of only revealing an already-loaded local list.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Server-side Home filter pagination for `live` and `today` views. Current Home filters still apply to loaded pages.
+- Search tab backend pagination is not part of JR and remains a separate visible-flow cycle.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.id`, `updatedAt`, and `createdAt` support cursor pagination.
+
+Temporary mock/static data:
+
+- JR proof creates disposable backend event rows with public listed markets. It does not add frontend-only event rows.
+
 ## Cycle JQ - Backend-Driven Event Rules and Sell Safety
 
 Closed or narrowed:

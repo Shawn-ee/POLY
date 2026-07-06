@@ -58,6 +58,7 @@ const MARKET_DATA_MODE: "mock" | "server" =
   ORDER_MODE === "server" || process.env.EXPO_PUBLIC_MARKET_DATA_MODE === "server" ? "server" : "mock";
 const SMOKE_OPEN_SERVER_ORDER_PRICE = 1;
 const SMOKE_OPEN_SERVER_ORDER_AMOUNT = "1";
+const HOME_EVENT_PAGE_SIZE = 10;
 const SAVED_EVENTS_STORAGE_KEY = "holiwyn.savedEventIds.v1";
 const LANGUAGE_STORAGE_KEY = "holiwyn.language.v1";
 const PORTFOLIO_STORAGE_KEY = "holiwyn.portfolio.v1";
@@ -245,6 +246,17 @@ const isBookSpreadLifecycleSelection = (selection?: TicketSelection) =>
   typeof selection.limitPrice === "number" &&
   selection.limitPrice > 0;
 
+const appendUniqueEvents = (current: Event[], next: Event[]) => {
+  const seen = new Set(current.map((event) => event.id));
+  const merged = [...current];
+  for (const event of next) {
+    if (seen.has(event.id)) continue;
+    seen.add(event.id);
+    merged.push(event);
+  }
+  return merged;
+};
+
 const mexicoEcuadorGamePositionFixture = (): Position | undefined => {
   const event = worldCupEvents.find((item) => item.id === "mexico-ecuador");
   const market = event?.markets.find((item) => item.id === "mexico-ecuador-winner");
@@ -316,6 +328,8 @@ export default function App() {
     ORDER_MODE === "server" && DEFAULT_API_KEY.length > 0 ? "syncing" : "hidden"
   );
   const [events, setEvents] = useState<Event[]>(worldCupEvents);
+  const [eventNextCursor, setEventNextCursor] = useState<string | null>(null);
+  const [isLoadingMoreEvents, setIsLoadingMoreEvents] = useState(false);
   const [savedEventIds, setSavedEventIds] = useState<Set<string>>(() => new Set());
   const [savedEventIdsHydrated, setSavedEventIdsHydrated] = useState(false);
   const [forceAccountSignedIn, setForceAccountSignedIn] = useState(false);
@@ -910,9 +924,10 @@ export default function App() {
     };
   }, [apiKeyDiagnosticEnabled, runtimeApiKey]);
 
-  const loadBackendWorldCup = useCallback(async () => {
+  const loadBackendWorldCup = useCallback(async (cursor: string | null = null, append = false) => {
     try {
-      const payload = await api.listWorldCupEvents();
+      const payload = await api.listWorldCupEvents({ limit: HOME_EVENT_PAGE_SIZE, cursor });
+      const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
         .filter((event) => event.markets.length > 0);
@@ -934,7 +949,8 @@ export default function App() {
       ];
       if (mounted.current && normalized.length > 0) {
         if (ORDER_MODE !== "server") {
-          setEvents(normalized);
+          setEvents((current) => append ? appendUniqueEvents(current, normalized) : normalized);
+          setEventNextCursor(nextCursor);
           return;
         }
         const quotedEvents = await Promise.all(
@@ -943,12 +959,27 @@ export default function App() {
             return applyTicketQuotesToEvent(event, quotesByMarketId);
           }),
         );
-        if (mounted.current) setEvents(quotedEvents);
+        if (mounted.current) {
+          setEvents((current) => append ? appendUniqueEvents(current, quotedEvents) : quotedEvents);
+          setEventNextCursor(nextCursor);
+        }
       }
     } catch {
-      if (mounted.current) setEvents(worldCupEvents);
+      if (mounted.current && !append) {
+        setEvents(worldCupEvents);
+        setEventNextCursor(null);
+      }
     }
   }, [api]);
+
+  const loadMoreBackendEvents = useCallback(() => {
+    if (MARKET_DATA_MODE !== "server" || !eventNextCursor || isLoadingMoreEvents) return;
+    setIsLoadingMoreEvents(true);
+    loadBackendWorldCup(eventNextCursor, true)
+      .finally(() => {
+        if (mounted.current) setIsLoadingMoreEvents(false);
+      });
+  }, [eventNextCursor, isLoadingMoreEvents, loadBackendWorldCup]);
 
   useEffect(() => {
     loadBackendWorldCup();
@@ -1464,6 +1495,9 @@ export default function App() {
                 setQuery={setQuery}
                 openEvent={openEventDetail}
                 openTicket={openTicket}
+                canLoadMoreEvents={MARKET_DATA_MODE === "server" ? Boolean(eventNextCursor) : undefined}
+                isLoadingMoreEvents={isLoadingMoreEvents}
+                loadMoreEvents={MARKET_DATA_MODE === "server" ? loadMoreBackendEvents : undefined}
                 futures={futures}
                 savedEventIds={savedEventIds}
                 toggleSavedEvent={toggleSavedEvent}
