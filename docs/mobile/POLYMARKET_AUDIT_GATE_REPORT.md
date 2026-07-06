@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle ND
+
+Gate status: Pass
+
+Scope: Account navigation consistency contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-ND-account-navigation-consistency-contract/cycle-ND-account-navigation-consistency-contract.json`
+- Focused tests: `mobile/src/__tests__/accountNavigationService.test.ts`, `mobile/src/__tests__/accountBootstrapService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-ND-account-navigation-consistency-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Account navigation rejects contradictory enabled/status/kind/destination rows before visible Account menu state applies.
+
 ## Cycle NC
 
 Gate status: Pass

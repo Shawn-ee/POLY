@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle ND - Account Navigation Consistency Contract
+
+Cycle ND hardens Account navigation metadata before visible Account menu state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-ND-account-navigation-consistency-contract/cycle-ND-account-navigation-consistency-contract.json`.
+- Proof script: `scripts/prove_mobile_account_navigation_consistency_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/accountNavigationService.test.ts`, `mobile/src/__tests__/accountBootstrapService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account menu navigation consistency | `/api/account/navigation` through `PolyApi.getAccountNavigation()` | GET | Canonical API key/session with account read access | None beyond authenticated request | Item `kind`, `enabled`, `status`, `destination`, and reason; available items must be enabled with a destination, placeholders must be disabled/unavailable/destinationless | Account navigation metadata service, user feature flag/permission state | Mock/local Account remains unchanged. Server-mode contradictory navigation metadata rejects before visible Account menu state applies. | None for focused Account navigation consistency contract. P2 optional item-specific error copy. |
+
 ## Cycle NC - Selection Limit Price Bounds Contract
 
 Cycle NC hardens selected-market snapshot `limitPrice` fields before visible Portfolio, History, or submitted-order state applies:

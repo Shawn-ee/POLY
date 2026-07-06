@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle ND",
+  "feature": "Account navigation consistency contract",
+  "generatedAt": "2026-07-06T13:27:02.056Z",
+  "route": "/api/account/navigation",
+  "contract": {
+    "validPayload": "Available account navigation rows must be enabled and provide a destination.",
+    "placeholderPayload": "Placeholder rows must stay disabled, unavailable, and destinationless.",
+    "malformedPayload": "contradictory enabled/status/destination rows reject before visible Account menu state applies."
+  },
+  "assertions": {
+    "validPlaceholderAccepted": true,
+    "validAvailableDestinationAccepted": true,
+    "enabledUnavailableRejects": true,
+    "availableWithoutDestinationRejects": true,
+    "enabledPlaceholderRejects": true
+  }
+}

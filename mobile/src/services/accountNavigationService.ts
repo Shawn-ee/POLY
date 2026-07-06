@@ -37,6 +37,33 @@ const requireBoolean = (value: unknown, field: string) => {
   return value;
 };
 
+const assertItemConsistency = ({
+  index,
+  kind,
+  enabled,
+  status,
+  destination,
+}: {
+  index: number;
+  kind: AccountNavigationItemResult["kind"];
+  enabled: boolean;
+  status: AccountNavigationItemResult["status"];
+  destination: string | null;
+}) => {
+  if (kind === "placeholder" && (enabled || status !== "unavailable" || destination)) {
+    throw new Error(`Account navigation response had inconsistent items[${index}].`);
+  }
+  if (enabled && status !== "available") {
+    throw new Error(`Account navigation response had inconsistent items[${index}].`);
+  }
+  if (status === "available" && (!enabled || !destination)) {
+    throw new Error(`Account navigation response had inconsistent items[${index}].`);
+  }
+  if (status === "unavailable" && enabled) {
+    throw new Error(`Account navigation response had inconsistent items[${index}].`);
+  }
+};
+
 export const loadAccountNavigation = async (
   api: Pick<PolyApi, "getAccountNavigation">,
 ): Promise<AccountNavigationResult> => {
@@ -56,16 +83,26 @@ export const loadAccountNavigation = async (
     if (!allowedStatuses.has(status)) {
       throw new Error(`Account navigation response had invalid items[${index}].status.`);
     }
-    return {
+    const enabled = requireBoolean(item.enabled, `items[${index}].enabled`);
+    const destination = optionalString(item.destination);
+    const normalizedItem = {
       id: requireString(item.id, `items[${index}].id`),
       label: requireString(item.label, `items[${index}].label`),
       icon: requireString(item.icon, `items[${index}].icon`),
       kind: kind as AccountNavigationItemResult["kind"],
-      enabled: requireBoolean(item.enabled, `items[${index}].enabled`),
+      enabled,
       status: status as AccountNavigationItemResult["status"],
-      destination: optionalString(item.destination),
+      destination,
       reason: optionalString(item.reason),
     };
+    assertItemConsistency({
+      index,
+      kind: normalizedItem.kind,
+      enabled: normalizedItem.enabled,
+      status: normalizedItem.status,
+      destination: normalizedItem.destination,
+    });
+    return normalizedItem;
   });
 
   return { source, generatedAt, items };

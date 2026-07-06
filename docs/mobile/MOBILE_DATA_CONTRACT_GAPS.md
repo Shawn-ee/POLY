@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle ND - Account Navigation Consistency Contract
+
+Closed or narrowed:
+
+- Account navigation validation now rejects contradictory `enabled`, `status`, `kind`, and `destination` metadata before visible Account menu state applies.
+- Available rows must be enabled and include a destination.
+- Placeholder rows must remain disabled, unavailable, and destinationless.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Account navigation consistency contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/account/navigation` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Account remains unchanged. Server-mode inconsistent navigation metadata rejects before visible menu state applies.
+
 ## Cycle NC - Selection Limit Price Bounds Contract
 
 Closed or narrowed:
