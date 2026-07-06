@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NO - Portfolio History Side Contract
+
+Cycle NO hardens Portfolio History side fields before visible activity state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NO-portfolio-history-side-contract/cycle-NO-portfolio-history-side-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_history_side_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio History activity side mapping | `/api/portfolio/history` through `PolyApi.getPortfolioHistory()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | `recentTrades[].side` and `canceledOrders[].side`; visible activity requires `BUY` or `SELL` before mapping to opened/sold/canceled rows | `Trade`, `Order`, `Market`, `Outcome`, portfolio history projection | Mock/local history remains unchanged. Server-mode unknown side values reject before visible History state applies. | None for focused Portfolio History side contract. P2 optional side-specific error copy. |
+
 ## Cycle NN - Portfolio Canceled-Order History Contract
 
 Cycle NN hardens Portfolio History canceled-order rows before visible activity state applies:

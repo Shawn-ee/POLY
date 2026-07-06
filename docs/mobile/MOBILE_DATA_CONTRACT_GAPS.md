@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NO - Portfolio History Side Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio History `recentTrades` rows now require `side=BUY` or `side=SELL` before becoming visible activity.
+- Server-mode Portfolio History `canceledOrders` rows now require `side=BUY` or `side=SELL` before becoming visible canceled activity.
+- Unknown side values reject instead of silently becoming buy/opened activity.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio History side contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio/history` recent trade and canceled-order `side` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local history behavior remains unchanged. Server-mode malformed side fields reject before visible History state applies.
+
 ## Cycle NN - Portfolio Canceled-Order History Contract
 
 Closed or narrowed:

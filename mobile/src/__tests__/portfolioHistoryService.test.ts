@@ -243,6 +243,30 @@ describe("portfolio history activity mapping", () => {
     ).toThrow("Portfolio history response had invalid recentTrades[].shares.");
   });
 
+  test("rejects invalid recent trade side before applying activity", () => {
+    expect(() =>
+      recentTradesToActivity([
+        {
+          id: "bad-trade-side",
+          market: {
+            id: "world-cup-winner",
+            title: "Will France win the 2026 FIFA World Cup?",
+            status: "LIVE",
+          },
+          outcome: {
+            id: "yes",
+            name: "YES",
+          },
+          side: "HOLD",
+          shares: 100,
+          cost: 50,
+          fee: 0,
+          createdAt: "2026-07-02T06:10:00.000Z",
+        } as never,
+      ]),
+    ).toThrow("Portfolio history response had invalid recentTrades[].side.");
+  });
+
   test("rejects negative canceled order economics before applying Portfolio activity", () => {
     expect(() =>
       canceledOrdersToActivity([
@@ -266,6 +290,31 @@ describe("portfolio history activity mapping", () => {
         },
       ]),
     ).toThrow("Portfolio history response had invalid canceledOrders[].price.");
+  });
+
+  test("rejects invalid canceled order side before applying activity", () => {
+    expect(() =>
+      canceledOrdersToActivity([
+        {
+          id: "bad-cancel-side",
+          market: {
+            id: "world-cup-winner",
+            title: "World Cup winner",
+            status: "LIVE",
+          },
+          outcome: {
+            id: "yes",
+            name: "YES",
+          },
+          side: "HOLD",
+          status: "CANCELED",
+          price: 0.5,
+          size: 200,
+          remaining: 100,
+          canceledAt: "2026-07-02T05:55:00.000Z",
+        } as never,
+      ]),
+    ).toThrow("Portfolio history response had invalid canceledOrders[].side.");
   });
 
   test("rejects non-canceled canceledOrders rows before applying activity", () => {

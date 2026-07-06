@@ -53,6 +53,17 @@ const requireCanceledOrderStatus = (value: unknown) => {
   }
 };
 
+const requireOrderSide = (value: unknown, field: string): "BUY" | "SELL" => {
+  if (typeof value !== "string") {
+    throw new Error(`Portfolio history response had invalid ${field}.`);
+  }
+  const normalized = value.trim().toUpperCase();
+  if (normalized !== "BUY" && normalized !== "SELL") {
+    throw new Error(`Portfolio history response had invalid ${field}.`);
+  }
+  return normalized;
+};
+
 const requireExecutionPrice = (cost: number, shares: number) => {
   if (shares === 0) {
     if (cost > 0) {
@@ -91,6 +102,7 @@ export const canceledOrdersToActivity = (orders: PortfolioCanceledOrderItem[] = 
       throw new Error("Portfolio history response had canceledOrders[].remaining above canceledOrders[].size.");
     }
     const price = requireProbabilityNumber(order.price, "canceledOrders[].price");
+    const side = requireOrderSide(order.side, "canceledOrders[].side");
     return {
       id: `canceled-order-${order.id}`,
       action: "canceled",
@@ -99,7 +111,7 @@ export const canceledOrdersToActivity = (orders: PortfolioCanceledOrderItem[] = 
       selection: portfolioSelectionFromBackend(order.selection, "canceledOrders[].selection"),
       amount: remaining * price,
       shares: remaining,
-      side: order.side === "SELL" ? "sell" : "buy",
+      side: side === "SELL" ? "sell" : "buy",
       probability: Math.round(price * 100),
       timestamp: formatHistoryTimestamp(order.canceledAt),
     };
@@ -110,15 +122,16 @@ export const recentTradesToActivity = (trades: PortfolioRecentTradeItem[] = []):
     const shares = requireNonNegativeNumber(trade.shares, "recentTrades[].shares");
     const cost = requireNonNegativeNumber(trade.cost, "recentTrades[].cost");
     const executionPrice = requireExecutionPrice(cost, shares);
+    const side = requireOrderSide(trade.side, "recentTrades[].side");
     return {
       id: `trade-${trade.id}`,
-      action: trade.side === "SELL" ? "sold" : "opened",
+      action: side === "SELL" ? "sold" : "opened",
       title: trade.market.title,
       outcome: trade.outcome.name,
       selection: portfolioSelectionFromBackend(trade.selection, "recentTrades[].selection"),
       amount: cost,
       shares,
-      side: trade.side === "SELL" ? "sell" : "buy",
+      side: side === "SELL" ? "sell" : "buy",
       probability: Math.round(executionPrice * 100),
       timestamp: formatHistoryTimestamp(trade.createdAt),
     };

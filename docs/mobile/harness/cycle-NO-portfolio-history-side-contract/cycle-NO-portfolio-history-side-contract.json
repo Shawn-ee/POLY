@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle NO",
+  "feature": "Portfolio history side contract",
+  "generatedAt": "2026-07-06T14:09:53.712Z",
+  "route": "/api/portfolio/history",
+  "contract": {
+    "validPayload": "recentTrades and canceledOrders rows must use BUY or SELL before becoming visible Portfolio History activity.",
+    "malformedPayload": "unknown or missing side values reject before visible Portfolio History state applies."
+  },
+  "assertions": {
+    "acceptsRecentTradeBuySide": true,
+    "acceptsRecentTradeSellSide": true,
+    "rejectsRecentTradeUnknownSide": true,
+    "acceptsCanceledOrderBuySide": true,
+    "acceptsCanceledOrderSellSide": true,
+    "rejectsCanceledOrderUnknownSide": true
+  }
+}
