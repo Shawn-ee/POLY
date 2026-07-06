@@ -1,0 +1,19 @@
+{
+  "cycle": "Cycle ME",
+  "feature": "Portfolio snapshot economics contract",
+  "generatedAt": "2026-07-06T11:53:12.322Z",
+  "route": "/api/portfolio",
+  "contract": {
+    "validPayload": "visible Portfolio wallet, position, and open-order economics must be finite non-negative values before state applies",
+    "malformedPayload": "negative wallet values, shares, position values, or open-order economics reject before visible Portfolio state applies",
+    "allowedLoss": "position pnl remains allowed to be negative"
+  },
+  "assertions": {
+    "validNonNegativeSnapshotApplies": true,
+    "negativePnlRemainsAllowed": true,
+    "negativeWalletRejects": true,
+    "negativeSharesRejects": true,
+    "negativeCurrentValueRejects": true,
+    "negativeOpenOrderPriceRejects": true
+  }
+}

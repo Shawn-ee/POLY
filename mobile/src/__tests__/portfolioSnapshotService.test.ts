@@ -209,6 +209,60 @@ describe("portfolio snapshot service", () => {
     await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid openOrders[].remaining.");
   });
 
+  test("rejects negative visible portfolio economics before applying Portfolio state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        positions: [
+          {
+            ...snapshot().positions[0],
+            shares: -1,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid positions[].shares.");
+  });
+
+  test("allows negative position pnl while rejecting negative open-order economics", async () => {
+    const validLossApi = {
+      getPortfolio: vi.fn(async () =>
+        snapshot({
+          positions: [
+            {
+              ...snapshot().positions[0],
+              pnlTokens: -12.5,
+            },
+          ],
+        }),
+      ),
+    } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(validLossApi)).resolves.toMatchObject({
+      positions: [
+        {
+          pnl: -12.5,
+        },
+      ],
+    });
+
+    const invalidOrderApi = {
+      getPortfolio: vi.fn(async () =>
+        snapshot({
+          openOrders: [
+            {
+              ...snapshot().openOrders[0],
+              price: -0.01,
+            },
+          ],
+        }),
+      ),
+    } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(invalidOrderApi)).rejects.toThrow("Portfolio snapshot response had invalid openOrders[].price.");
+  });
+
   test("preserves backend line selection labels for positions and open orders", async () => {
     const getPortfolio = vi.fn(async () =>
       snapshot({

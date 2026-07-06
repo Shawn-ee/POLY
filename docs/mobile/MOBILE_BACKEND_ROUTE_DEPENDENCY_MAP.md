@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle ME - Portfolio Snapshot Economics Contract
+
+Cycle ME hardens visible Portfolio snapshot economics before server-mode Portfolio state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-ME-portfolio-snapshot-economics-contract/cycle-ME-portfolio-snapshot-economics-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_snapshot_economics_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio snapshot wallet, positions, and open orders | `/api/portfolio` | GET | Canonical API key/session with `account:read` | None | `walletAvailableUSDC`, position cost basis, average cost, shares, current price, current value, open-order price, size, and remaining must be finite non-negative values; position `pnlTokens` may be negative | `UserBalance`, `Position`, `Order`, `Market`, `Outcome` | Mock/local Portfolio remains unchanged. Server-mode malformed negative economics reject before visible Portfolio state applies. | None for focused Portfolio snapshot economics contract. P2 optional field-specific Portfolio snapshot error copy. |
+
 ## Cycle MD - Account Balance Shape Contract
 
 Cycle MD hardens visible Account balance data before server-mode account state applies:

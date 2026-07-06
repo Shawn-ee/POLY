@@ -43,6 +43,14 @@ const requireFiniteNumber = (value: unknown, field: string) => {
   return parsed;
 };
 
+const requireNonNegativeNumber = (value: unknown, field: string) => {
+  const parsed = requireFiniteNumber(value, field);
+  if (parsed < 0) {
+    throw new Error(`Portfolio snapshot response had invalid ${field}.`);
+  }
+  return parsed;
+};
+
 const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
   if (!Array.isArray(value)) {
     throw new Error(`Portfolio snapshot response had invalid ${field}.`);
@@ -55,7 +63,7 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
   const positions = requireArray<PortfolioPositionItem>(snapshot.positions, "positions");
   const openOrders = requireArray<PortfolioOpenOrderItem>(snapshot.openOrders, "openOrders");
   return {
-    balance: requireFiniteNumber(snapshot.walletAvailableUSDC, "walletAvailableUSDC"),
+    balance: requireNonNegativeNumber(snapshot.walletAvailableUSDC, "walletAvailableUSDC"),
     positions: positions.map((position) => ({
       id: `server-${position.market.id}-${position.outcome}`,
       mode: "server",
@@ -65,16 +73,16 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       outcome: position.outcome,
       selection: portfolioSelectionFromBackend(position.selection, "positions[].selection"),
       side: "buy",
-      amount: requireFiniteNumber(position.costBasisTokens, "positions[].costBasisTokens"),
-      probability: Math.round(requireFiniteNumber(position.avgCost, "positions[].avgCost") * 100),
-      shares: requireFiniteNumber(position.shares, "positions[].shares"),
-      currentPrice: requireFiniteNumber(position.currentPrice, "positions[].currentPrice"),
+      amount: requireNonNegativeNumber(position.costBasisTokens, "positions[].costBasisTokens"),
+      probability: Math.round(requireNonNegativeNumber(position.avgCost, "positions[].avgCost") * 100),
+      shares: requireNonNegativeNumber(position.shares, "positions[].shares"),
+      currentPrice: requireNonNegativeNumber(position.currentPrice, "positions[].currentPrice"),
       marketAvailability: position.market.availability,
       bestBid: toDepthProbability(position.bestBid),
       bestAsk: toDepthProbability(position.bestAsk),
       bestBidSize: toDepthSize(position.bestBidSize),
       bestAskSize: toDepthSize(position.bestAskSize),
-      currentValue: requireFiniteNumber(position.valueTokens, "positions[].valueTokens"),
+      currentValue: requireNonNegativeNumber(position.valueTokens, "positions[].valueTokens"),
       pnl: requireFiniteNumber(position.pnlTokens, "positions[].pnlTokens"),
     })),
     openOrders: openOrders.map((order) => ({
@@ -84,11 +92,11 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       selection: portfolioSelectionFromBackend(order.selection, "openOrders[].selection"),
       side: order.side === "SELL" ? "sell" : "buy",
       status: order.status,
-      price: requireFiniteNumber(order.price, "openOrders[].price"),
-      remaining: requireFiniteNumber(order.remaining, "openOrders[].remaining"),
-      originalShares: requireFiniteNumber(order.size, "openOrders[].size"),
-      remainingShares: requireFiniteNumber(order.remaining, "openOrders[].remaining"),
-      orderValue: requireFiniteNumber(order.remaining, "openOrders[].remaining") * requireFiniteNumber(order.price, "openOrders[].price"),
+      price: requireNonNegativeNumber(order.price, "openOrders[].price"),
+      remaining: requireNonNegativeNumber(order.remaining, "openOrders[].remaining"),
+      originalShares: requireNonNegativeNumber(order.size, "openOrders[].size"),
+      remainingShares: requireNonNegativeNumber(order.remaining, "openOrders[].remaining"),
+      orderValue: requireNonNegativeNumber(order.remaining, "openOrders[].remaining") * requireNonNegativeNumber(order.price, "openOrders[].price"),
       placedAt: formatOpenOrderTimestamp(order.createdAt),
     })),
   };

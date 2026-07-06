@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle ME - Portfolio Snapshot Economics Contract
+
+Closed or narrowed:
+
+- Portfolio snapshot wallet, position, and open-order economics now reject negative values before visible Portfolio state applies.
+- Position `pnlTokens` remains allowed to be negative.
+- Malformed negative position shares/current value and open-order price/remaining/size no longer render as impossible rows.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio snapshot economics contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` numeric fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio remains unchanged. Server-mode malformed snapshot economics reject instead of applying impossible visible Portfolio state.
+
 ## Cycle MD - Account Balance Shape Contract
 
 Closed or narrowed:

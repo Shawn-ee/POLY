@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Portfolio snapshot economics contract | Cycle ME | Pass for backend/data-contract scope | 0 for focused Portfolio snapshot economics scope | P2 optional field-specific Portfolio snapshot error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-ME-portfolio-snapshot-economics-contract/cycle-ME-portfolio-snapshot-economics-contract.json`; tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`; audit: `mobile/docs/audits/cycle-ME-portfolio-snapshot-economics-contract.md` | Portfolio snapshot now rejects negative wallet, position, and open-order economics before visible Portfolio state applies while allowing negative P/L. |
 | Account balance shape contract | Cycle MD | Pass for backend/data-contract scope | 0 for focused Account balance shape scope | P2 optional field-specific Account balance error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MD-account-balance-shape-contract/cycle-MD-account-balance-shape-contract.json`; tests: `mobile/src/__tests__/accountBalanceService.test.ts`, `mobile/src/__tests__/accountBootstrapService.test.ts`; audit: `mobile/docs/audits/cycle-MD-account-balance-shape-contract.md` | Account balance now rejects negative wallet values, inconsistent totals, and malformed timestamps before visible Account state applies. |
 | Order selection echo contract | Cycle MC | Pass for backend/data-contract scope | 0 for focused order selection echo scope | P2 optional route-specific Trade Ticket order selection error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MC-order-selection-echo-contract/cycle-MC-order-selection-echo-contract.json`; tests: `mobile/src/__tests__/portfolioSelectionService.test.ts`, `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-MC-order-selection-echo-contract.md` | Trade Ticket server-mode submit now validates backend selection echoes before visible submitted-order state applies; id-only legacy confirmations remain accepted. |
 | Portfolio selection identity contract | Cycle MB | Pass for backend/data-contract scope | 0 for focused selection identity scope | P2 optional route-specific Portfolio selection error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MB-portfolio-selection-identity-contract/cycle-MB-portfolio-selection-identity-contract.json`; tests: `mobile/src/__tests__/portfolioSelectionService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`; audit: `mobile/docs/audits/cycle-MB-portfolio-selection-identity-contract.md` | Portfolio snapshot/history now preserve backend selection identity and reject malformed selection market types, labels, and limit fields before visible Portfolio rows apply. |
@@ -103,6 +104,42 @@ Fail the feature when:
 | Current live event detail visible provider behavior and structural parity | Cycle EG integrated | Partial; PM-GAP-084 remains open | 4 P0 status/provider-lifecycle proof areas remain | P1 fresh S23 recapture, broader real provider-backed family breadth, visible provider refresh lifecycle; P2 density/chart/orderbook/status polish | Reused stale/reference-only DQ-C Samsung S23 official Polymarket evidence; gate: `docs/mobile/audits/cycle-eg-c-live-event-visible-provider-gate.md` | Backend refresh lifecycle proof: `docs/mobile/harness/cycle-EG-A-provider-refresh-lifecycle.json`; Samsung tablet visible proof: `docs/mobile/harness/cycle-EG-B-visible-live-parity/cycle-EG-B-visible-live-parity-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EG-B-visible-live-parity/` and `docs/mobile/harness/cycle-EG-B-visible-live-parity/` | EG materially closes chart, line-selector, Book ladder, and ticket carry-through gaps for the selected Mexico/Ecuador Spread path. It remains partial because the Android run used contract-shaped fallback data and did not visibly prove ready/stale/refreshing/unavailable provider lifecycle states tied to the backend route in one run. |
 | Current live game page Book-origin snapshot durability after metadata drift | Cycle EF integrated | Pass for selected EF proof; PM-GAP-083 verified for selected path | 0 for selected EF gate | P1 repeat across real provider-backed line families, provider-refresh drift regression, official production history recapture; P2 Portfolio/history visual clarity | Reused EE/ED checked-in proof and DQ-C Polymarket reference; gate: `docs/mobile/audits/cycle-ef-c-snapshot-durability-gate.md` | Backend proof: `docs/mobile/harness/cycle-EF-A-snapshot-durability.json`; Samsung tablet proof: `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/cycle-EF-snapshot-durability-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EF-integrated-snapshot-durability/` and `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/` | Integrated proof mutates current market/outcome/provider metadata after order/fill creation, then proves backend and Android Portfolio/activity still render order-time/fill-time selected Book identity with no fallback/default reconstruction and explicit fake-token labels. |
 | Current live game page Book-origin open/cancel/fill status and selection snapshots | Cycle EE integrated | Pass for selected PM-GAP-082 gate | 0 for selected EE gate | P1 real provider-backed line-family status matrix, official production confirmation/cancel/fill recapture, durability checks after metadata changes; P2 Portfolio/history visual status polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook and location-gated ticket reference; ED/DX/DO/Portfolio checked-in lifecycle baselines; gate: `docs/mobile/audits/cycle-ee-c-book-order-status-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EE-integrated-book-order-status/cycle-EE-book-order-status-proof.json`; backend snapshot proof: `docs/mobile/harness/cycle-EE-A-book-order-status-snapshots.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EE-integrated-book-order-status/` and `docs/mobile/harness/cycle-EE-integrated-book-order-status/` | EE integrated proof shows the same Book-origin selected identity through open order, cancel/canceled status, filled position, recent activity/history, guarded backend selection snapshots, visible fake-token status labels, and no-fallback assertions. |
+
+## Cycle ME
+
+Gate status: Pass
+
+Lead Agent target: Ensure `/api/portfolio` snapshot wallet, position, and open-order economics reject impossible negative values before visible Portfolio state applies.
+
+Reference Audit Agent: Backend/data-contract loop. Manual UI review is no longer required every cycle.
+
+Implementation Agent: Tightened Portfolio snapshot economics validation, added focused tests, and generated harness proof.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-ME-portfolio-snapshot-economics-contract.md`
+- `docs/mobile/harness/cycle-ME-portfolio-snapshot-economics-contract/cycle-ME-portfolio-snapshot-economics-contract.json`
+- `scripts/prove_mobile_portfolio_snapshot_economics_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| ME-P0-01 | P0 | Pass | Valid non-negative snapshot applies. | N/A |
+| ME-P0-02 | P0 | Pass | Negative wallet balance rejects before visible apply. | N/A |
+| ME-P0-03 | P0 | Pass | Negative shares reject before visible apply. | N/A |
+| ME-P0-04 | P0 | Pass | Negative current value rejects before visible apply. | N/A |
+| ME-P0-05 | P0 | Pass | Negative open-order economics reject before visible apply. | N/A |
+| ME-P0-06 | P0 | Pass | Negative position P/L remains allowed. | N/A |
+| ME-P2-01 | P2 | Open | No field-specific Portfolio snapshot error copy. | Optional later copy pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused Portfolio snapshot economics contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional field-specific Portfolio snapshot error copy.
 
 ## Cycle MD
 
