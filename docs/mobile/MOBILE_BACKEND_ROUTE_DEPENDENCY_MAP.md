@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NW - Trade Ticket Order Amount Contract
+
+Cycle NW hardens Trade Ticket order amount before server-mode submit:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NW-order-amount-contract/cycle-NW-order-amount-contract.json`.
+- Proof script: `scripts/prove_mobile_order_amount_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket finite amount submit | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Market id, outcome id, side, contract side, validated price, finite positive amount-derived size, and selection identity | Returned order id/status/lifecycle after amount guard passes | `Order`, matching/reservation service | Mock mode uses the same finite positive amount guard. Server-mode invalid amounts reject before route call. | None for focused Trade Ticket order amount contract. P2 optional amount-specific error copy. |
+
 ## Cycle NV - Event Detail Line-Ticket Outcome Contract
 
 Cycle NV hardens Event Detail route-backed line ticket market/outcome identity before Trade Ticket opens:

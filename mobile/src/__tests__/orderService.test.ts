@@ -785,7 +785,7 @@ describe("ticket order service", () => {
     ).rejects.toThrow("Order submit was not confirmed by the server.");
   });
 
-  test("rejects non-positive ticket amounts before calling the API", async () => {
+  test("rejects non-finite or non-positive ticket amounts before calling the API", async () => {
     const placeLimitOrder = vi.fn();
     const api = { placeLimitOrder } as unknown as PolyApi;
 
@@ -798,7 +798,27 @@ describe("ticket order service", () => {
         side: "buy",
         amount: 0,
       }),
-    ).rejects.toThrow("Order amount must be greater than zero.");
+    ).rejects.toThrow("Order amount must be a finite value greater than zero.");
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: Number.NaN,
+      }),
+    ).rejects.toThrow("Order amount must be a finite value greater than zero.");
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: Number.POSITIVE_INFINITY,
+      }),
+    ).rejects.toThrow("Order amount must be a finite value greater than zero.");
     expect(placeLimitOrder).not.toHaveBeenCalled();
   });
 

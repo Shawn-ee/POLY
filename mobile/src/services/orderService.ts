@@ -245,8 +245,8 @@ const validateServerOrderStatus = (status: string | undefined) => {
 };
 
 export const submitTicketOrder = async (input: TicketOrderInput): Promise<TicketOrderResult> => {
-  if (input.amount <= 0) {
-    throw new Error("Order amount must be greater than zero.");
+  if (!Number.isFinite(input.amount) || input.amount <= 0) {
+    throw new Error("Order amount must be a finite value greater than zero.");
   }
 
   if (input.mode === "mock") {

@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NW - Trade Ticket Order Amount Contract
+
+Closed or narrowed:
+
+- Trade Ticket submit now requires finite positive `amount` before deriving order size.
+- Zero, negative, `NaN`, or infinite amounts reject before `/api/orders` is called.
+- Mock and server modes share the same amount guard.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Trade Ticket order amount contract.
+
+Schema mismatch:
+
+- No schema migration was made. This cycle guards the mobile request before the existing `/api/orders` route.
+
+Temporary mock/static data:
+
+- Mock order mode remains available but now rejects the same malformed amounts before visible submitted-order state applies.
+
 ## Cycle NV - Event Detail Line-Ticket Outcome Contract
 
 Closed or narrowed:

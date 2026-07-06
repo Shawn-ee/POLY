@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NW
+
+Gate status: Pass
+
+Scope: Trade Ticket order amount contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NW-order-amount-contract/cycle-NW-order-amount-contract.json`
+- Focused tests: `mobile/src/__tests__/orderService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NW-order-amount-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Trade Ticket submit rejects zero, negative, `NaN`, and infinite amounts before deriving order size or calling `/api/orders`.
+
 ## Cycle NV
 
 Gate status: Pass
