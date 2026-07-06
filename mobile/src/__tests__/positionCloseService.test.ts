@@ -24,6 +24,7 @@ describe("position close service", () => {
     expect(canCashOutPosition(position)).toBe(true);
     expect(canCashOutPosition({ ...position, shares: 0 })).toBe(false);
     expect(canCashOutPosition({ ...position, shares: undefined })).toBe(false);
+    expect(canCashOutPosition({ ...position, currentPrice: undefined })).toBe(false);
     expect(canCashOutPosition({ ...position, mode: "mock", shares: undefined })).toBe(true);
   });
 
@@ -57,20 +58,21 @@ describe("position close service", () => {
     });
   });
 
-  test("falls back to entry probability when current price is unavailable", async () => {
-    const placeLimitOrder = vi.fn(async () => ({ order: { id: "close-order-2" } }));
+  test("rejects server cashout when current price is unavailable", async () => {
+    const placeLimitOrder = vi.fn();
     const api = { placeLimitOrder } as unknown as PolyApi;
 
-    await closePositionOnServer({
-      mode: "server",
-      api,
-      position: {
-        ...position,
-        currentPrice: undefined,
-      },
-    });
-
-    expect(placeLimitOrder).toHaveBeenCalledWith(expect.objectContaining({ price: "0.42" }));
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position: {
+          ...position,
+          currentPrice: undefined,
+        },
+      }),
+    ).rejects.toThrow("Cash out requires a current market price.");
+    expect(placeLimitOrder).not.toHaveBeenCalled();
   });
 
   test("rejects server closes without market, outcome, and share identity", async () => {

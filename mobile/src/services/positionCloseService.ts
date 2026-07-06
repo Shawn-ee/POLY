@@ -9,12 +9,20 @@ export type ClosePositionInput = {
   position: Position;
 };
 
-const closePrice = (position: Position) =>
-  (typeof position.currentPrice === "number" ? position.currentPrice : position.probability / 100).toFixed(2);
+const hasAvailableShares = (position: Position) => {
+  const shares = typeof position.shares === "number" ? position.shares : undefined;
+  return Boolean(shares && shares > 0);
+};
+
+const closePrice = (position: Position) => {
+  if (typeof position.currentPrice !== "number" || !Number.isFinite(position.currentPrice) || position.currentPrice <= 0) {
+    return undefined;
+  }
+  return position.currentPrice.toFixed(2);
+};
 
 export const canCashOutPosition = (position: Position) => {
-  const shares = typeof position.shares === "number" ? position.shares : undefined;
-  return position.mode !== "server" || Boolean(shares && shares > 0);
+  return position.mode !== "server" || Boolean(hasAvailableShares(position) && closePrice(position));
 };
 
 export const cashOutEstimate = (position: Position) => {
@@ -34,20 +42,24 @@ export const closePositionOnServer = async ({ mode, api, position }: ClosePositi
     return;
   }
 
-  if (!canCashOutPosition(position)) {
+  if (!hasAvailableShares(position)) {
     throw new Error("Cash out requires an open position with available shares.");
   }
 
   const size = closeSize(position);
+  const price = closePrice(position);
   if (!position.marketId || !position.outcomeId || !size) {
     throw new Error("Server position close requires market, outcome, and share identity.");
+  }
+  if (!price) {
+    throw new Error("Cash out requires a current market price.");
   }
 
   const response = await api.placeLimitOrder({
     marketId: position.marketId,
     outcomeId: position.outcomeId,
     side: "SELL",
-    price: closePrice(position),
+    price,
     size,
   });
   assertPositionCloseOrderResponseShape(response, Number(size));

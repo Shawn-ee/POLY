@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle ML - Cashout Current Price Contract
+
+Closed or narrowed:
+
+- Server-mode cashout no longer falls back to entry probability when `position.currentPrice` is missing.
+- Cashout availability now requires positive server position shares and a finite positive current price.
+- Missing or zero current price rejects before `/api/orders` submit.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cashout current price contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing Portfolio position `currentPrice` supports this contract.
+
+Temporary mock/static data:
+
+- Mock/local cashout remains unchanged. Server-mode missing current price blocks cashout instead of submitting guessed price.
+
 ## Cycle MK - Cashout Confirmation Size Contract
 
 Closed or narrowed:

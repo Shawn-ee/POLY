@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle ML",
+  "feature": "Cashout current price contract",
+  "generatedAt": "2026-07-06T12:19:18.651Z",
+  "route": "/api/orders via server-mode cashout",
+  "contract": {
+    "validPayload": "Server-mode cashout uses finite positive position.currentPrice as the sell-all limit price",
+    "malformedPayload": "missing, zero, or invalid current price blocks cashout before submit instead of falling back to entry probability"
+  },
+  "assertions": {
+    "currentPricePositionAvailable": true,
+    "missingCurrentPriceUnavailable": true,
+    "zeroCurrentPriceUnavailable": true,
+    "validCashoutUsesCurrentPrice": true,
+    "missingCurrentPriceRejectsBeforeSubmit": true,
+    "zeroCurrentPriceRejectsBeforeSubmit": true
+  }
+}

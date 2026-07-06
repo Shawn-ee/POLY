@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle ML - Cashout Current Price Contract
+
+Cycle ML requires server-mode cashout to use a current market price instead of falling back to entry probability:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-ML-cashout-current-price-contract/cycle-ML-cashout-current-price-contract.json`.
+- Proof script: `scripts/prove_mobile_cashout_current_price_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionCloseService.test.ts`, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio cashout sell-all current price | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Sell order with market id, outcome id, side `SELL`, finite positive `position.currentPrice`, and full visible `position.shares` size | Confirmation handled by Cycle MK; submit is blocked before route call when current price is missing or invalid | `Position`, `Market`, current quote/price projection, `Order` | Mock/local cashout remains unchanged. Server-mode missing or zero current price blocks cashout instead of using entry probability. | None for focused cashout current price contract. P2 optional richer unavailable-price copy. |
+
 ## Cycle MK - Cashout Confirmation Size Contract
 
 Cycle MK hardens server-mode cashout sell-all confirmations before Portfolio refresh treats a close as accepted:
