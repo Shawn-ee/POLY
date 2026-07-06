@@ -85,6 +85,21 @@ describe("event detail route shape service", () => {
     expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed marketProfile");
   });
 
+  test("rejects inconsistent draw rules before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    payload.event.resultMode = "no_draw";
+    payload.event.gameRules.allowDraw = true;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("inconsistent draw rules");
+  });
+
+  test("rejects market profile missing from supported market types before Event Detail applies", () => {
+    const payload = detailPayload();
+    payload.event.supportedMarketTypes = ["spread"];
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("unsupported marketProfile");
+  });
+
   test("rejects negative live scores before Event Detail applies", () => {
     const payload = detailPayload();
     payload.event.homeScore = -1;

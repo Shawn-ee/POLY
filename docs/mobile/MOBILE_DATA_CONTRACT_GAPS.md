@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MJ - Event Detail Rule Consistency Contract
+
+Closed or narrowed:
+
+- Event Detail route validation now rejects contradictory draw-rule metadata before visible game page state applies.
+- `resultMode=can_draw` requires `gameRules.allowDraw=true`; `resultMode=no_draw` requires `gameRules.allowDraw=false`.
+- When supplied, `supportedMarketTypes` must include the event `marketProfile`.
+- Malformed rule payloads no longer allow frontend selectors to guess primary/regulation market structure from contradictory backend data.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail rule consistency contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing Event Detail rule fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Event Detail remains unchanged. Server-mode contradictory rule metadata rejects before visible game page state applies.
+
 ## Cycle MI - Event Detail Market Count Contract
 
 Closed or narrowed:

@@ -122,10 +122,19 @@ function assertEventRulesShape(event: Record<string, unknown>, eventId: string) 
     if (typeof event.gameRules.description !== "string" || !event.gameRules.description.trim()) {
       throw new Error(`Event detail route returned event ${eventId} without game rule description.`);
     }
+    if (event.resultMode === "can_draw" && event.gameRules.allowDraw !== true) {
+      throw new Error(`Event detail route returned event ${eventId} with inconsistent draw rules.`);
+    }
+    if (event.resultMode === "no_draw" && event.gameRules.allowDraw !== false) {
+      throw new Error(`Event detail route returned event ${eventId} with inconsistent draw rules.`);
+    }
   }
   if (event.supportedMarketTypes !== undefined) {
     if (!Array.isArray(event.supportedMarketTypes) || event.supportedMarketTypes.some((item) => !isSupportedMarketType(item))) {
       throw new Error(`Event detail route returned event ${eventId} with malformed supportedMarketTypes.`);
+    }
+    if (event.marketProfile !== undefined && !event.supportedMarketTypes.includes(event.marketProfile)) {
+      throw new Error(`Event detail route returned event ${eventId} with unsupported marketProfile.`);
     }
   }
 }

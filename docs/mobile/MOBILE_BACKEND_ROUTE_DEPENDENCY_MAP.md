@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MJ - Event Detail Rule Consistency Contract
+
+Cycle MJ hardens backend-owned Event Detail game-rule metadata before route-backed game page state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MJ-event-detail-rule-consistency-contract/cycle-MJ-event-detail-rule-consistency-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_rule_consistency_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail game-rule selection metadata | `/api/mobile/events/:slug/live-detail` | GET | Public/mobile route | Event slug | `resultMode` must agree with `gameRules.allowDraw`; `marketProfile` must be present in `supportedMarketTypes` when both fields are supplied | `Event`, listed public `Market`, backend market-rule/profile derivation | Mock/local detail remains unchanged. Server-mode contradictory rule fields reject before frontend primary/regulation market selection applies. | None for focused Event Detail rule consistency contract. P2 optional rule-specific error copy. |
+
 ## Cycle MI - Event Detail Market Count Contract
 
 Cycle MI hardens Event Detail market-count metadata before route-backed game page state applies:
