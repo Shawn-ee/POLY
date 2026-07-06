@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KJ - Home Status Filters
+
+Closed or narrowed:
+
+- Home server mode now sends visible `Live` and `Today` filter state to `/api/events` through `statusGroup`.
+- Backend `/api/events` now supports `statusGroup=today`, matching events with explicit `status=today` or `startTime` inside the current UTC day.
+- Home treats route-backed Live/Today responses as already filtered so valid today events are not hidden by client-only status string checks.
+- Route proof verifies Live, Today, and unfiltered Home pages with compact mobile markets.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Saved Home filter remains local until saved/followed markets are backend-owned.
+- Today currently uses UTC day boundaries; user-local day semantics can be added later if product requires it.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.status`, `Event.startTime`, `Market`, and `Outcome` support the KJ contract.
+
+Temporary mock/static data:
+
+- KJ proof creates disposable backend live, today, and future events with listed public markets. It does not add frontend-only Home rows.
+
 ## Cycle KI - Account Profile Contract
 
 Closed or narrowed:

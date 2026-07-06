@@ -291,6 +291,7 @@ const openOrderRemainingShares = (order: OpenOrder) => order.remainingShares ?? 
 const openOrderValue = (order: OpenOrder) => order.orderValue ?? openOrderRemainingShares(order) * order.price;
 
 type MainTab = "home" | "live" | "portfolio" | "search" | "account";
+type HomeFilter = "all" | "live" | "today" | "saved";
 type StoredPortfolio = {
   balance?: number;
   positions?: Position[];
@@ -310,6 +311,7 @@ export default function App() {
   const [localeHydrated, setLocaleHydrated] = useState(false);
   const [mainTab, setMainTab] = useState<MainTab>("home");
   const [worldCupTab, setWorldCupTab] = useState<WorldCupTab>("games");
+  const [homeFilter, setHomeFilter] = useState<HomeFilter>("all");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [selectedDepthMarketId, setSelectedDepthMarketId] = useState<string | null>(null);
   const [eventDetailForcedSide, setEventDetailForcedSide] = useState<"buy" | "sell" | null>(null);
@@ -368,6 +370,8 @@ export default function App() {
     () => openOrders.reduce((total, order) => total + openOrderValue(order), 0),
     [openOrders],
   );
+  const homeStatusGroup: "live" | "today" | null =
+    homeFilter === "live" || homeFilter === "today" ? homeFilter : null;
 
   useEffect(() => {
     return () => {
@@ -572,6 +576,7 @@ export default function App() {
         setQuery("");
         setMainTab("home");
         setWorldCupTab("games");
+        setHomeFilter("all");
         setTicketDefaults({ amount: "100", side: "buy", slippage: "1%" });
         setSavedEventIds(new Set());
         setAccountProfileName("Holiwyn Demo");
@@ -936,7 +941,7 @@ export default function App() {
 
   const loadBackendWorldCup = useCallback(async (cursor: string | null = null, append = false) => {
     try {
-      const payload = await api.listWorldCupEvents({ limit: HOME_EVENT_PAGE_SIZE, cursor });
+      const payload = await api.listWorldCupEvents({ limit: HOME_EVENT_PAGE_SIZE, cursor, statusGroup: homeStatusGroup });
       const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
@@ -980,7 +985,7 @@ export default function App() {
         setEventNextCursor(null);
       }
     }
-  }, [api]);
+  }, [api, homeStatusGroup]);
 
   const loadMoreBackendEvents = useCallback(() => {
     if (MARKET_DATA_MODE !== "server" || !eventNextCursor || isLoadingMoreEvents) return;
@@ -1597,6 +1602,9 @@ export default function App() {
                 futures={futures}
                 savedEventIds={savedEventIds}
                 toggleSavedEvent={toggleSavedEvent}
+                homeFilter={homeFilter}
+                setHomeFilter={setHomeFilter}
+                routeFiltered={MARKET_DATA_MODE === "server"}
               />
             )}
             {mainTab === "live" && (

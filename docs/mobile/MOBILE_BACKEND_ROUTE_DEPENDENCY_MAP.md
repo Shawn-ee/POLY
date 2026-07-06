@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KJ - Home Status Filters
+
+Cycle KJ wires visible Home Live/Today filters to backend route filters instead of filtering only the current client page:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KJ-home-status-filters/cycle-KJ-home-status-filters.json`.
+- Proof script: `scripts/prove_mobile_home_status_filters.ts`.
+- Focused tests: `mobile/src/__tests__/api.test.ts`, route proof, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home Live filter | `/api/events?statusGroup=live&includeMobileMarkets=1` | GET | Public/mobile route | None | `events[]`, `events[].markets[]`, `nextCursor`, `page.nextCursor`; route filters live events before pagination | `Event.status`, listed public `Market`, `Outcome` | Mock mode keeps local filtering. Server mode sends the selected visible filter to backend. | P1: saved filter remains local until saved state is backend-owned. |
+| Home Today filter | `/api/events?statusGroup=today&includeMobileMarkets=1` | GET | Public/mobile route | None | Same compact Home event page shape; route includes events with `status=today` or `startTime` within current UTC day | `Event.status`, `Event.startTime`, listed public `Market`, `Outcome` | Mock mode keeps local `status=today` filtering. Server mode treats route response as already filtered so valid today events are not hidden by client status text. | P1: richer timezone/user-locale day boundaries if product requires local-day semantics. |
+
 ## Cycle KI - Account Profile Contract
 
 Cycle KI wires the visible Account profile identity to a canonical backend route:

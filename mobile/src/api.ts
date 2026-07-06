@@ -51,7 +51,7 @@ export class PolyApi {
     }
   }
 
-  listWorldCupEvents(input: string | { search?: string; limit?: number; cursor?: string | null; statusGroup?: "live" | "upcoming" | null } = "") {
+  listWorldCupEvents(input: string | { search?: string; limit?: number; cursor?: string | null; statusGroup?: "live" | "today" | "upcoming" | null } = "") {
     const search = typeof input === "string" ? input : input.search ?? "";
     const params = new URLSearchParams({
       sportKey: "soccer",

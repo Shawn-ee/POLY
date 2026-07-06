@@ -41,6 +41,9 @@ export function HomeScreen({
   futures,
   savedEventIds,
   toggleSavedEvent,
+  homeFilter,
+  setHomeFilter,
+  routeFiltered = false,
 }: {
   locale: Locale;
   t: HomeScreenCopy;
@@ -57,8 +60,16 @@ export function HomeScreen({
   futures: Market[];
   savedEventIds: Set<string>;
   toggleSavedEvent: (event: Event) => void;
+  homeFilter?: HomeFilter;
+  setHomeFilter?: (filter: HomeFilter) => void;
+  routeFiltered?: boolean;
 }) {
-  const [homeFilter, setHomeFilter] = useState<HomeFilter>("all");
+  const [localHomeFilter, setLocalHomeFilter] = useState<HomeFilter>("all");
+  const activeHomeFilter = homeFilter ?? localHomeFilter;
+  const updateHomeFilter = (filter: HomeFilter) => {
+    setHomeFilter?.(filter);
+    if (!setHomeFilter) setLocalHomeFilter(filter);
+  };
   const homeFilters: Array<[HomeFilter, string]> = [
     ["all", t.searchAll],
     ["live", t.searchLive],
@@ -67,16 +78,18 @@ export function HomeScreen({
   ];
   const visibleEvents = useMemo(
     () =>
-      homeFilter === "live"
+      routeFiltered && (activeHomeFilter === "live" || activeHomeFilter === "today")
+        ? events
+        : activeHomeFilter === "live"
         ? events.filter((event) => event.status === "live")
-        : homeFilter === "today"
+        : activeHomeFilter === "today"
           ? events.filter((event) => event.status === "today")
-          : homeFilter === "saved"
+          : activeHomeFilter === "saved"
             ? events.filter((event) => savedEventIds.has(event.id))
           : events,
-    [events, homeFilter, savedEventIds],
+    [events, activeHomeFilter, routeFiltered, savedEventIds],
   );
-  const emptyCopy = homeFilter === "saved" ? t.noSavedMarkets : t.noResults;
+  const emptyCopy = activeHomeFilter === "saved" ? t.noSavedMarkets : t.noResults;
   const canLoadMore = Boolean(canLoadMoreEvents && loadMoreEvents);
   const loadMoreMatches = () => {
     if (!canLoadMore || isLoadingMoreEvents) return;
@@ -109,21 +122,21 @@ export function HomeScreen({
             key={value}
             accessibilityLabel={`home-filter-${value}`}
             testID={`home-filter-${value}`}
-            style={[styles.filterChip, homeFilter === value && styles.filterChipActive]}
-            onPress={() => setHomeFilter(value)}
+            style={[styles.filterChip, activeHomeFilter === value && styles.filterChipActive]}
+            onPress={() => updateHomeFilter(value)}
           >
-            <Text style={[styles.filterText, homeFilter === value && styles.filterTextActive]}>{text}</Text>
+            <Text style={[styles.filterText, activeHomeFilter === value && styles.filterTextActive]}>{text}</Text>
           </Pressable>
         ))}
       </View>
-      {homeFilter === "saved" && visibleEvents.length === 0 && (
+      {activeHomeFilter === "saved" && visibleEvents.length === 0 && (
         <Text accessibilityLabel="home-saved-empty" testID="home-saved-empty" style={styles.savedEmptyText}>
           {t.noSavedMarkets}
         </Text>
       )}
       <WorldCupSegmented left={t.games} right={t.futures} value={worldCupTab} setValue={setWorldCupTab} />
       {worldCupTab === "games" ? (
-        homeFilter === "saved" && visibleEvents.length === 0 ? null : (
+        activeHomeFilter === "saved" && visibleEvents.length === 0 ? null : (
           <MarketList
             locale={locale}
             events={visibleEvents}

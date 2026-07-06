@@ -67,6 +67,18 @@ const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
 const eventStatusGroupFilter = (statusGroup: string): Prisma.EventWhereInput =>
   statusGroup === "live"
     ? { status: { in: ["live", "LIVE"] } }
+    : statusGroup === "today"
+      ? {
+          OR: [
+            { status: { in: ["today", "TODAY"] } },
+            {
+              startTime: {
+                gte: new Date(new Date().setUTCHours(0, 0, 0, 0)),
+                lt: new Date(new Date().setUTCHours(24, 0, 0, 0)),
+              },
+            },
+          ],
+        }
     : statusGroup === "upcoming"
       ? { NOT: { status: { in: ["live", "LIVE"] } } }
       : {};

@@ -1,0 +1,74 @@
+{
+  "pass": true,
+  "cycle": "Cycle KJ",
+  "createdAt": "2026-07-06T07:44:28.174Z",
+  "route": "/api/events",
+  "query": {
+    "includeMobileMarkets": true,
+    "sportKey": "soccer",
+    "leagueKey": "world_cup",
+    "statusGroups": [
+      "live",
+      "today"
+    ]
+  },
+  "seededEvents": {
+    "live": {
+      "id": "541b2c78-0c41-4892-8019-d03d78dd4be5",
+      "slug": "mobile-kj-live-4ef18e60",
+      "status": "live",
+      "startTime": "2026-07-06T12:00:00.000Z"
+    },
+    "today": {
+      "id": "de14f140-ded3-47c4-8bcc-9b5c456e0be4",
+      "slug": "mobile-kj-today-4ef18e60",
+      "status": "upcoming",
+      "startTime": "2026-07-06T12:00:00.000Z"
+    },
+    "future": {
+      "id": "6bb7bdd3-be91-4fac-bd48-22a6570cb826",
+      "slug": "mobile-kj-future-4ef18e60",
+      "status": "upcoming",
+      "startTime": "2026-07-07T12:00:00.000Z"
+    }
+  },
+  "results": {
+    "allSlugs": [
+      "mobile-kj-future-4ef18e60",
+      "mobile-kj-today-4ef18e60",
+      "mobile-kj-live-4ef18e60"
+    ],
+    "liveSlugs": [
+      "mobile-kj-live-4ef18e60"
+    ],
+    "todaySlugs": [
+      "mobile-kj-today-4ef18e60",
+      "mobile-kj-live-4ef18e60",
+      "mobile-kj-today-88c71380",
+      "mobile-kj-live-88c71380"
+    ],
+    "todayCompactMarketCounts": [
+      {
+        "slug": "mobile-kj-today-4ef18e60",
+        "markets": 1
+      },
+      {
+        "slug": "mobile-kj-live-4ef18e60",
+        "markets": 1
+      },
+      {
+        "slug": "mobile-kj-today-88c71380",
+        "markets": 1
+      },
+      {
+        "slug": "mobile-kj-live-88c71380",
+        "markets": 1
+      }
+    ],
+    "nextCursor": {
+      "all": null,
+      "live": null,
+      "today": null
+    }
+  }
+}
