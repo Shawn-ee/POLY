@@ -2218,3 +2218,15 @@ Cycle LI implementation notes:
 - Added `resolveAccountBootstrapResults` to require balance, profile, and navigation success for a fully synced Account state.
 - Account bootstrap applies successful partial data but sets visible `accountDataStatus=error` when any route fails.
 - Account screen now shows account data sync state separately from profile preferences sync state.
+
+## Cycle LJ - Cancel No Optimistic Server Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio open-order cancel in server mode | `/api/orders/:id`, `/api/portfolio`, `/api/portfolio/history` | DELETE then GET + GET | Mobile API key with `orders:write` and `account:read` | Order id from visible open order row | Same order id with `status=CANCELED`, followed by refreshed open-order/history state | `Order`, `UserBalance`, `ApiOrderRequest`, `Market`, `Outcome` | Mock mode still removes the open order and appends canceled activity locally. Server mode no longer mutates local Portfolio before backend confirmation. | No P0 gap for focused no-optimistic server cancel contract. |
+
+Cycle LJ implementation notes:
+
+- Added `shouldApplyOptimisticCancel` so only mock mode applies local cancel mutation before confirmation.
+- Server-mode cancel now waits for `DELETE /api/orders/:id` confirmation and Portfolio/history refresh.
+- Failed server cancel keeps existing visible state and marks Portfolio sync error.

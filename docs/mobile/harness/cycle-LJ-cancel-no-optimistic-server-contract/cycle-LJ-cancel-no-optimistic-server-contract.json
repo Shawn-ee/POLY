@@ -1,0 +1,28 @@
+{
+  "cycle": "LJ",
+  "gate": "cancel-no-optimistic-server-contract",
+  "generatedAt": "2026-07-06T10:19:29.870Z",
+  "routes": [
+    "/api/orders/:id",
+    "/api/portfolio",
+    "/api/portfolio/history"
+  ],
+  "assertions": {
+    "mockCancelCanRemainOptimistic": true,
+    "serverCancelIsNotOptimistic": true,
+    "serverCancelRequiresSameOrderCanceledConfirmation": true,
+    "failedServerCancelMustKeepExistingVisibleStateUntilRefresh": true,
+    "confirmedServerCancelCanRefreshPortfolioAndHistory": true
+  },
+  "order": {
+    "id": "server-open-order-lj",
+    "title": "LJ cancel proof",
+    "outcome": "YES",
+    "side": "buy",
+    "status": "OPEN",
+    "price": 0.44,
+    "remaining": 50,
+    "remainingShares": 50,
+    "orderValue": 22
+  }
+}

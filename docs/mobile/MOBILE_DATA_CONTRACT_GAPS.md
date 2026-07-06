@@ -4579,6 +4579,35 @@ Future migration concern:
 
 - If account actions become enabled, route-owned action metadata should include destination permissions and retry/error policy per row.
 
+## Cycle LJ - Cancel No Optimistic Server Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio cancel no longer removes open orders or appends canceled activity before backend confirmation.
+- Mock-mode cancel remains local/optimistic for offline fake-token flows.
+- Existing cancel confirmation guard remains required: server cancel must return the same order id with `status=CANCELED`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No P0 field gap for focused server cancel optimism.
+- Optional inline copy could distinguish already-filled/already-canceled cancel races.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `/api/orders/:id`, `/api/portfolio`, and `/api/portfolio/history` fields are enough.
+
+Route mismatch:
+
+- No route mismatch for the focused contract. Server mode waits for cancel confirmation before refresh.
+
+Temporary mock/static data:
+
+- Mock cancel remains local by design. Server cancel is backend-confirmed only.
+
+Future migration concern:
+
+- If cancel transitions become realtime, reconcile push/socket order updates with the same no-fake-canceled-state invariant.
+
 ## Cycle LA - Cashout/Sell Safety Contract
 
 Closed or narrowed:

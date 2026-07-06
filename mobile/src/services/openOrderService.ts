@@ -21,6 +21,8 @@ export const appendUniqueActivity = (
   activity: PortfolioActivity,
 ): PortfolioActivity[] => (current.some((item) => item.id === activity.id) ? current : [activity, ...current]);
 
+export const shouldApplyOptimisticCancel = (mode: OrderMode) => mode !== "server";
+
 export const cancelOpenOrderOnServer = async ({
   mode,
   api,

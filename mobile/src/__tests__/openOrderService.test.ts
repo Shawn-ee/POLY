@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import type { PolyApi } from "../api";
 import type { OpenOrder, PortfolioActivity } from "../components/Portfolio";
-import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity } from "../services/openOrderService";
+import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity, shouldApplyOptimisticCancel } from "../services/openOrderService";
 
 const order: OpenOrder = {
   id: "server-open-order-1",
@@ -36,6 +36,11 @@ describe("open order service", () => {
 
     expect(appendUniqueActivity(existing, activity)).toBe(existing);
     expect(appendUniqueActivity([], activity)).toEqual([activity]);
+  });
+
+  test("only applies optimistic open-order cancel in mock mode", () => {
+    expect(shouldApplyOptimisticCancel("mock")).toBe(true);
+    expect(shouldApplyOptimisticCancel("server")).toBe(false);
   });
 
   test("does not call the backend for mock-mode order cancel", async () => {

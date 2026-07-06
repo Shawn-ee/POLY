@@ -4471,3 +4471,38 @@ Decision:
 - Pass/fail: Pass for focused Account bootstrap contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional per-route retry copy/action.
+
+## Cycle LJ - Cancel No Optimistic Server Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure server-mode Portfolio cancel cannot create fake canceled UI state before backend confirmation.
+
+Reference Audit Agent: Backend/data-contract loop. Portfolio visual redesign is out of scope.
+
+Implementation Agent: Added cancel optimism guard, server-mode app wiring, tests, and proof.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LJ-cancel-no-optimistic-server-contract.md`
+- `docs/mobile/harness/cycle-LJ-cancel-no-optimistic-server-contract/cycle-LJ-cancel-no-optimistic-server-contract.json`
+- `scripts/prove_mobile_cancel_no_optimistic_server_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LJ-P0-01 | P0 | Pass | Mock-mode cancel remains optimistic. | N/A |
+| LJ-P0-02 | P0 | Pass | Server-mode cancel is not optimistic. | N/A |
+| LJ-P0-03 | P0 | Pass | Server cancel requires same-order `CANCELED` confirmation. | N/A |
+| LJ-P0-04 | P0 | Pass | Failed server cancel keeps existing visible state until route refresh. | N/A |
+| LJ-P0-05 | P0 | Pass | Confirmed server cancel can refresh Portfolio/history. | N/A |
+| LJ-P2-01 | P2 | Open | No dedicated inline cancel-race copy. | Optional later copy/action pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused server cancel optimism contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional cancel-race copy/action.

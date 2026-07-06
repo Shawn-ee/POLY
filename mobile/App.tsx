@@ -33,7 +33,7 @@ import {
   worldCupFutures,
 } from "./src/mocks/worldCup";
 import { OrderMode, submitTicketOrder } from "./src/services/orderService";
-import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity } from "./src/services/openOrderService";
+import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity, shouldApplyOptimisticCancel } from "./src/services/openOrderService";
 import { closePositionOnServer } from "./src/services/positionCloseService";
 import { loadAccountBalance } from "./src/services/accountBalanceService";
 import { resolveAccountBootstrapResults, type AccountBootstrapStatus } from "./src/services/accountBootstrapService";
@@ -1695,9 +1695,11 @@ export default function App() {
   }, [api]);
 
   const cancelOpenOrder = (order: OpenOrder) => {
-    setOpenOrders((current) => current.filter((item) => item.id !== order.id));
     const canceledActivity = openOrderCanceledActivity(order, t.justNow);
-    setActivities((current) => appendUniqueActivity(current, canceledActivity));
+    if (shouldApplyOptimisticCancel(ORDER_MODE)) {
+      setOpenOrders((current) => current.filter((item) => item.id !== order.id));
+      setActivities((current) => appendUniqueActivity(current, canceledActivity));
+    }
     cancelOpenOrderOnServer({ mode: ORDER_MODE, api, order })
       .then(() => {
         if (ORDER_MODE === "server") {
