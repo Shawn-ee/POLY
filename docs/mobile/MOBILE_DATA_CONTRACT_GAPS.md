@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MY - Portfolio Position Price Bounds Contract
+
+Closed or narrowed:
+
+- Portfolio snapshot validation now rejects position `avgCost`, `currentPrice`, `bestBid`, and `bestAsk` values outside the contract price range `0` to `1`.
+- Visible Portfolio position rows and cashout state no longer accept above-one position prices from `/api/portfolio`.
+- Position depth sizes remain separate from quote prices, so large `bestBidSize` and `bestAskSize` values are still accepted.
+- Negative position P/L remains allowed.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio position price bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` position price and depth fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio remains unchanged. Server-mode invalid position prices reject before visible Portfolio/cashout state applies.
+
 ## Cycle MX - Portfolio Value History Total Contract
 
 Closed or narrowed:

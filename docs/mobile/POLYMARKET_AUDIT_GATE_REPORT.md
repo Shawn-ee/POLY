@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle MY
+
+Gate status: Pass
+
+Scope: Portfolio position price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-MY-portfolio-position-price-bounds-contract/cycle-MY-portfolio-position-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-MY-portfolio-position-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio snapshot rejects position prices outside `0` to `1` before visible Portfolio rows or cashout state apply while preserving large depth sizes as sizes.
+
 ## Cycle MX
 
 Gate status: Pass

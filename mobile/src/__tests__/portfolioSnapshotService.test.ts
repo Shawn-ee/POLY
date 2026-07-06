@@ -225,6 +225,64 @@ describe("portfolio snapshot service", () => {
     await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid positions[].shares.");
   });
 
+  test("rejects position prices above contract bounds before applying Portfolio state", async () => {
+    const invalidCurrentPrice = {
+      getPortfolio: vi.fn(async () =>
+        snapshot({
+          positions: [
+            {
+              ...snapshot().positions[0],
+              currentPrice: 1.2,
+            },
+          ],
+        }),
+      ),
+    } as unknown as PolyApi;
+    const invalidBestAsk = {
+      getPortfolio: vi.fn(async () =>
+        snapshot({
+          positions: [
+            {
+              ...snapshot().positions[0],
+              bestAsk: "1.2",
+            },
+          ],
+        }),
+      ),
+    } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(invalidCurrentPrice)).rejects.toThrow("Portfolio snapshot response had invalid positions[].currentPrice.");
+    await expect(loadPortfolioSnapshot(invalidBestAsk)).rejects.toThrow("Portfolio snapshot response had invalid positions[].bestAsk.");
+  });
+
+  test("allows large position depth sizes while preserving bounded quote prices", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        positions: [
+          {
+            ...snapshot().positions[0],
+            bestBid: "0.47",
+            bestAsk: "0.5",
+            bestBidSize: "1200.5",
+            bestAskSize: 2400,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).resolves.toMatchObject({
+      positions: [
+        {
+          bestBid: 47,
+          bestAsk: 50,
+          bestBidSize: 1200.5,
+          bestAskSize: 2400,
+        },
+      ],
+    });
+  });
+
   test("allows negative position pnl while rejecting negative open-order economics", async () => {
     const validLossApi = {
       getPortfolio: vi.fn(async () =>

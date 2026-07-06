@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MY - Portfolio Position Price Bounds Contract
+
+Cycle MY hardens Portfolio position price fields before visible Portfolio rows and cashout state apply:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MY-portfolio-position-price-bounds-contract/cycle-MY-portfolio-position-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_position_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio position price bounds | `/api/portfolio` through `PolyApi.getPortfolio()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | Position `avgCost`, `currentPrice`, `bestBid`, and `bestAsk` must be contract prices from `0` to `1`; `bestBidSize` and `bestAskSize` remain non-negative depth values and may exceed `1` | `Position`, `Market`, `Outcome`, provider quote/depth projection | Mock/local Portfolio remains unchanged. Server-mode invalid position prices reject before visible Portfolio rows or cashout state apply. | None for focused Portfolio position price bounds contract. P2 optional Portfolio-specific malformed price copy. |
+
 ## Cycle MX - Portfolio Value History Total Contract
 
 Cycle MX hardens Portfolio value-history point totals before visible chart state applies:

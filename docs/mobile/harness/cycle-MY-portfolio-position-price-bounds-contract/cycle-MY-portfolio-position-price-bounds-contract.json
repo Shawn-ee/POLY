@@ -1,0 +1,21 @@
+{
+  "cycle": "Cycle MY",
+  "feature": "Portfolio position price bounds contract",
+  "generatedAt": "2026-07-06T13:10:02.596Z",
+  "route": "/api/portfolio",
+  "contract": {
+    "validPayload": "Portfolio position avgCost/currentPrice and depth quote prices must be probability prices from 0 to 1.",
+    "depthPayload": "bestBidSize and bestAskSize remain depth sizes and may be greater than 1.",
+    "malformedPayload": "above-one position prices reject before visible Portfolio position/cashout state applies.",
+    "allowedLoss": "position pnl remains allowed to be negative."
+  },
+  "assertions": {
+    "validPositionPricesAccepted": true,
+    "largeDepthSizesAccepted": true,
+    "priceOneAccepted": true,
+    "currentPriceAboveOneRejects": true,
+    "avgCostAboveOneRejects": true,
+    "bestAskAboveOneRejects": true,
+    "negativePnlRemainsAllowed": true
+  }
+}

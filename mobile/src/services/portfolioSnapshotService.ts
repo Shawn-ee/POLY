@@ -21,11 +21,21 @@ const formatOpenOrderTimestamp = (value: string) => {
   }).format(parsed);
 };
 
-const toDepthProbability = (value: number | string | null | undefined) => {
+const requireProbabilityNumber = (value: unknown, field: string) => {
+  const parsed = requireNonNegativeNumber(value, field);
+  if (parsed > 1) {
+    throw new Error(`Portfolio snapshot response had invalid ${field}.`);
+  }
+  return parsed;
+};
+
+const toOptionalDepthProbability = (value: number | string | null | undefined, field: string) => {
   if (value === null || value === undefined) return null;
   const parsed = typeof value === "string" ? Number(value) : value;
-  if (!Number.isFinite(parsed) || parsed < 0) return null;
-  return parsed <= 1 ? Math.round(parsed * 100) : Math.round(parsed);
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 1) {
+    throw new Error(`Portfolio snapshot response had invalid ${field}.`);
+  }
+  return Math.round(parsed * 100);
 };
 
 const toDepthSize = (value: number | string | null | undefined) => {
@@ -88,12 +98,12 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       selection: portfolioSelectionFromBackend(position.selection, "positions[].selection"),
       side: "buy",
       amount: requireNonNegativeNumber(position.costBasisTokens, "positions[].costBasisTokens"),
-      probability: Math.round(requireNonNegativeNumber(position.avgCost, "positions[].avgCost") * 100),
+      probability: Math.round(requireProbabilityNumber(position.avgCost, "positions[].avgCost") * 100),
       shares: requireNonNegativeNumber(position.shares, "positions[].shares"),
-      currentPrice: requireNonNegativeNumber(position.currentPrice, "positions[].currentPrice"),
+      currentPrice: requireProbabilityNumber(position.currentPrice, "positions[].currentPrice"),
       marketAvailability: position.market.availability,
-      bestBid: toDepthProbability(position.bestBid),
-      bestAsk: toDepthProbability(position.bestAsk),
+      bestBid: toOptionalDepthProbability(position.bestBid, "positions[].bestBid"),
+      bestAsk: toOptionalDepthProbability(position.bestAsk, "positions[].bestAsk"),
       bestBidSize: toDepthSize(position.bestBidSize),
       bestAskSize: toDepthSize(position.bestAskSize),
       currentValue: requireNonNegativeNumber(position.valueTokens, "positions[].valueTokens"),
