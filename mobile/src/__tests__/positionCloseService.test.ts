@@ -43,7 +43,7 @@ describe("position close service", () => {
   });
 
   test("submits server-mode closes as canonical SELL limit orders", async () => {
-    const placeLimitOrder = vi.fn(async () => ({ order: { id: "close-order-1" } }));
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "close-order-1", size: "500.00", remaining: "500.00" } }));
     const api = { placeLimitOrder } as unknown as PolyApi;
 
     await closePositionOnServer({ mode: "server", api, position });
@@ -105,5 +105,31 @@ describe("position close service", () => {
       }),
     ).rejects.toThrow("Cash out requires an open position with available shares.");
     expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("rejects server cashout when backend omits order confirmation", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { status: "OPEN" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position,
+      }),
+    ).rejects.toThrow("Cash out order was not confirmed by the server.");
+  });
+
+  test("rejects server cashout when backend returns malformed lifecycle numbers", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "close-order-bad", remaining: "bad" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position,
+      }),
+    ).rejects.toThrow("Cash out order response had invalid order.remaining.");
   });
 });

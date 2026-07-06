@@ -1,0 +1,24 @@
+{
+  "cycle": "Cycle LX",
+  "feature": "Cashout submit confirmation contract",
+  "generatedAt": "2026-07-06T11:25:19.292Z",
+  "route": "/api/orders",
+  "contract": {
+    "validPayload": "sell-all cashout only proceeds after backend order confirmation",
+    "malformedPayload": "missing order id or malformed lifecycle numbers reject before Portfolio refresh treats cashout as accepted"
+  },
+  "assertions": {
+    "validSellAllConfirmationAccepted": true,
+    "closeUsesFullHeldShares": true,
+    "zeroShareCashoutRejectedBeforeSubmit": true,
+    "missingOrderConfirmationRejected": true,
+    "malformedOrderNumberRejected": true
+  },
+  "position": {
+    "id": "server-world-cup-winner-France",
+    "marketId": "world-cup-winner",
+    "outcomeId": "france",
+    "shares": 500,
+    "currentPrice": 0.51
+  }
+}

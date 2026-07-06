@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle LX - Cashout Submit Confirmation Contract
+
+Cycle LX hardens server-mode cashout so `/api/orders` must confirm the sell-all close order before visible Portfolio refresh treats cashout as accepted:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-LX-cashout-submit-confirmation-contract/cycle-LX-cashout-submit-confirmation-contract.json`.
+- Proof script: `scripts/prove_mobile_cashout_submit_confirmation_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Cashout / close position submit confirmation | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | SELL limit order with full held `position.shares`, market id, outcome id, and current close price | Nested `order.id` or top-level `id` must be present; optional `size`, `remaining`, and `fills[].size` must be finite non-negative numbers when provided | `Order`, `Position`, `Market`, `Outcome`, matching/reservation service | Mock mode remains local. Server-mode zero/missing-share cashout is blocked before API; malformed submit confirmations reject before Portfolio refresh. | None for the focused cashout submit confirmation contract. P2 optional richer submit error copy. |
+
 ## Cycle LW - Cancel Route Shape Contract
 
 Cycle LW hardens the visible Portfolio cancel flow so server-mode cancel is confirmed only by the exact backend route shape the UI needs:

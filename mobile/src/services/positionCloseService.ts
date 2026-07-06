@@ -1,6 +1,7 @@
 import type { PolyApi } from "../api";
 import type { Position } from "../components/Portfolio";
 import type { OrderMode } from "./orderService";
+import { assertPositionCloseOrderResponseShape } from "./positionCloseRouteShapeService";
 
 export type ClosePositionInput = {
   mode: OrderMode;
@@ -42,11 +43,12 @@ export const closePositionOnServer = async ({ mode, api, position }: ClosePositi
     throw new Error("Server position close requires market, outcome, and share identity.");
   }
 
-  await api.placeLimitOrder({
+  const response = await api.placeLimitOrder({
     marketId: position.marketId,
     outcomeId: position.outcomeId,
     side: "SELL",
     price: closePrice(position),
     size,
   });
+  assertPositionCloseOrderResponseShape(response);
 };

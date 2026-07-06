@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LX - Cashout Submit Confirmation Contract
+
+Closed or narrowed:
+
+- Server-mode cashout now validates `/api/orders` submit confirmation before resolving `closePositionOnServer`.
+- Missing order ids and malformed optional order lifecycle numbers now reject before the app refreshes Portfolio as if cashout was accepted.
+- Cashout remains sell-all only: the submit size is the full visible `position.shares`.
+- Cycle LA zero-share/no-position frontend guard remains intact.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cashout submit confirmation contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing canonical order submit responses with nested `order.id` or legacy top-level `id` support this contract.
+
+Temporary mock/static data:
+
+- Mock/local cashout remains unchanged. Server-mode malformed submit confirmations no longer fall through to Portfolio refresh.
+
 ## Cycle LW - Cancel Route Shape Contract
 
 Closed or narrowed:
