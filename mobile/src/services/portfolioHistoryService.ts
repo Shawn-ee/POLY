@@ -47,6 +47,12 @@ const requireProbabilityNumber = (value: unknown, field: string) => {
   return parsed;
 };
 
+const requireCanceledOrderStatus = (value: unknown) => {
+  if (typeof value !== "string" || value.trim().toUpperCase() !== "CANCELED") {
+    throw new Error("Portfolio history response had invalid canceledOrders[].status.");
+  }
+};
+
 const requireExecutionPrice = (cost: number, shares: number) => {
   if (shares === 0) {
     if (cost > 0) {
@@ -78,7 +84,12 @@ export const portfolioHistoryToActivity = (history: Awaited<ReturnType<PolyApi["
 
 export const canceledOrdersToActivity = (orders: PortfolioCanceledOrderItem[] = []): PortfolioActivity[] =>
   orders.map((order) => {
+    requireCanceledOrderStatus(order.status);
+    const size = requireNonNegativeNumber(order.size, "canceledOrders[].size");
     const remaining = requireNonNegativeNumber(order.remaining, "canceledOrders[].remaining");
+    if (remaining > size) {
+      throw new Error("Portfolio history response had canceledOrders[].remaining above canceledOrders[].size.");
+    }
     const price = requireProbabilityNumber(order.price, "canceledOrders[].price");
     return {
       id: `canceled-order-${order.id}`,

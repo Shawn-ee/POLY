@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NN - Portfolio Canceled-Order History Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio History `canceledOrders` rows now require `status=CANCELED` before becoming visible canceled activity.
+- Canceled-order `size` is validated and `remaining <= size` is enforced.
+- Non-canceled statuses such as `OPEN` or `FILLED` reject before visible History state applies.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio canceled-order history contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio/history` canceled-order `status`, `size`, and `remaining` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local history behavior remains unchanged. Server-mode malformed canceled rows reject before visible History state applies.
+
 ## Cycle NM - Portfolio Open-Order Status Contract
 
 Closed or narrowed:

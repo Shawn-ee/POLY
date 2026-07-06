@@ -268,6 +268,56 @@ describe("portfolio history activity mapping", () => {
     ).toThrow("Portfolio history response had invalid canceledOrders[].price.");
   });
 
+  test("rejects non-canceled canceledOrders rows before applying activity", () => {
+    expect(() =>
+      canceledOrdersToActivity([
+        {
+          id: "bad-cancel-status",
+          market: {
+            id: "world-cup-winner",
+            title: "World Cup winner",
+            status: "LIVE",
+          },
+          outcome: {
+            id: "yes",
+            name: "YES",
+          },
+          side: "BUY",
+          status: "OPEN",
+          price: 0.5,
+          size: 200,
+          remaining: 100,
+          canceledAt: "2026-07-02T05:55:00.000Z",
+        },
+      ]),
+    ).toThrow("Portfolio history response had invalid canceledOrders[].status.");
+  });
+
+  test("rejects canceled order remaining above original size before applying activity", () => {
+    expect(() =>
+      canceledOrdersToActivity([
+        {
+          id: "bad-cancel-size",
+          market: {
+            id: "world-cup-winner",
+            title: "World Cup winner",
+            status: "LIVE",
+          },
+          outcome: {
+            id: "yes",
+            name: "YES",
+          },
+          side: "BUY",
+          status: "CANCELED",
+          price: 0.5,
+          size: 100,
+          remaining: 101,
+          canceledAt: "2026-07-02T05:55:00.000Z",
+        },
+      ]),
+    ).toThrow("Portfolio history response had canceledOrders[].remaining above canceledOrders[].size.");
+  });
+
   test("rejects canceled order prices above contract bounds before applying activity", () => {
     expect(() =>
       canceledOrdersToActivity([

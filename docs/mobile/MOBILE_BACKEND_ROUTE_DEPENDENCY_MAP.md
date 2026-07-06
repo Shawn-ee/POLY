@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NN - Portfolio Canceled-Order History Contract
+
+Cycle NN hardens Portfolio History canceled-order rows before visible activity state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NN-portfolio-canceled-order-history-contract/cycle-NN-portfolio-canceled-order-history-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_canceled_order_history_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio canceled-order history activity | `/api/portfolio/history` through `PolyApi.getPortfolioHistory()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | `canceledOrders[].status`, `size`, `remaining`, `price`, side, market/outcome, selection; visible canceled activity requires `CANCELED` status and `remaining <= size` | `Order`, `Market`, `Outcome`, order history projection | Mock/local history remains unchanged. Server-mode non-canceled or impossible canceled rows reject before visible History state applies. | None for focused Portfolio canceled-order history contract. P2 optional malformed-row copy. |
+
 ## Cycle NM - Portfolio Open-Order Status Contract
 
 Cycle NM hardens Portfolio server-mode open-order rows before visible Orders state applies:

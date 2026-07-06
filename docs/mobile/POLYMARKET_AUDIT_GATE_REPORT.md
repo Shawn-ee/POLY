@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NN
+
+Gate status: Pass
+
+Scope: Portfolio canceled-order history contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NN-portfolio-canceled-order-history-contract/cycle-NN-portfolio-canceled-order-history-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioHistoryService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NN-portfolio-canceled-order-history-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio History canceledOrders require `CANCELED` status and coherent remaining/size before visible History activity applies.
+
 ## Cycle NM
 
 Gate status: Pass

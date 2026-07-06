@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle NN",
+  "feature": "Portfolio canceled-order history contract",
+  "generatedAt": "2026-07-06T14:06:44.266Z",
+  "route": "/api/portfolio/history",
+  "contract": {
+    "validPayload": "canceledOrders rows must have CANCELED status and coherent remaining/size quantities before becoming visible history activity.",
+    "malformedPayload": "non-canceled statuses or remaining above size reject before visible Portfolio History state applies."
+  },
+  "assertions": {
+    "acceptsCanceledStatus": true,
+    "rejectsOpenStatus": true,
+    "rejectsFilledStatus": true,
+    "rejectsRemainingAboveSize": true,
+    "rejectsNegativeSize": true
+  }
+}
