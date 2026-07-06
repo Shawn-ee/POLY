@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Cashout remaining size contract | Cycle MO | Pass for backend/data-contract scope | 0 for focused cashout remaining size scope | P2 optional richer cashout lifecycle mismatch copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MO-cashout-remaining-size-contract/cycle-MO-cashout-remaining-size-contract.json`; tests: `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`; audit: `mobile/docs/audits/cycle-MO-cashout-remaining-size-contract.md` | Server-mode cashout now rejects impossible confirmations where returned remaining size exceeds returned order size before Portfolio refresh treats cashout as accepted. |
 | Event Detail required rules contract | Cycle MN | Pass for backend/data-contract scope | 0 for focused Event Detail required rules scope | P2 optional missing-rule-field error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MN-event-detail-required-rules-contract/cycle-MN-event-detail-required-rules-contract.json`; tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`; audit: `mobile/docs/audits/cycle-MN-event-detail-required-rules-contract.md` | Event Detail route validation now rejects missing backend game-rule fields before frontend market selection can infer route-backed game structure. |
 | Cashout price bounds contract | Cycle MM | Pass for backend/data-contract scope | 0 for focused cashout price bounds scope | P2 optional richer invalid-price row copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MM-cashout-price-bounds-contract/cycle-MM-cashout-price-bounds-contract.json`; tests: `mobile/src/__tests__/positionCloseService.test.ts`, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`; audit: `mobile/docs/audits/cycle-MM-cashout-price-bounds-contract.md` | Server-mode cashout now blocks missing, zero, negative, or above-one current prices before submit, while allowing valid price `1.00`. |
 | Cashout current price contract | Cycle ML | Pass for backend/data-contract scope | 0 for focused cashout current price scope | P2 optional richer unavailable-price row copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-ML-cashout-current-price-contract/cycle-ML-cashout-current-price-contract.json`; tests: `mobile/src/__tests__/positionCloseService.test.ts`, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`; audit: `mobile/docs/audits/cycle-ML-cashout-current-price-contract.md` | Server-mode cashout now requires finite positive current price and blocks missing/zero current price before submit instead of falling back to entry probability. |
@@ -113,6 +114,40 @@ Fail the feature when:
 | Current live event detail visible provider behavior and structural parity | Cycle EG integrated | Partial; PM-GAP-084 remains open | 4 P0 status/provider-lifecycle proof areas remain | P1 fresh S23 recapture, broader real provider-backed family breadth, visible provider refresh lifecycle; P2 density/chart/orderbook/status polish | Reused stale/reference-only DQ-C Samsung S23 official Polymarket evidence; gate: `docs/mobile/audits/cycle-eg-c-live-event-visible-provider-gate.md` | Backend refresh lifecycle proof: `docs/mobile/harness/cycle-EG-A-provider-refresh-lifecycle.json`; Samsung tablet visible proof: `docs/mobile/harness/cycle-EG-B-visible-live-parity/cycle-EG-B-visible-live-parity-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EG-B-visible-live-parity/` and `docs/mobile/harness/cycle-EG-B-visible-live-parity/` | EG materially closes chart, line-selector, Book ladder, and ticket carry-through gaps for the selected Mexico/Ecuador Spread path. It remains partial because the Android run used contract-shaped fallback data and did not visibly prove ready/stale/refreshing/unavailable provider lifecycle states tied to the backend route in one run. |
 | Current live game page Book-origin snapshot durability after metadata drift | Cycle EF integrated | Pass for selected EF proof; PM-GAP-083 verified for selected path | 0 for selected EF gate | P1 repeat across real provider-backed line families, provider-refresh drift regression, official production history recapture; P2 Portfolio/history visual clarity | Reused EE/ED checked-in proof and DQ-C Polymarket reference; gate: `docs/mobile/audits/cycle-ef-c-snapshot-durability-gate.md` | Backend proof: `docs/mobile/harness/cycle-EF-A-snapshot-durability.json`; Samsung tablet proof: `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/cycle-EF-snapshot-durability-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EF-integrated-snapshot-durability/` and `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/` | Integrated proof mutates current market/outcome/provider metadata after order/fill creation, then proves backend and Android Portfolio/activity still render order-time/fill-time selected Book identity with no fallback/default reconstruction and explicit fake-token labels. |
 | Current live game page Book-origin open/cancel/fill status and selection snapshots | Cycle EE integrated | Pass for selected PM-GAP-082 gate | 0 for selected EE gate | P1 real provider-backed line-family status matrix, official production confirmation/cancel/fill recapture, durability checks after metadata changes; P2 Portfolio/history visual status polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook and location-gated ticket reference; ED/DX/DO/Portfolio checked-in lifecycle baselines; gate: `docs/mobile/audits/cycle-ee-c-book-order-status-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EE-integrated-book-order-status/cycle-EE-book-order-status-proof.json`; backend snapshot proof: `docs/mobile/harness/cycle-EE-A-book-order-status-snapshots.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EE-integrated-book-order-status/` and `docs/mobile/harness/cycle-EE-integrated-book-order-status/` | EE integrated proof shows the same Book-origin selected identity through open order, cancel/canceled status, filled position, recent activity/history, guarded backend selection snapshots, visible fake-token status labels, and no-fallback assertions. |
+
+## Cycle MO
+
+Gate status: Pass
+
+Lead Agent target: Ensure server-mode cashout confirmations reject impossible remaining-size lifecycle data before Portfolio refresh.
+
+Reference Audit Agent: Backend/data-contract loop. Manual UI review is no longer required every cycle.
+
+Implementation Agent: Tightened cashout confirmation lifecycle validation, added focused tests, and generated harness proof.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-MO-cashout-remaining-size-contract.md`
+- `docs/mobile/harness/cycle-MO-cashout-remaining-size-contract/cycle-MO-cashout-remaining-size-contract.json`
+- `scripts/prove_mobile_cashout_remaining_size_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| MO-P0-01 | P0 | Pass | Equal remaining and size accepted. | N/A |
+| MO-P0-02 | P0 | Pass | Lower remaining than size accepted. | N/A |
+| MO-P0-03 | P0 | Pass | Nested remaining above size rejects before Portfolio refresh. | N/A |
+| MO-P0-04 | P0 | Pass | Top-level remaining above size rejects before Portfolio refresh. | N/A |
+| MO-P2-01 | P2 | Open | No richer cashout lifecycle mismatch copy. | Optional later copy pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused cashout remaining size contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional richer cashout lifecycle mismatch copy.
 
 ## Cycle MN
 

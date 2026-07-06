@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MO - Cashout Remaining Size Contract
+
+Closed or narrowed:
+
+- Server-mode cashout confirmation validation now rejects lifecycle payloads where `remaining > size`.
+- The check applies to nested `order.*` and legacy top-level order confirmation fields.
+- Impossible remaining-size confirmations no longer allow Portfolio refresh to treat cashout as accepted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cashout remaining size contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/orders` confirmation lifecycle fields support this contract when returned.
+
+Temporary mock/static data:
+
+- Mock/local cashout remains unchanged. Server-mode impossible remaining lifecycle rejects before Portfolio refresh.
+
 ## Cycle MN - Event Detail Required Rules Contract
 
 Closed or narrowed:

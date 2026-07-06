@@ -35,7 +35,10 @@ export function assertPositionCloseOrderResponseShape(payload: unknown, expected
   if (expectedSize !== undefined && confirmedSize !== undefined && Math.abs(confirmedSize - expectedSize) > 0.000001) {
     throw new Error("Cash out order response did not match the requested full position size.");
   }
-  optionalFiniteNumber(order?.remaining ?? payload.remaining, "order.remaining");
+  const remaining = optionalFiniteNumber(order?.remaining ?? payload.remaining, "order.remaining");
+  if (confirmedSize !== undefined && remaining !== undefined && remaining > confirmedSize) {
+    throw new Error("Cash out order response had remaining size above order size.");
+  }
   if (payload.fills !== undefined) {
     if (!Array.isArray(payload.fills)) {
       throw new Error("Cash out order response had invalid fills.");

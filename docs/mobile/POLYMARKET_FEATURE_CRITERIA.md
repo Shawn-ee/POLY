@@ -31,6 +31,7 @@ These apply to every page, feature, button, and interaction:
 
 | Feature | Criteria owner file | P0 status | P1/P2 status | Latest gate |
 | --- | --- | --- | --- | --- |
+| Cashout remaining size contract | `mobile/docs/audits/cycle-MO-cashout-remaining-size-contract.md` | Pass for focused backend/data-contract scope. Server-mode cashout confirmation must reject `remaining > size` before Portfolio refresh. | P2 optional richer cashout lifecycle mismatch copy | Cycle MO audit gate |
 | Event Detail required rules contract | `mobile/docs/audits/cycle-MN-event-detail-required-rules-contract.md` | Pass for focused backend/data-contract scope. Server-mode Event Detail must include backend-owned game-rule fields before visible market selection applies. | P2 optional missing-rule-field error copy | Cycle MN audit gate |
 | Cashout price bounds contract | `mobile/docs/audits/cycle-MM-cashout-price-bounds-contract.md` | Pass for focused backend/data-contract scope. Server-mode cashout current price must be finite and within `(0, 1]` before submit. | P2 optional richer invalid-price row copy | Cycle MM audit gate |
 | Cashout current price contract | `mobile/docs/audits/cycle-ML-cashout-current-price-contract.md` | Pass for focused backend/data-contract scope. Server-mode cashout must use finite positive current price and must not fall back to entry probability. | P2 optional richer unavailable-price row copy | Cycle ML audit gate |

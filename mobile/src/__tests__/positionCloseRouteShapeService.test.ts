@@ -50,4 +50,14 @@ describe("position close route shape service", () => {
       },
     }, 500)).toThrow("did not match the requested full position size");
   });
+
+  test("rejects close confirmations with remaining above order size", () => {
+    expect(() => assertPositionCloseOrderResponseShape({
+      order: {
+        id: "close-order-1",
+        size: "500.00",
+        remaining: "501.00",
+      },
+    }, 500)).toThrow("remaining size above order size");
+  });
 });

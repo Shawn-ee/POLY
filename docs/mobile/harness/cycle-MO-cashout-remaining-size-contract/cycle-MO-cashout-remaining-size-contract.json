@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle MO",
+  "feature": "Cashout remaining size contract",
+  "generatedAt": "2026-07-06T12:29:16.026Z",
+  "route": "/api/orders via server-mode cashout",
+  "contract": {
+    "validPayload": "Cashout confirmation remaining size must be less than or equal to order size when both are returned",
+    "malformedPayload": "remaining size above order size rejects before Portfolio refresh treats cashout as accepted"
+  },
+  "assertions": {
+    "equalRemainingAccepted": true,
+    "lowerRemainingAccepted": true,
+    "remainingAboveSizeRejects": true,
+    "topLevelRemainingAboveSizeRejects": true
+  }
+}
