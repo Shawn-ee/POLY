@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle NH",
+  "feature": "Event Detail supported line family contract",
+  "generatedAt": "2026-07-06T13:45:56.816Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "route-backed line families must be declared in event.supportedMarketTypes and backed by a matching backend market.",
+    "malformedPayload": "a line market for an undeclared family is rejected before Event Detail applies the payload.",
+    "localPayload": "non-route-backed/local Event Detail may still use fallback line fixtures."
+  },
+  "assertions": {
+    "routeRejectsUnsupportedLineFamily": true,
+    "routeAcceptsDeclaredLineFamily": true,
+    "routeBackedUiRequiresDeclaredLineFamily": true,
+    "routeBackedUiRequiresBackendMarket": true,
+    "localUiFallbackUnaffected": true
+  }
+}

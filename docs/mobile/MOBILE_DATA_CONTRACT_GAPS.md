@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NH - Event Detail Supported Line Family Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail now rejects line market rows whose family is not declared in backend `event.supportedMarketTypes`.
+- Route-backed Game Lines now require both a matching backend market and the matching backend-supported family before rendering spread, totals, team-total, first-half, or second-half rows.
+- Team-total aliases are recognized before broader totals aliases, avoiding accidental totals classification.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail supported line-family contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/mobile/events/:slug/live-detail` `supportedMarketTypes` and market type/family fields support this contract.
+
+Temporary mock/static data:
+
+- Local/mock Event Detail fallback line fixtures remain unchanged. Server-mode route-backed Event Detail requires backend-supported market families.
+
 ## Cycle NG - Event Detail Line Ticket Route-Backed Contract
 
 Closed or narrowed:

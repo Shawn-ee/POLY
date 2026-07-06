@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NH
+
+Gate status: Pass
+
+Scope: Event Detail supported line-family contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NH-event-detail-supported-line-family-contract/cycle-NH-event-detail-supported-line-family-contract.json`
+- Focused tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailLineAvailabilityService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NH-event-detail-supported-line-family-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Route-backed Event Detail Game Lines render only backend-declared line families with matching backend markets, and the route validator rejects undeclared line-family markets.
+
 ## Cycle NG
 
 Gate status: Pass

@@ -82,7 +82,7 @@ describe("event detail market profile service", () => {
     expect(selectEventDetailRegulationMarket(event, event.markets)).toBeUndefined();
   });
 
-  test("requires backend market before rendering route-backed line families", () => {
+  test("requires backend market and declared support before rendering route-backed line families", () => {
     const spread = market({
       id: "spread-market",
       title: "Spread",
@@ -92,9 +92,14 @@ describe("event detail market profile service", () => {
       period: "regulation",
       outcomes: [outcome("yes", "yes", "Yes"), outcome("no", "no", "No")],
     });
+    const routeEvent: Pick<Event, "backendSlug" | "supportedMarketTypes"> = {
+      backendSlug: "route-event",
+      supportedMarketTypes: ["regulation_90", "spread"],
+    };
 
-    expect(canRenderEventDetailLineFamily({ backendSlug: "route-event" }, undefined)).toBe(false);
-    expect(canRenderEventDetailLineFamily({ backendSlug: "route-event" }, spread)).toBe(true);
-    expect(canRenderEventDetailLineFamily({}, undefined)).toBe(true);
+    expect(canRenderEventDetailLineFamily(routeEvent, undefined, "spread")).toBe(false);
+    expect(canRenderEventDetailLineFamily(routeEvent, spread, "spread")).toBe(true);
+    expect(canRenderEventDetailLineFamily({ ...routeEvent, supportedMarketTypes: ["regulation_90"] }, spread, "spread")).toBe(false);
+    expect(canRenderEventDetailLineFamily({}, undefined, "spread")).toBe(true);
   });
 });

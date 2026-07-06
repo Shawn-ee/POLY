@@ -57,6 +57,25 @@ const isResultMode = (value: unknown) =>
 const isSupportedMarketType = (value: unknown) =>
   typeof value === "string" && supportedMarketTypes.includes(value as (typeof supportedMarketTypes)[number]);
 
+const normalizeKey = (value: unknown) =>
+  typeof value === "string" ? value.toLowerCase().replace(/_/g, "-") : "";
+
+const lineFamilyForRouteMarket = (market: Record<string, unknown>) => {
+  const selection = isRecord(market.selection) ? market.selection : {};
+  const key = [
+    market.marketType,
+    market.marketGroupId,
+    selection.marketType,
+    selection.marketFamily,
+    market.title,
+  ].map(normalizeKey).join(" ");
+
+  if (/(^|[\s-])(spread|handicap|asian-handicap)([\s-]|$)/.test(key)) return "spread";
+  if (/(^|[\s-])(team-total|team-totals|team-total-goals)([\s-]|$)/.test(key)) return "team-total";
+  if (/(^|[\s-])(totals?|total-goals)([\s-]|$)/.test(key)) return "totals";
+  return null;
+};
+
 function assertEventDetailOutcomeShape(outcome: unknown, marketId: string): asserts outcome is Outcome {
   if (!isRecord(outcome)) {
     throw new Error(`Event detail route returned malformed outcome for market ${marketId}.`);
@@ -85,7 +104,7 @@ function assertEventDetailOutcomeShape(outcome: unknown, marketId: string): asse
   }
 }
 
-function assertEventDetailMarketShape(market: unknown): asserts market is Market {
+function assertEventDetailMarketShape(market: unknown, eventSupportedMarketTypes: readonly string[]): asserts market is Market {
   if (!isRecord(market)) {
     throw new Error("Event detail route returned malformed market.");
   }
@@ -116,6 +135,10 @@ function assertEventDetailMarketShape(market: unknown): asserts market is Market
   }
   if (!Array.isArray(market.outcomes) || market.outcomes.length === 0) {
     throw new Error(`Event detail route returned market ${marketId} without outcomes array.`);
+  }
+  const lineFamily = lineFamilyForRouteMarket(market);
+  if (lineFamily && !eventSupportedMarketTypes.includes(lineFamily)) {
+    throw new Error(`Event detail route returned market ${marketId} for unsupported line family ${lineFamily}.`);
   }
   market.outcomes.forEach((outcome) => assertEventDetailOutcomeShape(outcome, marketId));
 }
@@ -192,5 +215,6 @@ export function assertEventDetailRoutePayloadShape(payload: unknown): asserts pa
   if (!Array.isArray(payload.markets)) {
     throw new Error(`Event detail route returned event ${payload.event.id} without markets array.`);
   }
-  payload.markets.forEach(assertEventDetailMarketShape);
+  const supportedMarketTypes = Array.isArray(payload.event.supportedMarketTypes) ? payload.event.supportedMarketTypes : [];
+  payload.markets.forEach((market) => assertEventDetailMarketShape(market, supportedMarketTypes));
 }

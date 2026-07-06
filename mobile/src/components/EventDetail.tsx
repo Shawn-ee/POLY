@@ -680,7 +680,7 @@ export function EventDetail({
       market.outcomes.length > 0);
   const backendFirstHalfMarket = matchingBackendPeriodWinnerMarket("first-half");
   const backendSecondHalfMarket = matchingBackendPeriodWinnerMarket("second-half");
-  const canRenderSpread = canRenderEventDetailLineFamily(event, backendSpreadMarket);
+  const canRenderSpread = canRenderEventDetailLineFamily(event, backendSpreadMarket, "spread");
   const spreadMarket = makeLineMarket(`${event.id}-spread-${selectedSpreadLine}-${linePeriodCode(selectedSpreadPeriod)}`, `Spread ${homeCode} -${selectedSpreadLine} ${linePeriodCode(selectedSpreadPeriod)}`, [], "spread", selectedSpreadLine, marketPeriodForLinePeriod(selectedSpreadPeriod));
   const spreadYesOutcome = withLineOutcome({
     id: `${spreadMarket.id}-yes`,
@@ -888,7 +888,16 @@ export function EventDetail({
       ],
     },
   ];
-  const visibleGameLineGroups = gameLineGroups.filter((group) => canRenderEventDetailLineFamily(event, group.backendMarket));
+  const supportedMarketTypeForGroup = (groupId: string) => {
+    if (groupId === "totals") return "totals";
+    if (groupId === "first-half-winner") return "first-half";
+    if (groupId === "second-half-winner") return "second-half";
+    if (groupId === "team-total-goals") return "team-total";
+    return undefined;
+  };
+  const visibleGameLineGroups = gameLineGroups.filter((group) =>
+    canRenderEventDetailLineFamily(event, group.backendMarket, supportedMarketTypeForGroup(group.id))
+  );
   const toggleGroup = (id: string) => {
     setExpandedMarketIds((current) => ({ ...current, [id]: !current[id] }));
   };

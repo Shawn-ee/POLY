@@ -128,6 +128,62 @@ describe("event detail route shape service", () => {
     expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("unsupported marketProfile");
   });
 
+  test("rejects route-backed line markets missing from supported market types", () => {
+    const payload = detailPayload() as any;
+    payload.event.supportedMarketTypes = ["regulation_90"];
+    payload.markets.push({
+      id: "spread-market",
+      title: "Spread Mexico -1.5",
+      description: null,
+      status: "LIVE",
+      marketGroupTitle: "Spread",
+      marketType: "spread",
+      period: "regulation",
+      line: "1.5",
+      propCategory: null,
+      liquidity: "1000.50",
+      outcomes: [
+        { id: "yes", name: "Yes", label: "Yes", side: "yes", price: 0.45, bestBid: null, bestAsk: null, isTradable: true },
+        { id: "no", name: "No", label: "No", side: "no", price: 0.55, bestBid: null, bestAsk: null, isTradable: true },
+      ],
+      event: null,
+      rulesText: null,
+    });
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("unsupported line family spread");
+  });
+
+  test("accepts supported line markets declared by selection family aliases", () => {
+    const payload = detailPayload() as any;
+    payload.event.supportedMarketTypes = ["regulation_90", "team-total"];
+    payload.markets.push({
+      id: "team-total-market",
+      title: "Home Team Total Goals",
+      description: null,
+      status: "LIVE",
+      marketGroupTitle: "Team Totals",
+      marketType: null,
+      period: "regulation",
+      line: "1.5",
+      selection: {
+        marketType: "team_total_goals",
+        marketFamily: "team_total",
+        line: "1.5",
+        period: "regulation",
+      },
+      propCategory: null,
+      liquidity: "1000.50",
+      outcomes: [
+        { id: "over", name: "Over", label: "Over", side: "over", price: 0.45, bestBid: null, bestAsk: null, isTradable: true },
+        { id: "under", name: "Under", label: "Under", side: "under", price: 0.55, bestBid: null, bestAsk: null, isTradable: true },
+      ],
+      event: null,
+      rulesText: null,
+    });
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).not.toThrow();
+  });
+
   test("rejects negative live scores before Event Detail applies", () => {
     const payload = detailPayload();
     payload.event.homeScore = -1;

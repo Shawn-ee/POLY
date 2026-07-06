@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NH - Event Detail Supported Line Family Contract
+
+Cycle NH hardens route-backed Event Detail Game Lines market-family availability before rendering visible line groups:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NH-event-detail-supported-line-family-contract/cycle-NH-event-detail-supported-line-family-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_supported_line_family_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailLineAvailabilityService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail route-backed Game Lines family availability | `/api/mobile/events/:slug/live-detail` through Event Detail hydration | GET | Public/mobile route | Event slug | `event.supportedMarketTypes`, line market family/type, period, line, outcomes; route-backed Game Lines require a declared supported family and a matching backend market | `Event`, listed public `Market`, `Outcome`, backend market-rule/profile derivation | Local/mock Event Detail still allows fallback line fixtures. Route-backed Event Detail rejects undeclared line families and does not render line groups without matching backend support. | None for focused Event Detail supported line-family contract. P2 optional disabled-row explanation copy. |
+
 ## Cycle NG - Event Detail Line Ticket Route-Backed Contract
 
 Cycle NG hardens route-backed Event Detail Game Lines ticket identity before opening Trade Ticket:

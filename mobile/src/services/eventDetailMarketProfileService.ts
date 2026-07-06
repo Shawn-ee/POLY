@@ -38,6 +38,11 @@ export const isRouteBackedEventDetail = (event: Pick<Event, "backendSlug">) =>
   Boolean(event.backendSlug);
 
 export const canRenderEventDetailLineFamily = (
-  event: Pick<Event, "backendSlug">,
+  event: Pick<Event, "backendSlug" | "supportedMarketTypes">,
   backendMarket: Market | undefined,
-) => !isRouteBackedEventDetail(event) || Boolean(backendMarket);
+  supportedMarketType?: NonNullable<Event["supportedMarketTypes"]>[number],
+) => {
+  if (!isRouteBackedEventDetail(event)) return true;
+  if (!backendMarket) return false;
+  return !supportedMarketType || Boolean(event.supportedMarketTypes?.includes(supportedMarketType));
+};
