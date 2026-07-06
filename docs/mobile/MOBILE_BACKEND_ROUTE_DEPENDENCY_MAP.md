@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KI - Account Profile Contract
+
+Cycle KI wires the visible Account profile identity to a canonical backend route:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KI-account-profile-contract/cycle-KI-account-profile-contract.json`.
+- Proof script: `scripts/prove_mobile_account_profile_contract.ts`.
+- Focused tests: `mobile/src/__tests__/accountProfileService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account profile identity | `/api/account/profile` | GET | Canonical API key/session with `account:read` | None | `id`, `username`, `displayName`, `email`, `image`, `walletAddress`, `hasWalletLinked`, `hasGoogleLinked` | `User`, `Wallet`, `Account`, canonical auth/API usage/rate limits | Mock mode keeps local `Holiwyn Demo`. Server mode loads backend `displayName` and marks Account as signed in when profile sync succeeds. | P1: full server-authored Account menu destinations and account-specific sync/error copy remain future work. |
+
 ## Cycle KH - Account Balance Contract
 
 Cycle KH wires the visible Account balance state to the canonical account balance route:

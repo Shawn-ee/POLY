@@ -1,0 +1,37 @@
+{
+  "pass": true,
+  "cycle": "Cycle KI",
+  "createdAt": "2026-07-06T07:39:38.030Z",
+  "routes": {
+    "accountProfile": "/api/account/profile"
+  },
+  "account": {
+    "auth": "canonical API key with account:read",
+    "userId": "4d463c8d-efe7-48ee-85e4-b17a2de2404f",
+    "username": "mobile_ki_profile_0d381369",
+    "displayName": "KI Profile 0d381369",
+    "email": "mobile-ki-profile-0d381369@example.test",
+    "image": "https://example.test/avatar-0d381369.png",
+    "hasCustomAvatar": true
+  },
+  "routeProfile": {
+    "id": "4d463c8d-efe7-48ee-85e4-b17a2de2404f",
+    "username": "mobile_ki_profile_0d381369",
+    "displayName": "KI Profile 0d381369",
+    "email": "mobile-ki-profile-0d381369@example.test",
+    "image": "https://example.test/avatar-0d381369.png",
+    "walletAddress": null,
+    "hasWalletLinked": false,
+    "hasGoogleLinked": false
+  },
+  "mobileProfile": {
+    "id": "4d463c8d-efe7-48ee-85e4-b17a2de2404f",
+    "username": "mobile_ki_profile_0d381369",
+    "displayName": "KI Profile 0d381369",
+    "email": "mobile-ki-profile-0d381369@example.test",
+    "image": "https://example.test/avatar-0d381369.png",
+    "walletAddress": null,
+    "hasWalletLinked": false,
+    "hasGoogleLinked": false
+  }
+}

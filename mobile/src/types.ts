@@ -422,6 +422,20 @@ export type AccountBalance = {
   updatedAt?: string | null;
 };
 
+export type AccountProfile = {
+  id: string;
+  username: string;
+  displayName: string;
+  email?: string | null;
+  image?: string | null;
+  hasCustomAvatar?: boolean;
+  isAdmin?: boolean;
+  walletAddress?: string | null;
+  hasWalletLinked?: boolean;
+  hasGoogleLinked?: boolean;
+  createdAt?: string;
+};
+
 export type ProfilePreferences = {
   locale: "en" | "zh";
   ticketDefaultAmount: string;

@@ -13,6 +13,7 @@ export type CanonicalRateLimitRouteId =
   | "combo-orders:get"
   | "combo-orders:list"
   | "fills:list"
+  | "account:profile"
   | "account:balance"
   | "account:positions"
   | "account:ledger"
@@ -34,6 +35,7 @@ export const CANONICAL_RATE_LIMITS: Record<CanonicalRateLimitRouteId, CanonicalR
   "combo-orders:get": { windowMs: 60_000, max: 120 },
   "combo-orders:list": { windowMs: 60_000, max: 120 },
   "fills:list": { windowMs: 60_000, max: 120 },
+  "account:profile": { windowMs: 60_000, max: 120 },
   "account:balance": { windowMs: 60_000, max: 120 },
   "account:positions": { windowMs: 60_000, max: 120 },
   "account:ledger": { windowMs: 60_000, max: 120 },

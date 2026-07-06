@@ -53,6 +53,7 @@ export function AccountScreen({
   t,
   balance,
   forceSignedIn,
+  profileName,
   languagePreferenceValue,
   ticketDefaultAmount,
   ticketDefaultSide,
@@ -69,6 +70,7 @@ export function AccountScreen({
   t: AccountCopy;
   balance: number;
   forceSignedIn?: boolean;
+  profileName?: string;
   languagePreferenceValue: string;
   ticketDefaultAmount: string;
   ticketDefaultSide: "buy" | "sell";
@@ -141,7 +143,7 @@ export function AccountScreen({
         <View accessibilityLabel="account-profile-card" testID="account-profile-card" style={styles.profileCard}>
           <View>
             <Text style={styles.cardLabel}>{t.accountId}</Text>
-            <Text style={styles.profileName}>Holiwyn Demo</Text>
+            <Text style={styles.profileName}>{profileName ?? "Holiwyn Demo"}</Text>
           </View>
           <Text style={styles.tier}>{t.accountTier}</Text>
         </View>

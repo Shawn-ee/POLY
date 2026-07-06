@@ -255,6 +255,50 @@ export const getCanonicalAccountBalance = async (userId: string) => {
   };
 };
 
+export const getCanonicalAccountProfile = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      username: true,
+      displayName: true,
+      email: true,
+      image: true,
+      hasCustomAvatar: true,
+      isAdmin: true,
+      createdAt: true,
+      wallets: {
+        where: { isActive: true },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { address: true },
+      },
+      accounts: {
+        select: { provider: true },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new MarketGuardError("Account profile not found.", 404);
+  }
+
+  const displayName = user.displayName?.trim() || user.username;
+  return {
+    id: user.id,
+    username: user.username,
+    displayName,
+    email: user.email,
+    image: user.image,
+    hasCustomAvatar: user.hasCustomAvatar,
+    isAdmin: user.isAdmin,
+    walletAddress: user.wallets[0]?.address ?? null,
+    hasWalletLinked: user.wallets.length > 0 || user.accounts.some((account) => account.provider === "wallet"),
+    hasGoogleLinked: user.accounts.some((account) => account.provider === "google"),
+    createdAt: user.createdAt,
+  };
+};
+
 export const listCanonicalPositions = async (params: {
   userId: string;
   marketId?: string | null;

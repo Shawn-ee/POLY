@@ -36,6 +36,7 @@ import { OrderMode, submitTicketOrder } from "./src/services/orderService";
 import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity } from "./src/services/openOrderService";
 import { closePositionOnServer } from "./src/services/positionCloseService";
 import { loadAccountBalance } from "./src/services/accountBalanceService";
+import { loadAccountProfile } from "./src/services/accountProfileService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
 import { applyServerPortfolioState } from "./src/services/portfolioStateApplyService";
 import { loadServerPortfolioState } from "./src/services/portfolioSyncService";
@@ -318,6 +319,7 @@ export default function App() {
   const [ticketOrderErrorDetail, setTicketOrderErrorDetail] = useState<string | null>(null);
   const [forceOrderFailure, setForceOrderFailure] = useState(false);
   const [balance, setBalance] = useState(10000);
+  const [accountProfileName, setAccountProfileName] = useState("Holiwyn Demo");
   const [positions, setPositions] = useState<Position[]>([]);
   const [latestOrder, setLatestOrder] = useState<OrderConfirmation | null>(null);
   const [openOrders, setOpenOrders] = useState<OpenOrder[]>([]);
@@ -572,6 +574,7 @@ export default function App() {
         setWorldCupTab("games");
         setTicketDefaults({ amount: "100", side: "buy", slippage: "1%" });
         setSavedEventIds(new Set());
+        setAccountProfileName("Holiwyn Demo");
         setForceAccountSignedIn(false);
         setPortfolioSyncStatus(ORDER_MODE === "server" ? "syncing" : "hidden");
         setProfilePreferencesSyncStatus(ORDER_MODE === "server" ? "syncing" : "hidden");
@@ -1112,6 +1115,12 @@ export default function App() {
     loadAccountBalance(api).then((accountBalance) => {
       if (!cancelled && mounted.current) setBalance(accountBalance.availableUSDC);
     }).catch(() => undefined);
+    loadAccountProfile(api).then((profile) => {
+      if (!cancelled && mounted.current) {
+        setAccountProfileName(profile.displayName);
+        setForceAccountSignedIn(true);
+      }
+    }).catch(() => undefined);
     setPortfolioSyncStatus("syncing");
     loadServerPortfolioState(api).then((serverState) => {
       if (!cancelled && mounted.current) applyServerState(serverState);
@@ -1647,6 +1656,7 @@ export default function App() {
                 t={t}
                 balance={balance}
                 forceSignedIn={forceAccountSignedIn}
+                profileName={accountProfileName}
                 languagePreferenceValue={locale === "en" ? "English" : "\u4e2d\u6587"}
                 ticketDefaultAmount={ticketDefaults.amount}
                 ticketDefaultSide={ticketDefaults.side}

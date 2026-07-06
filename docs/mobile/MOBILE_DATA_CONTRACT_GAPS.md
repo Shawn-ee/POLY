@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KI - Account Profile Contract
+
+Closed or narrowed:
+
+- Backend now exposes canonical `GET /api/account/profile` with `account:read` auth for mobile/API-key account identity.
+- Mobile now has `PolyApi.getAccountProfile()` and `loadAccountProfile()` for visible Account profile state.
+- Server-mode app startup loads backend `displayName` and marks Account signed in when profile sync succeeds, replacing the hardcoded demo name for authenticated server mode.
+- Route proof verifies backend `User` identity fields survive through the route and mobile mapper.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Full server-authored Account menu destinations/actions remain future work.
+- Richer Account-specific sync/error copy remains future work.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `User`, `Wallet`, `Account`, canonical auth, rate-limit, and API usage models support the KI contract.
+
+Temporary mock/static data:
+
+- KI proof creates a disposable backend user and API key. It does not add frontend-only account rows or deposit/withdraw behavior.
+
 ## Cycle KH - Account Balance Contract
 
 Closed or narrowed:

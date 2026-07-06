@@ -90,6 +90,29 @@ describe("Holiwyn mobile API client", () => {
     expect(balance.availableUSDC).toBe("140.86");
   });
 
+  test("loads canonical account profile with auth headers", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse({
+        id: "user-1",
+        username: "grouchypike7067",
+        displayName: "grouchypike7067",
+        email: "grouchy@example.test",
+        walletAddress: "0x1234",
+        hasWalletLinked: true,
+        hasGoogleLinked: false,
+      }),
+    );
+    vi.stubGlobal("fetch", fetchImpl);
+
+    const profile = await new PolyApi("https://api.example.test", "pk_live_test.secret").getAccountProfile();
+
+    const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    const headers = init.headers as Headers;
+    expect(url).toBe("https://api.example.test/api/account/profile");
+    expect(headers.get("Authorization")).toBe("Bearer pk_live_test.secret");
+    expect(profile.displayName).toBe("grouchypike7067");
+  });
+
   test("loads range-aware market chart history", async () => {
     const fetchImpl = vi.fn(async () =>
       jsonResponse({
