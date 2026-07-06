@@ -27,6 +27,30 @@ describe("position close route shape service", () => {
     );
   });
 
+  test("rejects close confirmations with failed terminal status", () => {
+    expect(() => assertPositionCloseOrderResponseShape({
+      order: {
+        id: "close-order-rejected",
+        status: "REJECTED",
+        size: "500.00",
+      },
+    }, 500)).toThrow("Cash out order was rejected by the server with status REJECTED.");
+    expect(() => assertPositionCloseOrderResponseShape({
+      id: "close-order-canceled",
+      status: "CANCELED",
+      size: "500.00",
+    }, 500)).toThrow("Cash out order was rejected by the server with status CANCELED.");
+  });
+
+  test("rejects malformed close confirmation status", () => {
+    expect(() => assertPositionCloseOrderResponseShape({
+      order: {
+        id: "close-order-bad-status",
+        status: 12,
+      },
+    })).toThrow("invalid order.status");
+  });
+
   test("rejects malformed optional numeric lifecycle fields", () => {
     expect(() => assertPositionCloseOrderResponseShape({
       order: {

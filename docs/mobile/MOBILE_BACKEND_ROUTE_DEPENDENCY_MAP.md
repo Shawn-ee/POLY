@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NK - Cashout Status Contract
+
+Cycle NK hardens Portfolio server-mode cashout confirmation status before treating a full-position close as accepted:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NK-cashout-status-contract/cycle-NK-cashout-status-contract.json`.
+- Proof script: `scripts/prove_mobile_cashout_status_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio server-mode cashout status confirmation | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Market id, outcome id, side `SELL`, bounded current price, and full visible position shares | Returned order id, optional status, size, remaining, and fills; explicit failed terminal statuses reject before treating cashout as accepted | `Order`, `Position`, matching/reservation service | Mock/local cashout remains unchanged. Server-mode legacy id-only confirmations remain accepted; explicit failed statuses block success state. | None for focused cashout status contract. P2 optional rejected-cashout copy. |
+
 ## Cycle NJ - Order Submit Status Contract
 
 Cycle NJ hardens Trade Ticket server-mode order submit confirmation before visible submitted-order state applies:

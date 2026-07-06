@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle NK",
+  "feature": "Cashout status contract",
+  "generatedAt": "2026-07-06T13:56:03.611Z",
+  "route": "/api/orders",
+  "contract": {
+    "validPayload": "server-mode cashout may apply an order id with active/success status, or legacy missing status.",
+    "malformedPayload": "server-mode cashout must reject explicit terminal failed statuses even when an id and full close size are returned."
+  },
+  "assertions": {
+    "acceptsOpenStatus": true,
+    "acceptsLegacyMissingStatus": true,
+    "rejectsNestedRejectedStatus": true,
+    "rejectsTopLevelCanceledStatus": true,
+    "rejectsFailedStatus": true
+  }
+}

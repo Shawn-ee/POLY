@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NK
+
+Gate status: Pass
+
+Scope: Cashout status contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NK-cashout-status-contract/cycle-NK-cashout-status-contract.json`
+- Focused tests: `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NK-cashout-status-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode cashout rejects explicit terminal failed statuses even when the backend returns an order id and full-position size, while preserving legacy id-only and active-status confirmations.
+
 ## Cycle NJ
 
 Gate status: Pass

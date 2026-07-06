@@ -165,4 +165,17 @@ describe("position close service", () => {
       }),
     ).rejects.toThrow("did not match the requested full position size");
   });
+
+  test("rejects server cashout when backend returns a failed terminal status", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "close-order-rejected", status: "REJECTED", size: "500.00" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position,
+      }),
+    ).rejects.toThrow("Cash out order was rejected by the server with status REJECTED.");
+  });
 });

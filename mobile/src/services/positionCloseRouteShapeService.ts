@@ -1,10 +1,12 @@
 type CloseOrderResponse = {
   order?: {
     id?: string;
+    status?: string;
     size?: string | number | null;
     remaining?: string | number | null;
   };
   id?: string;
+  status?: string;
   size?: string | number | null;
   remaining?: string | number | null;
   fills?: Array<{ size?: string | number | null }>;
@@ -22,6 +24,19 @@ const optionalFiniteNumber = (value: unknown, field: string) => {
   return numeric;
 };
 
+const failedCloseStatuses = new Set(["CANCELED", "CANCELLED", "REJECTED", "FAILED", "EXPIRED"]);
+
+const assertCloseStatus = (status: unknown) => {
+  if (status === undefined || status === null || status === "") return;
+  if (typeof status !== "string") {
+    throw new Error("Cash out order response had invalid order.status.");
+  }
+  const normalized = status.trim().toUpperCase();
+  if (failedCloseStatuses.has(normalized)) {
+    throw new Error(`Cash out order was rejected by the server with status ${normalized}.`);
+  }
+};
+
 export function assertPositionCloseOrderResponseShape(payload: unknown, expectedSize?: number): asserts payload is CloseOrderResponse {
   if (!isRecord(payload)) {
     throw new Error("Cash out order was not confirmed by the server.");
@@ -31,6 +46,7 @@ export function assertPositionCloseOrderResponseShape(payload: unknown, expected
   if (typeof orderId !== "string" || !orderId.trim()) {
     throw new Error("Cash out order was not confirmed by the server.");
   }
+  assertCloseStatus(order?.status ?? payload.status);
   const confirmedSize = optionalFiniteNumber(order?.size ?? payload.size, "order.size");
   if (expectedSize !== undefined && confirmedSize !== undefined && Math.abs(confirmedSize - expectedSize) > 0.000001) {
     throw new Error("Cash out order response did not match the requested full position size.");
