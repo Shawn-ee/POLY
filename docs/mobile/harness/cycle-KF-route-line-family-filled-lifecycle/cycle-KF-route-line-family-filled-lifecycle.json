@@ -1,0 +1,96 @@
+{
+  "pass": true,
+  "cycle": "Cycle KF",
+  "createdAt": "2026-07-06T07:19:51.561Z",
+  "routes": {
+    "submit": "/api/orders",
+    "portfolio": "/api/portfolio",
+    "history": "/api/portfolio/history"
+  },
+  "families": [
+    {
+      "family": "spread",
+      "makerOrderId": "bde30f0c-1808-4c1f-83cf-11ab4da33bb8",
+      "takerOrderId": "f5dae864-3b61-4bf1-bfa0-b7cea7398611",
+      "fillCount": 1,
+      "submitSelection": {
+        "marketId": "537403a1-517d-4cac-ae2b-fe227075af61",
+        "outcomeId": "a9dc070d-f54b-4a13-ada0-56dcebd8d82a",
+        "marketType": "spread",
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-kf-spread-21c3d990",
+        "referenceTokenId": "token-kf-spread-selected-21c3d990",
+        "limitSide": "bid"
+      },
+      "routeSelection": {
+        "marketId": "537403a1-517d-4cac-ae2b-fe227075af61",
+        "outcomeId": "a9dc070d-f54b-4a13-ada0-56dcebd8d82a",
+        "marketType": "spread",
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-kf-spread-21c3d990",
+        "referenceTokenId": "token-kf-spread-selected-21c3d990",
+        "limitSide": "bid"
+      },
+      "portfolioPosition": {
+        "shares": 20,
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-kf-spread-21c3d990",
+        "referenceTokenId": "token-kf-spread-selected-21c3d990"
+      },
+      "recentTrade": {
+        "side": "BUY",
+        "shares": 20,
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-kf-spread-21c3d990",
+        "referenceTokenId": "token-kf-spread-selected-21c3d990",
+        "limitSide": "bid"
+      }
+    },
+    {
+      "family": "team-total",
+      "makerOrderId": "922bb2ce-2a8b-465c-9a51-5aa66d2225c2",
+      "takerOrderId": "a18ee397-2b66-4d46-8152-b1919a182ab3",
+      "fillCount": 1,
+      "submitSelection": {
+        "marketId": "e28112a6-1085-4a20-ad32-2c92e264ca0d",
+        "outcomeId": "c54ee88d-ad0d-49ee-af28-d59ea51fa2cc",
+        "marketType": "team-total",
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-kf-team-total-21c3d990",
+        "referenceTokenId": "token-kf-team-total-selected-21c3d990",
+        "limitSide": "bid"
+      },
+      "routeSelection": {
+        "marketId": "e28112a6-1085-4a20-ad32-2c92e264ca0d",
+        "outcomeId": "c54ee88d-ad0d-49ee-af28-d59ea51fa2cc",
+        "marketType": "team-total",
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-kf-team-total-21c3d990",
+        "referenceTokenId": "token-kf-team-total-selected-21c3d990",
+        "limitSide": "bid"
+      },
+      "portfolioPosition": {
+        "shares": 20,
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-kf-team-total-21c3d990",
+        "referenceTokenId": "token-kf-team-total-selected-21c3d990"
+      },
+      "recentTrade": {
+        "side": "BUY",
+        "shares": 20,
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-kf-team-total-21c3d990",
+        "referenceTokenId": "token-kf-team-total-selected-21c3d990",
+        "limitSide": "bid"
+      }
+    }
+  ]
+}

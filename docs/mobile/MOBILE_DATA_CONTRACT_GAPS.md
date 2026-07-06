@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KF - Route Line Family Filled Lifecycle
+
+Closed or narrowed:
+
+- Selected Spread and Team Total tickets now have route-backed proof through maker liquidity, taker fill, `/api/portfolio` positions, and `/api/portfolio/history` recent trades.
+- Filled positions preserve line, period, provider market id, and provider token for both families.
+- Recent trades preserve line, period, provider market id, provider token, and buyer limit side for both families.
+- The proof uses complete-set inventory for maker SELL orders so matching remains collateral-safe.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Repeat against real provider-backed live line markets when exact markets are available.
+- Immutable first-class selection snapshot columns for orders/fills/trades remain future hardening.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection`, `Order`, `Fill`, `Trade`, `Position`, and route selection bridges support the KF contract.
+
+Temporary mock/static data:
+
+- KF proof creates disposable backend buyer/seller users, API keys, event, Spread and Team Total markets, outcomes, quote snapshots, complete-set inventory, maker/taker orders, fills, positions, and recent history. It does not add frontend-only ticket/order rows.
+
 ## Cycle KE - Route Line Family Cancel and History
 
 Closed or narrowed:

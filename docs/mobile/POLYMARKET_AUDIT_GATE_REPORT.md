@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Route line family filled lifecycle | Cycle KF | Pass for backend/data-contract scope | 0 for focused Spread and Team Total filled lifecycle scope | P1 real-provider replay; P1 immutable first-class selection snapshots | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KF-route-line-family-filled-lifecycle/cycle-KF-route-line-family-filled-lifecycle.json`; tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`; audit: `mobile/docs/audits/cycle-KF-route-line-family-filled-lifecycle.md` | Selected Spread and Team Total tickets preserve line/provider identity through maker liquidity, taker fill, Portfolio positions, and recent history. |
 | Route line family cancel and history | Cycle KE | Pass for backend/data-contract scope | 0 for focused Spread and Team Total cancel/history scope | P1 filled selected-line lifecycle breadth; P1 immutable first-class selection snapshots | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KE-route-line-family-cancel-history/cycle-KE-route-line-family-cancel-history.json`; tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `mobile/src/__tests__/openOrderService.test.ts`, `src/__tests__/orders.cancel.route.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`; audit: `mobile/docs/audits/cycle-KE-route-line-family-cancel-history.md` | Selected Spread and Team Total tickets preserve line/provider identity through submit, cancel, open-order removal, and canceled history. |
 | Route-backed line family submit breadth | Cycle KD | Pass for backend/data-contract scope | 0 for focused Spread and Team Total route-backed submit echo scope | P1 filled/canceled selected-line lifecycle breadth; P1 immutable first-class selection snapshots | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KD-route-order-submit-line-family-breadth/cycle-KD-route-order-submit-line-family-breadth.json`; tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`; audit: `mobile/docs/audits/cycle-KD-route-order-submit-line-family-breadth.md` | Actual `/api/orders` responses satisfy the mobile selected-line guard for Spread and Team Total tickets, and `/api/portfolio` preserves both open-order selections. |
 | Route-backed order submit selection echo | Cycle KC | Pass for backend/data-contract scope | 0 for focused route-backed selected Totals line submit echo scope | P1 spread/team-total route breadth; P1 filled/canceled selected-line lifecycle breadth; P1 immutable first-class selection snapshots | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KC-route-order-submit-selection-echo/cycle-KC-route-order-submit-selection-echo.json`; tests: `mobile/src/__tests__/orderService.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`; audit: `mobile/docs/audits/cycle-KC-route-order-submit-selection-echo.md` | Actual `/api/orders` response is accepted by mobile `submitTicketOrder` guard for a selected Totals line only because the route echoes matching line/provider `order.selection`; `/api/portfolio` preserves the same open-order selection. |
@@ -123,6 +124,31 @@ Fail the feature when:
 | Trade ticket | Cycle AG | Pass | 0 | P1 binary NO/share contract semantics; P1 production auth/location eligibility gates | `docs/mobile/reference/screenshots/cycle-AG-polymarket-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-amount.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-trade.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/harness/cycle-current-holiwyn-event-detail-ticket-details.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade` | Focused pass only. First view is now sparse and settings opens advanced controls. |
 | Trade ticket surface | Cycle AI | Pass | 0 | P1 production auth/location eligibility gate; P2 native motion polish | `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-start.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-france-ticket.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-after-france-row-tap.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/screenshots/cycle-current-holiwyn-future-list-buy-no-ticket.png`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade`; `cmd /c npm.cmd run smoke:tablet:future-list-buy-no` | Logged-in Polymarket World Cup selection opened a tall location-verification sheet; Holiwyn now uses a taller dimmed fake-token ticket with fixed swipe-up submit rail. |
 | Game page compact scrolled header | Cycle AJ | Pass | 0 | P1 phone visual density/sticky tab polish; P1 backend market/live data; P1 Player Props reference scope | `docs/mobile/reference/screenshots/cycle-AJ-polymarket-live-tab.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-top.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-lines-mid.png` | `docs/mobile/screenshots/cycle-current-holiwyn-game-page-full-markets.png`; `docs/mobile/harness/cycle-current-holiwyn-game-page-full-markets.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-full-page` | Logged-in Polymarket keeps compact match context when scrolled into Game Lines; Holiwyn now shows a compact match header in that state and full game-page smoke passed. |
+
+## Cycle KF
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for selected Spread and Team Total maker/taker filled lifecycle through Portfolio positions and recent history.
+
+Evidence:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KF-route-line-family-filled-lifecycle/cycle-KF-route-line-family-filled-lifecycle.json`.
+- Cycle audit: `mobile/docs/audits/cycle-KF-route-line-family-filled-lifecycle.md`.
+- Focused mobile tests:
+  - `mobile/src/__tests__/orderService.test.ts`
+  - `mobile/src/__tests__/portfolioSnapshotService.test.ts`
+  - `mobile/src/__tests__/portfolioHistoryService.test.ts`
+- Focused backend tests:
+  - `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`
+- Proof script:
+  - `scripts/prove_mobile_route_line_family_filled_lifecycle.ts`
+
+Decision:
+
+- Pass for focused backend/data-contract scope.
+- Selected Spread and Team Total line/provider identity is preserved through filled order, Portfolio position, and recent trade routes.
+- Remaining P1: real-provider replay and immutable first-class selection snapshots.
 
 ## Cycle KE
 

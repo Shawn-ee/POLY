@@ -2,6 +2,20 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KF - Route Line Family Filled Lifecycle
+
+Cycle KF proves selected Spread and Team Total line/provider identity survives a filled order lifecycle:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KF-route-line-family-filled-lifecycle/cycle-KF-route-line-family-filled-lifecycle.json`.
+- Proof script: `scripts/prove_mobile_route_line_family_filled_lifecycle.ts`.
+- Focused tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Spread selected-line filled submit | `/api/orders` | POST | Canonical API key/session with `orders:write`; internal trading beta enabled in local proof | Maker SELL and taker BUY selected Spread ticket with provider `selection`, price, size, and complete-set inventory | `order.status=FILLED`, `fills[]`, `position`, and `order.selection.line/period/provider ids`; consumed by mobile submit guard | `ApiOrderRequest`, `Order`, `Fill`, `Trade`, `Position`, `UserBalance`, `Market`, `Outcome`, complete-set collateral | Mock mode unchanged. Server mode consumes confirmed backend fill and selection echo. | P1: real-provider replay when exact live Spread market is available. |
+| Team Total selected-line filled submit | `/api/orders` | POST | Canonical API key/session with `orders:write`; internal trading beta enabled in local proof | Maker SELL and taker BUY selected Team Total ticket with provider `selection`, price, size, and complete-set inventory | Same filled order, fill, position, and selection fields as Spread | `ApiOrderRequest`, `Order`, `Fill`, `Trade`, `Position`, `UserBalance`, `Market`, `Outcome`, complete-set collateral | Mock mode unchanged. Server mode consumes confirmed backend fill and selection echo. | P1: real-provider replay when exact live Team Total market is available. |
+| Filled line-family Portfolio/history | `/api/portfolio` and `/api/portfolio/history` | GET | Canonical API key/session with `account:read` | None | `positions[].selection.line`, `period`, `externalMarketId`, `referenceTokenId`; `recentTrades[].selection.line`, `period`, `externalMarketId`, `referenceTokenId`, `limitSide` | `Position`, `Trade`, `Order`, `ApiOrderRequest`, `Market`, `Outcome` | Mock Portfolio/history path unchanged. Server mode consumes route snapshots. | P1: immutable first-class order/fill/trade selection snapshot columns remain future hardening. |
+
 ## Cycle KE - Route Line Family Cancel and History
 
 Cycle KE proves selected line/provider identity survives cancel and canceled-history routes for the line families broadened in Cycle KD:
