@@ -39,6 +39,17 @@ const selectionOutcomeForBackendOutcome = (market: Market, outcome: Outcome | un
   });
 };
 
+const backendMarketContainsOutcome = (market: Market | undefined, outcome: Outcome | undefined) => {
+  if (!market || !outcome) return false;
+  return market.outcomes.some((item) => {
+    if (item.id === outcome.id) return true;
+    if (item.referenceTokenId && item.referenceTokenId === outcome.referenceTokenId) return true;
+    if (item.referenceOutcomeLabel && item.referenceOutcomeLabel === outcome.referenceOutcomeLabel) return true;
+    if (item.side && item.side === outcome.side) return true;
+    return Boolean(item.label && item.label === outcome.label);
+  });
+};
+
 const contractSideForOutcome = (market: Market, outcome: Outcome | undefined) => {
   const index = outcome ? market.outcomes.findIndex((item) => item.id === outcome.id) : -1;
   if (outcome?.side === "no" || outcome?.label.toLowerCase().startsWith("no") || (market.outcomes.length === 2 && index === 1)) return "no" as const;
@@ -50,7 +61,7 @@ export const ticketSelectionFromBackendMarket = (
   backendMarket: Market | undefined,
   backendOutcome: Outcome | undefined,
 ): TicketSelection | undefined => {
-  if (!backendMarket || !backendOutcome || !backendMarket.selection) return baseSelection;
+  if (!backendMarket || !backendOutcome || !backendMarket.selection || !backendMarketContainsOutcome(backendMarket, backendOutcome)) return baseSelection;
   const selectionOutcome = selectionOutcomeForBackendOutcome(backendMarket, backendOutcome);
   return {
     marketType: ticketMarketTypeFromBackendSelection(backendMarket),
@@ -121,8 +132,9 @@ export const resolveLineTicketTarget = ({
   const syntheticMarket = syntheticMarketForSelection(selection, syntheticMarkets);
   const isLineSelection = Boolean(syntheticMarket);
   const canUseBackendLineMarket = backendLineMatchesSelection(selection, backendMarket);
+  const canUseBackendOutcome = backendMarketContainsOutcome(backendMarket, backendOutcome);
 
-  if (isLineSelection && backendMarket && backendOutcome && canUseBackendLineMarket) {
+  if (isLineSelection && backendMarket && backendOutcome && canUseBackendLineMarket && canUseBackendOutcome) {
     return { market: backendMarket, outcome: backendOutcome, source: "backend-line-market" as const };
   }
 
@@ -134,7 +146,7 @@ export const resolveLineTicketTarget = ({
     return { market: syntheticMarket, outcome: syntheticOutcome, source: "deterministic-line-fixture" as const };
   }
 
-  if (backendMarket && backendOutcome) {
+  if (backendMarket && backendOutcome && canUseBackendOutcome) {
     return { market: backendMarket, outcome: backendOutcome, source: "backend-market" as const };
   }
 

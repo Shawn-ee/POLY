@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NV - Event Detail Line-Ticket Outcome Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail line tickets now require backend outcome identity to belong to the selected backend market.
+- Stale or mismatched backend outcomes return no route-backed ticket target instead of opening a mismatched Trade Ticket.
+- Backend ticket selection construction no longer uses a stale outcome outside the selected backend market.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail line-ticket outcome contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing live-detail market/outcome identity and selection fields support this contract.
+
+Temporary mock/static data:
+
+- Local/mock Event Detail deterministic fallback remains unchanged. Server-mode route-backed mismatches reject before visible ticket state applies.
+
 ## Cycle NU - Event Detail Profile Rules Contract
 
 Closed or narrowed:

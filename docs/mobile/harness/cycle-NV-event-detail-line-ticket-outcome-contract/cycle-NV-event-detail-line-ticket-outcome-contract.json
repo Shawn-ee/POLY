@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle NV",
+  "feature": "Event Detail line-ticket outcome contract",
+  "generatedAt": "2026-07-06T14:31:59.773Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "route-backed line tickets require the selected backend outcome to belong to the selected backend market.",
+    "malformedPayload": "stale or mismatched backend outcomes reject before route-backed tickets open, and non-route fallbacks remain deterministic."
+  },
+  "assertions": {
+    "acceptsRouteBackedMarketOutcomeMatch": true,
+    "rejectsRouteBackedOutcomeMismatch": true,
+    "fallsBackForNonRouteOutcomeMismatch": true,
+    "doesNotBuildSelectionFromStaleOutcome": true
+  }
+}

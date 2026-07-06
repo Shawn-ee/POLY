@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NV - Event Detail Line-Ticket Outcome Contract
+
+Cycle NV hardens Event Detail route-backed line ticket market/outcome identity before Trade Ticket opens:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NV-event-detail-line-ticket-outcome-contract/cycle-NV-event-detail-line-ticket-outcome-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_line_ticket_outcome_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailLineTicketService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail route-backed Game Lines ticket market/outcome identity | `/api/mobile/events/:slug/live-detail` through Event Detail hydration | GET | Public/mobile route | Event slug | Backend line market id, outcome id, token/side/label identity, selection envelope; route-backed tickets require the selected backend outcome to belong to the selected backend market | `Event`, listed public `Market`, `Outcome`, provider selection metadata | Local/mock Event Detail fallback remains unchanged. Route-backed Event Detail rejects stale or mismatched backend outcomes before opening ticket. | None for focused Event Detail line-ticket outcome contract. P2 optional stale-outcome disabled copy. |
+
 ## Cycle NU - Event Detail Profile Rules Contract
 
 Cycle NU hardens Event Detail backend-owned profile rules before visible state applies:

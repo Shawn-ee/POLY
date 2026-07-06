@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NV
+
+Gate status: Pass
+
+Scope: Event Detail line-ticket outcome contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NV-event-detail-line-ticket-outcome-contract/cycle-NV-event-detail-line-ticket-outcome-contract.json`
+- Focused tests: `mobile/src/__tests__/eventDetailLineTicketService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NV-event-detail-line-ticket-outcome-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Route-backed Event Detail line tickets require the selected backend outcome to belong to the selected backend market before Trade Ticket opens.
+
 ## Cycle NU
 
 Gate status: Pass

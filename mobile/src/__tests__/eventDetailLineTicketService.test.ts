@@ -108,6 +108,47 @@ describe("event detail line ticket resolver", () => {
     expect(target).toBeNull();
   });
 
+  test("does not use a route-backed backend outcome that is missing from the backend market", () => {
+    const actualOutcome = outcome("backend-over-25", "Over 2.5");
+    const staleOutcome = outcome("stale-over-35", "Over 3.5");
+    const backendMarket = market("backend-totals-25", "totals", [actualOutcome]);
+    const syntheticOutcome = outcome("display-over-25", "Over 2.5 RT");
+    const syntheticMarket = market("display-totals-25", "totals", [syntheticOutcome]);
+
+    const target = resolveLineTicketTarget({
+      selection: { marketType: "totals", line: "2.5", period: "Reg. Time", displayLabel: "Over 2.5 RT" },
+      backendMarket,
+      backendOutcome: staleOutcome,
+      syntheticOutcome,
+      syntheticMarkets: { totals: syntheticMarket },
+      routeBacked: true,
+    });
+
+    expect(target).toBeNull();
+  });
+
+  test("falls back to deterministic fixture when a non-route backend outcome is missing from the backend market", () => {
+    const actualOutcome = outcome("backend-over-25", "Over 2.5");
+    const staleOutcome = outcome("stale-over-35", "Over 3.5");
+    const backendMarket = market("backend-totals-25", "totals", [actualOutcome]);
+    const syntheticOutcome = outcome("display-over-25", "Over 2.5 RT");
+    const syntheticMarket = market("display-totals-25", "totals", [syntheticOutcome]);
+
+    const target = resolveLineTicketTarget({
+      selection: { marketType: "totals", line: "2.5", period: "Reg. Time", displayLabel: "Over 2.5 RT" },
+      backendMarket,
+      backendOutcome: staleOutcome,
+      syntheticOutcome,
+      syntheticMarkets: { totals: syntheticMarket },
+    });
+
+    expect(target).toMatchObject({
+      source: "deterministic-line-fixture",
+      market: { id: "display-totals-25" },
+      outcome: { id: "display-over-25" },
+    });
+  });
+
   test("does not invent a synthetic line ticket for route-backed missing backend lines", () => {
     const syntheticOutcome = outcome("display-team-total-over", "MEX Over 1.5");
     const syntheticMarket = market("display-team-total-market", "team-total", [syntheticOutcome]);
@@ -268,6 +309,47 @@ describe("event detail line ticket resolver", () => {
       source: "backend-line-market",
       market: { id: "total-25-1h" },
       outcome: { id: "backend-over" },
+    });
+  });
+
+  test("does not build backend ticket selection from an outcome outside the backend market", () => {
+    const backendOutcome = outcome("backend-over", "Over 2.5");
+    const staleOutcome = outcome("stale-under", "Under 2.5");
+    const backendMarket = market("total-25-1h", "totals", [backendOutcome], {
+      period: "first-half",
+      line: "2.5",
+      selection: {
+        selectorKey: "totals:first-half:2.5",
+        marketId: "total-25-1h",
+        marketGroupId: "totals",
+        marketType: "total_goals",
+        marketFamily: "total",
+        displayLabel: "Totals first-half 2.5",
+        period: "first-half",
+        line: "2.5",
+        outcomes: [{
+          id: "backend-over",
+          outcomeId: "backend-over",
+          side: "over",
+          label: "Over 2.5",
+          tokenId: "token-over-25-1h",
+          referenceTokenId: "token-over-25-1h",
+          isTradable: true,
+        }],
+      },
+    });
+
+    const selection = ticketSelectionFromBackendMarket(
+      { marketType: "totals", line: "2.5", period: "1st Half", displayLabel: "Over 2.5 1H" },
+      backendMarket,
+      staleOutcome,
+    );
+
+    expect(selection).toEqual({
+      marketType: "totals",
+      line: "2.5",
+      period: "1st Half",
+      displayLabel: "Over 2.5 1H",
     });
   });
 });
