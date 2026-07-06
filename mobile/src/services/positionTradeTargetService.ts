@@ -34,6 +34,11 @@ const withPositionQuote = (outcome: Outcome, position: Position): Outcome => {
 const marketMatches = (market: Market, position: Position) =>
   market.id === position.marketId || market.title === position.title;
 
+const withPositionAvailability = (market: Market, position: Position): Market =>
+  position.marketAvailability && !market.availability
+    ? { ...market, availability: position.marketAvailability }
+    : market;
+
 const buildFallbackTarget = (position: Position): PositionTradeTarget | undefined => {
   if (!position.marketId || !position.outcomeId) return undefined;
   const outcome: Outcome = withPositionQuote(
@@ -52,6 +57,7 @@ const buildFallbackTarget = (position: Position): PositionTradeTarget | undefine
       title: position.title,
       zhTitle: position.title,
       type: position.isLive ? "live" : "future",
+      availability: position.marketAvailability,
       outcomes: [outcome],
     },
     outcome,
@@ -70,14 +76,14 @@ export const resolvePositionTradeTarget = ({
   for (const market of futures) {
     if (!marketMatches(market, position)) continue;
     const outcome = findOutcome(market, position);
-    if (outcome) return { market, outcome: withPositionQuote(outcome, position) };
+    if (outcome) return { market: withPositionAvailability(market, position), outcome: withPositionQuote(outcome, position) };
   }
 
   for (const event of events) {
     for (const market of event.markets) {
       if (!marketMatches(market, position)) continue;
       const outcome = findOutcome(market, position);
-      if (outcome) return { event, market, outcome: withPositionQuote(outcome, position) };
+      if (outcome) return { event, market: withPositionAvailability(market, position), outcome: withPositionQuote(outcome, position) };
     }
   }
 

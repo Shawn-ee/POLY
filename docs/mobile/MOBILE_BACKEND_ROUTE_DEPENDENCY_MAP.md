@@ -2166,3 +2166,16 @@ Cycle LB implementation notes:
 - Added `eventDetailLineAvailabilityService` so route-backed line controls are backend-derived instead of static frontend guesses.
 - Spread/Totals period and line rails now use backend-supported values for route-backed Event Detail.
 - Team Total now uses backend line/period for visible label and ticket selection instead of always pretending `1.5` regulation.
+
+## Cycle LF - Portfolio Position Availability Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio position re-trade from server positions | `/api/portfolio` | GET | Session user or mobile API key with `account:read` | None | `positions[].market.status`, `positions[].market.availability`, `marketId`, `outcomeId`, current quote/depth fields | `Position`, `Market`, `Outcome`, orderbook quote snapshots | Mock-mode Portfolio positions remain local. Server-mode positions now preserve backend market availability before opening fallback tickets. | No P0 gap for focused position availability. |
+| Portfolio position Buy/Sell ticket submit guard | `/api/orders` | POST | Mobile API key with `orders:write` | Existing ticket submit payload; no new request fields | Existing order error path plus frontend pre-submit block when fallback market availability is `suspended` or `unavailable` | `Order`, `Market`, `Outcome`, matching safety layer | Local/offline fallback still works for mock positions. | Richer row-level closed/paused-market copy remains optional P2. |
+
+Cycle LF implementation notes:
+
+- `/api/portfolio` now maps market status into a small availability object for position and open-order markets.
+- Mobile maps `position.marketAvailability` and carries it into backend-only position fallback tickets.
+- The existing ticket submit availability guard now blocks unavailable Portfolio re-trade fallback targets before `/api/orders`.

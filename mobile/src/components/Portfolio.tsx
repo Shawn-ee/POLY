@@ -7,6 +7,7 @@ import {
   portfolioPositionValue,
 } from "../domain/portfolioPositionMetrics";
 import type { Locale } from "../mocks/worldCup";
+import type { AvailabilityState } from "../mocks/worldCup";
 import { money } from "../presentation/formatters";
 import {
   openOrderPotentialCopyKey,
@@ -33,6 +34,7 @@ export type Position = {
   probability: number;
   shares?: number;
   currentPrice?: number;
+  marketAvailability?: AvailabilityState;
   bestBid?: number | null;
   bestAsk?: number | null;
   bestBidSize?: number | null;

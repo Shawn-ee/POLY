@@ -101,6 +101,7 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       probability: Math.round(position.avgCost * 100),
       shares: position.shares,
       currentPrice: position.currentPrice,
+      marketAvailability: position.market.availability,
       bestBid: toDepthProbability(position.bestBid),
       bestAsk: toDepthProbability(position.bestAsk),
       bestBidSize: toDepthSize(position.bestBidSize),

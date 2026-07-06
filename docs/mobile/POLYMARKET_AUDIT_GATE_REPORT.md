@@ -4333,3 +4333,37 @@ Decision:
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: production active provider breadth and non-disposable liquidity/source breadth.
 - Next cycle required: yes, continue Local MVP user-flow breadth or production provider breadth.
+
+## Cycle LF - Portfolio Position Availability Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure visible Portfolio position Buy/Sell actions in server mode inherit backend market availability from `/api/portfolio` and cannot submit unavailable fallback tickets.
+
+Reference Audit Agent: Backend/data-contract loop. Manual UI polish is out of scope for this cycle.
+
+Implementation Agent: Added market availability mapping to `/api/portfolio`, mobile position mapping, and fallback ticket propagation.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LF-portfolio-position-availability-contract.md`
+- `docs/mobile/harness/cycle-LF-portfolio-position-availability-contract/cycle-LF-portfolio-position-availability-contract.json`
+- `scripts/prove_mobile_portfolio_position_availability_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LF-P0-01 | P0 | Pass | `/api/portfolio` position market objects disclose availability derived from backend market status. | N/A |
+| LF-P0-02 | P0 | Pass | Mobile snapshot mapping keeps `position.marketAvailability`. | N/A |
+| LF-P0-03 | P0 | Pass | Backend-only position fallback tickets carry market availability. | N/A |
+| LF-P0-04 | P0 | Pass | Existing ticket submit guard blocks unavailable/suspended fallback tickets. | N/A |
+| LF-P2-01 | P2 | Open | Portfolio row copy does not yet explicitly explain closed/paused market status. | Optional later copy pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused Portfolio position availability contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional row-level closed/paused market copy.

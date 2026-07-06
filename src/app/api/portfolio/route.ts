@@ -4,6 +4,7 @@ import { getUserId } from "@/lib/auth";
 import { requireCanonicalActor } from "@/lib/canonicalAuth";
 import { getOutcomeQuotes } from "@/lib/orderbookPricing";
 import { buildTicketSelectionMetadata } from "@/server/services/ticketSelectionMetadata";
+import type { MarketStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,50 @@ async function getPortfolioUserId(request: NextRequest) {
   }
   return getUserId();
 }
+
+const marketAvailability = (status: MarketStatus) => {
+  const normalized = String(status);
+  if (status === "UPCOMING" || status === "LIVE") {
+    return {
+      source: "portfolio-market-status",
+      status: "ready",
+      marketStatus: normalized,
+      lastUpdated: null,
+      stalenessSeconds: null,
+      staleAfterSeconds: 60,
+      isStale: false,
+      isSuspended: false,
+      isDelayed: false,
+      reason: "Market accepts orders.",
+    };
+  }
+  if (status === "PAUSED") {
+    return {
+      source: "portfolio-market-status",
+      status: "suspended",
+      marketStatus: normalized,
+      lastUpdated: null,
+      stalenessSeconds: null,
+      staleAfterSeconds: 60,
+      isStale: false,
+      isSuspended: true,
+      isDelayed: false,
+      reason: "Market is paused.",
+    };
+  }
+  return {
+    source: "portfolio-market-status",
+    status: "unavailable",
+    marketStatus: normalized,
+    lastUpdated: null,
+    stalenessSeconds: null,
+    staleAfterSeconds: 60,
+    isStale: false,
+    isSuspended: false,
+    isDelayed: false,
+    reason: "Market is not accepting orders.",
+  };
+};
 
 export async function GET(request: NextRequest) {
   const userId = await getPortfolioUserId(request);
@@ -152,6 +197,7 @@ export async function GET(request: NextRequest) {
         id: position.market.id,
         title: position.market.title,
         status: position.market.status,
+        availability: marketAvailability(position.market.status),
         resolveTime: position.market.resolveTime,
         createdAt: position.market.createdAt,
       },
@@ -202,6 +248,7 @@ export async function GET(request: NextRequest) {
         id: order.market.id,
         title: order.market.title,
         status: order.market.status,
+        availability: marketAvailability(order.market.status),
       },
       outcome: {
         id: order.outcome.id,

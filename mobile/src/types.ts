@@ -351,6 +351,7 @@ export type PortfolioPositionItem = {
     id: string;
     title: string;
     status: string;
+    availability?: OrderbookAvailability;
     resolveTime: string | null;
     createdAt: string;
   };
@@ -395,6 +396,7 @@ export type PortfolioOpenOrderItem = {
     id: string;
     title: string;
     status: string;
+    availability?: OrderbookAvailability;
   };
   outcome: {
     id: string;

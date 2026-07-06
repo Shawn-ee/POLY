@@ -1,0 +1,49 @@
+{
+  "cycle": "LF",
+  "gate": "portfolio-position-availability-contract",
+  "generatedAt": "2026-07-06T10:05:00.735Z",
+  "routes": [
+    "/api/portfolio",
+    "/api/orders"
+  ],
+  "assertions": {
+    "portfolioRouteDisclosesPositionMarketAvailability": true,
+    "mobilePositionKeepsAvailability": true,
+    "backendOnlyPositionTicketTargetKeepsAvailability": true,
+    "unavailablePositionRetradeSubmitIsBlocked": true
+  },
+  "position": {
+    "id": "server-lf-closed-market-YES",
+    "marketId": "lf-closed-market",
+    "outcomeId": "lf-closed-outcome",
+    "marketAvailability": {
+      "source": "portfolio-market-status",
+      "status": "unavailable",
+      "marketStatus": "CLOSED",
+      "lastUpdated": null,
+      "stalenessSeconds": null,
+      "staleAfterSeconds": 60,
+      "isStale": false,
+      "isSuspended": false,
+      "isDelayed": false,
+      "reason": "Market is not accepting orders."
+    }
+  },
+  "target": {
+    "marketId": "lf-closed-market",
+    "outcomeId": "lf-closed-outcome",
+    "availability": {
+      "source": "portfolio-market-status",
+      "status": "unavailable",
+      "marketStatus": "CLOSED",
+      "lastUpdated": null,
+      "stalenessSeconds": null,
+      "staleAfterSeconds": 60,
+      "isStale": false,
+      "isSuspended": false,
+      "isDelayed": false,
+      "reason": "Market is not accepting orders."
+    },
+    "blockReason": "Market is not accepting orders."
+  }
+}

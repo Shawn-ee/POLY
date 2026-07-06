@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { Position } from "../components/Portfolio";
 import { worldCupEvents, worldCupFutures } from "../mocks/worldCup";
+import { marketOrderBlockReason } from "../services/orderService";
 import { resolvePositionTradeTarget } from "../services/positionTradeTargetService";
 
 const futurePosition: Position = {
@@ -108,6 +109,39 @@ describe("position trade target service", () => {
         bestAskSize: 2500,
       },
     });
+  });
+
+  test("carries backend market availability into fallback server ticket targets", () => {
+    const target = resolvePositionTradeTarget({
+      position: {
+        ...futurePosition,
+        marketId: "closed-backend-market",
+        outcomeId: "closed-backend-outcome",
+        title: "Closed backend proof",
+        outcome: "YES",
+        marketAvailability: {
+          source: "portfolio-market-status",
+          status: "unavailable",
+          marketStatus: "CLOSED",
+          lastUpdated: null,
+          stalenessSeconds: null,
+          staleAfterSeconds: 60,
+          isStale: false,
+          isSuspended: false,
+          isDelayed: false,
+          reason: "Market is not accepting orders.",
+        },
+      },
+      futures: worldCupFutures,
+      events: worldCupEvents,
+    });
+
+    expect(target?.market.availability).toMatchObject({
+      source: "portfolio-market-status",
+      status: "unavailable",
+      marketStatus: "CLOSED",
+    });
+    expect(marketOrderBlockReason(target!.market)).toBe("Market is not accepting orders.");
   });
 
   test("returns undefined when no matching market exists and backend identifiers are missing", () => {

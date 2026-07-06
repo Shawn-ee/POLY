@@ -4463,6 +4463,35 @@ Future migration concern:
 
 - Replace disposable provider-shaped proof events with production active Polymarket-backed World Cup events before treating provider breadth as complete.
 
+## Cycle LF - Portfolio Position Availability Contract
+
+Closed or narrowed:
+
+- `/api/portfolio` now returns backend-owned market availability for visible position and open-order market objects.
+- Mobile preserves that availability as `position.marketAvailability`.
+- Backend-only Portfolio position fallback tickets inherit the availability so unavailable or suspended markets are blocked by the existing server-mode submit guard instead of acting like normal tradable tickets.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No P0 field gap for focused position re-trade availability.
+- Optional P2 copy could make closed/paused market status more explicit directly on the Portfolio row.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `Market.status` is mapped to the mobile availability shape.
+
+Route mismatch:
+
+- `/api/portfolio` and `/api/orders` are sufficient for the focused contract.
+
+Temporary mock/static data:
+
+- Mock-mode Portfolio positions remain local-only. Server-mode position availability is backend-owned.
+
+Future migration concern:
+
+- If provider trading status becomes more granular than internal `Market.status`, extend `/api/portfolio` to expose provider-specific accept-order state from the same source used by Event Detail availability.
+
 ## Cycle LA - Cashout/Sell Safety Contract
 
 Closed or narrowed:
