@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NL
+
+Gate status: Pass
+
+Scope: Position re-trade availability contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NL-position-retrade-availability-contract/cycle-NL-position-retrade-availability-contract.json`
+- Focused tests: `mobile/src/__tests__/positionTradeTargetService.test.ts`, `mobile/src/__tests__/orderService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NL-position-retrade-availability-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio position availability is authoritative for re-trade ticket targets and overrides locally loaded ready market state before the Trade Ticket submit guard.
+
 ## Cycle NK
 
 Gate status: Pass

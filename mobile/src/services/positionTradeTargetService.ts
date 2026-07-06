@@ -35,7 +35,7 @@ const marketMatches = (market: Market, position: Position) =>
   market.id === position.marketId || market.title === position.title;
 
 const withPositionAvailability = (market: Market, position: Position): Market =>
-  position.marketAvailability && !market.availability
+  position.marketAvailability
     ? { ...market, availability: position.marketAvailability }
     : market;
 

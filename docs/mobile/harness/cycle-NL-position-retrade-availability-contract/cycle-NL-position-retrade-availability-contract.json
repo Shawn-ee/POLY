@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle NL",
+  "feature": "Portfolio position re-trade availability contract",
+  "generatedAt": "2026-07-06T13:59:05.202Z",
+  "route": "/api/portfolio",
+  "contract": {
+    "validPayload": "server-mode Portfolio position marketAvailability is authoritative for re-trade ticket targets.",
+    "malformedPayload": "locally loaded ready market state must not override backend Portfolio unavailable/suspended status."
+  },
+  "assertions": {
+    "matchedLocalMarketUsesPortfolioAvailability": true,
+    "matchedLocalMarketBlocksOrders": true,
+    "fallbackMarketUsesPortfolioAvailability": true,
+    "fallbackMarketBlocksOrders": true
+  }
+}

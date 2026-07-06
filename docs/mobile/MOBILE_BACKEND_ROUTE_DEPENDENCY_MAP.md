@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NL - Position Re-Trade Availability Contract
+
+Cycle NL hardens Portfolio position Buy/Sell re-trade targets so backend Portfolio market availability remains authoritative:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NL-position-retrade-availability-contract/cycle-NL-position-retrade-availability-contract.json`.
+- Proof script: `scripts/prove_mobile_position_retrade_availability_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionTradeTargetService.test.ts`, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio position Buy/Sell re-trade availability | `/api/portfolio` through `PolyApi.getPortfolio()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | Position market id/outcome id plus `position.market.availability`; Portfolio availability overrides locally loaded market availability before Trade Ticket submit guard | `Position`, `Market`, provider/internal market status projection | Mock/local Portfolio remains unchanged. Server-mode Portfolio position availability blocks re-trade tickets even when local market fixtures look ready. | None for focused position re-trade availability contract. P2 optional Portfolio row copy. |
+
 ## Cycle NK - Cashout Status Contract
 
 Cycle NK hardens Portfolio server-mode cashout confirmation status before treating a full-position close as accepted:

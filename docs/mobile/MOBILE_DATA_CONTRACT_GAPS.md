@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NL - Position Re-Trade Availability Contract
+
+Closed or narrowed:
+
+- Portfolio position re-trade targets now treat server-mode `position.marketAvailability` as authoritative.
+- Locally loaded ready market state no longer overrides backend Portfolio unavailable/suspended status when opening a Buy/Sell ticket from a position.
+- Backend-only fallback targets continue to carry Portfolio availability into the existing Trade Ticket order guard.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused position re-trade availability contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` position market availability fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio behavior remains unchanged. Server-mode Portfolio market availability blocks re-trade even if local fixture state is ready.
+
 ## Cycle NK - Cashout Status Contract
 
 Closed or narrowed:

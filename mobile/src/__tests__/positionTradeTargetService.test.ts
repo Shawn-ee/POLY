@@ -144,6 +144,53 @@ describe("position trade target service", () => {
     expect(marketOrderBlockReason(target!.market)).toBe("Market is not accepting orders.");
   });
 
+  test("uses backend portfolio market availability over locally loaded market availability", () => {
+    const target = resolvePositionTradeTarget({
+      position: {
+        ...futurePosition,
+        marketAvailability: {
+          source: "portfolio-market-status",
+          status: "unavailable",
+          marketStatus: "CLOSED",
+          lastUpdated: null,
+          stalenessSeconds: null,
+          staleAfterSeconds: 60,
+          isStale: false,
+          isSuspended: false,
+          isDelayed: false,
+          reason: "Portfolio route says this market is closed.",
+        },
+      },
+      futures: worldCupFutures.map((market) =>
+        market.id === "world-cup-winner"
+          ? {
+              ...market,
+              availability: {
+                source: "local-market-fixture",
+                status: "ready",
+                marketStatus: "LIVE",
+                lastUpdated: "2026-07-06T08:00:00.000Z",
+                stalenessSeconds: 0,
+                staleAfterSeconds: 60,
+                isStale: false,
+                isSuspended: false,
+                isDelayed: false,
+                reason: "Local fixture is ready.",
+              },
+            }
+          : market,
+      ),
+      events: worldCupEvents,
+    });
+
+    expect(target?.market.availability).toMatchObject({
+      source: "portfolio-market-status",
+      status: "unavailable",
+      marketStatus: "CLOSED",
+    });
+    expect(marketOrderBlockReason(target!.market)).toBe("Portfolio route says this market is closed.");
+  });
+
   test("returns undefined when no matching market exists and backend identifiers are missing", () => {
     expect(
       resolvePositionTradeTarget({
