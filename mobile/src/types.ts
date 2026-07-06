@@ -156,6 +156,14 @@ export type EventSummary = {
   imageUrl?: string | null;
   marketCount: number;
   activeMarketCount: number;
+  metrics?: {
+    source: string;
+    marketCount: number;
+    activeMarketCount: number;
+    liquidity: number | string | null;
+    volume24h: number | string | null;
+    commentCount: number | null;
+  };
   liveStats?: EventLiveStat[];
   liveDataStatus?: EventLiveDataStatus;
   chartHistory?: EventChartPoint[];

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KN - Search Metrics Contract
+
+Cycle KN removes frontend-invented Search row volume/liquidity/chat metrics and makes visible Search event rows consume an explicit backend event metrics contract:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KN-search-metrics-contract/cycle-KN-search-metrics-contract.json`.
+- Proof script: `scripts/prove_mobile_search_metrics_contract.ts`.
+- Focused validation: route proof, `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Search event row metrics | `/api/events?search=...&includeMobileMarkets=1` | GET | Public/mobile route | None | `events[].metrics.source`, `marketCount`, `activeMarketCount`, `liquidity`, `volume24h`, `commentCount`, plus compact `events[].markets[]` | `Event`, listed public `Market`, active `Outcome`, orderbook quote/depth helper for real liquidity when present | Mock mode may aggregate embedded market liquidity; server mode consumes route-owned `metrics` and shows unknown volume/comments as `--`/absent rather than generating fake values | P1: real backend 24h volume and comment/activity counts if those become product requirements. |
+
 ## Cycle KM - Account Navigation Contract
 
 Cycle KM wires visible Account menu rows to backend-owned metadata so unsupported destinations are disabled instead of pretending to be functional mobile buttons:

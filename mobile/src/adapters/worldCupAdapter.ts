@@ -44,8 +44,24 @@ const asTitleCase = (value: string | null | undefined, fallback: string) => {
 };
 
 const asNumberOrNull = (value: string | number | null | undefined) => {
+  if (value == null || value === "") return null;
   const parsed = typeof value === "number" ? value : Number(value);
   return Number.isFinite(parsed) ? parsed : null;
+};
+
+const normalizeEventMetrics = (event: BackendEventSummary) => {
+  if (event.metrics) {
+    return {
+      source: event.metrics.source,
+      marketCount: event.metrics.marketCount,
+      activeMarketCount: event.metrics.activeMarketCount,
+      liquidity: asNumberOrNull(event.metrics.liquidity),
+      volume24h: asNumberOrNull(event.metrics.volume24h),
+      commentCount: event.metrics.commentCount,
+    };
+  }
+
+  return undefined;
 };
 
 const asOutcomeSide = (value: string | null | undefined): Outcome["side"] | undefined => {
@@ -277,6 +293,7 @@ export const normalizeEventSummary = (event: BackendEventSummary, markets: Backe
       { name: away, zhName: zhPassthrough(away), flag: "•" },
     ],
     liveStats: event.liveStats,
+    metrics: normalizeEventMetrics(event),
     liveDataStatus: event.liveDataStatus,
     chartHistory: event.chartHistory,
     marketProfile: event.marketProfile ?? rules.marketProfile,

@@ -24,6 +24,8 @@ type SearchScreenCopy = {
   sortLiveFirst: string;
 };
 
+const metricMoney = (value: number | null | undefined) => (typeof value === "number" ? money(value) : "--");
+
 export function SearchScreen({
   locale,
   t,
@@ -199,9 +201,12 @@ export function SearchScreen({
             {visibleEvents.map((event) => {
               const topMarket = event.markets[0];
               const topOutcome = topMarket.outcomes[0];
-              const outcomeCount = event.markets.reduce((total, market) => total + market.outcomes.length, 0);
-              const volume = 8200 + outcomeCount * 1150;
-              const liquidity = 4200 + event.markets.length * 950;
+              const embeddedLiquidity = event.markets.reduce((total, market) => total + (market.liquidity ?? 0), 0);
+              const liquidity =
+                event.metrics?.liquidity ??
+                (embeddedLiquidity > 0 ? embeddedLiquidity : null);
+              const volume24h = event.metrics?.volume24h ?? null;
+              const marketCount = event.metrics?.marketCount ?? event.markets.length;
               const isSaved = savedEventIds.has(event.id);
               return (
                 <Pressable
@@ -218,12 +223,11 @@ export function SearchScreen({
                     <Text style={styles.resultKicker}>{label(locale, { label: "Sports - Soccer", zhLabel: "\u4f53\u80b2 - \u8db3\u7403" })}</Text>
                     <Text style={styles.resultTitle}>{label(locale, event)}</Text>
                     <View style={styles.resultStats}>
-                      <Text style={styles.resultStat}>{t.volume}: {money(volume)}</Text>
-                      <Text style={styles.resultStat}>{money(Math.round(volume * 0.08))} today</Text>
-                      <Text style={styles.resultStat}>{t.liquidity}: {money(liquidity)}</Text>
+                      <Text style={styles.resultStat}>{t.volume}: {metricMoney(volume24h)}</Text>
+                      <Text style={styles.resultStat}>{t.liquidity}: {metricMoney(liquidity)}</Text>
                     </View>
                     <View style={styles.resultStats}>
-                      <Text style={styles.resultStat}>Chat {420 + outcomeCount * 37}</Text>
+                      <Text style={styles.resultStat}>Markets {marketCount}</Text>
                       <Text style={styles.resultStat}>Ends {event.startsAt}</Text>
                     </View>
                   </View>

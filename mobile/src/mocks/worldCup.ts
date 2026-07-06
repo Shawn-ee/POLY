@@ -99,6 +99,15 @@ export type EventMarketType =
   | "second-half"
   | "player-props";
 
+export type EventMetrics = {
+  source: string;
+  marketCount: number;
+  activeMarketCount: number;
+  liquidity: number | null;
+  volume24h: number | null;
+  commentCount: number | null;
+};
+
 export type Event = {
   id: string;
   title: string;
@@ -110,6 +119,7 @@ export type Event = {
   zhTag: string;
   teams: Array<{ name: string; zhName: string; flag: string }>;
   liveStats?: Array<{ statId: string; label: string; home: string; away: string }>;
+  metrics?: EventMetrics;
   liveDataStatus?: AvailabilityState;
   chartHistory?: Array<{ outcomeId: string; timestamp: string; probability: number }>;
   chartHistorySource?: "embedded" | "market-chart-route" | "polymarket-clob-prices-history";

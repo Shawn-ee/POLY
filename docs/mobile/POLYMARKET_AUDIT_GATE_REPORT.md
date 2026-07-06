@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Search metrics contract | Cycle KN | Pass for backend/data-contract scope | 0 for focused Search row metrics scope | P1 real 24h volume and comment/activity counts if product requires them | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KN-search-metrics-contract/cycle-KN-search-metrics-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`; audit: `mobile/docs/audits/cycle-KN-search-metrics-contract.md` | Search rows now consume backend-owned `events[].metrics`; frontend synthetic volume/liquidity/today/chat values were removed and unavailable volume/comment data stays null. |
 | Account navigation contract | Cycle KM | Pass for backend/data-contract scope | 0 for focused Account menu metadata scope | P1 real destinations/actions when those products are intentionally in scope; P1 richer Account sync/error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KM-account-navigation-contract/cycle-KM-account-navigation-contract.json`; tests: `mobile/src/__tests__/accountNavigationService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KM-account-navigation-contract.md` | Mobile server mode now calls canonical `/api/account/navigation`; backend owns visible Account menu metadata and marks unsupported MVP destinations disabled/unavailable instead of leaving generic tappable placeholder rows. |
 | Search Saved filter | Cycle KL | Pass for backend/data-contract scope | 0 for focused Search Saved event-id route filter scope | P1 first-class saved/followed market route if saved state outgrows profile preferences | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KL-search-saved-filter/cycle-KL-search-saved-filter.json`; tests: `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KL-search-saved-filter.md` | Search server mode now sends saved event ids to `/api/events` with the active search query; the route returns only selected saved ids with compact mobile markets, and empty Saved is handled in-app as empty state. |
 | Home Saved filter | Cycle KK | Pass for backend/data-contract scope | 0 for focused Home Saved event-id route filter scope | P1 first-class saved/followed market route if saved state outgrows profile preferences | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KK-home-saved-filter/cycle-KK-home-saved-filter.json`; tests: `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KK-home-saved-filter.md` | Home server mode now sends saved event ids to `/api/events`; the route returns only selected event ids with compact mobile markets, and empty Saved is handled in-app as empty state. |
@@ -131,6 +132,29 @@ Fail the feature when:
 | Trade ticket | Cycle AG | Pass | 0 | P1 binary NO/share contract semantics; P1 production auth/location eligibility gates | `docs/mobile/reference/screenshots/cycle-AG-polymarket-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-amount.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-trade.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/harness/cycle-current-holiwyn-event-detail-ticket-details.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade` | Focused pass only. First view is now sparse and settings opens advanced controls. |
 | Trade ticket surface | Cycle AI | Pass | 0 | P1 production auth/location eligibility gate; P2 native motion polish | `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-start.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-france-ticket.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-after-france-row-tap.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/screenshots/cycle-current-holiwyn-future-list-buy-no-ticket.png`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade`; `cmd /c npm.cmd run smoke:tablet:future-list-buy-no` | Logged-in Polymarket World Cup selection opened a tall location-verification sheet; Holiwyn now uses a taller dimmed fake-token ticket with fixed swipe-up submit rail. |
 | Game page compact scrolled header | Cycle AJ | Pass | 0 | P1 phone visual density/sticky tab polish; P1 backend market/live data; P1 Player Props reference scope | `docs/mobile/reference/screenshots/cycle-AJ-polymarket-live-tab.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-top.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-lines-mid.png` | `docs/mobile/screenshots/cycle-current-holiwyn-game-page-full-markets.png`; `docs/mobile/harness/cycle-current-holiwyn-game-page-full-markets.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-full-page` | Logged-in Polymarket keeps compact match context when scrolled into Game Lines; Holiwyn now shows a compact match header in that state and full game-page smoke passed. |
+
+## Cycle KN
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for visible Search row metrics.
+
+Evidence:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KN-search-metrics-contract/cycle-KN-search-metrics-contract.json`.
+- Cycle audit: `mobile/docs/audits/cycle-KN-search-metrics-contract.md`.
+- Focused tests:
+  - `src/__tests__/public.events.no-leak.test.ts`
+  - `mobile/src/__tests__/worldCupAdapter.test.ts`
+- Proof script:
+  - `scripts/prove_mobile_search_metrics_contract.ts`
+
+Decision:
+
+- Pass for focused backend/data-contract scope.
+- `/api/events?includeMobileMarkets=1` now returns backend-owned `events[].metrics`.
+- Search rows no longer synthesize volume, today, liquidity, or chat counts in the frontend.
+- Remaining P1: real 24h volume and comment/activity routes if those metrics become product requirements.
 
 ## Cycle KM
 

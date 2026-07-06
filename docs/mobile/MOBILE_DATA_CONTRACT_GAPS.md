@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KN - Search Metrics Contract
+
+Closed or narrowed:
+
+- Backend `/api/events?includeMobileMarkets=1` now returns explicit `events[].metrics` for visible Search/Home-style event rows.
+- Search rows no longer invent volume, "today", liquidity, or chat counts on the frontend.
+- Mobile normalization preserves backend `metrics` and keeps unavailable `volume24h` and `commentCount` as `null`.
+- Route/mobile proof verifies the metrics source, market counts, compact markets, and removal of synthetic volume/chat values.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Real 24h volume remains unavailable for this route and is intentionally returned as `null`.
+- Real comment/activity counts remain unavailable and are intentionally returned as `null`; no chat UI/count is introduced.
+
+Schema mismatch:
+
+- No schema migration was made. Existing listed `Market`, active `Outcome`, and orderbook quote/depth helpers support real liquidity when depth exists.
+
+Temporary mock/static data:
+
+- Standalone/mock mode may still display embedded fixture liquidity. Server mode uses backend-owned `metrics` and displays unknown metrics truthfully instead of calculating fake values.
+
 ## Cycle KM - Account Navigation Contract
 
 Closed or narrowed:

@@ -283,6 +283,7 @@ describe("public event API no-leak checks", () => {
     expectOnlyKeys(body.events[0], [
       ...expectedEventSummaryKeys,
       "groupedSummary",
+      "metrics",
       "markets",
       "topOutcomes",
     ]);
@@ -290,6 +291,14 @@ describe("public event API no-leak checks", () => {
       slug: "france-vs-argentina",
       marketCount: 1,
       activeMarketCount: 1,
+      metrics: {
+        source: "event-route-mobile-markets",
+        marketCount: 1,
+        activeMarketCount: 1,
+        liquidity: null,
+        volume24h: null,
+        commentCount: null,
+      },
       markets: [
         {
           id: "market-1",

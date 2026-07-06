@@ -1,0 +1,47 @@
+{
+  "pass": true,
+  "cycle": "Cycle KN",
+  "createdAt": "2026-07-06T08:09:46.280Z",
+  "route": "/api/events",
+  "query": {
+    "sportKey": "soccer",
+    "leagueKey": "world_cup",
+    "search": "3fa67ff9",
+    "includeMobileMarkets": "1",
+    "limit": "5"
+  },
+  "seededEvent": {
+    "id": "1cbfcb62-341e-4561-8ddb-275c1b176350",
+    "slug": "mobile-kn-search-metrics-3fa67ff9"
+  },
+  "routeMetrics": {
+    "source": "event-route-mobile-markets",
+    "marketCount": 1,
+    "activeMarketCount": 1,
+    "liquidity": null,
+    "volume24h": null,
+    "commentCount": null
+  },
+  "routeMarkets": [
+    {
+      "id": "cafba41b-f884-4735-8273-74ce5aebda86",
+      "title": "KN Search Metrics winner",
+      "liquidity": null,
+      "outcomeCount": 2
+    }
+  ],
+  "mobileMetrics": {
+    "source": "event-route-mobile-markets",
+    "marketCount": 1,
+    "activeMarketCount": 1,
+    "liquidity": null,
+    "volume24h": null,
+    "commentCount": null
+  },
+  "assertions": {
+    "backendOwnedMetrics": true,
+    "syntheticVolumeRemoved": true,
+    "syntheticChatRemoved": true,
+    "mobileAdapterPreservesMetrics": true
+  }
+}

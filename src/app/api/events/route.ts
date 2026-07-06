@@ -8,6 +8,34 @@ import { selectCompactLiveMarkets } from "@/server/services/mobileLiveEventDetai
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
 
+type MobileMarketReadModel = Awaited<ReturnType<typeof serializeMarketReadModel>>;
+
+const asNumberOrNull = (value: unknown) => {
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const buildMobileEventMetrics = ({
+  marketCount,
+  activeMarketCount,
+  markets,
+}: {
+  marketCount: number;
+  activeMarketCount: number;
+  markets: MobileMarketReadModel[];
+}) => {
+  const liquidityTotal = markets.reduce((sum, market) => sum + (asNumberOrNull(market.liquidity) ?? 0), 0);
+
+  return {
+    source: "event-route-mobile-markets",
+    marketCount,
+    activeMarketCount,
+    liquidity: liquidityTotal > 0 ? liquidityTotal : null,
+    volume24h: null,
+    commentCount: null,
+  };
+};
+
 const paginationLimit = (value: string | null) => {
   const parsed = Number(value ?? DEFAULT_LIMIT);
   if (!Number.isFinite(parsed)) return DEFAULT_LIMIT;
@@ -175,10 +203,16 @@ export async function GET(request: NextRequest) {
               .filter((market) => compactMarketIds.has(market.id))
               .map((market) => serializeMarketReadModel(market)),
           );
+          const metrics = buildMobileEventMetrics({
+            marketCount: event.markets.length,
+            activeMarketCount,
+            markets: mobileMarkets,
+          });
           return {
             ...base,
             marketCount: event.markets.length,
             activeMarketCount,
+            metrics,
             hasGroupedMarkets: Boolean(referenceGroup) || base.hasGroupedMarkets,
             groupedSummary:
               referenceGroup && typeof referenceGroup.slug === "string"

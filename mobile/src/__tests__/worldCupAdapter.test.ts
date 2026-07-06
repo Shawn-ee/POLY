@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { normalizeEventDetail, normalizeMarket } from "../adapters/worldCupAdapter";
-import type { EventDetail, Market } from "../types";
+import { normalizeEventDetail, normalizeEventSummary, normalizeMarket } from "../adapters/worldCupAdapter";
+import type { EventDetail, EventSummary, Market } from "../types";
 
 const baseMarket: Market = {
   id: "world-cup-futures",
@@ -22,6 +22,47 @@ const baseMarket: Market = {
 };
 
 describe("world cup adapter", () => {
+  test("preserves backend event row metrics without synthetic fallbacks", () => {
+    const event: EventSummary = {
+      id: "event-search-metrics",
+      slug: "event-search-metrics",
+      title: "Search Metrics Home vs Search Metrics Away",
+      description: null,
+      category: "sports",
+      sportKey: "soccer",
+      leagueKey: "world_cup",
+      homeTeamName: "Search Metrics Home",
+      awayTeamName: "Search Metrics Away",
+      startTime: "2026-07-10T20:00:00.000Z",
+      status: "scheduled",
+      liveStatus: null,
+      period: null,
+      clock: null,
+      homeScore: null,
+      awayScore: null,
+      imageUrl: null,
+      marketCount: 2,
+      activeMarketCount: 1,
+      metrics: {
+        source: "event-route-mobile-markets",
+        marketCount: 2,
+        activeMarketCount: 1,
+        liquidity: "123.45",
+        volume24h: null,
+        commentCount: null,
+      },
+    };
+
+    expect(normalizeEventSummary(event, [])?.metrics).toEqual({
+      source: "event-route-mobile-markets",
+      marketCount: 2,
+      activeMarketCount: 1,
+      liquidity: 123.45,
+      volume24h: null,
+      commentCount: null,
+    });
+  });
+
   test("uses positive bid ask midpoint when backend outcome price is zero", () => {
     const normalized = normalizeMarket({
       ...baseMarket,
