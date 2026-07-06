@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MF - Portfolio History Economics Contract
+
+Closed or narrowed:
+
+- Portfolio history/activity economics now reject negative resolved payouts, recent trade shares/costs, and canceled order remaining/price before visible activity state applies.
+- `realizedPnLTokens` remains allowed to be negative because it is not used as the rendered activity amount.
+- Malformed negative activity economics no longer render as impossible history rows.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio history economics contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio/history` numeric fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio activity remains unchanged. Server-mode malformed activity economics reject instead of applying impossible visible Portfolio history state.
+
 ## Cycle ME - Portfolio Snapshot Economics Contract
 
 Closed or narrowed:

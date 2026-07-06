@@ -1,0 +1,19 @@
+{
+  "cycle": "Cycle MF",
+  "feature": "Portfolio history economics contract",
+  "generatedAt": "2026-07-06T11:56:19.541Z",
+  "route": "/api/portfolio/history",
+  "contract": {
+    "validPayload": "visible Portfolio history/activity amounts, shares, and probabilities must be derived from finite non-negative economics",
+    "malformedPayload": "negative payouts, trade shares/costs, or canceled-order economics reject before visible Portfolio activity applies",
+    "allowedLoss": "realizedPnLTokens may be negative because it is not used as the rendered activity amount"
+  },
+  "assertions": {
+    "validHistoryEconomicsApply": true,
+    "negativeRealizedPnlRemainsAllowed": true,
+    "negativeWinningsRejects": true,
+    "negativeTradeSharesRejects": true,
+    "negativeTradeCostRejects": true,
+    "negativeCanceledOrderPriceRejects": true
+  }
+}

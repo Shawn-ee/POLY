@@ -206,6 +206,68 @@ describe("portfolio history activity mapping", () => {
     await expect(loadPortfolioHistoryActivities(api)).rejects.toThrow("Portfolio history response had invalid canceledOrders[].price.");
   });
 
+  test("rejects negative resolved history payouts before applying Portfolio activity", () => {
+    expect(() =>
+      portfolioHistoryToActivity([
+        historyItem({
+          winningsTokens: -1,
+          refundsTokens: 0,
+          netInvestedTokens: 100,
+          realizedPnLTokens: -12,
+        }),
+      ]),
+    ).toThrow("Portfolio history response had invalid history[].winningsTokens.");
+  });
+
+  test("rejects negative recent trade economics before applying Portfolio activity", () => {
+    expect(() =>
+      recentTradesToActivity([
+        {
+          id: "bad-trade",
+          market: {
+            id: "world-cup-winner",
+            title: "Will France win the 2026 FIFA World Cup?",
+            status: "LIVE",
+          },
+          outcome: {
+            id: "yes",
+            name: "YES",
+          },
+          side: "BUY",
+          shares: -1,
+          cost: 100,
+          fee: 0,
+          createdAt: "2026-07-02T06:10:00.000Z",
+        },
+      ]),
+    ).toThrow("Portfolio history response had invalid recentTrades[].shares.");
+  });
+
+  test("rejects negative canceled order economics before applying Portfolio activity", () => {
+    expect(() =>
+      canceledOrdersToActivity([
+        {
+          id: "bad-cancel",
+          market: {
+            id: "world-cup-winner",
+            title: "World Cup winner",
+            status: "LIVE",
+          },
+          outcome: {
+            id: "yes",
+            name: "YES",
+          },
+          side: "BUY",
+          status: "CANCELED",
+          price: -0.01,
+          size: 200,
+          remaining: 100,
+          canceledAt: "2026-07-02T05:55:00.000Z",
+        },
+      ]),
+    ).toThrow("Portfolio history response had invalid canceledOrders[].price.");
+  });
+
   test("preserves line selection labels in backend order activity", () => {
     expect(
       recentTradesToActivity([

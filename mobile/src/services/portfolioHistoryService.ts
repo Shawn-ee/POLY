@@ -31,10 +31,18 @@ const requireFiniteNumber = (value: unknown, field: string) => {
   return parsed;
 };
 
+const requireNonNegativeNumber = (value: unknown, field: string) => {
+  const parsed = requireFiniteNumber(value, field);
+  if (parsed < 0) {
+    throw new Error(`Portfolio history response had invalid ${field}.`);
+  }
+  return parsed;
+};
+
 export const portfolioHistoryToActivity = (history: Awaited<ReturnType<PolyApi["getPortfolioHistory"]>>["history"]): PortfolioActivity[] =>
   history.map((item) => {
-    const payout = requireFiniteNumber(item.winningsTokens, "history[].winningsTokens") + requireFiniteNumber(item.refundsTokens, "history[].refundsTokens");
-    const netInvested = requireFiniteNumber(item.netInvestedTokens, "history[].netInvestedTokens");
+    const payout = requireNonNegativeNumber(item.winningsTokens, "history[].winningsTokens") + requireNonNegativeNumber(item.refundsTokens, "history[].refundsTokens");
+    const netInvested = requireNonNegativeNumber(item.netInvestedTokens, "history[].netInvestedTokens");
     return {
       id: `history-${item.market.id}`,
       action: "closed",
@@ -53,17 +61,17 @@ export const canceledOrdersToActivity = (orders: PortfolioCanceledOrderItem[] = 
     title: order.market.title,
     outcome: order.outcome.name,
     selection: portfolioSelectionFromBackend(order.selection, "canceledOrders[].selection"),
-    amount: requireFiniteNumber(order.remaining, "canceledOrders[].remaining") * requireFiniteNumber(order.price, "canceledOrders[].price"),
-    shares: requireFiniteNumber(order.remaining, "canceledOrders[].remaining"),
+    amount: requireNonNegativeNumber(order.remaining, "canceledOrders[].remaining") * requireNonNegativeNumber(order.price, "canceledOrders[].price"),
+    shares: requireNonNegativeNumber(order.remaining, "canceledOrders[].remaining"),
     side: order.side === "SELL" ? "sell" : "buy",
-    probability: Math.round(requireFiniteNumber(order.price, "canceledOrders[].price") * 100),
+    probability: Math.round(requireNonNegativeNumber(order.price, "canceledOrders[].price") * 100),
     timestamp: formatHistoryTimestamp(order.canceledAt),
   }));
 
 export const recentTradesToActivity = (trades: PortfolioRecentTradeItem[] = []): PortfolioActivity[] =>
   trades.map((trade) => {
-    const shares = requireFiniteNumber(trade.shares, "recentTrades[].shares");
-    const cost = requireFiniteNumber(trade.cost, "recentTrades[].cost");
+    const shares = requireNonNegativeNumber(trade.shares, "recentTrades[].shares");
+    const cost = requireNonNegativeNumber(trade.cost, "recentTrades[].cost");
     const executionPrice = shares > 0 ? cost / shares : 0;
     return {
       id: `trade-${trade.id}`,

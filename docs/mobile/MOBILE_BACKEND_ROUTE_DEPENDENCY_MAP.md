@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MF - Portfolio History Economics Contract
+
+Cycle MF hardens visible Portfolio history/activity economics before server-mode activity state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MF-portfolio-history-economics-contract/cycle-MF-portfolio-history-economics-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_history_economics_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio recent trades, canceled orders, and resolved activity | `/api/portfolio/history` | GET | Canonical API key/session with `account:read` | None | Resolved `winningsTokens`, `refundsTokens`, `netInvestedTokens`; recent trade `shares`, `cost`; canceled order `remaining`, `price` must be finite non-negative values; realized P/L may be negative | `Trade`, `Fill`, `Order`, `Market`, `Outcome`, history aggregation service | Mock/local Portfolio activity remains unchanged. Server-mode malformed negative activity economics reject before visible Portfolio activity applies. | None for focused Portfolio history economics contract. P2 optional field-specific Portfolio history error copy. |
+
 ## Cycle ME - Portfolio Snapshot Economics Contract
 
 Cycle ME hardens visible Portfolio snapshot economics before server-mode Portfolio state applies:
