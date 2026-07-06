@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle LQ",
+  "feature": "Live feed route shape contract",
+  "generatedAt": "2026-07-06T10:49:04.639Z",
+  "route": "/api/events?statusGroup=live&includeMobileMarkets=1",
+  "contract": {
+    "validPayload": "server-mode Live tab accepts route pages with visible event, market, outcome, and cursor fields",
+    "malformedPayload": "malformed route pages reject before Live cards are normalized or rendered",
+    "numericFields": "outcome price and quote fields must be finite numeric values or null"
+  },
+  "assertions": {
+    "validLiveRoutePageRendersOneCard": true,
+    "malformedEventWithoutMarketsRejects": true,
+    "malformedOutcomePriceRejects": true
+  }
+}

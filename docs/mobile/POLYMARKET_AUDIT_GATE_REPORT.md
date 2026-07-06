@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Live feed route shape contract | Cycle LQ | Pass for backend/data-contract scope | 0 for focused Live route-shape scope | P2 optional Live-tab-specific retry copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LQ-live-feed-route-shape-contract/cycle-LQ-live-feed-route-shape-contract.json`; tests: `mobile/src/__tests__/liveEventFeedService.test.ts`; audit: `mobile/docs/audits/cycle-LQ-live-feed-route-shape-contract.md` | Live tab server mode now validates `/api/events?statusGroup=live&includeMobileMarkets=1` payloads before visible cards are normalized, rejecting missing market arrays or non-numeric outcome price/quote fields. |
 | Order response numeric contract | Cycle LP | Pass for backend/data-contract scope | 0 for focused order lifecycle numeric scope | P2 optional richer inline submit error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LP-order-response-numeric-contract/cycle-LP-order-response-numeric-contract.json`; tests: `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-LP-order-response-numeric-contract.md` | Trade Ticket server submit still accepts id-only confirmations, but malformed `size`, `remaining`, or `fills[].size` values now reject before visible server order state is applied. |
 | Portfolio route shape validation contract | Cycle LO | Pass for backend/data-contract scope | 0 for focused Portfolio route-shape scope | P2 optional route-specific retry copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LO-portfolio-route-shape-validation-contract/cycle-LO-portfolio-route-shape-validation-contract.json`; tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `mobile/src/__tests__/portfolioSyncService.test.ts`; audit: `mobile/docs/audits/cycle-LO-portfolio-route-shape-validation-contract.md` | Server-mode Portfolio now rejects malformed `/api/portfolio` and `/api/portfolio/history` shapes before applying visible state/activity, causing sync error instead of false synced UI. |
 | Mobile saved event identity filter contract | Cycle LN | Pass for backend/data-contract scope | 0 for focused saved id/slug scope | P1 first-class saved/followed route if saved state outgrows profile preferences | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LN-mobile-saved-event-identity-filter-contract/cycle-LN-mobile-saved-event-identity-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LN-mobile-saved-event-identity-filter-contract.md` | `/api/events?eventIds=...` now matches both `Event.id` and `Event.slug`, aligning backend Saved filters with mobile's normalized event identity. |
@@ -89,6 +90,36 @@ Fail the feature when:
 | Current live event detail visible provider behavior and structural parity | Cycle EG integrated | Partial; PM-GAP-084 remains open | 4 P0 status/provider-lifecycle proof areas remain | P1 fresh S23 recapture, broader real provider-backed family breadth, visible provider refresh lifecycle; P2 density/chart/orderbook/status polish | Reused stale/reference-only DQ-C Samsung S23 official Polymarket evidence; gate: `docs/mobile/audits/cycle-eg-c-live-event-visible-provider-gate.md` | Backend refresh lifecycle proof: `docs/mobile/harness/cycle-EG-A-provider-refresh-lifecycle.json`; Samsung tablet visible proof: `docs/mobile/harness/cycle-EG-B-visible-live-parity/cycle-EG-B-visible-live-parity-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EG-B-visible-live-parity/` and `docs/mobile/harness/cycle-EG-B-visible-live-parity/` | EG materially closes chart, line-selector, Book ladder, and ticket carry-through gaps for the selected Mexico/Ecuador Spread path. It remains partial because the Android run used contract-shaped fallback data and did not visibly prove ready/stale/refreshing/unavailable provider lifecycle states tied to the backend route in one run. |
 | Current live game page Book-origin snapshot durability after metadata drift | Cycle EF integrated | Pass for selected EF proof; PM-GAP-083 verified for selected path | 0 for selected EF gate | P1 repeat across real provider-backed line families, provider-refresh drift regression, official production history recapture; P2 Portfolio/history visual clarity | Reused EE/ED checked-in proof and DQ-C Polymarket reference; gate: `docs/mobile/audits/cycle-ef-c-snapshot-durability-gate.md` | Backend proof: `docs/mobile/harness/cycle-EF-A-snapshot-durability.json`; Samsung tablet proof: `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/cycle-EF-snapshot-durability-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EF-integrated-snapshot-durability/` and `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/` | Integrated proof mutates current market/outcome/provider metadata after order/fill creation, then proves backend and Android Portfolio/activity still render order-time/fill-time selected Book identity with no fallback/default reconstruction and explicit fake-token labels. |
 | Current live game page Book-origin open/cancel/fill status and selection snapshots | Cycle EE integrated | Pass for selected PM-GAP-082 gate | 0 for selected EE gate | P1 real provider-backed line-family status matrix, official production confirmation/cancel/fill recapture, durability checks after metadata changes; P2 Portfolio/history visual status polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook and location-gated ticket reference; ED/DX/DO/Portfolio checked-in lifecycle baselines; gate: `docs/mobile/audits/cycle-ee-c-book-order-status-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EE-integrated-book-order-status/cycle-EE-book-order-status-proof.json`; backend snapshot proof: `docs/mobile/harness/cycle-EE-A-book-order-status-snapshots.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EE-integrated-book-order-status/` and `docs/mobile/harness/cycle-EE-integrated-book-order-status/` | EE integrated proof shows the same Book-origin selected identity through open order, cancel/canceled status, filled position, recent activity/history, guarded backend selection snapshots, visible fake-token status labels, and no-fallback assertions. |
+
+## Cycle LQ
+
+Gate status: Pass
+
+Scope:
+
+- Live tab server-mode feed loading from `/api/events?statusGroup=live&includeMobileMarkets=1`.
+- Route payload shape validation before visible Live cards are normalized.
+- Rejection of malformed compact event, market, outcome, and cursor metadata.
+
+Evidence:
+
+- `docs/mobile/harness/cycle-LQ-live-feed-route-shape-contract/cycle-LQ-live-feed-route-shape-contract.json`
+- `mobile/docs/audits/cycle-LQ-live-feed-route-shape-contract.md`
+- `mobile/src/__tests__/liveEventFeedService.test.ts`
+
+Criteria:
+
+| Criterion | Result | Evidence |
+| --- | --- | --- |
+| Valid route page still renders route-backed Live card state | Pass | LQ proof `validLiveRoutePageRendersOneCard=true` |
+| Missing compact market array rejects before visible card apply | Pass | LQ proof `malformedEventWithoutMarketsRejects=true` |
+| Non-numeric outcome price/quote fields reject before fallback odds | Pass | LQ proof `malformedOutcomePriceRejects=true` |
+| No unresolved P0 remains for focused Live feed route-shape scope | Pass | Route map, gap tracker, and cycle audit updated |
+
+Decision:
+
+- Pass/fail: Pass for focused backend/data-contract scope.
+- Remaining: P2 optional Live-tab-specific retry/error copy.
 
 ## Cycle LE
 

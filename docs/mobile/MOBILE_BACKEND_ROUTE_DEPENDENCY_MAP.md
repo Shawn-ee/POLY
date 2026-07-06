@@ -2307,3 +2307,15 @@ Cycle LP implementation notes:
 - Id-only server confirmations remain valid for legacy/older route responses.
 - When `/api/orders` returns lifecycle numbers, mobile now requires `size`, `remaining`, and `fills[].size` to parse as finite numbers.
 - Malformed lifecycle fields reject before visible latest-order/open-order state is updated.
+
+## Cycle LQ - Live Feed Route Shape Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Live tab route-backed event feed apply | `/api/events?statusGroup=live&includeMobileMarkets=1` | GET | Public viewing | Query params: sport/league filters, `limit`, optional `cursor` | `events[]`, `events[].id/slug/title/status/liveStatus/startTime`, compact `markets[]`, `markets[].outcomes[]`, outcome prices/quotes/tradability, `nextCursor`, `page` | `Event`, `Market`, `Outcome`; compact mobile event list read model | Local/offline Live feed remains local. Server mode now validates route page shape before normalizing visible Live cards. | P2 optional Live-tab-specific retry/error copy. |
+
+Cycle LQ implementation notes:
+
+- `loadLiveEventFeed` validates the backend page, event, market, outcome, cursor, and page metadata shape before applying route data.
+- Outcome `price`, `bestBid`, `bestAsk`, `bestBidSize`, and `bestAskSize` must be finite numeric values or null/blank.
+- Malformed Live route payloads reject before the Live tab can render partial cards or fallback-derived odds.

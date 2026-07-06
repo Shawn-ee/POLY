@@ -4463,6 +4463,35 @@ Future migration concern:
 
 - Replace disposable provider-shaped proof events with production active Polymarket-backed World Cup events before treating provider breadth as complete.
 
+## Cycle LQ - Live Feed Route Shape Contract
+
+Closed or narrowed:
+
+- Live tab server mode now validates `/api/events?statusGroup=live&includeMobileMarkets=1` before normalizing visible cards.
+- The validator requires route-owned event identity, title, status/timing fields, compact markets, compact outcomes, outcome tradability, cursor metadata, and finite outcome price/quote numbers.
+- Malformed route pages reject instead of letting `worldCupAdapter` synthesize fallback probabilities or render partial Live cards.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for Live feed route-shape validation.
+- P2: optional Live-tab-specific retry/error copy if the product wants a more tailored message than the current server data error path.
+
+Schema mismatch:
+
+- No schema migration was required. The existing `/api/events` compact mobile market shape already carries the fields this validation requires.
+
+Route mismatch:
+
+- No route mismatch remains for the focused Live feed apply path. Server mode uses the backend route and rejects malformed payloads before applying UI state.
+
+Temporary mock/static data:
+
+- Local/offline Live feed remains local-only by design and is not used for server-mode malformed route payloads.
+
+Future migration concern:
+
+- If compact Live events add new visible fields, add validator coverage for those fields before rendering them.
+
 ## Cycle LF - Portfolio Position Availability Contract
 
 Closed or narrowed:
