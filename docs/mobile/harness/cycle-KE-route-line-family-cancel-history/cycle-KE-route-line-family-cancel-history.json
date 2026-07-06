@@ -1,0 +1,85 @@
+{
+  "pass": true,
+  "cycle": "Cycle KE",
+  "createdAt": "2026-07-06T07:14:57.520Z",
+  "routes": {
+    "submit": "/api/orders",
+    "cancel": "/api/orders/:id",
+    "portfolio": "/api/portfolio",
+    "history": "/api/portfolio/history"
+  },
+  "families": [
+    {
+      "family": "spread",
+      "orderId": "bf4c68bd-4d5d-41a8-b978-87594fab3aae",
+      "submitSelection": {
+        "marketId": "3ec58336-0c87-48b2-8129-c99c3be9b7ec",
+        "outcomeId": "2e601b00-e4ae-4100-9e6c-265f69091181",
+        "marketType": "spread",
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-ke-spread-cee1b6d2",
+        "referenceTokenId": "token-ke-spread-selected-cee1b6d2"
+      },
+      "routeSelection": {
+        "marketId": "3ec58336-0c87-48b2-8129-c99c3be9b7ec",
+        "outcomeId": "2e601b00-e4ae-4100-9e6c-265f69091181",
+        "marketType": "spread",
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-ke-spread-cee1b6d2",
+        "referenceTokenId": "token-ke-spread-selected-cee1b6d2"
+      },
+      "cancel": {
+        "status": "CANCELED",
+        "canceledByApiKeyId": "pk_live_10bc231d646ee4da"
+      },
+      "portfolio": {
+        "openOrderRemoved": true
+      },
+      "historySelection": {
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-ke-spread-cee1b6d2",
+        "referenceTokenId": "token-ke-spread-selected-cee1b6d2",
+        "limitSide": "ask"
+      }
+    },
+    {
+      "family": "team-total",
+      "orderId": "09028fbb-09c1-4d92-9030-b4726c25fa25",
+      "submitSelection": {
+        "marketId": "02fa41f3-8d21-456e-9431-ee5172281ca5",
+        "outcomeId": "9466cc60-4985-4d43-9757-85a3b2a5e149",
+        "marketType": "team-total",
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-ke-team-total-cee1b6d2",
+        "referenceTokenId": "token-ke-team-total-selected-cee1b6d2"
+      },
+      "routeSelection": {
+        "marketId": "02fa41f3-8d21-456e-9431-ee5172281ca5",
+        "outcomeId": "9466cc60-4985-4d43-9757-85a3b2a5e149",
+        "marketType": "team-total",
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-ke-team-total-cee1b6d2",
+        "referenceTokenId": "token-ke-team-total-selected-cee1b6d2"
+      },
+      "cancel": {
+        "status": "CANCELED",
+        "canceledByApiKeyId": "pk_live_10bc231d646ee4da"
+      },
+      "portfolio": {
+        "openOrderRemoved": true
+      },
+      "historySelection": {
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-ke-team-total-cee1b6d2",
+        "referenceTokenId": "token-ke-team-total-selected-cee1b6d2",
+        "limitSide": "ask"
+      }
+    }
+  ]
+}

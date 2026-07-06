@@ -2,6 +2,20 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KE - Route Line Family Cancel and History
+
+Cycle KE proves selected line/provider identity survives cancel and canceled-history routes for the line families broadened in Cycle KD:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KE-route-line-family-cancel-history/cycle-KE-route-line-family-cancel-history.json`.
+- Proof script: `scripts/prove_mobile_route_line_family_cancel_history.ts`.
+- Focused tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `mobile/src/__tests__/openOrderService.test.ts`, `src/__tests__/orders.cancel.route.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Spread selected-line cancel | `/api/orders` then `/api/orders/:id` | POST then DELETE | Canonical API key/session with `orders:write`; internal trading beta enabled in local proof | Spread ticket submit with selected line/provider `selection`, followed by cancel by order id | Submit route echoes `order.selection`; cancel confirms `CANCELED` and unlocks balance | `ApiOrderRequest`, `Order`, `UserBalance`, `Market`, `Outcome`, provider quote snapshots | Mock cancel path unchanged. Server mode relies on route confirmation. | P1: filled lifecycle breadth for selected Spread tickets. |
+| Team Total selected-line cancel | `/api/orders` then `/api/orders/:id` | POST then DELETE | Canonical API key/session with `orders:write`; internal trading beta enabled in local proof | Team Total ticket submit with selected line/provider `selection`, followed by cancel by order id | Same selected identity and cancel confirmation fields as Spread | `ApiOrderRequest`, `Order`, `UserBalance`, `Market`, `Outcome`, provider quote snapshots | Mock cancel path unchanged. Server mode relies on route confirmation. | P1: filled lifecycle breadth for selected Team Total tickets. |
+| Canceled line-family history | `/api/portfolio` and `/api/portfolio/history` | GET | Canonical API key/session with `account:read` | None | Canceled orders are removed from `openOrders[]`; `canceledOrders[].selection.line`, `period`, `externalMarketId`, `referenceTokenId`, and `limitSide` are preserved | `Order`, `ApiOrderRequest`, `Market`, `Outcome` | Mock Portfolio/history path unchanged. Server mode consumes route snapshots. | P1: immutable first-class order/fill/trade selection snapshot columns remain future hardening. |
+
 ## Cycle KD - Route-Backed Line Family Submit Breadth
 
 Cycle KD broadens the selected line/provider submit echo proof from KC beyond Totals:

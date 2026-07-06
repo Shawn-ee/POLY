@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KE - Route Line Family Cancel and History
+
+Closed or narrowed:
+
+- Selected Spread and Team Total tickets now have route-backed proof through submit, cancel, removal from `/api/portfolio` open orders, and canceled activity in `/api/portfolio/history`.
+- Canceled history preserves line, period, provider market id, provider token, and limit side for both families.
+- The proof exercises the mobile submit guard, actual `/api/orders`, actual `/api/orders/:id`, `/api/portfolio`, and `/api/portfolio/history`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Filled lifecycle breadth for selected spread/totals/team-total tickets.
+- Immutable first-class selection snapshot columns for orders/fills/trades remain future hardening.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection` and route response/order history selection bridges support the KE contract.
+
+Temporary mock/static data:
+
+- KE proof creates disposable backend user, API key, event, Spread and Team Total markets, outcomes, quote snapshots, orders, cancel state, and canceled-history rows. It does not add frontend-only ticket/order rows.
+
 ## Cycle KD - Route-Backed Line Family Submit Breadth
 
 Closed or narrowed:
