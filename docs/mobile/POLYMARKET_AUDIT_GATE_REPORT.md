@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NE
+
+Gate status: Pass
+
+Scope: Profile preferences numeric defaults contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NE-profile-preferences-numeric-defaults-contract/cycle-NE-profile-preferences-numeric-defaults-contract.json`
+- Focused tests: `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NE-profile-preferences-numeric-defaults-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode profile preferences reject malformed ticket default amount/slippage strings before visible Account settings state applies.
+
 ## Cycle ND
 
 Gate status: Pass

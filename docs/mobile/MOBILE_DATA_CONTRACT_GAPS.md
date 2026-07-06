@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NE - Profile Preferences Numeric Defaults Contract
+
+Closed or narrowed:
+
+- Profile preferences validation now rejects nonnumeric or nonpositive `ticketDefaultAmount` strings before visible Account settings state applies.
+- Profile preferences validation now rejects malformed or out-of-range `ticketDefaultSlippage` strings before visible Account settings state applies.
+- Missing slippage from older backend payloads still defaults to `1%`.
+- Save round trip preserves canonical numeric default strings.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Profile preferences numeric defaults contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/profile/preferences` string fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local preferences remain unchanged. Server-mode malformed numeric defaults reject before visible settings state applies.
+
 ## Cycle ND - Account Navigation Consistency Contract
 
 Closed or narrowed:

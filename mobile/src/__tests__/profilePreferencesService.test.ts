@@ -43,6 +43,33 @@ describe("Holiwyn profile preferences service", () => {
     });
   });
 
+  test("accepts numeric ticket amount and bounded percent slippage strings", () => {
+    expect(
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "0.01",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "0%",
+        savedEventIds: [],
+      }),
+    ).toMatchObject({
+      ticketDefaultAmount: "0.01",
+      ticketDefaultSlippage: "0%",
+    });
+    expect(
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "100",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "100%",
+        savedEventIds: [],
+      }),
+    ).toMatchObject({
+      ticketDefaultAmount: "100",
+      ticketDefaultSlippage: "100%",
+    });
+  });
+
   test("defaults missing server slippage to 1 percent for older profile payloads", () => {
     expect(
       fromProfilePreferencesPayload({
@@ -175,5 +202,49 @@ describe("Holiwyn profile preferences service", () => {
         savedEventIds: ["mexico-ecuador", 42] as string[],
       }),
     ).toThrow("Profile preferences response had invalid savedEventIds.");
+  });
+
+  test("rejects nonnumeric or nonpositive ticket defaults before applying visible settings", () => {
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "abc",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "1%",
+        savedEventIds: [],
+      }),
+    ).toThrow("Profile preferences response had invalid ticketDefaultAmount.");
+
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "0",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "1%",
+        savedEventIds: [],
+      }),
+    ).toThrow("Profile preferences response had invalid ticketDefaultAmount.");
+  });
+
+  test("rejects malformed or out-of-range slippage before applying visible settings", () => {
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "100",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "banana",
+        savedEventIds: [],
+      }),
+    ).toThrow("Profile preferences response had invalid ticketDefaultSlippage.");
+
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "100",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "101%",
+        savedEventIds: [],
+      }),
+    ).toThrow("Profile preferences response had invalid ticketDefaultSlippage.");
   });
 });

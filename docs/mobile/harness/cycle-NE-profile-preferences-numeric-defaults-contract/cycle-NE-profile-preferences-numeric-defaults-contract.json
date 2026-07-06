@@ -1,0 +1,20 @@
+{
+  "cycle": "Cycle NE",
+  "feature": "Profile preferences numeric defaults contract",
+  "generatedAt": "2026-07-06T13:31:31.015Z",
+  "route": "/api/profile/preferences",
+  "contract": {
+    "validPayload": "ticketDefaultAmount must be a positive numeric string and ticketDefaultSlippage must be a 0..100 percent string.",
+    "legacyPayload": "missing slippage remains supported through the existing 1% default.",
+    "malformedPayload": "nonnumeric amount, nonpositive amount, malformed slippage, or out-of-range slippage rejects before visible Account settings state applies."
+  },
+  "assertions": {
+    "positiveAmountAndZeroSlippageAccepted": true,
+    "maxSlippageAccepted": true,
+    "saveRoundTripPreservesNumericDefaults": true,
+    "nonnumericAmountRejects": true,
+    "zeroAmountRejects": true,
+    "malformedSlippageRejects": true,
+    "aboveMaxSlippageRejects": true
+  }
+}

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NE - Profile Preferences Numeric Defaults Contract
+
+Cycle NE hardens profile preference numeric defaults before visible Account settings state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NE-profile-preferences-numeric-defaults-contract/cycle-NE-profile-preferences-numeric-defaults-contract.json`.
+- Proof script: `scripts/prove_mobile_profile_preferences_numeric_defaults_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account settings profile preference defaults | `/api/profile/preferences` through `PolyApi.getProfilePreferences()` and `PolyApi.saveProfilePreferences()` | GET/PUT | Canonical API key/session with profile read/write access | Locale, ticket default amount, side, slippage, saved event ids | `ticketDefaultAmount` must be a positive numeric string; `ticketDefaultSlippage` must be a percent string from `0%` to `100%`; missing legacy slippage defaults to `1%` | User profile preferences store | Mock/local preferences remain unchanged. Server-mode malformed numeric defaults reject before visible Account settings state applies. | None for focused Profile preferences numeric defaults contract. P2 optional Account settings-specific malformed preference copy. |
+
 ## Cycle ND - Account Navigation Consistency Contract
 
 Cycle ND hardens Account navigation metadata before visible Account menu state applies:
