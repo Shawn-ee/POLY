@@ -218,6 +218,16 @@ function assertEventRulesShape(event: Record<string, unknown>, eventId: string) 
   if (event.resultMode === "no_draw" && event.gameRules.allowDraw !== false) {
     throw new Error(`Event detail route returned event ${eventId} with inconsistent draw rules.`);
   }
+  if (event.marketProfile === "regulation_90") {
+    if (event.resultMode !== "can_draw" || event.gameRules.allowDraw !== true || event.gameRules.includesOvertime !== false) {
+      throw new Error(`Event detail route returned event ${eventId} with inconsistent regulation profile rules.`);
+    }
+  }
+  if (event.marketProfile === "to_advance" || event.marketProfile === "full_match_with_overtime") {
+    if (event.resultMode !== "no_draw" || event.gameRules.allowDraw !== false || event.gameRules.includesOvertime !== true) {
+      throw new Error(`Event detail route returned event ${eventId} with inconsistent no-draw profile rules.`);
+    }
+  }
   if (!Array.isArray(event.supportedMarketTypes) || event.supportedMarketTypes.some((item) => !isSupportedMarketType(item))) {
     throw new Error(`Event detail route returned event ${eventId} with malformed supportedMarketTypes.`);
   }

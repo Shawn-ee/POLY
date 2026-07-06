@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NU - Event Detail Profile Rules Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail `regulation_90` profiles now require `resultMode=can_draw`, `allowDraw=true`, and `includesOvertime=false`.
+- Route-backed Event Detail `to_advance` and `full_match_with_overtime` profiles now require `resultMode=no_draw`, `allowDraw=false`, and `includesOvertime=true`.
+- Contradictory event-level game-rule fields reject before visible Event Detail state applies.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail profile rules contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing live-detail `marketProfile`, `resultMode`, and `gameRules` fields support this contract.
+
+Temporary mock/static data:
+
+- Local/mock Event Detail behavior remains unchanged. Server-mode malformed profile rules reject before visible Event Detail state applies.
+
 ## Cycle NT - Event Detail Profile Outcome Contract
 
 Closed or narrowed:

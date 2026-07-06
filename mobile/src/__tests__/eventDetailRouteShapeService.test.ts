@@ -172,6 +172,48 @@ describe("event detail route shape service", () => {
     expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("inconsistent draw rules");
   });
 
+  test("rejects regulation profiles that include overtime before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    payload.event.marketProfile = "regulation_90";
+    payload.event.resultMode = "can_draw";
+    payload.event.gameRules.allowDraw = true;
+    payload.event.gameRules.includesOvertime = true;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("inconsistent regulation profile rules");
+  });
+
+  test("rejects advance profiles that can draw before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    payload.event.marketProfile = "to_advance";
+    payload.event.resultMode = "can_draw";
+    payload.event.gameRules.allowDraw = true;
+    payload.event.gameRules.includesOvertime = true;
+    payload.event.supportedMarketTypes = ["to_advance"];
+    payload.markets[0].marketType = "to_advance";
+    payload.markets[0].outcomes = [
+      { id: "home", name: "Home advances", label: "Home advances", side: "home", price: 0.52, bestBid: null, bestAsk: null, isTradable: true },
+      { id: "away", name: "Away advances", label: "Away advances", side: "away", price: 0.48, bestBid: null, bestAsk: null, isTradable: true },
+    ];
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("inconsistent no-draw profile rules");
+  });
+
+  test("rejects full-match overtime profiles that omit overtime before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    payload.event.marketProfile = "full_match_with_overtime";
+    payload.event.resultMode = "no_draw";
+    payload.event.gameRules.allowDraw = false;
+    payload.event.gameRules.includesOvertime = false;
+    payload.event.supportedMarketTypes = ["full_match_with_overtime"];
+    payload.markets[0].marketType = "full_match_with_overtime";
+    payload.markets[0].outcomes = [
+      { id: "home", name: "Mexico", label: "Mexico", side: "home", price: 0.51, bestBid: null, bestAsk: null, isTradable: true },
+      { id: "away", name: "Ecuador", label: "Ecuador", side: "away", price: 0.49, bestBid: null, bestAsk: null, isTradable: true },
+    ];
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("inconsistent no-draw profile rules");
+  });
+
   test("rejects market profile missing from supported market types before Event Detail applies", () => {
     const payload = detailPayload();
     payload.event.supportedMarketTypes = ["spread"];

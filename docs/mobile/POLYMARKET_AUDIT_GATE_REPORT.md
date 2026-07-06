@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NU
+
+Gate status: Pass
+
+Scope: Event Detail profile rules contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NU-event-detail-profile-rules-contract/cycle-NU-event-detail-profile-rules-contract.json`
+- Focused tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NU-event-detail-profile-rules-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Route-backed Event Detail rejects contradictory `marketProfile`, `resultMode`, and `gameRules` combinations before visible state applies.
+
 ## Cycle NT
 
 Gate status: Pass

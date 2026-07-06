@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NU - Event Detail Profile Rules Contract
+
+Cycle NU hardens Event Detail backend-owned profile rules before visible state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NU-event-detail-profile-rules-contract/cycle-NU-event-detail-profile-rules-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_profile_rules_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail backend-owned profile rules | `/api/mobile/events/:slug/live-detail` through Event Detail hydration | GET | Public/mobile route | Event slug | Event `marketProfile`, `resultMode`, `gameRules.allowDraw`, `gameRules.includesOvertime`; regulation profiles must be draw-capable and overtime-free, while advance/overtime profiles must be no-draw and include overtime/advancement semantics | `Event`, listed public `Market`, `Outcome`, backend market-rule/profile derivation | Local/mock Event Detail remains unchanged. Route-backed Event Detail rejects contradictory event-level profile rules before visible market state applies. | None for focused Event Detail profile rules contract. P2 optional event-rule-specific error copy. |
+
 ## Cycle NT - Event Detail Profile Outcome Contract
 
 Cycle NT hardens Event Detail primary profile market outcome structure before visible markets apply:
