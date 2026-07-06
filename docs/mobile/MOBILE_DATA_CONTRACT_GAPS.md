@@ -4724,6 +4724,35 @@ Future migration concern:
 
 - If product wants user-local Today semantics, add timezone input or user profile timezone to the route contract and prove it separately.
 
+## Cycle LN - Mobile Saved Event Identity Filter Contract
+
+Closed or narrowed:
+
+- `/api/events?eventIds=...` now accepts both database event ids and mobile-normalized event slugs.
+- Home/Search Saved filters no longer depend on saved values being database ids when mobile stores `event.slug || event.id`.
+- Empty saved state remains a local mobile empty-state path and does not fall through to an unfiltered backend route.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for saved event identity filtering.
+- P1: a first-class saved/followed event or market route may be needed if saved state grows beyond profile preferences.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `Event.id` and `Event.slug` carry the identity bridge.
+
+Route mismatch:
+
+- No mismatch for the focused flow. Mobile sends saved identities as `eventIds`; the backend now treats each value as either id or slug.
+
+Temporary mock/static data:
+
+- Local/offline saved filtering remains unchanged.
+
+Future migration concern:
+
+- If backend-owned saved state becomes canonical, replace client-sent ids with an authenticated saved-list route and keep this id/slug compatibility only as import/backfill support.
+
 ## Cycle LB - Event Detail Line Availability Contract
 
 Closed or narrowed:

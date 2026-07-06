@@ -5,7 +5,7 @@ import { serializeEventSummary } from "@/server/services/eventReadModel";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
 import { selectCompactLiveMarkets } from "@/server/services/mobileLiveEventDetail";
 import { resolveSortedMobilePageStart } from "@/server/services/mobileEventPagination";
-import { eventMarketTypeFilter, listedMarketWhere } from "@/server/services/mobileEventListFilters";
+import { eventIdsFilter, eventMarketTypeFilter, listedMarketWhere } from "@/server/services/mobileEventListFilters";
 import { eventStatusGroupFilter } from "@/server/services/mobileEventStatusFilters";
 
 const DEFAULT_LIMIT = 50;
@@ -150,9 +150,6 @@ const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
         ],
     }
     : {};
-
-const eventIdsFilter = (eventIds: string[]): Prisma.EventWhereInput =>
-  eventIds.length ? { id: { in: eventIds } } : {};
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);

@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Mobile saved event identity filter contract | Cycle LN | Pass for backend/data-contract scope | 0 for focused saved id/slug scope | P1 first-class saved/followed route if saved state outgrows profile preferences | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LN-mobile-saved-event-identity-filter-contract/cycle-LN-mobile-saved-event-identity-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LN-mobile-saved-event-identity-filter-contract.md` | `/api/events?eventIds=...` now matches both `Event.id` and `Event.slug`, aligning backend Saved filters with mobile's normalized event identity. |
 | Mobile event status group contract | Cycle LM | Pass for backend/data-contract scope | 0 for focused status-group scope | P2 optional user-local timezone semantics for Today | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LM-mobile-event-status-group-contract/cycle-LM-mobile-event-status-group-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LM-mobile-event-status-group-contract.md` | `/api/events?statusGroup=live` now includes `liveStatus=in_progress`; `statusGroup=upcoming` now excludes live/today/terminal events instead of meaning only not-live. |
 | Mobile event listed-market filter contract | Cycle LL | Pass for backend/data-contract scope | 0 for focused pre-pagination listed-market scope | Existing provider metric/ranking P1s remain outside this focused contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md` | `/api/events` now requires at least one public listed market in the event query before pagination, preventing no-market events from consuming visible mobile page slots or killing next cursor. |
 | Sorted mobile event cursor contract | Cycle LK | Pass for backend/data-contract scope | 0 for focused sorted cursor scope | None for focused sorted mobile event cursor contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md` | `/api/events?includeMobileMarkets=1&sortBy=popular/live` now rejects sorted cursors outside the backend-filtered result set instead of restarting at page one and duplicating visible discovery cards. |
@@ -4609,3 +4610,37 @@ Decision:
 - Pass/fail: Pass for focused mobile event status group contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional user-local timezone semantics for Today.
+
+## Cycle LN - Mobile Saved Event Identity Filter Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure backend Saved filters accept the same event identity that mobile stores and sends.
+
+Reference Audit Agent: Backend/data-contract loop. Manual visual review is not required for this route contract.
+
+Implementation Agent: Moved saved event id filtering into shared event-list filters, matched both `Event.id` and `Event.slug`, added focused route tests, and generated harness proof.
+
+Audit Gate Agent: Proof script, focused backend tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LN-mobile-saved-event-identity-filter-contract.md`
+- `docs/mobile/harness/cycle-LN-mobile-saved-event-identity-filter-contract/cycle-LN-mobile-saved-event-identity-filter-contract.json`
+- `scripts/prove_mobile_saved_event_identity_filter_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LN-P0-01 | P0 | Pass | Empty saved route filter does not constrain the backend query. | N/A |
+| LN-P0-02 | P0 | Pass | Saved values match `Event.id`. | N/A |
+| LN-P0-03 | P0 | Pass | Saved values match `Event.slug`. | N/A |
+| LN-P0-04 | P0 | Pass | The same saved values are applied to id and slug in one OR filter. | N/A |
+| LN-P1-01 | P1 | Open | Saved state still comes from profile preferences/local app state. | Add first-class saved/followed route only if saved state outgrows preferences. |
+
+Decision:
+
+- Pass/fail: Pass for focused mobile saved event identity filter contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional first-class saved/followed route.

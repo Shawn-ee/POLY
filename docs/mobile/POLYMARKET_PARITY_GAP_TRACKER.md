@@ -16,6 +16,7 @@ Rule: a feature cannot be marked complete while it has unresolved P0 gaps. P1/P2
 
 | Feature | P0 open | P1 open | P2 open | Latest status | Evidence |
 | --- | ---: | ---: | ---: | --- | --- |
+| Mobile saved event identity filter contract | 0 for focused backend/data-contract scope | 1 | 0 | Cycle LN verifies `/api/events?eventIds=...` accepts both database event ids and mobile-normalized slugs, so Home/Search Saved filters do not go empty when saved state stores the event slug. Remaining P1 work is a first-class saved/followed route if saved state outgrows profile preferences. | Harness proof: `docs/mobile/harness/cycle-LN-mobile-saved-event-identity-filter-contract/cycle-LN-mobile-saved-event-identity-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LN-mobile-saved-event-identity-filter-contract.md` |
 | Mobile event status group contract | 0 for focused backend/data-contract scope | 0 | 1 | Cycle LM verifies `/api/events?statusGroup=live|today|upcoming` uses backend-owned status semantics: live includes `liveStatus=in_progress`, today uses the UTC day window, and upcoming excludes live/today/terminal events. Remaining P2 work is optional user-local timezone semantics for Today. | Harness proof: `docs/mobile/harness/cycle-LM-mobile-event-status-group-contract/cycle-LM-mobile-event-status-group-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LM-mobile-event-status-group-contract.md` |
 | Mobile event listed-market filter contract | 0 for focused backend/data-contract scope | 0 | 0 | Cycle LL verifies `/api/events` filters for public listed markets before pagination so no-market events cannot consume visible mobile page slots or hide a valid next cursor. | Harness proof: `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md` |
 | Sorted mobile event cursor contract | 0 for focused backend/data-contract scope | 0 | 0 | Cycle LK verifies sorted Home/Search-style mobile event pages reject stale or filtered-out cursors instead of restarting at page one and duplicating visible cards. | Harness proof: `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md` |
@@ -593,3 +594,10 @@ For every UI element or interaction, answer:
 - LM closes the focused P0 data-contract gap where Upcoming could include terminal non-live events and Live could miss events represented only by `liveStatus=in_progress`.
 - Harness proof passes for live status/liveStatus matching, UTC Today window, scheduled/future Upcoming inclusion, and live/today/terminal Upcoming exclusion.
 - Remaining P2: optional user-local timezone semantics for Today if product requires it.
+
+## Cycle LN Gap Tracker Update
+
+- PM-GAP-113 is opened and verified for mobile saved event identity filtering.
+- LN closes the focused P0 data-contract gap where Saved filters could send mobile-normalized slugs while `/api/events` only matched database ids.
+- Harness proof passes for empty saved-state filter behavior, database id matching, slug matching, and shared OR filter shape.
+- Remaining P1: first-class saved/followed route if saved state outgrows profile preferences.

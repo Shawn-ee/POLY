@@ -402,6 +402,37 @@ describe("public event API no-leak checks", () => {
     expectNoForbiddenKeys(body);
   });
 
+  test("GET /api/events saved event filter accepts backend ids and mobile slugs", async () => {
+    mockPrisma.event.findMany.mockResolvedValue([
+      {
+        ...baseEvent,
+        id: "db-event-id",
+        slug: "saved-event-slug",
+        markets: [{ status: "LIVE", title: "Match Winner", referenceMetadata: null }],
+      },
+    ]);
+
+    const response = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&eventIds=db-event-id,saved-event-slug&limit=10"),
+    );
+
+    expect(response.status).toBe(200);
+    const findManyInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
+    expect(findManyInput.where.AND).toEqual(expect.arrayContaining([
+      {
+        OR: [
+          { id: { in: ["db-event-id", "saved-event-slug"] } },
+          { slug: { in: ["db-event-id", "saved-event-slug"] } },
+        ],
+      },
+    ]));
+
+    const body = await response.json();
+    expect(body.events).toHaveLength(1);
+    expect(body.events[0].slug).toBe("saved-event-slug");
+    expectNoForbiddenKeys(body);
+  });
+
   test("GET /api/events supports mobile Search statusGroup filters", async () => {
     mockPrisma.event.findMany.mockResolvedValue([
       {

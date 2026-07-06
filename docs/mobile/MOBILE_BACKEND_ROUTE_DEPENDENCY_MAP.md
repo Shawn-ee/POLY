@@ -2269,3 +2269,16 @@ Cycle LM implementation notes:
 - `statusGroup=live` now matches `Event.status=live` or `Event.liveStatus=live|in_progress`.
 - `statusGroup=upcoming` now requires scheduled/upcoming status or future `startTime`, while excluding live, today, closed, ended, resolved, settled, canceled, and related terminal statuses.
 - `statusGroup=today` remains backend-owned UTC-day filtering.
+
+## Cycle LN - Mobile Saved Event Identity Filter Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home Saved event filter | `/api/events?eventIds=<saved-id-or-slug>&includeMobileMarkets=1` | GET | Public viewing | Saved event identity values from mobile/profile preferences | Saved `events[]`, compact `markets[]`, `nextCursor`, `page` | `Event.id`, `Event.slug`, listed `Market` rows | Empty saved state remains handled locally without an unfiltered route fallback. | P1 first-class saved/followed route if saved state outgrows profile preferences. |
+| Search Saved event filter | `/api/events?search=...&eventIds=<saved-id-or-slug>&includeMobileMarkets=1` | GET | Public viewing | Search query plus saved event identity values | Saved search `events[]`, compact `markets[]`, `nextCursor`, `page` | `Event.id`, `Event.slug`, listed `Market` rows | Empty saved state remains handled locally without an unfiltered route fallback. | P1 first-class saved/followed route if needed later. |
+
+Cycle LN implementation notes:
+
+- Mobile saves normalized event identity as `event.slug || event.id`.
+- `/api/events?eventIds=...` now matches each saved value against both `Event.id` and `Event.slug`.
+- This keeps existing profile-preference saved state compatible with backend-filtered Home/Search Saved pages.

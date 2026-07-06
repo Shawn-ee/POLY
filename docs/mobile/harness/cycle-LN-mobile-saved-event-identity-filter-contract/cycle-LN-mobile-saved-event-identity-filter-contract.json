@@ -1,0 +1,44 @@
+{
+  "cycle": "Cycle LN",
+  "feature": "Mobile saved event identity filter contract",
+  "generatedAt": "2026-07-06T10:34:04.171Z",
+  "route": "/api/events?eventIds=...",
+  "contract": {
+    "mobileIdentity": "mobile saves normalized event.id, which is event.slug when present",
+    "backendIdentity": "backend filters saved values against both Event.id and Event.slug",
+    "emptySavedState": "empty saved state remains handled by mobile and produces no route constraint"
+  },
+  "samples": {
+    "savedValues": [
+      "db-event-id",
+      "saved-event-slug"
+    ],
+    "filter": {
+      "OR": [
+        {
+          "id": {
+            "in": [
+              "db-event-id",
+              "saved-event-slug"
+            ]
+          }
+        },
+        {
+          "slug": {
+            "in": [
+              "db-event-id",
+              "saved-event-slug"
+            ]
+          }
+        }
+      ]
+    },
+    "emptyFilter": {}
+  },
+  "assertions": {
+    "emptySavedFilterDoesNotConstrainRoute": true,
+    "savedFilterMatchesDatabaseIds": true,
+    "savedFilterMatchesMobileSlugs": true,
+    "savedFilterUsesSameValuesForIdAndSlug": true
+  }
+}

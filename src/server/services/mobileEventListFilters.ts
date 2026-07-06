@@ -20,3 +20,13 @@ export const eventMarketTypeFilter = (marketType: string): Prisma.EventWhereInpu
     some: listedMarketWhere(marketType),
   },
 });
+
+export const eventIdsFilter = (eventIds: string[]): Prisma.EventWhereInput =>
+  eventIds.length
+    ? {
+        OR: [
+          { id: { in: eventIds } },
+          { slug: { in: eventIds } },
+        ],
+      }
+    : {};
