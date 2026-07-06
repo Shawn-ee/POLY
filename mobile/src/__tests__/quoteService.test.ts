@@ -199,6 +199,53 @@ describe("quote service", () => {
     await expect(loadTicketQuotes(api, "winner", "usa")).rejects.toThrow(/invalid bestBid/);
   });
 
+  test("rejects route quote prices above contract bounds before applying ticket odds", async () => {
+    const getMarketQuote = vi.fn(async () => ({
+      marketId: "winner",
+      quotes: [
+        {
+          outcomeId: "usa",
+          outcomeName: "USA",
+          bestBid: 0.41,
+          bestAsk: "1.2",
+          midPrice: 0.42,
+          lastPrice: null,
+        },
+      ],
+    }));
+    const api = { getMarketQuote } as unknown as PolyApi;
+
+    await expect(loadTicketQuotes(api, "winner", "usa")).rejects.toThrow(/invalid bestAsk/);
+  });
+
+  test("allows large route quote depth sizes before applying ticket odds", async () => {
+    const getMarketQuote = vi.fn(async () => ({
+      marketId: "winner",
+      quotes: [
+        {
+          outcomeId: "usa",
+          outcomeName: "USA",
+          bestBid: 0.41,
+          bestAsk: 0.43,
+          bestBidSize: "1200.5",
+          bestAskSize: 2400,
+          midPrice: 0.42,
+          lastPrice: null,
+        },
+      ],
+    }));
+    const api = { getMarketQuote } as unknown as PolyApi;
+
+    await expect(loadTicketQuotes(api, "winner", "usa")).resolves.toMatchObject([
+      {
+        bestBid: 41,
+        bestAsk: 43,
+        bestBidSize: 1200.5,
+        bestAskSize: 2400,
+      },
+    ]);
+  });
+
   test("rejects quote payloads for the wrong market before applying ticket odds", async () => {
     const getMarketQuote = vi.fn(async () => ({
       marketId: "other-market",

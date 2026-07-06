@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MW - Quote Price Bounds Contract
+
+Closed or narrowed:
+
+- Quote route validation now rejects `bestBid`, `bestAsk`, `midPrice`, and `lastPrice` values outside the contract price range `0` to `1`.
+- Bulk quote refresh now marks markets with above-one quote prices as failed, feeding existing unavailable-market guards.
+- Quote depth sizes remain separate from quote prices, so large `bestBidSize` and `bestAskSize` values are still accepted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused quote price bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/markets/:id/quote` price and depth fields support this contract.
+
+Temporary mock/static data:
+
+- Direct local quote conversion remains tolerant for local/legacy conversion tests. Server-mode route loading rejects impossible quote prices before visible odds apply.
+
 ## Cycle MV - Market Chart Price Bounds Contract
 
 Closed or narrowed:

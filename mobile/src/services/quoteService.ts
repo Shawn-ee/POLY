@@ -37,6 +37,16 @@ const isNullableFiniteNonNegativeNumberLike = (value: unknown, optional = false)
   return false;
 };
 
+const isNullableProbabilityNumberLike = (value: unknown) => {
+  if (value === null) return true;
+  if (typeof value === "number") return Number.isFinite(value) && value >= 0 && value <= 1;
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1;
+  }
+  return false;
+};
+
 function assertQuoteRoutePayloadShape(
   payload: unknown,
   requestedMarketId: string,
@@ -64,7 +74,7 @@ function assertQuoteRoutePayloadShape(
       throw new Error(`Quote route returned quote ${quote.outcomeId} without outcomeName.`);
     }
     for (const field of ["bestBid", "bestAsk", "midPrice", "lastPrice"] as const) {
-      if (!isNullableFiniteNonNegativeNumberLike(quote[field])) {
+      if (!isNullableProbabilityNumberLike(quote[field])) {
         throw new Error(`Quote route returned invalid ${field} for outcome ${quote.outcomeId}.`);
       }
     }

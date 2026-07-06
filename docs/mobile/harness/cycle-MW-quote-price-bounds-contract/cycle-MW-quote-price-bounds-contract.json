@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle MW",
+  "feature": "Quote route price bounds contract",
+  "generatedAt": "2026-07-06T13:01:33.496Z",
+  "route": "/api/markets/:id/quote",
+  "contract": {
+    "validPayload": "Quote route price fields must be contract prices from 0 to 1 before visible ticket/card odds apply; depth sizes may exceed 1.",
+    "malformedPayload": "Above-one quote prices reject directly and enter failedMarketIds in bulk quote refresh."
+  },
+  "assertions": {
+    "validProbabilityQuotesAccepted": true,
+    "quotePriceOneAccepted": true,
+    "bestAskAboveOneRejects": true,
+    "midPriceAboveOneRejects": true,
+    "lastPriceAboveOneRejects": true,
+    "malformedBulkQuoteMarksMarketFailed": true
+  }
+}

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MW - Quote Price Bounds Contract
+
+Cycle MW hardens quote route price fields before visible ticket/card odds apply:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MW-quote-price-bounds-contract/cycle-MW-quote-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_quote_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/quoteService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Ticket/card quote refresh price bounds | `/api/markets/:id/quote` through `PolyApi.getMarketQuote()` | GET | Public/mobile route | Market id and optional outcome id | Quote `bestBid`, `bestAsk`, `midPrice`, and `lastPrice` must be contract prices from `0` to `1`; `bestBidSize` and `bestAskSize` remain non-negative depth values and may exceed `1` | `Market`, `Outcome`, provider quote/depth projection | Direct local quote conversion remains tolerant. Server-mode route loading rejects impossible quote prices and bulk refresh marks malformed markets failed. | None for focused quote price bounds contract. P2 optional quote-specific retry/error copy. |
+
 ## Cycle MV - Market Chart Price Bounds Contract
 
 Cycle MV hardens chart route history prices before visible Event Detail/Futures chart state applies:
