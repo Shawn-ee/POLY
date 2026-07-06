@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MU - Portfolio Open Order Lifecycle Contract
+
+Cycle MU hardens server-mode Portfolio open-order lifecycle quantities before visible Orders state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MU-portfolio-open-order-lifecycle-contract/cycle-MU-portfolio-open-order-lifecycle-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_open_order_lifecycle_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio open-order lifecycle quantities | `/api/portfolio` through `PolyApi.getPortfolio()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | Open-order `price`, `size`, and `remaining`; `remaining` must be less than or equal to `size`; visible `orderValue`, `remainingShares`, and `originalShares` reuse validated values | `Order`, `Market`, `Outcome`, selected-market snapshot metadata | Mock/local Portfolio remains unchanged. Server-mode impossible open-order lifecycle quantities reject before visible Orders state applies. | None for focused Portfolio open-order lifecycle contract. P2 optional field-specific lifecycle error copy. |
+
 ## Cycle MT - Order Lifecycle Consistency Contract
 
 Cycle MT hardens server-mode Trade Ticket order lifecycle totals before visible submitted-order state applies:

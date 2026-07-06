@@ -263,6 +263,48 @@ describe("portfolio snapshot service", () => {
     await expect(loadPortfolioSnapshot(invalidOrderApi)).rejects.toThrow("Portfolio snapshot response had invalid openOrders[].price.");
   });
 
+  test("accepts open orders with remaining equal to original size", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            size: 100,
+            remaining: 100,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).resolves.toMatchObject({
+      openOrders: [
+        {
+          originalShares: 100,
+          remainingShares: 100,
+          remaining: 100,
+        },
+      ],
+    });
+  });
+
+  test("rejects open orders with remaining above original size before applying Portfolio state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            size: 100,
+            remaining: 101,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had openOrders[].remaining above openOrders[].size.");
+  });
+
   test("preserves backend line selection labels for positions and open orders", async () => {
     const getPortfolio = vi.fn(async () =>
       snapshot({

@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MU - Portfolio Open Order Lifecycle Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio snapshot now rejects open orders where `remaining > size`.
+- Visible Portfolio order rows now reuse one parsed set of `price`, `size`, and `remaining` values instead of separately parsing the same backend fields.
+- Impossible open-order quantities no longer become visible Orders state.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio open-order lifecycle contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` open-order `size` and `remaining` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio remains unchanged. Server-mode impossible open-order quantities reject before visible Orders state applies.
+
 ## Cycle MT - Order Lifecycle Consistency Contract
 
 Closed or narrowed:

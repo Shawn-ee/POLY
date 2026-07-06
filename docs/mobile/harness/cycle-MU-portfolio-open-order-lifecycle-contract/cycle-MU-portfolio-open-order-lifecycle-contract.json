@@ -1,0 +1,15 @@
+{
+  "cycle": "Cycle MU",
+  "feature": "Portfolio open-order lifecycle consistency contract",
+  "generatedAt": "2026-07-06T12:53:42.733Z",
+  "route": "/api/portfolio",
+  "contract": {
+    "validPayload": "Portfolio open order remaining shares must be less than or equal to original order size before visible Orders state applies.",
+    "malformedPayload": "remaining above original size rejects before Portfolio state applies."
+  },
+  "assertions": {
+    "partialOpenOrderAccepted": true,
+    "equalRemainingOpenOrderAccepted": true,
+    "remainingAboveSizeRejects": true
+  }
+}

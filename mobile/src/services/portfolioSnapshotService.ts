@@ -58,6 +58,20 @@ const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
   return value as T[];
 };
 
+const parseOpenOrderEconomics = (order: PortfolioOpenOrderItem) => {
+  const price = requireNonNegativeNumber(order.price, "openOrders[].price");
+  const remaining = requireNonNegativeNumber(order.remaining, "openOrders[].remaining");
+  const size = requireNonNegativeNumber(order.size, "openOrders[].size");
+  if (remaining > size) {
+    throw new Error("Portfolio snapshot response had openOrders[].remaining above openOrders[].size.");
+  }
+  return {
+    price,
+    remaining,
+    size,
+  };
+};
+
 export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnapshotResult> => {
   const snapshot = await api.getPortfolio();
   const positions = requireArray<PortfolioPositionItem>(snapshot.positions, "positions");
@@ -85,19 +99,22 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       currentValue: requireNonNegativeNumber(position.valueTokens, "positions[].valueTokens"),
       pnl: requireFiniteNumber(position.pnlTokens, "positions[].pnlTokens"),
     })),
-    openOrders: openOrders.map((order) => ({
-      id: order.id,
-      title: order.market.title,
-      outcome: order.outcome.name,
-      selection: portfolioSelectionFromBackend(order.selection, "openOrders[].selection"),
-      side: order.side === "SELL" ? "sell" : "buy",
-      status: order.status,
-      price: requireNonNegativeNumber(order.price, "openOrders[].price"),
-      remaining: requireNonNegativeNumber(order.remaining, "openOrders[].remaining"),
-      originalShares: requireNonNegativeNumber(order.size, "openOrders[].size"),
-      remainingShares: requireNonNegativeNumber(order.remaining, "openOrders[].remaining"),
-      orderValue: requireNonNegativeNumber(order.remaining, "openOrders[].remaining") * requireNonNegativeNumber(order.price, "openOrders[].price"),
-      placedAt: formatOpenOrderTimestamp(order.createdAt),
-    })),
+    openOrders: openOrders.map((order) => {
+      const economics = parseOpenOrderEconomics(order);
+      return {
+        id: order.id,
+        title: order.market.title,
+        outcome: order.outcome.name,
+        selection: portfolioSelectionFromBackend(order.selection, "openOrders[].selection"),
+        side: order.side === "SELL" ? "sell" : "buy",
+        status: order.status,
+        price: economics.price,
+        remaining: economics.remaining,
+        originalShares: economics.size,
+        remainingShares: economics.remaining,
+        orderValue: economics.remaining * economics.price,
+        placedAt: formatOpenOrderTimestamp(order.createdAt),
+      };
+    }),
   };
 };
