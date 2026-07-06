@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle NF",
+  "feature": "Account profile link consistency contract",
+  "generatedAt": "2026-07-06T13:34:37.894Z",
+  "route": "/api/account/profile",
+  "contract": {
+    "validPayload": "Linked wallet/profile booleans must agree with walletAddress/email identity fields.",
+    "unlinkedPayload": "Unlinked wallet and Google account may omit walletAddress/email.",
+    "malformedPayload": "contradictory link metadata rejects before visible Account profile state applies."
+  },
+  "assertions": {
+    "linkedProfileAccepted": true,
+    "unlinkedProfileAccepted": true,
+    "walletLinkedWithoutAddressRejects": true,
+    "googleLinkedWithoutEmailRejects": true,
+    "malformedBooleanStillRejects": true
+  }
+}

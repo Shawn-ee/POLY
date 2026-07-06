@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NF - Account Profile Link Consistency Contract
+
+Cycle NF hardens Account profile linked identity metadata before visible Account profile state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NF-account-profile-link-consistency-contract/cycle-NF-account-profile-link-consistency-contract.json`.
+- Proof script: `scripts/prove_mobile_account_profile_link_consistency_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/accountProfileService.test.ts`, `mobile/src/__tests__/accountBootstrapService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account profile linked identity consistency | `/api/account/profile` through `PolyApi.getAccountProfile()` | GET | Canonical API key/session with account read access | None beyond authenticated request | `hasWalletLinked` must agree with `walletAddress`; `hasGoogleLinked` must agree with `email`; display identity fields remain required | `User`, linked auth provider records, wallet/account identity metadata | Mock/local Account remains unchanged. Server-mode contradictory linked metadata rejects before visible Account profile state applies. | None for focused Account profile link consistency contract. P2 optional linked-state error copy. |
+
 ## Cycle NE - Profile Preferences Numeric Defaults Contract
 
 Cycle NE hardens profile preference numeric defaults before visible Account settings state applies:

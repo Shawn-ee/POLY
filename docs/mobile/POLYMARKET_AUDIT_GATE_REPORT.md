@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NF
+
+Gate status: Pass
+
+Scope: Account profile link consistency contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NF-account-profile-link-consistency-contract/cycle-NF-account-profile-link-consistency-contract.json`
+- Focused tests: `mobile/src/__tests__/accountProfileService.test.ts`, `mobile/src/__tests__/accountBootstrapService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NF-account-profile-link-consistency-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Account profile rejects contradictory linked wallet/Google metadata before visible Account profile state applies.
+
 ## Cycle NE
 
 Gate status: Pass

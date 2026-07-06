@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NF - Account Profile Link Consistency Contract
+
+Closed or narrowed:
+
+- Account profile validation now rejects `hasWalletLinked=true` without a non-empty `walletAddress`.
+- Account profile validation now rejects `hasGoogleLinked=true` without a non-empty `email`.
+- Unlinked account states may still omit optional identity fields.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Account profile link consistency contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/account/profile` linked metadata fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Account remains unchanged. Server-mode contradictory linked identity metadata rejects before visible profile state applies.
+
 ## Cycle NE - Profile Preferences Numeric Defaults Contract
 
 Closed or narrowed:

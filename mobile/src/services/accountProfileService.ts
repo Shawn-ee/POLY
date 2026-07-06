@@ -30,14 +30,28 @@ const requireBoolean = (value: unknown, field: string) => {
 
 export const loadAccountProfile = async (api: Pick<PolyApi, "getAccountProfile">): Promise<AccountProfileResult> => {
   const profile = await api.getAccountProfile();
+  const id = requireString(profile.id, "id");
+  const username = requireString(profile.username, "username");
+  const displayName = requireString(profile.displayName, "displayName");
+  const email = optionalString(profile.email);
+  const image = optionalString(profile.image);
+  const walletAddress = optionalString(profile.walletAddress);
+  const hasWalletLinked = requireBoolean(profile.hasWalletLinked, "hasWalletLinked");
+  const hasGoogleLinked = requireBoolean(profile.hasGoogleLinked, "hasGoogleLinked");
+  if (hasWalletLinked && !walletAddress) {
+    throw new Error("Account profile response had inconsistent wallet link.");
+  }
+  if (hasGoogleLinked && !email) {
+    throw new Error("Account profile response had inconsistent Google link.");
+  }
   return {
-    id: requireString(profile.id, "id"),
-    username: requireString(profile.username, "username"),
-    displayName: requireString(profile.displayName, "displayName"),
-    email: optionalString(profile.email),
-    image: optionalString(profile.image),
-    walletAddress: optionalString(profile.walletAddress),
-    hasWalletLinked: requireBoolean(profile.hasWalletLinked, "hasWalletLinked"),
-    hasGoogleLinked: requireBoolean(profile.hasGoogleLinked, "hasGoogleLinked"),
+    id,
+    username,
+    displayName,
+    email,
+    image,
+    walletAddress,
+    hasWalletLinked,
+    hasGoogleLinked,
   };
 };
