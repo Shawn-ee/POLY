@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KT - Home Event Metrics Contract
+
+Closed or narrowed:
+
+- Mobile Home game-card metrics now use a dedicated service instead of local formulas in the component.
+- Visible Home game-card volume maps from backend `events[].metrics.volume24h` and stays unknown (`--`) when the backend returns `null`.
+- Visible Home game-card liquidity maps from backend `events[].metrics.liquidity` and stays unknown when unavailable.
+- Mobile metric normalization now preserves backend `null` values instead of converting them to zero.
+- Route/mobile proof verifies a backend Home event payload with `volume24h=null` and `liquidity=null` stays unknown through mobile normalization and card metrics mapping.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Provider-sourced 24h volume/open-interest fields remain future backend work if product requires them.
+
+Schema mismatch:
+
+- No schema migration was made. Existing route `events[].metrics` is used directly.
+
+Temporary mock/static data:
+
+- Mock/offline Home cards remain available, but shared Home event metrics no longer synthesize values from local market/outcome counts.
+
 ## Cycle KS - Home Futures Metrics Contract
 
 Closed or narrowed:

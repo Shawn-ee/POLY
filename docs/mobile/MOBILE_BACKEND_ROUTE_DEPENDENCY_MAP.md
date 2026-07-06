@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KT - Home Event Metrics Contract
+
+Cycle KT removes frontend-invented Home game-card volume/liquidity metrics:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KT-home-event-metrics-contract/cycle-KT-home-event-metrics-contract.json`.
+- Proof script: `scripts/prove_mobile_home_event_metrics_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventCardMetricsService.test.ts`, `mobile/src/__tests__/futuresMetricsService.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home game-card visible volume/liquidity metrics | `/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1` | GET | Public/mobile route | None | `events[].metrics.source`, `volume24h`, `liquidity`; unavailable values remain `null`/`--` instead of local-count-derived | `Event`, listed public `Market`, active `Outcome`, orderbook quote/depth helpers when available | Mock/offline cards render unknown metrics when route metrics are absent. Home no longer derives visible game-card metrics from local market/outcome counts. | P1: provider-sourced 24h volume/open-interest when those become product requirements. |
+
 ## Cycle KS - Home Futures Metrics Contract
 
 Cycle KS removes frontend-invented futures volume/liquidity metrics from the visible Home futures module:

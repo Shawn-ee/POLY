@@ -1,6 +1,7 @@
 import type { Market, Outcome } from "../mocks/worldCup";
 
 const asNumberOrNull = (value: unknown) => {
+  if (value == null || value === "") return null;
   const parsed = typeof value === "number" ? value : Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 };

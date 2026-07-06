@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
 import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
 import { label, money } from "../presentation/formatters";
+import { eventCardStats } from "../services/eventCardMetricsService";
 import { futureChartRanges } from "../services/futuresChartService";
 import { futureMarketStats, futureOutcomeVolume } from "../services/futuresMetricsService";
 import type { MarketChartRange } from "../types";
@@ -9,14 +10,6 @@ import type { MarketChartRange } from "../types";
 type MarketStatsCopy = {
   volume: string;
   liquidity: string;
-};
-
-const marketCardStats = (event: Event) => {
-  const outcomeCount = event.markets.reduce((total, market) => total + market.outcomes.length, 0);
-  return {
-    volume: 8200 + outcomeCount * 1150,
-    liquidity: 4200 + event.markets.length * 950,
-  };
 };
 
 const futureOutcomeFlags: Record<string, string> = {
@@ -75,7 +68,7 @@ export function MarketList({
       {events.map((event) => {
         const winner = event.markets[0];
         const isSaved = savedEventIds?.has(event.id) ?? false;
-        const stats = marketCardStats(event);
+        const stats = eventCardStats(event);
         return (
           <Pressable
             accessibilityLabel={`event-card-${event.id}`}
@@ -107,10 +100,10 @@ export function MarketList({
             {statsCopy && (
               <View style={styles.statsRow}>
                 <Text style={styles.statsText}>
-                  {statsCopy.volume}: {money(stats.volume)}
+                  {statsCopy.volume}: {metricText(stats.volume)}
                 </Text>
                 <Text style={styles.statsText}>
-                  {statsCopy.liquidity}: {money(stats.liquidity)}
+                  {statsCopy.liquidity}: {metricText(stats.liquidity)}
                 </Text>
               </View>
             )}

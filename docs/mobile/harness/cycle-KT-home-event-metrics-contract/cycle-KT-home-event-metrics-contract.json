@@ -1,0 +1,34 @@
+{
+  "pass": true,
+  "cycle": "Cycle KT",
+  "createdAt": "2026-07-06T08:48:45.345Z",
+  "route": "/api/events",
+  "query": {
+    "sportKey": "soccer",
+    "leagueKey": "world_cup",
+    "search": "87b16003",
+    "includeMobileMarkets": "1",
+    "limit": "10"
+  },
+  "seeded": {
+    "event": {
+      "id": "5152c6fc-77f3-4af8-9783-a103fa8791ce",
+      "slug": "mobile-kt-event-metrics-87b16003"
+    }
+  },
+  "backendMetrics": {
+    "source": "event-route-mobile-markets",
+    "marketCount": 1,
+    "activeMarketCount": 1,
+    "liquidity": null,
+    "volume24h": null,
+    "commentCount": null
+  },
+  "mobileHomeCardMetrics": {
+    "eventId": "mobile-kt-event-metrics-87b16003",
+    "volume": null,
+    "liquidity": null,
+    "source": "event-route-mobile-markets",
+    "noFrontendSyntheticMetrics": true
+  }
+}
