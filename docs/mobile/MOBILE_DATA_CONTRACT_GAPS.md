@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KU - Live Tab Feed Contract
+
+Closed or narrowed:
+
+- Mobile now has a dedicated Live tab feed service that requests `/api/events` with `statusGroup=live`.
+- Server-mode Live tab no longer depends on the Home feed's currently loaded page or on-device status filtering.
+- Backend compact event/market response shape is normalized through the same World Cup adapter used by Home/Search.
+- Route/mobile proof verifies a seeded live event is included, a seeded upcoming event with the same search suffix is excluded, and the mobile service sends `statusGroup=live`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Live tab feed contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.status`, `Event.liveStatus`, listed/public `Market`, and active `Outcome` fields support this route contract.
+
+Temporary mock/static data:
+
+- Mock/offline mode keeps local fixture filtering for Live. Server mode loads the backend route directly.
+
 ## Cycle KT - Home Event Metrics Contract
 
 Closed or narrowed:

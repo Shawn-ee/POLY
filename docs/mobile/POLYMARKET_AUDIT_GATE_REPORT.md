@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Live tab feed contract | Cycle KU | Pass for backend/data-contract scope | 0 for focused Live tab route scope | None for focused Live tab feed contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KU-live-tab-feed-contract/cycle-KU-live-tab-feed-contract.json`; tests: `mobile/src/__tests__/liveEventFeedService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KU-live-tab-feed-contract.md` | Live tab server mode now calls `/api/events?statusGroup=live&includeMobileMarkets=1` directly, normalizes compact backend markets, and no longer depends on Home's currently loaded page for live event availability. |
 | Home event metrics contract | Cycle KT | Pass for backend/data-contract scope | 0 for focused Home game-card metrics scope | P1 provider-sourced 24h volume/open-interest fields if product requires them | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KT-home-event-metrics-contract/cycle-KT-home-event-metrics-contract.json`; tests: `mobile/src/__tests__/eventCardMetricsService.test.ts`, `mobile/src/__tests__/futuresMetricsService.test.ts`; audit: `mobile/docs/audits/cycle-KT-home-event-metrics-contract.md` | Home game cards no longer derive visible volume/liquidity from local market/outcome counts. Backend null metrics stay unknown instead of becoming false zero. |
 | Home futures metrics contract | Cycle KS | Pass for backend/data-contract scope | 0 for focused Home futures visible metrics scope | P1 provider-sourced futures volume/open-interest fields | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KS-home-futures-metrics-contract/cycle-KS-home-futures-metrics-contract.json`; tests: `mobile/src/__tests__/futuresMetricsService.test.ts`; audit: `mobile/docs/audits/cycle-KS-home-futures-metrics-contract.md` | Home futures no longer derive visible volume/liquidity from outcome count, rank, or probability. Liquidity uses backend `market.liquidity` when present; unavailable volume renders as unknown. |
 | Home futures chart contract | Cycle KR | Pass for backend/data-contract scope | 0 for focused Home futures chart route scope | P1 provider-backed futures volume/open-interest metrics beyond price history | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KR-home-futures-chart-contract/cycle-KR-home-futures-chart-contract.json`; tests: `src/__tests__/public.market-chart.no-leak.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KR-home-futures-chart-contract.md` | Home futures chart/range controls now load `/api/markets/:id/chart?range=<selected>` in server mode, including the visible `1H` range, and expose route source/status/range/point-count on the chart harness label. |
@@ -138,6 +139,29 @@ Fail the feature when:
 | Trade ticket | Cycle AG | Pass | 0 | P1 binary NO/share contract semantics; P1 production auth/location eligibility gates | `docs/mobile/reference/screenshots/cycle-AG-polymarket-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-amount.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-trade.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/harness/cycle-current-holiwyn-event-detail-ticket-details.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade` | Focused pass only. First view is now sparse and settings opens advanced controls. |
 | Trade ticket surface | Cycle AI | Pass | 0 | P1 production auth/location eligibility gate; P2 native motion polish | `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-start.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-france-ticket.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-after-france-row-tap.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/screenshots/cycle-current-holiwyn-future-list-buy-no-ticket.png`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade`; `cmd /c npm.cmd run smoke:tablet:future-list-buy-no` | Logged-in Polymarket World Cup selection opened a tall location-verification sheet; Holiwyn now uses a taller dimmed fake-token ticket with fixed swipe-up submit rail. |
 | Game page compact scrolled header | Cycle AJ | Pass | 0 | P1 phone visual density/sticky tab polish; P1 backend market/live data; P1 Player Props reference scope | `docs/mobile/reference/screenshots/cycle-AJ-polymarket-live-tab.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-top.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-lines-mid.png` | `docs/mobile/screenshots/cycle-current-holiwyn-game-page-full-markets.png`; `docs/mobile/harness/cycle-current-holiwyn-game-page-full-markets.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-full-page` | Logged-in Polymarket keeps compact match context when scrolled into Game Lines; Holiwyn now shows a compact match header in that state and full game-page smoke passed. |
+
+## Cycle KU
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for visible Live tab event feed.
+
+Evidence:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KU-live-tab-feed-contract/cycle-KU-live-tab-feed-contract.json`.
+- Cycle audit: `mobile/docs/audits/cycle-KU-live-tab-feed-contract.md`.
+- Focused tests:
+  - `mobile/src/__tests__/liveEventFeedService.test.ts`
+  - `mobile/src/__tests__/api.test.ts`
+- Proof script:
+  - `scripts/prove_mobile_live_tab_feed_contract.ts`
+
+Decision:
+
+- Pass for focused backend/data-contract scope.
+- Live tab server mode now requests `/api/events?statusGroup=live&includeMobileMarkets=1` directly.
+- Backend route proof includes a seeded live event and excludes a same-suffix seeded upcoming event.
+- No remaining P1/P2 gaps for the focused Live tab feed contract.
 
 ## Cycle KT
 

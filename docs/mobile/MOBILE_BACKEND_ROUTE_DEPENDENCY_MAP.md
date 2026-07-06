@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KU - Live Tab Feed Contract
+
+Cycle KU wires the visible Live tab to the backend live-event route in server mode instead of borrowing the current Home feed and filtering it on-device:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KU-live-tab-feed-contract/cycle-KU-live-tab-feed-contract.json`.
+- Proof script: `scripts/prove_mobile_live_tab_feed_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/liveEventFeedService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Live tab event feed | `/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&statusGroup=live` | GET | Public/mobile route | None | `events[]`, `events[].status`, `events[].liveStatus`, compact `events[].markets[]`, `nextCursor`/`page.nextCursor`; server order mode then refreshes market quotes for returned market ids | `Event.status`, `Event.liveStatus`, listed public `Market`, active `Outcome`, orderbook quote/depth helpers when server quotes are enabled | Mock/offline mode keeps local live fixture filtering. Server mode requests the backend live feed directly and does not depend on Home's current loaded page. | None for the focused Live tab feed contract. |
+
 ## Cycle KT - Home Event Metrics Contract
 
 Cycle KT removes frontend-invented Home game-card volume/liquidity metrics:

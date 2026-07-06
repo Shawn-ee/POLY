@@ -38,6 +38,7 @@ import { closePositionOnServer } from "./src/services/positionCloseService";
 import { loadAccountBalance } from "./src/services/accountBalanceService";
 import { loadAccountNavigation, type AccountNavigationItemResult } from "./src/services/accountNavigationService";
 import { loadAccountProfile } from "./src/services/accountProfileService";
+import { loadLiveEventFeed } from "./src/services/liveEventFeedService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
 import { applyServerPortfolioState } from "./src/services/portfolioStateApplyService";
 import { loadServerPortfolioState } from "./src/services/portfolioSyncService";
@@ -353,6 +354,7 @@ export default function App() {
     ORDER_MODE === "server" && DEFAULT_API_KEY.length > 0 ? "syncing" : "hidden"
   );
   const [events, setEvents] = useState<Event[]>(worldCupEvents);
+  const [liveEvents, setLiveEvents] = useState<Event[]>(() => worldCupEvents.filter((event) => event.status === "live"));
   const [eventNextCursor, setEventNextCursor] = useState<string | null>(null);
   const [isLoadingMoreEvents, setIsLoadingMoreEvents] = useState(false);
   const [searchEvents, setSearchEvents] = useState<Event[]>([]);
@@ -1037,6 +1039,22 @@ export default function App() {
       });
   }, [eventNextCursor, isLoadingMoreEvents, loadBackendWorldCup]);
 
+  const loadBackendLiveEvents = useCallback(async () => {
+    const feed = await loadLiveEventFeed(api, HOME_EVENT_PAGE_SIZE);
+    if (!mounted.current) return;
+    if (ORDER_MODE !== "server") {
+      setLiveEvents(feed.events);
+      return;
+    }
+    const quotedEvents = await Promise.all(
+      feed.events.map(async (event) => {
+        const quotesByMarketId = await loadMarketQuotesById(api, event.markets.map((market) => market.id));
+        return applyTicketQuotesToEvent(event, quotesByMarketId);
+      }),
+    );
+    if (mounted.current) setLiveEvents(quotedEvents);
+  }, [api]);
+
   const loadBackendSearchEvents = useCallback(async (
     search: string,
     cursor: string | null = null,
@@ -1113,6 +1131,19 @@ export default function App() {
   useEffect(() => {
     loadBackendWorldCup();
   }, [loadBackendWorldCup]);
+
+  useEffect(() => {
+    if (MARKET_DATA_MODE !== "server" || mainTab !== "live") return undefined;
+    let cancelled = false;
+    setIsRefreshingLive(true);
+    loadBackendLiveEvents()
+      .finally(() => {
+        if (!cancelled && mounted.current) setIsRefreshingLive(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [loadBackendLiveEvents, mainTab]);
 
   useEffect(() => {
     if (MARKET_DATA_MODE !== "server" || mainTab !== "search") return undefined;
@@ -1284,12 +1315,16 @@ export default function App() {
   const refreshLiveMarkets = useCallback(async () => {
     setIsRefreshingLive(true);
     try {
-      await loadBackendWorldCup();
+      if (MARKET_DATA_MODE === "server") {
+        await loadBackendLiveEvents();
+      } else {
+        await loadBackendWorldCup();
+      }
       if (mounted.current) setLiveRefreshTick((tick) => tick + 1);
     } finally {
       if (mounted.current) setIsRefreshingLive(false);
     }
-  }, [loadBackendWorldCup]);
+  }, [loadBackendLiveEvents, loadBackendWorldCup]);
 
   const filteredEvents = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -1728,7 +1763,7 @@ export default function App() {
               <LiveScreen
                 locale={locale}
                 t={t}
-                events={events.filter((event) => event.status === "live")}
+                events={MARKET_DATA_MODE === "server" ? liveEvents : events.filter((event) => event.status === "live")}
                 isRefreshing={isRefreshingLive}
                 refreshTick={liveRefreshTick}
                 onRefresh={refreshLiveMarkets}

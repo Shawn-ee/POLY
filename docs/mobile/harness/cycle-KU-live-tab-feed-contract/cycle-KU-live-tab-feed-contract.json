@@ -1,0 +1,41 @@
+{
+  "pass": true,
+  "cycle": "Cycle KU",
+  "createdAt": "2026-07-06T08:54:44.592Z",
+  "route": "/api/events",
+  "query": {
+    "sportKey": "soccer",
+    "leagueKey": "world_cup",
+    "search": "b5fa5206",
+    "includeMobileMarkets": "1",
+    "statusGroup": "live",
+    "limit": "10"
+  },
+  "seeded": {
+    "liveEvent": {
+      "id": "ed159058-1fb9-4927-8169-53b0d5d2dd71",
+      "slug": "mobile-ku-live-b5fa5206"
+    },
+    "excludedUpcomingEvent": {
+      "id": "86dbd9ca-630b-41e0-a1d7-7446e9263f2b",
+      "slug": "mobile-ku-upcoming-b5fa5206"
+    }
+  },
+  "routeResults": {
+    "slugs": [
+      "mobile-ku-live-b5fa5206"
+    ],
+    "eventCount": 1,
+    "nextCursor": null
+  },
+  "mobileLiveFeed": {
+    "source": "events-route-statusGroup-live",
+    "eventCount": 1,
+    "statuses": [
+      "live"
+    ],
+    "marketCounts": [
+      1
+    ]
+  }
+}
