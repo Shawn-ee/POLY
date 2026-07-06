@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle NQ",
+  "feature": "Portfolio open-order side contract",
+  "generatedAt": "2026-07-06T14:15:37.951Z",
+  "route": "/api/portfolio",
+  "contract": {
+    "validPayload": "server-mode Portfolio openOrders must use BUY or SELL before becoming visible Orders rows.",
+    "malformedPayload": "unknown or missing side values reject before visible Portfolio Orders state applies."
+  },
+  "assertions": {
+    "acceptsBuySide": true,
+    "acceptsSellSide": true,
+    "rejectsUnknownSide": true,
+    "rejectsMissingSide": true
+  }
+}

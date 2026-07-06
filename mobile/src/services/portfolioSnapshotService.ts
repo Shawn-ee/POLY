@@ -81,6 +81,17 @@ const requireOpenOrderStatus = (value: unknown) => {
   return value;
 };
 
+const requireOpenOrderSide = (value: unknown): "BUY" | "SELL" => {
+  if (typeof value !== "string") {
+    throw new Error("Portfolio snapshot response had invalid openOrders[].side.");
+  }
+  const normalized = value.trim().toUpperCase();
+  if (normalized !== "BUY" && normalized !== "SELL") {
+    throw new Error("Portfolio snapshot response had invalid openOrders[].side.");
+  }
+  return normalized;
+};
+
 const parseOpenOrderEconomics = (order: PortfolioOpenOrderItem) => {
   const price = requireProbabilityNumber(order.price, "openOrders[].price");
   const remaining = requireNonNegativeNumber(order.remaining, "openOrders[].remaining");
@@ -127,12 +138,13 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
     })),
     openOrders: openOrders.map((order) => {
       const economics = parseOpenOrderEconomics(order);
+      const side = requireOpenOrderSide(order.side);
       return {
         id: order.id,
         title: order.market.title,
         outcome: order.outcome.name,
         selection: portfolioSelectionFromBackend(order.selection, "openOrders[].selection"),
-        side: order.side === "SELL" ? "sell" : "buy",
+        side: side === "SELL" ? "sell" : "buy",
         status: requireOpenOrderStatus(order.status),
         price: economics.price,
         remaining: economics.remaining,

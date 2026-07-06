@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NQ
+
+Gate status: Pass
+
+Scope: Portfolio open-order side contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NQ-portfolio-open-order-side-contract/cycle-NQ-portfolio-open-order-side-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NQ-portfolio-open-order-side-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio openOrders require `BUY` or `SELL` side values before visible Orders rows apply.
+
 ## Cycle NP
 
 Gate status: Pass

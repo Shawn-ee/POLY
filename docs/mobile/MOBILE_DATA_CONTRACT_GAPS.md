@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NQ - Portfolio Open-Order Side Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio `openOrders` rows now require `side=BUY` or `side=SELL` before becoming visible Orders rows.
+- Unknown or missing side values reject instead of silently becoming buy rows.
+- Buy and sell open orders keep explicit visible side mapping after route validation.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio open-order side contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` `openOrders[].side` supports this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio behavior remains unchanged. Server-mode malformed open-order side fields reject before visible Orders state applies.
+
 ## Cycle NP - Portfolio Resolved-History Status Contract
 
 Closed or narrowed:

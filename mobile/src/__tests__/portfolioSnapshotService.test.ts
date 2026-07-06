@@ -362,6 +362,22 @@ describe("portfolio snapshot service", () => {
     await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had terminal openOrders[].status.");
   });
 
+  test("rejects invalid open-order side before applying Portfolio Orders state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            side: "HOLD",
+          } as never,
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid openOrders[].side.");
+  });
+
   test("rejects zero-remaining open orders before applying Portfolio Orders state", async () => {
     const getPortfolio = vi.fn(async () =>
       snapshot({

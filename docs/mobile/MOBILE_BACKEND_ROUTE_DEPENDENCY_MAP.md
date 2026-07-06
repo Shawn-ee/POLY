@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NQ - Portfolio Open-Order Side Contract
+
+Cycle NQ hardens Portfolio open-order side fields before visible Orders state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NQ-portfolio-open-order-side-contract/cycle-NQ-portfolio-open-order-side-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_open_order_side_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio Orders side mapping | `/api/portfolio` through `PolyApi.getPortfolio()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | `openOrders[].side`; visible Orders rows require `BUY` or `SELL` before mapping to buy/sell rows | `Order`, `Market`, `Outcome`, open-order projection | Mock/local Portfolio remains unchanged. Server-mode unknown or missing open-order side values reject before visible Orders state applies. | None for focused Portfolio open-order side contract. P2 optional side-specific error copy. |
+
 ## Cycle NP - Portfolio Resolved-History Status Contract
 
 Cycle NP hardens Portfolio History resolved-market status before visible closed activity state applies:
