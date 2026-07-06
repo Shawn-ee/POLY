@@ -1,0 +1,35 @@
+{
+  "pass": true,
+  "cycle": "Cycle KG",
+  "createdAt": "2026-07-06T07:29:47.730Z",
+  "routes": {
+    "submit": "/api/orders",
+    "portfolio": "/api/portfolio"
+  },
+  "cases": {
+    "noPositionSellRejected": {
+      "status": 409,
+      "message": "Insufficient shares",
+      "positions": 0,
+      "openOrders": 0
+    },
+    "oversellRejected": {
+      "status": 409,
+      "message": "Insufficient available shares",
+      "sharesAfter": 2,
+      "openOrdersAfter": 0
+    },
+    "validSellAllAccepted": {
+      "status": 200,
+      "orderId": "014f8d74-f1cb-4eaf-a822-b9b3283c4572",
+      "side": "SELL",
+      "size": "2",
+      "reservedSharesAfter": "2",
+      "portfolioOpenOrder": {
+        "id": "014f8d74-f1cb-4eaf-a822-b9b3283c4572",
+        "side": "SELL",
+        "remaining": 2
+      }
+    }
+  }
+}

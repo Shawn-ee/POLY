@@ -2,6 +2,20 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KG - Route Sell/Cashout Safety
+
+Cycle KG proves the production-like route path for mobile cashout/sell safety:
+
+- Route proof: `docs/mobile/harness/cycle-KG-route-sell-safety/cycle-KG-route-sell-safety.json`.
+- Proof script: `scripts/prove_mobile_route_sell_safety.ts`.
+- Focused tests: `mobile/src/__tests__/positionCloseService.test.ts`, `src/server/services/__tests__/phase7_kalshi_model.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| No-position cashout/sell rejection | `/api/orders` then `/api/portfolio` | POST then GET | Canonical API key/session with `orders:write` and `account:read`; internal trading beta enabled in local proof | `SELL LIMIT` with no owned `Position` shares | Route returns `409` with `Insufficient shares`; `/api/portfolio` shows no positions and no open orders | `ApiOrderRequest`, `Order`, `Position`, `UserBalance`, `Market`, `Outcome` | Mobile mock mode unchanged. Server-mode close keeps using backend route and must surface the route error. | None for focused no-position route safety. |
+| Oversell cashout/sell rejection | `/api/orders` then `/api/portfolio` | POST then GET | Same as above | `SELL LIMIT` size greater than owned available shares | Route returns `409` with `Insufficient available shares`; `/api/portfolio` preserves existing shares and no open order is created | `ApiOrderRequest`, `Order`, `Position.reservedShares`, `UserBalance`, `Market`, `Outcome` | Mobile close still submits full current position size only; backend remains the final safety layer if frontend state is stale. | None for focused oversell route safety. |
+| Valid full-position cashout/sell | `/api/orders` then `/api/portfolio` | POST then GET | Same as above | `SELL LIMIT` size equal to owned shares, matching the mobile default close-all behavior | Route returns `200` with `order.side=SELL` and `order.size`; `/api/portfolio` exposes the open sell order and DB reserves owned shares | `ApiOrderRequest`, `Order`, `Position.reservedShares`, `UserBalance`, `Market`, `Outcome`, complete-set collateral | Mock mode unchanged. Server mode confirms the backend order before treating close as submitted. | P1: provider-backed close/cashout replay when exact live provider markets are available. |
+
 ## Cycle KF - Route Line Family Filled Lifecycle
 
 Cycle KF proves selected Spread and Team Total line/provider identity survives a filled order lifecycle:

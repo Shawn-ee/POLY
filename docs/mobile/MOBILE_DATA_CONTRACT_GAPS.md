@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KG - Route Sell/Cashout Safety
+
+Closed or narrowed:
+
+- Production-like HTTP route proof now covers no-position SELL rejection through `POST /api/orders`.
+- Production-like HTTP route proof now covers oversell rejection through `POST /api/orders`.
+- `/api/portfolio` confirms rejected sell attempts do not create open orders and do not mutate owned shares.
+- A valid full-position SELL, matching the mobile default cashout-all behavior, is accepted by `/api/orders` and reserves all owned shares.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Provider-backed close/cashout replay against exact live markets remains future hardening.
+- Richer client-facing cashout error copy can be refined later, but backend safety is closed for this route contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Position.shares`, `Position.reservedShares`, `Order`, `ApiOrderRequest`, and canonical route error responses support the KG contract.
+
+Temporary mock/static data:
+
+- KG proof creates disposable backend users, API keys, one public orderbook market, outcomes, complete-set inventory for the valid holder, rejected route requests, and one valid sell-all order. It does not add frontend-only cashout/order rows.
+
 ## Cycle KF - Route Line Family Filled Lifecycle
 
 Closed or narrowed:
