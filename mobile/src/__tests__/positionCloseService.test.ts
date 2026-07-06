@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import type { PolyApi } from "../api";
 import type { Position } from "../components/Portfolio";
-import { closePositionOnServer } from "../services/positionCloseService";
+import { canCashOutPosition, cashOutEstimate, closePositionOnServer } from "../services/positionCloseService";
 
 const position: Position = {
   id: "server-world-cup-winner-France",
@@ -20,6 +20,19 @@ const position: Position = {
 };
 
 describe("position close service", () => {
+  test("reports cashout availability from server position shares", () => {
+    expect(canCashOutPosition(position)).toBe(true);
+    expect(canCashOutPosition({ ...position, shares: 0 })).toBe(false);
+    expect(canCashOutPosition({ ...position, shares: undefined })).toBe(false);
+    expect(canCashOutPosition({ ...position, mode: "mock", shares: undefined })).toBe(true);
+  });
+
+  test("estimates cashout all from current value before falling back to shares and current price", () => {
+    expect(cashOutEstimate(position)).toBe(255);
+    expect(cashOutEstimate({ ...position, currentValue: undefined, shares: 500, currentPrice: 0.49 })).toBe(245);
+    expect(cashOutEstimate({ ...position, currentValue: undefined, currentPrice: undefined })).toBe(0);
+  });
+
   test("does not call the backend for mock-mode closes", async () => {
     const placeLimitOrder = vi.fn();
     const api = { placeLimitOrder } as unknown as PolyApi;
@@ -74,6 +87,23 @@ describe("position close service", () => {
         },
       }),
     ).rejects.toThrow("Server position close requires market, outcome, and share identity.");
+    expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("rejects server cashout without positive shares before calling the API", async () => {
+    const placeLimitOrder = vi.fn();
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position: {
+          ...position,
+          shares: 0,
+        },
+      }),
+    ).rejects.toThrow("Cash out requires an open position with available shares.");
     expect(placeLimitOrder).not.toHaveBeenCalled();
   });
 });

@@ -529,3 +529,10 @@ For every UI element or interaction, answer:
 - Samsung tablet proof passes for Home route-backed card -> Event Detail -> Spread row -> ticket -> server fake-token order -> filled Portfolio position/activity/history.
 - Default Book/orderbook UI remains hidden and is not a blocker for Local MVP completion.
 - Remaining P1: production active Polymarket World Cup provider breadth and non-disposable liquidity/source breadth.
+
+## Cycle LA Gap Tracker Update
+
+- PM-GAP-105 is opened and verified for cashout/sell safety across the visible Portfolio and Event Detail position actions.
+- LA closes the focused P0 safety gap: zero-share/missing-share server positions cannot submit mobile cashout, `/api/orders` rejects no-position SELL and oversell, and valid sell-all reserves all owned shares.
+- Harness proof passes for mobile service blocking, route no-position rejection, route oversell rejection, and valid sell-all acceptance.
+- Remaining P1: provider-backed production close/cashout replay on live markets after production provider breadth/liquidity is in scope.

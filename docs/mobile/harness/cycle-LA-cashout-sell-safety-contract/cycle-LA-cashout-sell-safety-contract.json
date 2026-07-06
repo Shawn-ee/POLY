@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "cycle": "Cycle LA",
+  "createdAt": "2026-07-06T09:32:16.451Z",
+  "mobileService": {
+    "validPositionEnabled": true,
+    "zeroSharePositionDisabled": true,
+    "cashoutEstimate": 104,
+    "invalidCashoutMessage": "Cash out requires an open position with available shares.",
+    "validCashoutApiCalls": 1
+  },
+  "routeSafety": {
+    "routes": {
+      "submit": "/api/orders",
+      "portfolio": "/api/portfolio"
+    },
+    "noPositionSellRejected": {
+      "status": 409,
+      "message": "Insufficient shares",
+      "positions": 0,
+      "openOrders": 0
+    },
+    "oversellRejected": {
+      "status": 409,
+      "message": "Insufficient available shares",
+      "sharesAfter": 2,
+      "openOrdersAfter": 0
+    },
+    "validSellAllAccepted": {
+      "status": 200,
+      "orderId": "f51c9162-5f1c-4cf8-870c-11ed01e0fa88",
+      "side": "SELL",
+      "size": "2",
+      "reservedSharesAfter": "2",
+      "portfolioOpenOrder": {
+        "id": "f51c9162-5f1c-4cf8-870c-11ed01e0fa88",
+        "side": "SELL",
+        "remaining": 2
+      }
+    }
+  }
+}

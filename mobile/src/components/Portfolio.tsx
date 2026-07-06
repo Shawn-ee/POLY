@@ -15,6 +15,7 @@ import {
   openOrderValue,
 } from "../services/openOrderEconomicsService";
 import type { OrderMode } from "../services/orderService";
+import { canCashOutPosition, cashOutEstimate } from "../services/positionCloseService";
 import type { BinaryContractSide, TicketSelection } from "./TradeTicket";
 import type { PortfolioValueHistory } from "../types";
 
@@ -533,121 +534,128 @@ export function Portfolio({
               </Text>
             </View>
           </View>
-          {positions.map((position) => (
-            <View accessibilityLabel={`position-card-${position.id} ${selectionIdentityLabel(position)}`} key={position.id} style={styles.positionCard}>
-              {position.isLive && (
-                <View accessibilityLabel="portfolio-position-live-badge" testID="portfolio-position-live-badge" style={styles.liveBadge}>
-                  <Ionicons name="radio" color="#fecaca" size={13} />
-                  <Text style={styles.liveBadgeText}>{t.liveNow}</Text>
-                </View>
-              )}
-              {position.liveClock && (
-                <Text accessibilityLabel="portfolio-position-live-clock" testID="portfolio-position-live-clock" style={styles.liveClock}>
-                  {position.liveClock}
-                </Text>
-              )}
-              <Text style={styles.positionTitle}>{position.title}</Text>
-              <Text style={styles.positionMeta}>
-                {position.mode.toUpperCase()} - {position.side === "buy" ? t.buy : t.sell} - {displayOutcome(position)} - {position.probability}%
-              </Text>
-              {position.selection && (
-                <Text accessibilityLabel={`position-snapshot-${position.id} ${snapshotSourceLabel(position.id, position.selection)}`} style={styles.snapshotText}>
-                  Order-time snapshot
-                </Text>
-              )}
-              <Pressable
-                accessibilityLabel={`position-detail-toggle-${position.id}`}
-                onPress={() => setExpandedPositionId((current) => (current === position.id ? null : position.id))}
-                style={styles.detailToggle}
-                testID={`position-detail-toggle-${position.id}`}
-              >
-                <Ionicons name={expandedPositionId === position.id ? "chevron-up" : "chevron-down"} color="#93c5fd" size={16} />
-                <Text style={styles.detailToggleText}>{expandedPositionId === position.id ? detailCopy.hideDetails : detailCopy.actionHint}</Text>
-              </Pressable>
-              <Text style={styles.positionValue}>{money(position.amount)}</Text>
-              <View style={styles.positionDetailGrid}>
-                <View style={styles.positionDetailItem}>
-                  <Text style={styles.positionDetailLabel}>{t.entry}</Text>
-                  <Text style={styles.positionDetailValue}>{position.probability}%</Text>
-                </View>
-                <View style={styles.positionDetailItem}>
-                  <Text style={styles.positionDetailLabel}>{t.currentValue}</Text>
-                  <Text style={styles.positionDetailValue}>{money(portfolioPositionValue(position))}</Text>
-                </View>
-                <View style={styles.positionDetailItem}>
-                  <Text style={styles.positionDetailLabel}>{t.estimatedPnl}</Text>
-                  <Text style={[styles.positionDetailValue, estimatedPnl(position) >= 0 ? styles.pnlPositive : styles.pnlNegative]}>
-                    {estimatedPnl(position) >= 0 ? "+" : ""}
-                    {money(estimatedPnl(position))}
+          {positions.map((position) => {
+            const canCashOut = canCashOutPosition(position);
+            return (
+              <View accessibilityLabel={`position-card-${position.id} ${selectionIdentityLabel(position)} cashout-${canCashOut ? "available" : "unavailable"}`} key={position.id} style={styles.positionCard}>
+                {position.isLive && (
+                  <View accessibilityLabel="portfolio-position-live-badge" testID="portfolio-position-live-badge" style={styles.liveBadge}>
+                    <Ionicons name="radio" color="#fecaca" size={13} />
+                    <Text style={styles.liveBadgeText}>{t.liveNow}</Text>
+                  </View>
+                )}
+                {position.liveClock && (
+                  <Text accessibilityLabel="portfolio-position-live-clock" testID="portfolio-position-live-clock" style={styles.liveClock}>
+                    {position.liveClock}
                   </Text>
-                </View>
-              </View>
-              {typeof position.shares === "number" && (
-                <Text accessibilityLabel={`position-shares-${position.id}`} style={styles.positionServerMeta}>
-                  {t.filledShares}: {position.shares.toFixed(2)}
-                  {typeof position.currentPrice === "number" ? ` - ${t.currentPrice} ${Math.round(position.currentPrice * 100)}%` : ""}
+                )}
+                <Text style={styles.positionTitle}>{position.title}</Text>
+                <Text style={styles.positionMeta}>
+                  {position.mode.toUpperCase()} - {position.side === "buy" ? t.buy : t.sell} - {displayOutcome(position)} - {position.probability}%
                 </Text>
-              )}
-              {(typeof position.shares === "number" || typeof position.currentPrice === "number") && (
-                <View style={styles.positionServerDetailGrid}>
-                  {typeof position.shares === "number" && (
-                    <View
-                      accessibilityLabel={`position-filled-shares-${position.id}`}
-                      style={styles.positionServerDetailItem}
-                      testID={`position-filled-shares-${position.id}`}
-                    >
-                      <Text style={styles.positionServerDetailLabel}>{t.filledShares}</Text>
-                      <Text style={styles.positionServerDetailValue}>{position.shares.toFixed(2)}</Text>
-                    </View>
-                  )}
-                  {typeof position.currentPrice === "number" && (
-                    <View
-                      accessibilityLabel={`position-current-price-${position.id}`}
-                      style={styles.positionServerDetailItem}
-                      testID={`position-current-price-${position.id}`}
-                    >
-                      <Text style={styles.positionServerDetailLabel}>{t.currentPrice}</Text>
-                      <Text style={styles.positionServerDetailValue}>{Math.round(position.currentPrice * 100)}%</Text>
-                    </View>
-                  )}
+                {position.selection && (
+                  <Text accessibilityLabel={`position-snapshot-${position.id} ${snapshotSourceLabel(position.id, position.selection)}`} style={styles.snapshotText}>
+                    Order-time snapshot
+                  </Text>
+                )}
+                <Pressable
+                  accessibilityLabel={`position-detail-toggle-${position.id}`}
+                  onPress={() => setExpandedPositionId((current) => (current === position.id ? null : position.id))}
+                  style={styles.detailToggle}
+                  testID={`position-detail-toggle-${position.id}`}
+                >
+                  <Ionicons name={expandedPositionId === position.id ? "chevron-up" : "chevron-down"} color="#93c5fd" size={16} />
+                  <Text style={styles.detailToggleText}>{expandedPositionId === position.id ? detailCopy.hideDetails : detailCopy.actionHint}</Text>
+                </Pressable>
+                <Text style={styles.positionValue}>{money(position.amount)}</Text>
+                <View style={styles.positionDetailGrid}>
+                  <View style={styles.positionDetailItem}>
+                    <Text style={styles.positionDetailLabel}>{t.entry}</Text>
+                    <Text style={styles.positionDetailValue}>{position.probability}%</Text>
+                  </View>
+                  <View style={styles.positionDetailItem}>
+                    <Text style={styles.positionDetailLabel}>{t.currentValue}</Text>
+                    <Text style={styles.positionDetailValue}>{money(portfolioPositionValue(position))}</Text>
+                  </View>
+                  <View style={styles.positionDetailItem}>
+                    <Text style={styles.positionDetailLabel}>{t.estimatedPnl}</Text>
+                    <Text style={[styles.positionDetailValue, estimatedPnl(position) >= 0 ? styles.pnlPositive : styles.pnlNegative]}>
+                      {estimatedPnl(position) >= 0 ? "+" : ""}
+                      {money(estimatedPnl(position))}
+                    </Text>
+                  </View>
                 </View>
-              )}
-              {expandedPositionId === position.id && (
-                <View accessibilityLabel={`position-detail-${position.id}`} testID={`position-detail-${position.id}`} style={styles.detailPanel}>
-                  <Text style={styles.detailPanelTitle}>{detailCopy.details}</Text>
-                  <Text style={styles.detailPanelText}>{t.currentValue}: {money(portfolioPositionValue(position))}</Text>
-                  <Text style={styles.detailPanelText}>{t.estimatedPnl}: {estimatedPnl(position) >= 0 ? "+" : ""}{money(estimatedPnl(position))}</Text>
-                  <Text style={styles.detailPanelText}>{t.currentPrice}: {typeof position.currentPrice === "number" ? `${Math.round(position.currentPrice * 100)}%` : `${position.probability}%`}</Text>
+                {typeof position.shares === "number" && (
+                  <Text accessibilityLabel={`position-shares-${position.id}`} style={styles.positionServerMeta}>
+                    {t.filledShares}: {position.shares.toFixed(2)}
+                    {typeof position.currentPrice === "number" ? ` - ${t.currentPrice} ${Math.round(position.currentPrice * 100)}%` : ""}
+                  </Text>
+                )}
+                {(typeof position.shares === "number" || typeof position.currentPrice === "number") && (
+                  <View style={styles.positionServerDetailGrid}>
+                    {typeof position.shares === "number" && (
+                      <View
+                        accessibilityLabel={`position-filled-shares-${position.id}`}
+                        style={styles.positionServerDetailItem}
+                        testID={`position-filled-shares-${position.id}`}
+                      >
+                        <Text style={styles.positionServerDetailLabel}>{t.filledShares}</Text>
+                        <Text style={styles.positionServerDetailValue}>{position.shares.toFixed(2)}</Text>
+                      </View>
+                    )}
+                    {typeof position.currentPrice === "number" && (
+                      <View
+                        accessibilityLabel={`position-current-price-${position.id}`}
+                        style={styles.positionServerDetailItem}
+                        testID={`position-current-price-${position.id}`}
+                      >
+                        <Text style={styles.positionServerDetailLabel}>{t.currentPrice}</Text>
+                        <Text style={styles.positionServerDetailValue}>{Math.round(position.currentPrice * 100)}%</Text>
+                      </View>
+                    )}
+                  </View>
+                )}
+                {expandedPositionId === position.id && (
+                  <View accessibilityLabel={`position-detail-${position.id}`} testID={`position-detail-${position.id}`} style={styles.detailPanel}>
+                    <Text style={styles.detailPanelTitle}>{detailCopy.details}</Text>
+                    <Text style={styles.detailPanelText}>{t.currentValue}: {money(portfolioPositionValue(position))}</Text>
+                    <Text style={styles.detailPanelText}>{t.estimatedPnl}: {estimatedPnl(position) >= 0 ? "+" : ""}{money(estimatedPnl(position))}</Text>
+                    <Text style={styles.detailPanelText}>{t.currentPrice}: {typeof position.currentPrice === "number" ? `${Math.round(position.currentPrice * 100)}%` : `${position.probability}%`}</Text>
+                  </View>
+                )}
+                <View style={styles.positionActionRow}>
+                  <Pressable
+                    accessibilityLabel={`position-trade-buy-${position.id}`}
+                    onPress={() => openPositionTrade(position, "buy")}
+                    style={styles.positionTradeButton}
+                    testID={`position-trade-buy-${position.id}`}
+                  >
+                    <Text style={styles.positionTradeButtonText}>{t.buy}</Text>
+                  </Pressable>
+                  <Pressable
+                    accessibilityLabel={`position-trade-sell-${position.id}`}
+                    accessibilityState={{ disabled: !canCashOut }}
+                    disabled={!canCashOut}
+                    onPress={() => openPositionTrade(position, "sell")}
+                    style={[styles.positionTradeButton, !canCashOut && styles.positionTradeButtonDisabled]}
+                    testID={`position-trade-sell-${position.id}`}
+                  >
+                    <Text style={styles.positionTradeButtonText}>{t.sell}</Text>
+                  </Pressable>
+                  <Pressable
+                    accessibilityLabel={`close-position-${position.id} cashout-${canCashOut ? "available" : "unavailable"} cashout-estimate-${cashOutEstimate(position).toFixed(2)}`}
+                    accessibilityState={{ disabled: !canCashOut }}
+                    disabled={!canCashOut}
+                    onPress={() => closePosition(position)}
+                    style={[styles.closeButton, !canCashOut && styles.closeButtonDisabled]}
+                    testID={`close-position-${position.id}`}
+                  >
+                    <Text style={styles.closeButtonText}>{t.closePosition}</Text>
+                  </Pressable>
                 </View>
-              )}
-              <View style={styles.positionActionRow}>
-                <Pressable
-                  accessibilityLabel={`position-trade-buy-${position.id}`}
-                  onPress={() => openPositionTrade(position, "buy")}
-                  style={styles.positionTradeButton}
-                  testID={`position-trade-buy-${position.id}`}
-                >
-                  <Text style={styles.positionTradeButtonText}>{t.buy}</Text>
-                </Pressable>
-                <Pressable
-                  accessibilityLabel={`position-trade-sell-${position.id}`}
-                  onPress={() => openPositionTrade(position, "sell")}
-                  style={styles.positionTradeButton}
-                  testID={`position-trade-sell-${position.id}`}
-                >
-                  <Text style={styles.positionTradeButtonText}>{t.sell}</Text>
-                </Pressable>
-                <Pressable
-                  accessibilityLabel={`close-position-${position.id}`}
-                  onPress={() => closePosition(position)}
-                  style={styles.closeButton}
-                  testID={`close-position-${position.id}`}
-                >
-                  <Text style={styles.closeButtonText}>{t.closePosition}</Text>
-                </Pressable>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </>
       )}
       {activities.length > 0 && (
@@ -781,8 +789,10 @@ const styles = StyleSheet.create({
   pnlNegative: { color: "#ef4444" },
   positionActionRow: { flexDirection: "row", gap: 8, marginTop: 12 },
   positionTradeButton: { flex: 1, minHeight: 44, borderRadius: 10, alignItems: "center", justifyContent: "center", backgroundColor: "#0f766e", borderWidth: 1, borderColor: "#14b8a6" },
+  positionTradeButtonDisabled: { opacity: 0.45, backgroundColor: "#111827", borderColor: "#263247" },
   positionTradeButtonText: { color: "#ecfeff", fontSize: 14, fontWeight: "900" },
   closeButton: { flex: 1.35, minHeight: 44, borderRadius: 10, alignItems: "center", justifyContent: "center", backgroundColor: "#1f2937", borderWidth: 1, borderColor: "#334155" },
+  closeButtonDisabled: { opacity: 0.45, backgroundColor: "#111827", borderColor: "#263247" },
   closeButtonText: { color: "#dbeafe", fontSize: 14, fontWeight: "900" },
   confirmationCard: { marginTop: 16, padding: 14, borderRadius: 14, backgroundColor: "#12213a", borderWidth: 1, borderColor: "#2b5ca8" },
   confirmationTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },

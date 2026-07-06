@@ -4399,6 +4399,35 @@ Future migration concern:
 
 - Replace disposable provider-shaped proof events with production active Polymarket-backed World Cup events before treating provider breadth as complete.
 
+## Cycle LA - Cashout/Sell Safety Contract
+
+Closed or narrowed:
+
+- Mobile server-mode Cash out all now requires a positive server position share quantity before the visible Portfolio/Event Detail action can submit.
+- `closePositionOnServer` rejects zero-share/missing-share cashout before calling the API and uses current value/current price only for the cashout estimate, while the backend sell-all order still uses the held share quantity.
+- `/api/orders` proof confirms no-position SELL and oversell are rejected with `409`, no Portfolio/open-order mutation occurs, and a valid sell-all creates a SELL open order with all shares reserved.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 backend field gap remains for cashout/sell safety.
+- P1: provider-backed production close/cashout replay on live markets once production liquidity/provider breadth is in scope.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `Position.shares` and `Position.reservedShares` are enough for the route guard.
+
+Route mismatch:
+
+- No mismatch for the focused flow: `/api/orders` rejects invalid sells, `/api/portfolio` reflects valid sell-all as an open SELL order with reserved shares.
+
+Temporary mock/static data:
+
+- Mock-mode Portfolio close remains local-only by design. Server mode no longer relies on a fake cashout for invalid positions.
+
+Future migration concern:
+
+- If partial cashout becomes a product requirement, add first-class amount/share input and proof separately. LA intentionally keeps default cashout-all behavior.
+
 ## Cycle FU - Portfolio Value History Backend Route
 
 Closed or narrowed:

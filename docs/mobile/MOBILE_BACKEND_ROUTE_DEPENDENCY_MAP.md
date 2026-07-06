@@ -2103,3 +2103,16 @@ Cycle FU implementation notes:
 - Invalid ranges return `400` before account state queries.
 - Empty accounts return `status=empty`, `emptyState=no-history`, and no points.
 - No orderbook, deposit, withdraw, chat, live stats, or social behavior was added.
+
+## Cycle LA - Cashout/Sell Safety Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio/Event Detail Cash out all | `/api/orders` | POST | Mobile API key with `orders:write` and internal trading beta gate enabled | Server close submits `side=SELL`, `marketId`, `outcomeId`, current price, and full held share size from the position | Success creates a server SELL order; Portfolio refresh then consumes open order/reserved-share state from `/api/portfolio` | `Order`, `Position`, `Market`, `Outcome`, `ApiOrderRequest`; matching reserves owned shares before creating the order | Mock-mode close remains local Portfolio state only. Server-mode invalid cashout is blocked before API when shares are missing/zero. | No P0 gap for focused cashout/sell safety. Provider-backed production close replay remains P1. |
+| Naked sell/oversell route guard | `/api/orders`, `/api/portfolio` | POST, GET | Same mobile API key | SELL order size greater than owned/available shares, or no position at all | `409` errors with `Insufficient shares` or `Insufficient available shares`; Portfolio remains unchanged with no open order | `Position.shares`, `Position.reservedShares`, matching transaction locks | None in server mode. The backend rejects even if frontend fails. | None for focused route-backed sell safety. |
+
+Cycle LA implementation notes:
+
+- `mobile/src/services/positionCloseService.ts` now exposes cashout eligibility and cashout-all estimate helpers.
+- Portfolio and Event Detail disable visible server cashout/sell actions when the position has no positive server share quantity.
+- The backend route guard was already present in matching; LA refreshes proof with current loop env and documents the frontend safety layer.

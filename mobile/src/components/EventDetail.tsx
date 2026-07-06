@@ -9,6 +9,7 @@ import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
 import { label, money } from "../presentation/formatters";
 import { resolveLineTicketTarget, ticketSelectionFromBackendMarket } from "../services/eventDetailLineTicketService";
 import { canRenderEventDetailLineFamily, selectEventDetailPrimaryMarket, selectEventDetailRegulationMarket } from "../services/eventDetailMarketProfileService";
+import { canCashOutPosition, cashOutEstimate } from "../services/positionCloseService";
 import type { Position } from "./Portfolio";
 import type { TicketSelection } from "./TradeTicket";
 
@@ -422,6 +423,7 @@ export function EventDetail({
   const position = positions.find((item) =>
     event.markets.some((market) => market.id === item.marketId || market.title === item.title),
   );
+  const canCashOut = position ? canCashOutPosition(position) : false;
   const teamA = event.teams[0];
   const teamB = event.teams[1];
   const leftOutcome = primaryOutcomes[0];
@@ -2029,9 +2031,11 @@ export function EventDetail({
                   <Text style={styles.buyMoreText}>Buy more {positionCurrentProbability(position)}%</Text>
                 </Pressable>
                 <Pressable
-                  accessibilityLabel="event-detail-position-cash-out"
+                  accessibilityLabel={`event-detail-position-cash-out cashout-${canCashOut ? "available" : "unavailable"} cashout-estimate-${position ? cashOutEstimate(position).toFixed(2) : "0.00"}`}
+                  accessibilityState={{ disabled: !canCashOut }}
+                  disabled={!canCashOut}
                   onPress={() => closePosition?.(position)}
-                  style={styles.cashOutButton}
+                  style={[styles.cashOutButton, !canCashOut && styles.cashOutButtonDisabled]}
                   testID="event-detail-position-cash-out"
                 >
                   <Text style={styles.cashOutText}>Cash out</Text>
@@ -2458,6 +2462,7 @@ const styles = StyleSheet.create({
   buyMoreButton: { flex: 1, minHeight: 50, alignItems: "center", justifyContent: "center", borderRadius: 13, backgroundColor: "#b8c0d1" },
   buyMoreText: { color: "#101827", fontSize: 16, fontWeight: "800" },
   cashOutButton: { flex: 1, minHeight: 50, alignItems: "center", justifyContent: "center", borderRadius: 13, borderWidth: 1, borderColor: "#293548", backgroundColor: "#070c14" },
+  cashOutButtonDisabled: { opacity: 0.45, backgroundColor: "#111827", borderColor: "#263247" },
   cashOutText: { color: "#f8fafc", fontSize: 16, fontWeight: "800" },
   primaryOutcomeRow: { flexDirection: "row", gap: 14, paddingHorizontal: 24, marginTop: 24, paddingTop: 18, borderTopWidth: 1, borderTopColor: "#1f2937" },
   primaryOutcomeButton: { flex: 1, minHeight: 64, alignItems: "center", justifyContent: "center", borderRadius: 16, shadowColor: "#000", shadowOpacity: 0.35, shadowRadius: 8, elevation: 3 },
