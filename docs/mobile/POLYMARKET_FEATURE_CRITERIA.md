@@ -31,6 +31,7 @@ These apply to every page, feature, button, and interaction:
 
 | Feature | Criteria owner file | P0 status | P1/P2 status | Latest gate |
 | --- | --- | --- | --- | --- |
+| Event Detail quote price bounds contract | `mobile/docs/audits/cycle-MQ-event-detail-quote-price-bounds-contract.md` | Pass for focused backend/data-contract scope. Server-mode Event Detail outcome quote prices must be probability values from `0` to `1` before visible game-page markets apply. | P2 optional field-specific Event Detail quote error copy | Cycle MQ audit gate |
 | Cashout fill size contract | `mobile/docs/audits/cycle-MP-cashout-fill-size-contract.md` | Pass for focused backend/data-contract scope. Server-mode cashout confirmation must reject total `fills[].size > size` before Portfolio refresh. | P2 optional richer cashout fill mismatch copy | Cycle MP audit gate |
 | Cashout remaining size contract | `mobile/docs/audits/cycle-MO-cashout-remaining-size-contract.md` | Pass for focused backend/data-contract scope. Server-mode cashout confirmation must reject `remaining > size` before Portfolio refresh. | P2 optional richer cashout lifecycle mismatch copy | Cycle MO audit gate |
 | Event Detail required rules contract | `mobile/docs/audits/cycle-MN-event-detail-required-rules-contract.md` | Pass for focused backend/data-contract scope. Server-mode Event Detail must include backend-owned game-rule fields before visible market selection applies. | P2 optional missing-rule-field error copy | Cycle MN audit gate |

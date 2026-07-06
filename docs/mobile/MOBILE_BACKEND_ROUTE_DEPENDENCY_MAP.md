@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MQ - Event Detail Quote Price Bounds Contract
+
+Cycle MQ hardens route-backed Event Detail quote prices before game-page market rows apply:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MQ-event-detail-quote-price-bounds-contract/cycle-MQ-event-detail-quote-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_quote_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail outcome quote bounds | `/api/mobile/events/:slug/live-detail` | GET | Public/mobile route | Event slug | Outcome `price`, `bestBid`, and `bestAsk` must be probability values from `0` to `1`; `bestBidSize` and `bestAskSize` remain non-negative depth values and may exceed `1` | `Event`, listed public `Market`, quote projection, provider depth/quote rows | Mock/local detail remains unchanged. Server-mode impossible quote prices reject before frontend normalization or game-page market rendering. | None for focused Event Detail quote bounds contract. P2 optional field-specific quote error copy. |
+
 ## Cycle MP - Cashout Fill Size Contract
 
 Cycle MP hardens server-mode cashout fill lifecycle confirmation before Portfolio refresh treats a close as accepted:

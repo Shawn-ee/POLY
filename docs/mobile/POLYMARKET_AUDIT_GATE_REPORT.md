@@ -16,10 +16,25 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle MQ
+
+Gate status: Pass
+
+Scope: Event Detail quote price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-MQ-event-detail-quote-price-bounds-contract/cycle-MQ-event-detail-quote-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-MQ-event-detail-quote-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Event Detail rejects outcome quote prices outside `0` to `1` before frontend normalization or game-page market rendering while still accepting large backend depth sizes.
+
 ## Latest Gate Summary
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Event Detail quote price bounds contract | Cycle MQ | Pass for backend/data-contract scope | 0 for focused Event Detail quote bounds scope | P2 optional field-specific Event Detail quote error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MQ-event-detail-quote-price-bounds-contract/cycle-MQ-event-detail-quote-price-bounds-contract.json`; tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`; audit: `mobile/docs/audits/cycle-MQ-event-detail-quote-price-bounds-contract.md` | Server-mode Event Detail now rejects outcome quote prices outside `0` to `1` before frontend normalization or game-page market rendering while still accepting large backend depth sizes. |
 | Cashout fill size contract | Cycle MP | Pass for backend/data-contract scope | 0 for focused cashout fill size scope | P2 optional richer cashout fill mismatch copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MP-cashout-fill-size-contract/cycle-MP-cashout-fill-size-contract.json`; tests: `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`; audit: `mobile/docs/audits/cycle-MP-cashout-fill-size-contract.md` | Server-mode cashout now rejects impossible confirmations where total returned fill size exceeds returned order size before Portfolio refresh treats cashout as accepted. |
 | Cashout remaining size contract | Cycle MO | Pass for backend/data-contract scope | 0 for focused cashout remaining size scope | P2 optional richer cashout lifecycle mismatch copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MO-cashout-remaining-size-contract/cycle-MO-cashout-remaining-size-contract.json`; tests: `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`; audit: `mobile/docs/audits/cycle-MO-cashout-remaining-size-contract.md` | Server-mode cashout now rejects impossible confirmations where returned remaining size exceeds returned order size before Portfolio refresh treats cashout as accepted. |
 | Event Detail required rules contract | Cycle MN | Pass for backend/data-contract scope | 0 for focused Event Detail required rules scope | P2 optional missing-rule-field error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MN-event-detail-required-rules-contract/cycle-MN-event-detail-required-rules-contract.json`; tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`; audit: `mobile/docs/audits/cycle-MN-event-detail-required-rules-contract.md` | Event Detail route validation now rejects missing backend game-rule fields before frontend market selection can infer route-backed game structure. |

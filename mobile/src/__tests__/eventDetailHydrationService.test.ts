@@ -146,6 +146,6 @@ describe("event detail hydration service", () => {
     }));
 
     await expect(loadEventDetailForCard({ getEvent } as any, { id: "db-event-id", backendSlug: "backend-event-slug" }))
-      .rejects.toThrow("non-numeric price");
+      .rejects.toThrow("invalid price");
   });
 });

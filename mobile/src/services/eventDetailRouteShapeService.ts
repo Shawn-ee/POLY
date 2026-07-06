@@ -19,12 +19,22 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const isNullableString = (value: unknown) => value === null || typeof value === "string";
 
-const isFiniteNumberLike = (value: unknown) => {
+const isFiniteNonNegativeNumberLike = (value: unknown) => {
   if (value === null || value === undefined || value === "") return true;
   if (typeof value === "number") return Number.isFinite(value) && value >= 0;
   if (typeof value === "string") {
     const numeric = Number(value);
     return Number.isFinite(numeric) && numeric >= 0;
+  }
+  return false;
+};
+
+const isProbabilityNumberLike = (value: unknown) => {
+  if (value === null || value === undefined || value === "") return true;
+  if (typeof value === "number") return Number.isFinite(value) && value >= 0 && value <= 1;
+  if (typeof value === "string") {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && numeric >= 0 && numeric <= 1;
   }
   return false;
 };
@@ -36,7 +46,7 @@ const isFiniteNonNegativeInteger = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value) && Number.isInteger(value) && value >= 0;
 
 const isOptionalFiniteNumberLike = (value: unknown) =>
-  value === undefined || isFiniteNumberLike(value);
+  value === undefined || isFiniteNonNegativeNumberLike(value);
 
 const isMarketProfile = (value: unknown) =>
   typeof value === "string" && marketProfiles.includes(value as (typeof marketProfiles)[number]);
@@ -63,9 +73,14 @@ function assertEventDetailOutcomeShape(outcome: unknown, marketId: string): asse
   if (!isNullableString(outcome.side) && outcome.side !== undefined) {
     throw new Error(`Event detail route returned malformed side for outcome ${outcome.id}.`);
   }
-  for (const field of ["price", "bestBid", "bestAsk", "bestBidSize", "bestAskSize"] as const) {
-    if (!isFiniteNumberLike(outcome[field])) {
-      throw new Error(`Event detail route returned non-numeric ${field} for outcome ${outcome.id}.`);
+  for (const field of ["price", "bestBid", "bestAsk"] as const) {
+    if (!isProbabilityNumberLike(outcome[field])) {
+      throw new Error(`Event detail route returned invalid ${field} for outcome ${outcome.id}.`);
+    }
+  }
+  for (const field of ["bestBidSize", "bestAskSize"] as const) {
+    if (!isFiniteNonNegativeNumberLike(outcome[field])) {
+      throw new Error(`Event detail route returned invalid ${field} for outcome ${outcome.id}.`);
     }
   }
 }

@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MQ - Event Detail Quote Price Bounds Contract
+
+Closed or narrowed:
+
+- Event Detail route validation now rejects outcome `price`, `bestBid`, and `bestAsk` values outside the probability range `0` to `1`.
+- Above-one route quote values no longer reach frontend normalization as fake percentages on the game page.
+- Backend depth sizes remain separate from quote prices, so large `bestBidSize` and `bestAskSize` values are still accepted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail quote bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing Event Detail outcome quote and depth fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Event Detail remains unchanged. Server-mode invalid quote prices reject before visible game page state applies.
+
 ## Cycle MP - Cashout Fill Size Contract
 
 Closed or narrowed:

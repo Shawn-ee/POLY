@@ -1,0 +1,19 @@
+{
+  "cycle": "Cycle MQ",
+  "feature": "Event Detail outcome quote price bounds contract",
+  "generatedAt": "2026-07-06T12:37:46.213Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "Route-backed Event Detail outcome price, bestBid, and bestAsk must be probability values from 0 to 1.",
+    "malformedPayload": "Above-one or malformed quote prices reject before Event Detail can normalize market rows; depth sizes remain allowed above one."
+  },
+  "assertions": {
+    "validProbabilityQuotesAccepted": true,
+    "largeDepthSizeAccepted": true,
+    "priceAboveOneRejects": true,
+    "bidAboveOneRejects": true,
+    "askAboveOneRejects": true,
+    "malformedQuoteRejects": true,
+    "negativeDepthSizeRejects": true
+  }
+}

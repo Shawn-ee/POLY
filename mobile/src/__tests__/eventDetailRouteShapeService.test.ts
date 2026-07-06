@@ -168,6 +168,23 @@ describe("event detail route shape service", () => {
     const payload = detailPayload() as any;
     payload.markets[0].outcomes[0].bestAsk = "not-a-number";
 
-    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("non-numeric bestAsk");
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("invalid bestAsk");
+  });
+
+  test("rejects outcome quote prices above probability bounds", () => {
+    const payload = detailPayload() as any;
+    payload.markets[0].outcomes[0].price = 1.2;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("invalid price");
+  });
+
+  test("allows large backend depth sizes on outcome quotes", () => {
+    const payload = detailPayload() as any;
+    payload.markets[0].outcomes[0].bestBid = "0.4";
+    payload.markets[0].outcomes[0].bestAsk = "0.45";
+    payload.markets[0].outcomes[0].bestBidSize = "1000.5";
+    payload.markets[0].outcomes[0].bestAskSize = 2500;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).not.toThrow();
   });
 });
