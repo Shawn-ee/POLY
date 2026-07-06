@@ -1,0 +1,27 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:24:25.090Z",
+  "route": "/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&search=<query>&statusGroup=live|upcoming",
+  "live": {
+    "count": 2,
+    "statuses": [
+      "live",
+      "live"
+    ],
+    "slugs": [
+      "mobile-jt-search-live-1-filterf3c40bf7",
+      "mobile-jt-search-live-0-filterf3c40bf7"
+    ]
+  },
+  "upcoming": {
+    "count": 2,
+    "statuses": [
+      "upcoming",
+      "upcoming"
+    ],
+    "slugs": [
+      "mobile-jt-search-upcoming-2-filterf3c40bf7",
+      "mobile-jt-search-upcoming-3-filterf3c40bf7"
+    ]
+  }
+}

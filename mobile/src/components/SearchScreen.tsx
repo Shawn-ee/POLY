@@ -36,6 +36,7 @@ export function SearchScreen({
   isLoadingEvents = false,
   loadMoreEvents,
   routeError,
+  setServerStatusGroup,
   savedEventIds,
   toggleSavedEvent,
 }: {
@@ -50,6 +51,7 @@ export function SearchScreen({
   isLoadingEvents?: boolean;
   loadMoreEvents?: () => void;
   routeError?: string | null;
+  setServerStatusGroup?: (statusGroup: "live" | "upcoming" | null) => void;
   savedEventIds: Set<string>;
   toggleSavedEvent: (event: Event) => void;
 }) {
@@ -83,6 +85,10 @@ export function SearchScreen({
   const loadMoreSearchResults = () => {
     if (!canLoadMore || isLoadingEvents) return;
     loadMoreEvents?.();
+  };
+  const changeFilter = (value: SearchFilter) => {
+    setFilter(value);
+    setServerStatusGroup?.(value === "live" || value === "upcoming" ? value : null);
   };
   const filters: Array<[SearchFilter, string]> = [
     ["all", t.searchAll],
@@ -162,7 +168,7 @@ export function SearchScreen({
               accessibilityLabel={`search-filter-${value}`}
               testID={`search-filter-${value}`}
               style={[styles.searchFilterChip, filter === value && styles.searchFilterChipActive]}
-              onPress={() => setFilter(value)}
+              onPress={() => changeFilter(value)}
             >
               <Text style={[styles.searchFilterText, filter === value && styles.searchFilterTextActive]}>{text}</Text>
             </Pressable>
@@ -279,7 +285,7 @@ export function SearchScreen({
               <Pressable
                 accessibilityLabel={`search-sheet-filter-${value}`}
                 key={value}
-                onPress={() => setFilter(value)}
+                onPress={() => changeFilter(value)}
                 style={[styles.sheetChip, filter === value && styles.sheetChipActive]}
                 testID={`search-sheet-filter-${value}`}
               >

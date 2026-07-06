@@ -335,6 +335,7 @@ export default function App() {
   const [searchNextCursor, setSearchNextCursor] = useState<string | null>(null);
   const [isLoadingSearchEvents, setIsLoadingSearchEvents] = useState(false);
   const [searchEventError, setSearchEventError] = useState<string | null>(null);
+  const [searchStatusGroup, setSearchStatusGroup] = useState<"live" | "upcoming" | null>(null);
   const [savedEventIds, setSavedEventIds] = useState<Set<string>>(() => new Set());
   const [savedEventIdsHydrated, setSavedEventIdsHydrated] = useState(false);
   const [forceAccountSignedIn, setForceAccountSignedIn] = useState(false);
@@ -986,9 +987,14 @@ export default function App() {
       });
   }, [eventNextCursor, isLoadingMoreEvents, loadBackendWorldCup]);
 
-  const loadBackendSearchEvents = useCallback(async (search: string, cursor: string | null = null, append = false) => {
+  const loadBackendSearchEvents = useCallback(async (
+    search: string,
+    cursor: string | null = null,
+    append = false,
+    statusGroup: "live" | "upcoming" | null = null,
+  ) => {
     try {
-      const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search });
+      const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search, statusGroup });
       const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
@@ -1039,11 +1045,11 @@ export default function App() {
   const loadMoreBackendSearchEvents = useCallback(() => {
     if (MARKET_DATA_MODE !== "server" || !searchNextCursor || isLoadingSearchEvents) return;
     setIsLoadingSearchEvents(true);
-    loadBackendSearchEvents(query, searchNextCursor, true)
+    loadBackendSearchEvents(query, searchNextCursor, true, searchStatusGroup)
       .finally(() => {
         if (mounted.current) setIsLoadingSearchEvents(false);
       });
-  }, [isLoadingSearchEvents, loadBackendSearchEvents, query, searchNextCursor]);
+  }, [isLoadingSearchEvents, loadBackendSearchEvents, query, searchNextCursor, searchStatusGroup]);
 
   useEffect(() => {
     loadBackendWorldCup();
@@ -1053,14 +1059,14 @@ export default function App() {
     if (MARKET_DATA_MODE !== "server" || mainTab !== "search") return undefined;
     let cancelled = false;
     setIsLoadingSearchEvents(true);
-    loadBackendSearchEvents(query)
+    loadBackendSearchEvents(query, null, false, searchStatusGroup)
       .finally(() => {
         if (!cancelled && mounted.current) setIsLoadingSearchEvents(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [loadBackendSearchEvents, mainTab, query]);
+  }, [loadBackendSearchEvents, mainTab, query, searchStatusGroup]);
 
   useEffect(() => {
     if (ORDER_MODE !== "server") return undefined;
@@ -1627,6 +1633,7 @@ export default function App() {
                 isLoadingEvents={MARKET_DATA_MODE === "server" ? isLoadingSearchEvents : false}
                 loadMoreEvents={MARKET_DATA_MODE === "server" ? loadMoreBackendSearchEvents : undefined}
                 routeError={MARKET_DATA_MODE === "server" ? searchEventError : null}
+                setServerStatusGroup={MARKET_DATA_MODE === "server" ? setSearchStatusGroup : undefined}
                 savedEventIds={savedEventIds}
                 toggleSavedEvent={toggleSavedEvent}
               />

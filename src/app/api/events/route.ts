@@ -61,8 +61,15 @@ const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
             },
           },
         ],
-      }
+    }
     : {};
+
+const eventStatusGroupFilter = (statusGroup: string): Prisma.EventWhereInput =>
+  statusGroup === "live"
+    ? { status: { in: ["live", "LIVE"] } }
+    : statusGroup === "upcoming"
+      ? { NOT: { status: { in: ["live", "LIVE"] } } }
+      : {};
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -72,6 +79,7 @@ export async function GET(request: NextRequest) {
   const leagueKey = url.searchParams.get("leagueKey")?.trim() ?? "";
   const source = url.searchParams.get("source")?.trim() ?? "";
   const status = url.searchParams.get("status")?.trim() ?? "";
+  const statusGroup = url.searchParams.get("statusGroup")?.trim() ?? "";
   const includeMobileMarkets = url.searchParams.get("includeMobileMarkets") === "1";
   const limit = paginationLimit(url.searchParams.get("limit"));
   const cursorId = url.searchParams.get("cursor")?.trim() ?? "";
@@ -92,6 +100,7 @@ export async function GET(request: NextRequest) {
     ...(leagueKey ? { leagueKey } : {}),
     ...(source ? { source } : {}),
     ...(status ? { status } : {}),
+    ...(!status && statusGroup ? eventStatusGroupFilter(statusGroup) : {}),
     },
   ];
   const where: Prisma.EventWhereInput = { AND: eventFilters };

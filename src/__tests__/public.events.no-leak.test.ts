@@ -374,6 +374,45 @@ describe("public event API no-leak checks", () => {
     expectNoForbiddenKeys(body);
   });
 
+  test("GET /api/events supports mobile Search statusGroup filters", async () => {
+    mockPrisma.event.findMany.mockResolvedValue([
+      {
+        ...baseEvent,
+        status: "live",
+        markets: [{ status: "LIVE", title: "Match Winner", referenceMetadata: null }],
+      },
+    ]);
+
+    const liveResponse = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&statusGroup=live&limit=10"),
+    );
+    expect(liveResponse.status).toBe(200);
+    const liveInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
+    expect(JSON.stringify(liveInput.where)).toContain("live");
+    expect(liveInput).toEqual(expect.objectContaining({ take: 11 }));
+
+    mockPrisma.event.findMany.mockClear();
+    mockPrisma.event.findMany.mockResolvedValue([
+      {
+        ...baseEvent,
+        status: "upcoming",
+        markets: [{ status: "LIVE", title: "Match Winner", referenceMetadata: null }],
+      },
+    ]);
+
+    const upcomingResponse = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&statusGroup=upcoming&limit=10"),
+    );
+    expect(upcomingResponse.status).toBe(200);
+    const upcomingInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
+    expect(JSON.stringify(upcomingInput.where)).toContain("NOT");
+    expect(JSON.stringify(upcomingInput.where)).toContain("live");
+
+    const body = await upcomingResponse.json();
+    expect(body.events).toHaveLength(1);
+    expectNoForbiddenKeys(body);
+  });
+
   test("GET /api/events/[slug] returns event detail without sensitive keys", async () => {
     mockPrisma.event.findUnique.mockResolvedValue({
       ...baseEvent,

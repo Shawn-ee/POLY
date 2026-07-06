@@ -2,6 +2,20 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JT - Search Status Filter Backend Wiring
+
+Cycle JT wires visible Search `Live` and `Upcoming` filters to backend route filters in server market-data mode:
+
+- Route proof: `docs/mobile/harness/cycle-JT-search-status-filters/cycle-JT-search-status-filters.json`.
+- Proof script: `scripts/prove_mobile_search_status_filters.ts`.
+- Focused route tests: selected status-group case in `src/__tests__/public.events.no-leak.test.ts`.
+- Focused mobile tests: `mobile/src/__tests__/api.test.ts` and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Search Live filter | `/api/events?...&search=<query>&statusGroup=live&limit=10` | GET | Public/mobile route | Query params only | Live `events[]` with compact `markets[]`, `nextCursor`, `page.hasMore` | Existing `Event.status`, `Market`, `Outcome` rows | Mock mode keeps local filtering. Server mode fetches the Live backend page for the active query. | P1: richer live ranking/facet counts. |
+| Search Upcoming filter | `/api/events?...&search=<query>&statusGroup=upcoming&limit=10` | GET | Public/mobile route | Query params only | Non-live `events[]` with compact `markets[]`, cursor metadata | Existing `Event.status`, `Market`, `Outcome` rows | Mock mode keeps local filtering. Server mode fetches the Upcoming backend page for the active query. | P1: exact event lifecycle taxonomy if statuses expand beyond live/non-live MVP. |
+
 ## Cycle JS - Search Event Route and Pagination
 
 Cycle JS wires the visible Search tab in server market-data mode to backend search and cursor pagination:

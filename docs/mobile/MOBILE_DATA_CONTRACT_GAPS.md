@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JT - Search Status Filter Backend Wiring
+
+Closed or narrowed:
+
+- Search tab server market-data mode now sends `statusGroup=live` when the visible Live filter is selected.
+- Search tab server market-data mode now sends `statusGroup=upcoming` when the visible Upcoming filter is selected.
+- `/api/events` maps `statusGroup=live` to live event rows and `statusGroup=upcoming` to non-live event rows while preserving search, pagination, and compact mobile markets.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Server-side saved filter integration. Saved state is still local/profile-driven and applied to loaded backend Search rows.
+- Dedicated Search ranking/facet metadata such as category counts, volume/liquidity ranking, and saved-state-aware discovery.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.status` supports the MVP live/non-live Search filter contract.
+
+Temporary mock/static data:
+
+- JT proof creates disposable backend live/upcoming event rows with listed public markets. It does not add frontend-only search rows.
+
 ## Cycle JS - Search Event Route and Pagination
 
 Closed or narrowed:
@@ -13,7 +34,7 @@ Closed or narrowed:
 
 Fields Holiwyn still needs but backend does not fully provide:
 
-- Server-side Search filters for `live`, `upcoming`, and `saved`. Current Search status/saved filters still apply to the loaded backend page.
+- Server-side saved filter integration. Current Saved filter still applies to loaded backend Search rows.
 - Dedicated Search ranking/facet metadata such as category counts, volume/liquidity ranking, and saved-state-aware discovery.
 
 Schema mismatch:
