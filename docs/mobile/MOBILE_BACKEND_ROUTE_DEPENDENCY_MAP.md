@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MH - Event Detail Score Contract
+
+Cycle MH hardens Event Detail visible score fields before route-backed game page state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MH-event-detail-score-contract/cycle-MH-event-detail-score-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_score_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail visible score | `/api/mobile/events/:slug/live-detail` | GET | Public/mobile route | Event slug | Event `homeScore` and `awayScore` must be finite non-negative numbers when present; null/omitted scores remain allowed for pre-match or unknown score state | `Event`, live score/provider projection fields | Mock/local detail remains unchanged. Server-mode negative score fields reject before impossible visible Event Detail score state applies. | None for focused Event Detail score contract. P2 optional score-specific error copy. |
+
 ## Cycle MG - Event List Non-Negative Quote Contract
 
 Cycle MG hardens event-list quote/depth fields before Home, Search, Live, or Futures visible card state applies:

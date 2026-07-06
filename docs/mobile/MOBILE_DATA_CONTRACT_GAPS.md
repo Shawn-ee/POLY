@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MH - Event Detail Score Contract
+
+Closed or narrowed:
+
+- Event Detail route validation now rejects negative `homeScore` and `awayScore` values before visible game page state applies.
+- Null or omitted scores remain accepted for pre-match or unknown score state.
+- Malformed negative live scores no longer render as impossible match state.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail score contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing Event Detail score fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Event Detail remains unchanged. Server-mode malformed negative scores reject before visible game page state applies.
+
 ## Cycle MG - Event List Non-Negative Quote Contract
 
 Closed or narrowed:

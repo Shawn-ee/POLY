@@ -85,6 +85,13 @@ describe("event detail route shape service", () => {
     expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed marketProfile");
   });
 
+  test("rejects negative live scores before Event Detail applies", () => {
+    const payload = detailPayload();
+    payload.event.homeScore = -1;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed score");
+  });
+
   test("rejects missing detail markets array", () => {
     const payload = detailPayload() as unknown as { markets?: unknown };
     delete payload.markets;

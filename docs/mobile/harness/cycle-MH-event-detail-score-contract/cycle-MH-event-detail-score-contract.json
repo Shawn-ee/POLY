@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle MH",
+  "feature": "Event Detail score contract",
+  "generatedAt": "2026-07-06T12:04:17.264Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "Event Detail live scores must be finite non-negative numbers when present; null remains allowed for unknown/pre-match scores",
+    "malformedPayload": "negative scores reject before visible Event Detail state applies"
+  },
+  "assertions": {
+    "validLiveScoresAccepted": true,
+    "nullScoresAcceptedForPreMatchOrUnknown": true,
+    "negativeHomeScoreRejects": true,
+    "negativeAwayScoreRejects": true
+  }
+}

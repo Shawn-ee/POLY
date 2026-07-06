@@ -29,8 +29,8 @@ const isFiniteNumberLike = (value: unknown) => {
   return false;
 };
 
-const isOptionalFiniteNumber = (value: unknown) =>
-  value === undefined || value === null || (typeof value === "number" && Number.isFinite(value));
+const isOptionalFiniteNonNegativeNumber = (value: unknown) =>
+  value === undefined || value === null || (typeof value === "number" && Number.isFinite(value) && value >= 0);
 
 const isOptionalFiniteNumberLike = (value: unknown) =>
   value === undefined || isFiniteNumberLike(value);
@@ -147,7 +147,7 @@ function assertEventDetailEventShape(event: unknown): asserts event is EventSumm
   if (!isNullableString(event.liveStatus) || !isNullableString(event.startTime)) {
     throw new Error(`Event detail route returned event ${eventId} with malformed timing status.`);
   }
-  if (!isOptionalFiniteNumber(event.homeScore) || !isOptionalFiniteNumber(event.awayScore)) {
+  if (!isOptionalFiniteNonNegativeNumber(event.homeScore) || !isOptionalFiniteNonNegativeNumber(event.awayScore)) {
     throw new Error(`Event detail route returned event ${eventId} with malformed score.`);
   }
   assertEventRulesShape(event, eventId);
