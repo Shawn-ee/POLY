@@ -4428,6 +4428,36 @@ Future migration concern:
 
 - If partial cashout becomes a product requirement, add first-class amount/share input and proof separately. LA intentionally keeps default cashout-all behavior.
 
+## Cycle LB - Event Detail Line Availability Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail no longer relies on static Spread/Totals line rails when backend markets provide different lines or periods.
+- Mobile derives supported line options, supported period options, selected backend line, and selected backend period from `/api/mobile/events/:slug/live-detail` markets.
+- Team Total visible label and ticket metadata now use backend-provided line/period when available.
+- Proof covers a route-backed event where old frontend defaults are unsupported: Spread `3.5` second half, Totals `4.5` first half, and Team Total `2.5` second half.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 gap remains for route-backed line availability.
+- P1: production active Polymarket line-family breadth and live provider liquidity.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `Market.marketType`, `Market.line`, `Market.period`, and selection metadata carry the line availability contract.
+
+Route mismatch:
+
+- No mismatch for the focused flow: `/api/mobile/events/:slug/live-detail` returns enough data for mobile to render only backend-supported line/period controls.
+
+Temporary mock/static data:
+
+- Static fallback line options remain only for non-route-backed local fixture mode.
+
+Future migration concern:
+
+- If product wants multiple Team Total teams/period selectors, add first-class backend grouping and a separate UI contract cycle.
+
 ## Cycle FU - Portfolio Value History Backend Route
 
 Closed or narrowed:

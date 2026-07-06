@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Event Detail line availability contract | Cycle LB | Pass for backend/data-contract scope | 0 for focused backend-driven line/period availability scope | P1 production active provider breadth/liquidity | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LB-event-detail-line-availability-contract/cycle-LB-event-detail-line-availability-contract.json`; tests: `mobile/src/__tests__/eventDetailLineAvailabilityService.test.ts`, `mobile/src/__tests__/eventDetailLineTicketService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`; audit: `mobile/docs/audits/cycle-LB-event-detail-line-availability-contract.md` | Route-backed Event Detail line controls now derive Spread/Totals/Team Total lines and periods from backend markets instead of static frontend defaults. |
 | Cashout/sell safety contract | Cycle LA | Pass for backend/data-contract scope | 0 for focused no-position, zero-share, oversell, and valid sell-all scope | P1 provider-backed production close/cashout replay on live markets | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LA-cashout-sell-safety-contract/cycle-LA-cashout-sell-safety-contract.json`; tests: `mobile/src/__tests__/positionCloseService.test.ts`, `src/server/services/__tests__/phase7_kalshi_model.test.ts`; audit: `mobile/docs/audits/cycle-LA-cashout-sell-safety-contract.md` | Portfolio/Event Detail server cashout actions are disabled for zero/missing shares; mobile close service blocks invalid cashout before API; `/api/orders` rejects naked sell/oversell and accepts valid sell-all by reserving all shares. |
 | Event Detail market availability contract | Cycle KZ | Pass for backend/data-contract scope | 0 for focused unsupported Game Lines visibility scope | None for focused Event Detail market availability contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KZ-event-detail-market-availability-contract/cycle-KZ-event-detail-market-availability-contract.json`; tests: `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KZ-event-detail-market-availability-contract.md` | Route-backed Event Detail now hides unsupported Spread/Totals/Team Total/Halves when backend does not provide matching markets; local fixture fallback remains unchanged. |
 | Event Detail mixed profile contract | Cycle KY | Pass for backend/data-contract scope | 0 for focused mixed-profile route/rendering selection scope | None for focused mixed-profile Event Detail contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KY-event-detail-mixed-profile-contract/cycle-KY-event-detail-mixed-profile-contract.json`; tests: `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KY-event-detail-mixed-profile-contract.md` | Mixed knockout Event Detail now treats backend `to_advance` as a first-class game-line type, selects it for primary buttons, and separately selects backend regulation Home/Tie/Away for Game Lines when provided. |
@@ -112,6 +113,39 @@ Decision:
 - Pass/fail: Pass for focused cashout/sell safety contract.
 - Unresolved P0 gaps: 0 for focused cashout/sell safety scope.
 - Remaining P1/P2 gaps: provider-backed production close/cashout replay on real live markets once provider breadth/liquidity is in scope.
+
+## Cycle LB
+
+Gate status: Pass
+
+Scope:
+
+- Event Detail Game Lines line/period availability for route-backed Spread, Totals, and Team Total markets.
+- Preserve local fallback behavior for non-route-backed fixture mode.
+
+Evidence:
+
+- `docs/mobile/harness/cycle-LB-event-detail-line-availability-contract/cycle-LB-event-detail-line-availability-contract.json`
+- `mobile/docs/audits/cycle-LB-event-detail-line-availability-contract.md`
+- `mobile/src/__tests__/eventDetailLineAvailabilityService.test.ts`
+- `mobile/src/__tests__/eventDetailLineTicketService.test.ts`
+- `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`
+
+Criteria:
+
+| Criterion | Result | Evidence |
+| --- | --- | --- |
+| Route-backed Spread line controls come from backend markets | Pass | LB proof hydrates only Spread `3.5` second half; resolver selects `3.5` / `2nd Half`. |
+| Route-backed Totals line controls come from backend markets | Pass | LB proof hydrates only Totals `4.5` first half; resolver selects `4.5` / `1st Half`. |
+| Route-backed Team Total uses backend line/period | Pass | LB proof hydrates only Team Total `2.5` second half; resolver selects `2.5` / `2nd Half`. |
+| Unsupported static defaults are not used for route-backed events | Pass | Unit tests and route proof start from old defaults and fall back to backend-supported values. |
+| Local fixture fallback remains available | Pass | Unit test keeps fallback `1.5` regulation options when `routeBacked=false`. |
+
+Decision:
+
+- Pass/fail: Pass for focused Event Detail line availability contract.
+- Unresolved P0 gaps: 0 for focused line availability scope.
+- Remaining P1/P2 gaps: production active provider line-family breadth and live provider liquidity.
 | Current live game page Book-selected order to Portfolio/history lifecycle | Cycle ED integrated | Pass for selected PM-GAP-081 gate | 0 for selected ED gate | P1 broader real provider-backed line-family lifecycle breadth, open/cancel/fill status breadth, production confirmation recapture, immutable selection snapshots; P2 Portfolio/history visual/motion polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook and location-gated ticket reference; provider/lifecycle baselines from DN/DO/DX; gate: `docs/mobile/audits/cycle-ed-c-book-order-portfolio-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-ED-integrated-book-order-portfolio/cycle-ED-book-order-portfolio-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-ED-integrated-book-order-portfolio/` and `docs/mobile/harness/cycle-ED-integrated-book-order-portfolio/`; backend route/data proof `docs/mobile/harness/cycle-ED-A-book-order-portfolio-history.json` | ED integrated proof starts on the live game page Book surface, selects Spread `1.5` regulation Yes, opens the matching ticket, submits a fake-token order, and preserves the same identity through Android-visible Portfolio open order/open position and activity/history with backend order/portfolio/history data proof. |
 | Current live game page orderbook/depth and ticket carry-through | Cycle EC integrated | Pass for selected PM-GAP-080 orderbook/ticket gate | 0 for selected EC gate | P1 broader real provider-backed line-family breadth, richer settings, order/Portfolio/history carry-through; P2 phone-density/visual/motion polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook reference; gate: `docs/mobile/audits/cycle-ec-c-orderbook-ticket-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EC-integrated-orderbook-ticket/cycle-EC-orderbook-ticket-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EC-integrated-orderbook-ticket/` and `docs/mobile/harness/cycle-EC-integrated-orderbook-ticket/`; backend identity proof: `docs/mobile/harness/cycle-EC-A-provider-orderbook-identity.json` | EC integrated proof shows selected live-page context -> Book ladder/depth -> selector changes/settings -> matching Spread ticket carry-through. Backend/provider identity proof supports the same selected feature but does not replace the Android evidence. |
 | Current game page chart touch and line selector | Cycle EB integrated | Pass for selected PM-GAP-079 chart/line gate | 0 for selected EB gate | P1 changed-line Book target, selected-market chart switching, real provider-backed line families, line lifecycle through Portfolio/history; P2 gesture/visual polish | Reused DQ-C S23 official Polymarket reference plus focused AD chart and Y line-selector references; gate: `docs/mobile/audits/cycle-eb-c-chart-line-selector-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EB-integrated-chart-line/cycle-DY-A-holiwyn-game-page-structure-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EB-integrated-chart-line/` and `docs/mobile/harness/cycle-EB-integrated-chart-line/` | EB integrated proof passes chart mid/target touch, All/Live filters, Spread `2.5`/`1st Half` ticket carry-through, Totals `3.5`/`2nd Half` ticket carry-through, and EA full-page regression markers. |

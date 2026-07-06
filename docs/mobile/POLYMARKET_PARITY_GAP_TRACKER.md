@@ -536,3 +536,10 @@ For every UI element or interaction, answer:
 - LA closes the focused P0 safety gap: zero-share/missing-share server positions cannot submit mobile cashout, `/api/orders` rejects no-position SELL and oversell, and valid sell-all reserves all owned shares.
 - Harness proof passes for mobile service blocking, route no-position rejection, route oversell rejection, and valid sell-all acceptance.
 - Remaining P1: provider-backed production close/cashout replay on live markets after production provider breadth/liquidity is in scope.
+
+## Cycle LB Gap Tracker Update
+
+- PM-GAP-106 is opened and verified for backend-driven Event Detail line availability.
+- LB closes the focused P0 gap where route-backed Game Lines could still expose or default to static frontend Spread/Totals/Team Total lines.
+- Harness proof passes for a route-backed event whose only available lines differ from the old defaults: Spread `3.5` 2H, Totals `4.5` 1H, and Team Total `2.5` 2H.
+- Remaining P1: production active Polymarket provider line-family breadth and live provider liquidity.

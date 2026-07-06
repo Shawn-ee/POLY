@@ -1,0 +1,392 @@
+{
+  "pass": true,
+  "cycle": "Cycle LB",
+  "createdAt": "2026-07-06T09:42:44.669Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "seeded": {
+    "eventId": "56d07a36-71a1-4c62-9cf9-a1feda7d5577",
+    "slug": "mobile-lb-line-availability-40a4cfde"
+  },
+  "hydratedDetail": {
+    "backendSlug": "mobile-lb-line-availability-40a4cfde",
+    "routeMarkets": [
+      {
+        "id": "486c4817-02fd-4dd8-a695-64ff1f8f4fc4",
+        "marketType": "spread",
+        "period": "second-half",
+        "line": "-3.5"
+      },
+      {
+        "id": "c57855ce-7c8f-4a3a-8e66-757d6e30703c",
+        "marketType": "totals",
+        "period": "first-half",
+        "line": "4.5"
+      },
+      {
+        "id": "f71735fd-298a-4477-90d5-d9090fc19bcd",
+        "marketType": "team-total",
+        "period": "second-half",
+        "line": "2.5"
+      }
+    ],
+    "lineAvailability": {
+      "spread": {
+        "backendMarket": {
+          "id": "486c4817-02fd-4dd8-a695-64ff1f8f4fc4",
+          "marketGroupId": "spread",
+          "marketType": "spread",
+          "period": "second-half",
+          "line": "-3.5",
+          "referenceSource": null,
+          "externalSlug": null,
+          "externalMarketId": null,
+          "conditionId": null,
+          "selection": {
+            "selectorKey": "spread:second-half:-3.5",
+            "marketId": "486c4817-02fd-4dd8-a695-64ff1f8f4fc4",
+            "outcomeId": null,
+            "marketGroupKey": "spread",
+            "marketGroupId": "spread",
+            "marketGroupTitle": "Spread",
+            "marketType": "spread",
+            "marketFamily": "spread",
+            "displayLabel": "Spread second-half -3.5",
+            "period": "second-half",
+            "line": "-3.5",
+            "lineValue": -3.5,
+            "unit": null,
+            "chart": {
+              "targetMarketId": "486c4817-02fd-4dd8-a695-64ff1f8f4fc4",
+              "status": "unavailable",
+              "source": "empty",
+              "pointCount": 0,
+              "outcomeCount": 0,
+              "range": "1D",
+              "ranges": [
+                "1D",
+                "1W",
+                "1M",
+                "MAX"
+              ],
+              "emptyState": "no-history"
+            },
+            "outcomes": [
+              {
+                "id": "0a43df7f-938f-43d0-8622-08d16840fea5",
+                "outcomeId": "0a43df7f-938f-43d0-8622-08d16840fea5",
+                "side": "yes",
+                "label": "Line Home -3.5",
+                "tokenId": null,
+                "referenceTokenId": null,
+                "referenceOutcomeLabel": null,
+                "isTradable": true
+              },
+              {
+                "id": "fcaf5799-a13a-4daa-a952-7b0203d6ae06",
+                "outcomeId": "fcaf5799-a13a-4daa-a952-7b0203d6ae06",
+                "side": "no",
+                "label": "No Line Home -3.5",
+                "tokenId": null,
+                "referenceTokenId": null,
+                "referenceOutcomeLabel": null,
+                "isTradable": true
+              }
+            ]
+          },
+          "title": "Spread",
+          "zhTitle": "Spread",
+          "type": "prop",
+          "orderbookDepth": [],
+          "availability": {
+            "source": "market-updated-at",
+            "status": "ready",
+            "marketStatus": "LIVE",
+            "lastUpdated": "2026-07-06T09:42:44.615Z",
+            "stalenessSeconds": 0,
+            "staleAfterSeconds": 90,
+            "isStale": false,
+            "isSuspended": false,
+            "isDelayed": false,
+            "reason": "Market orderbook data is fresh."
+          },
+          "outcomes": [
+            {
+              "id": "0a43df7f-938f-43d0-8622-08d16840fea5",
+              "label": "Line Home -3.5",
+              "zhLabel": "Line Home -3.5",
+              "probability": 50,
+              "side": "yes",
+              "referenceTokenId": null,
+              "referenceOutcomeLabel": null,
+              "bestBid": null,
+              "bestAsk": null,
+              "bestBidSize": null,
+              "bestAskSize": null,
+              "color": "#2563eb"
+            },
+            {
+              "id": "fcaf5799-a13a-4daa-a952-7b0203d6ae06",
+              "label": "No Line Home -3.5",
+              "zhLabel": "No Line Home -3.5",
+              "probability": 50,
+              "side": "no",
+              "referenceTokenId": null,
+              "referenceOutcomeLabel": null,
+              "bestBid": null,
+              "bestAsk": null,
+              "bestBidSize": null,
+              "bestAskSize": null,
+              "color": "#60a5fa"
+            }
+          ]
+        },
+        "lineOptions": [
+          "3.5"
+        ],
+        "periodOptions": [
+          "2nd Half"
+        ],
+        "selectedLine": "3.5",
+        "selectedPeriod": "2nd Half"
+      },
+      "totals": {
+        "backendMarket": {
+          "id": "c57855ce-7c8f-4a3a-8e66-757d6e30703c",
+          "marketGroupId": "totals",
+          "marketType": "totals",
+          "period": "first-half",
+          "line": "4.5",
+          "referenceSource": null,
+          "externalSlug": null,
+          "externalMarketId": null,
+          "conditionId": null,
+          "selection": {
+            "selectorKey": "totals:first-half:4.5",
+            "marketId": "c57855ce-7c8f-4a3a-8e66-757d6e30703c",
+            "outcomeId": null,
+            "marketGroupKey": "totals",
+            "marketGroupId": "totals",
+            "marketGroupTitle": "Totals",
+            "marketType": "totals",
+            "marketFamily": "total",
+            "displayLabel": "Totals first-half 4.5",
+            "period": "first-half",
+            "line": "4.5",
+            "lineValue": 4.5,
+            "unit": null,
+            "chart": {
+              "targetMarketId": "c57855ce-7c8f-4a3a-8e66-757d6e30703c",
+              "status": "unavailable",
+              "source": "empty",
+              "pointCount": 0,
+              "outcomeCount": 0,
+              "range": "1D",
+              "ranges": [
+                "1D",
+                "1W",
+                "1M",
+                "MAX"
+              ],
+              "emptyState": "no-history"
+            },
+            "outcomes": [
+              {
+                "id": "38448e21-bc72-42c1-8d5d-cf40a906f21b",
+                "outcomeId": "38448e21-bc72-42c1-8d5d-cf40a906f21b",
+                "side": "over",
+                "label": "Over 4.5 1H",
+                "tokenId": null,
+                "referenceTokenId": null,
+                "referenceOutcomeLabel": null,
+                "isTradable": true
+              },
+              {
+                "id": "6a331ef4-79ad-43e4-92e2-0bad298d7962",
+                "outcomeId": "6a331ef4-79ad-43e4-92e2-0bad298d7962",
+                "side": "under",
+                "label": "Under 4.5 1H",
+                "tokenId": null,
+                "referenceTokenId": null,
+                "referenceOutcomeLabel": null,
+                "isTradable": true
+              }
+            ]
+          },
+          "title": "Totals",
+          "zhTitle": "Totals",
+          "type": "prop",
+          "orderbookDepth": [],
+          "availability": {
+            "source": "market-updated-at",
+            "status": "ready",
+            "marketStatus": "LIVE",
+            "lastUpdated": "2026-07-06T09:42:44.615Z",
+            "stalenessSeconds": 0,
+            "staleAfterSeconds": 90,
+            "isStale": false,
+            "isSuspended": false,
+            "isDelayed": false,
+            "reason": "Market orderbook data is fresh."
+          },
+          "outcomes": [
+            {
+              "id": "38448e21-bc72-42c1-8d5d-cf40a906f21b",
+              "label": "Over 4.5 1H",
+              "zhLabel": "Over 4.5 1H",
+              "probability": 50,
+              "side": "over",
+              "referenceTokenId": null,
+              "referenceOutcomeLabel": null,
+              "bestBid": null,
+              "bestAsk": null,
+              "bestBidSize": null,
+              "bestAskSize": null,
+              "color": "#2563eb"
+            },
+            {
+              "id": "6a331ef4-79ad-43e4-92e2-0bad298d7962",
+              "label": "Under 4.5 1H",
+              "zhLabel": "Under 4.5 1H",
+              "probability": 50,
+              "side": "under",
+              "referenceTokenId": null,
+              "referenceOutcomeLabel": null,
+              "bestBid": null,
+              "bestAsk": null,
+              "bestBidSize": null,
+              "bestAskSize": null,
+              "color": "#60a5fa"
+            }
+          ]
+        },
+        "lineOptions": [
+          "4.5"
+        ],
+        "periodOptions": [
+          "1st Half"
+        ],
+        "selectedLine": "4.5",
+        "selectedPeriod": "1st Half"
+      },
+      "teamTotal": {
+        "backendMarket": {
+          "id": "f71735fd-298a-4477-90d5-d9090fc19bcd",
+          "marketGroupId": "team-total",
+          "marketType": "team-total",
+          "period": "second-half",
+          "line": "2.5",
+          "referenceSource": null,
+          "externalSlug": null,
+          "externalMarketId": null,
+          "conditionId": null,
+          "selection": {
+            "selectorKey": "team-total:second-half:2.5",
+            "marketId": "f71735fd-298a-4477-90d5-d9090fc19bcd",
+            "outcomeId": null,
+            "marketGroupKey": "team-total",
+            "marketGroupId": "team-total",
+            "marketGroupTitle": "Team Total",
+            "marketType": "team-total",
+            "marketFamily": "team_total",
+            "displayLabel": "Team Total second-half 2.5",
+            "period": "second-half",
+            "line": "2.5",
+            "lineValue": 2.5,
+            "unit": null,
+            "chart": {
+              "targetMarketId": "f71735fd-298a-4477-90d5-d9090fc19bcd",
+              "status": "unavailable",
+              "source": "empty",
+              "pointCount": 0,
+              "outcomeCount": 0,
+              "range": "1D",
+              "ranges": [
+                "1D",
+                "1W",
+                "1M",
+                "MAX"
+              ],
+              "emptyState": "no-history"
+            },
+            "outcomes": [
+              {
+                "id": "a467fe10-ff50-449a-b5de-1972d7e2e56b",
+                "outcomeId": "a467fe10-ff50-449a-b5de-1972d7e2e56b",
+                "side": "over",
+                "label": "Line Home Over 2.5 2H",
+                "tokenId": null,
+                "referenceTokenId": null,
+                "referenceOutcomeLabel": null,
+                "isTradable": true
+              },
+              {
+                "id": "8d74705e-0d9e-4e31-85aa-040bac91c2c8",
+                "outcomeId": "8d74705e-0d9e-4e31-85aa-040bac91c2c8",
+                "side": "under",
+                "label": "Line Home Under 2.5 2H",
+                "tokenId": null,
+                "referenceTokenId": null,
+                "referenceOutcomeLabel": null,
+                "isTradable": true
+              }
+            ]
+          },
+          "title": "Team Total",
+          "zhTitle": "Team Total",
+          "type": "prop",
+          "orderbookDepth": [],
+          "availability": {
+            "source": "market-updated-at",
+            "status": "ready",
+            "marketStatus": "LIVE",
+            "lastUpdated": "2026-07-06T09:42:44.615Z",
+            "stalenessSeconds": 0,
+            "staleAfterSeconds": 90,
+            "isStale": false,
+            "isSuspended": false,
+            "isDelayed": false,
+            "reason": "Market orderbook data is fresh."
+          },
+          "outcomes": [
+            {
+              "id": "a467fe10-ff50-449a-b5de-1972d7e2e56b",
+              "label": "Line Home Over 2.5 2H",
+              "zhLabel": "Line Home Over 2.5 2H",
+              "probability": 50,
+              "side": "over",
+              "referenceTokenId": null,
+              "referenceOutcomeLabel": null,
+              "bestBid": null,
+              "bestAsk": null,
+              "bestBidSize": null,
+              "bestAskSize": null,
+              "color": "#2563eb"
+            },
+            {
+              "id": "8d74705e-0d9e-4e31-85aa-040bac91c2c8",
+              "label": "Line Home Under 2.5 2H",
+              "zhLabel": "Line Home Under 2.5 2H",
+              "probability": 50,
+              "side": "under",
+              "referenceTokenId": null,
+              "referenceOutcomeLabel": null,
+              "bestBid": null,
+              "bestAsk": null,
+              "bestBidSize": null,
+              "bestAskSize": null,
+              "color": "#60a5fa"
+            }
+          ]
+        },
+        "lineOptions": [
+          "2.5"
+        ],
+        "periodOptions": [
+          "2nd Half"
+        ],
+        "selectedLine": "2.5",
+        "selectedPeriod": "2nd Half"
+      }
+    }
+  }
+}

@@ -2116,3 +2116,16 @@ Cycle LA implementation notes:
 - `mobile/src/services/positionCloseService.ts` now exposes cashout eligibility and cashout-all estimate helpers.
 - Portfolio and Event Detail disable visible server cashout/sell actions when the position has no positive server share quantity.
 - The backend route guard was already present in matching; LA refreshes proof with current loop env and documents the frontend safety layer.
+
+## Cycle LB - Event Detail Line Availability Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail Game Lines line/period controls | `/api/events?includeMobileMarkets=1`, `/api/mobile/events/:slug/live-detail` | GET | Public viewing | Event slug from route-backed summary card | `markets[].marketType`, `markets[].selection.marketFamily`, `markets[].line`, `markets[].period`, outcomes, availability | `Event`, `Market`, `Outcome`; market group/type/line/period fields | Local/offline Event Detail keeps deterministic fallback line options. Route-backed Event Detail derives line/period options only from backend markets. | No focused P0 gap for visible line availability. Production provider breadth remains P1. |
+| Team Total line identity | `/api/mobile/events/:slug/live-detail` | GET | Public viewing | Event slug | Backend team-total `line` and `period` drive visible label and ticket metadata | `Market.marketType`, `Market.line`, `Market.period`, selection metadata | Local fallback still uses the existing `1.5` regulation team-total fixture. | No focused P0 gap. |
+
+Cycle LB implementation notes:
+
+- Added `eventDetailLineAvailabilityService` so route-backed line controls are backend-derived instead of static frontend guesses.
+- Spread/Totals period and line rails now use backend-supported values for route-backed Event Detail.
+- Team Total now uses backend line/period for visible label and ticket selection instead of always pretending `1.5` regulation.
