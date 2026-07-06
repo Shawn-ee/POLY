@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle LV - Event Detail Route Shape Contract
+
+Cycle LV hardens Event Detail hydration so visible game rules and market rows cannot be applied from malformed backend detail payloads:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-LV-event-detail-route-shape-contract/cycle-LV-event-detail-route-shape-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_route_shape_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail backend game rules and market rows | `/api/mobile/events/:slug/live-detail`, falling back to `/api/events/:slug` through `PolyApi.getEvent()` | GET | Public/mobile route | Backend event slug | `event.id`, `event.slug`, `event.title`, `event.status`, `event.liveStatus`, `event.startTime`, `event.marketProfile`, `event.resultMode`, `event.gameRules`, `event.supportedMarketTypes`, `markets[]`, `marketType`, `period`, `line`, `outcomes[]`, outcome labels/sides/tradability/quote fields | `Event`, listed public `Market`, active `Outcome`, compact live-detail route serializers | Local/offline fixtures remain unchanged. Server-mode detail routes must validate before hydration; malformed payloads reject instead of applying guessed or partial Event Detail state. | None for the focused route-shape contract. P2 optional route-specific retry/error copy. |
+
 ## Cycle LE - Portfolio Partial Sync Contract
 
 Cycle LE tightens visible Portfolio sync status for the two backend routes that feed the Portfolio screen:

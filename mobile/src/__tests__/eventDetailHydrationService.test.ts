@@ -119,4 +119,33 @@ describe("event detail hydration service", () => {
     });
     expect(event?.markets[0]?.outcomes.map((outcome) => outcome.side)).toEqual(["home", "away"]);
   });
+
+  test("rejects malformed route game rules before hydration", async () => {
+    const getEvent = vi.fn(async () => ({
+      ...detailPayload,
+      event: {
+        ...detailPayload.event,
+        marketProfile: "shootout",
+      },
+    }));
+
+    await expect(loadEventDetailForCard({ getEvent } as any, { id: "db-event-id", backendSlug: "backend-event-slug" }))
+      .rejects.toThrow("malformed marketProfile");
+  });
+
+  test("rejects malformed route outcome numbers before hydration", async () => {
+    const getEvent = vi.fn(async () => ({
+      ...detailPayload,
+      markets: [{
+        ...detailPayload.markets[0],
+        outcomes: [
+          { ...detailPayload.markets[0].outcomes[0], price: -0.01 },
+          ...detailPayload.markets[0].outcomes.slice(1),
+        ],
+      }],
+    }));
+
+    await expect(loadEventDetailForCard({ getEvent } as any, { id: "db-event-id", backendSlug: "backend-event-slug" }))
+      .rejects.toThrow("non-numeric price");
+  });
 });

@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BackHandler, Linking, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PolyApi } from "./src/api";
-import { normalizeEventDetail, normalizeEventSummary, normalizeMarket } from "./src/adapters/worldCupAdapter";
+import { normalizeEventSummary, normalizeMarket } from "./src/adapters/worldCupAdapter";
 import { AccountScreen } from "./src/components/AccountScreen";
 import { BottomTabs } from "./src/components/BottomTabs";
 import { EventDetail } from "./src/components/EventDetail";
@@ -39,7 +39,7 @@ import { loadAccountBalance } from "./src/services/accountBalanceService";
 import { resolveAccountBootstrapResults, type AccountBootstrapStatus } from "./src/services/accountBootstrapService";
 import { loadAccountNavigation, type AccountNavigationItemResult } from "./src/services/accountNavigationService";
 import { loadAccountProfile } from "./src/services/accountProfileService";
-import { loadEventDetailForCard } from "./src/services/eventDetailHydrationService";
+import { loadEventDetailBySlug, loadEventDetailForCard } from "./src/services/eventDetailHydrationService";
 import { assertEventListRoutePayloadShape } from "./src/services/eventListRouteShapeService";
 import { loadLiveEventFeed } from "./src/services/liveEventFeedService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
@@ -672,8 +672,7 @@ export default function App() {
     if (forceBackendEventSlugMatch?.[1]) {
       const slug = decodeURIComponent(forceBackendEventSlugMatch[1]);
       setMainTab("live");
-      api.getEvent(slug)
-        .then((detail) => normalizeEventDetail(detail))
+      loadEventDetailBySlug(api, slug)
         .then((event) => {
           if (!event || !mounted.current) return;
           setSelectedEvent(event);
@@ -1003,7 +1002,7 @@ export default function App() {
           .slice(0, Math.max(0, 8 - summaryEvents.length))
           .map(async (event) => {
           try {
-            return normalizeEventDetail(await api.getEvent(event.slug));
+            return loadEventDetailBySlug(api, event.slug);
           } catch {
             return null;
           }
@@ -1104,7 +1103,7 @@ export default function App() {
           .slice(0, Math.max(0, 8 - summaryEvents.length))
           .map(async (event) => {
           try {
-            return normalizeEventDetail(await api.getEvent(event.slug));
+            return loadEventDetailBySlug(api, event.slug);
           } catch {
             return null;
           }

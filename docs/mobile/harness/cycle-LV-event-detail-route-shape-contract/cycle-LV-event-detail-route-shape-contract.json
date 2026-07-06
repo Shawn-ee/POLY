@@ -1,0 +1,20 @@
+{
+  "cycle": "Cycle LV",
+  "feature": "Event Detail route shape contract",
+  "generatedAt": "2026-07-06T11:15:49.825Z",
+  "routes": [
+    "/api/mobile/events/:slug/live-detail",
+    "/api/events/:slug"
+  ],
+  "contract": {
+    "validPayload": "regulation-with-draw and advance/no-draw detail payloads hydrate only after backend rule and market arrays validate",
+    "malformedPayload": "malformed market profile, missing markets, or bad outcome numeric fields reject before visible Event Detail state applies"
+  },
+  "assertions": {
+    "regulationWithDrawApplies": true,
+    "advanceNoDrawApplies": true,
+    "malformedProfileRejects": true,
+    "missingMarketsRejects": true,
+    "malformedOutcomePriceRejects": true
+  }
+}

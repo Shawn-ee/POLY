@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LV - Event Detail Route Shape Contract
+
+Closed or narrowed:
+
+- Event Detail hydration now validates backend detail payloads before applying visible game rules or markets.
+- Invalid `marketProfile`, `resultMode`, `gameRules`, `supportedMarketTypes`, missing `markets[]`, or malformed outcome quote fields now reject before `normalizeEventDetail`.
+- App deep-link/detail fallback paths and card-open hydration use the same guarded loader.
+- LV proof verifies regulation 90-minute with draw, advance/no-draw, malformed profile rejection, missing markets rejection, and malformed outcome price rejection.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail route-shape contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing event-level rule fields and compact market/outcome fields support the visible Event Detail contract.
+
+Temporary mock/static data:
+
+- Local/offline fixtures remain unchanged. Server-mode Event Detail rejects malformed route payloads instead of falling back to guessed or partial route data.
+
 ## Cycle LE - Portfolio Partial Sync Contract
 
 Closed or narrowed:
