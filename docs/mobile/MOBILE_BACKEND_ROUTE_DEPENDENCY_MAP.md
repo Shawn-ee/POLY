@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle LY - Account Profile Boolean Contract
+
+Cycle LY hardens Account profile linked-state fields so malformed backend booleans cannot silently change visible Account state:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-LY-account-profile-boolean-contract/cycle-LY-account-profile-boolean-contract.json`.
+- Proof script: `scripts/prove_mobile_account_profile_boolean_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/accountProfileService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account profile linked states | `/api/account/profile` | GET | Canonical API key/session with `account:read` | None | `id`, `username`, `displayName`, optional text fields, `hasWalletLinked`, `hasGoogleLinked`; linked fields must be real booleans | `User`, wallet/account link models, canonical auth/API usage | Mock mode keeps local demo state. Server-mode malformed linked booleans reject and feed existing Account bootstrap error state. | None for focused boolean response-shape contract. P2 optional field-specific error copy. |
+
 ## Cycle LX - Cashout Submit Confirmation Contract
 
 Cycle LX hardens server-mode cashout so `/api/orders` must confirm the sell-all close order before visible Portfolio refresh treats cashout as accepted:

@@ -41,4 +41,23 @@ describe("Holiwyn account profile service", () => {
       "Account profile response was missing displayName.",
     );
   });
+
+  test("rejects malformed linked-account booleans instead of coercing visible state", async () => {
+    const api = {
+      getAccountProfile: async () => ({
+        id: "user-1",
+        username: "grouchypike7067",
+        displayName: "grouchypike7067",
+        email: null,
+        image: null,
+        walletAddress: null,
+        hasWalletLinked: "false",
+        hasGoogleLinked: false,
+      }),
+    };
+
+    await expect(loadAccountProfile(api as unknown as Parameters<typeof loadAccountProfile>[0])).rejects.toThrow(
+      "Account profile response was missing hasWalletLinked.",
+    );
+  });
 });

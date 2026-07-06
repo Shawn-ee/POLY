@@ -1,0 +1,15 @@
+{
+  "cycle": "Cycle LY",
+  "feature": "Account profile boolean contract",
+  "generatedAt": "2026-07-06T11:28:54.072Z",
+  "route": "/api/account/profile",
+  "contract": {
+    "validPayload": "linked-account fields must be real booleans before visible Account state applies",
+    "malformedPayload": "string/number linked-account fields reject instead of being coerced into true/false UI state"
+  },
+  "assertions": {
+    "validBooleanProfileApplies": true,
+    "stringWalletLinkedRejects": true,
+    "numericGoogleLinkedRejects": true
+  }
+}

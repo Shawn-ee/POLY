@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LY - Account Profile Boolean Contract
+
+Closed or narrowed:
+
+- Account profile linked-state fields now require real booleans before visible Account state applies.
+- Malformed `hasWalletLinked` / `hasGoogleLinked` values such as strings or numbers reject instead of being coerced with JavaScript truthiness.
+- Rejection feeds the existing Account bootstrap partial-error path from Cycle LI.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Account profile boolean contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/account/profile` boolean fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Account state remains unchanged.
+
 ## Cycle LX - Cashout Submit Confirmation Contract
 
 Closed or narrowed:
