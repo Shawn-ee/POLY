@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MI - Event Detail Market Count Contract
+
+Closed or narrowed:
+
+- Event Detail route validation now rejects malformed `marketCount` and `activeMarketCount` values before visible game page state applies.
+- Count values must be finite non-negative integers.
+- `activeMarketCount` must not exceed `marketCount`.
+- Malformed count payloads no longer render as impossible market metadata.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail market count contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing Event Detail count fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Event Detail remains unchanged. Server-mode malformed count values reject before visible game page state applies.
+
 ## Cycle MH - Event Detail Score Contract
 
 Closed or narrowed:

@@ -92,6 +92,28 @@ describe("event detail route shape service", () => {
     expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed score");
   });
 
+  test("rejects malformed market counts before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    payload.event.marketCount = "1";
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed market counts");
+  });
+
+  test("rejects negative market counts before Event Detail applies", () => {
+    const payload = detailPayload();
+    payload.event.activeMarketCount = -1;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed market counts");
+  });
+
+  test("rejects active market counts above total before Event Detail applies", () => {
+    const payload = detailPayload();
+    payload.event.marketCount = 1;
+    payload.event.activeMarketCount = 2;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("inconsistent market counts");
+  });
+
   test("rejects missing detail markets array", () => {
     const payload = detailPayload() as unknown as { markets?: unknown };
     delete payload.markets;

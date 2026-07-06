@@ -32,6 +32,9 @@ const isFiniteNumberLike = (value: unknown) => {
 const isOptionalFiniteNonNegativeNumber = (value: unknown) =>
   value === undefined || value === null || (typeof value === "number" && Number.isFinite(value) && value >= 0);
 
+const isFiniteNonNegativeInteger = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value) && Number.isInteger(value) && value >= 0;
+
 const isOptionalFiniteNumberLike = (value: unknown) =>
   value === undefined || isFiniteNumberLike(value);
 
@@ -149,6 +152,14 @@ function assertEventDetailEventShape(event: unknown): asserts event is EventSumm
   }
   if (!isOptionalFiniteNonNegativeNumber(event.homeScore) || !isOptionalFiniteNonNegativeNumber(event.awayScore)) {
     throw new Error(`Event detail route returned event ${eventId} with malformed score.`);
+  }
+  const marketCount = event.marketCount;
+  const activeMarketCount = event.activeMarketCount;
+  if (!isFiniteNonNegativeInteger(marketCount) || !isFiniteNonNegativeInteger(activeMarketCount)) {
+    throw new Error(`Event detail route returned event ${eventId} with malformed market counts.`);
+  }
+  if (activeMarketCount > marketCount) {
+    throw new Error(`Event detail route returned event ${eventId} with inconsistent market counts.`);
   }
   assertEventRulesShape(event, eventId);
 }

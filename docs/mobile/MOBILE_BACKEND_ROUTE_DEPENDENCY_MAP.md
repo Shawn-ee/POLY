@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MI - Event Detail Market Count Contract
+
+Cycle MI hardens Event Detail market-count metadata before route-backed game page state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MI-event-detail-market-count-contract/cycle-MI-event-detail-market-count-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_market_count_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail market-count metadata | `/api/mobile/events/:slug/live-detail` | GET | Public/mobile route | Event slug | Event `marketCount` and `activeMarketCount` must be finite non-negative integers, and `activeMarketCount` must not exceed `marketCount` | `Event`, listed public `Market`, active market projection fields | Mock/local detail remains unchanged. Server-mode malformed count fields reject before impossible visible Event Detail market metadata applies. | None for focused Event Detail market count contract. P2 optional count-specific error copy. |
+
 ## Cycle MH - Event Detail Score Contract
 
 Cycle MH hardens Event Detail visible score fields before route-backed game page state applies:

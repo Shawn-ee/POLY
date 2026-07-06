@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle MI",
+  "feature": "Event Detail market count contract",
+  "generatedAt": "2026-07-06T12:08:38.676Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "Event Detail marketCount and activeMarketCount must be finite non-negative integers",
+    "malformedPayload": "string, negative, fractional, or active-greater-than-total counts reject before visible Event Detail state applies"
+  },
+  "assertions": {
+    "validMarketCountsAccepted": true,
+    "stringMarketCountRejects": true,
+    "negativeActiveCountRejects": true,
+    "fractionalMarketCountRejects": true,
+    "activeAboveTotalRejects": true
+  }
+}
