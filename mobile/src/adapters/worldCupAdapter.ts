@@ -4,7 +4,7 @@ import type {
   Market as BackendMarket,
   Outcome as BackendOutcome,
 } from "../types";
-import type { Event, EventMarketProfile, EventMarketType, Market, Outcome } from "../mocks/worldCup";
+import type { Event, EventMarketProfile, EventMarketType, Market, MarketSelection, Outcome } from "../mocks/worldCup";
 
 const COLORS = ["#2563eb", "#60a5fa", "#ef4444", "#0a8f61", "#f4c20d", "#7c3aed", "#94a3b8"];
 
@@ -74,6 +74,45 @@ const asPeriod = (value: string | null | undefined): Market["period"] | undefine
     return normalized as Market["period"];
   }
   return undefined;
+};
+
+const asMarketSelection = (selection: BackendMarket["selection"]): MarketSelection | null => {
+  if (!selection) return null;
+  return {
+    selectorKey: selection.selectorKey ?? null,
+    marketId: selection.marketId ?? null,
+    outcomeId: selection.outcomeId ?? null,
+    marketGroupKey: selection.marketGroupKey ?? null,
+    marketGroupId: selection.marketGroupId ?? null,
+    marketGroupTitle: selection.marketGroupTitle ?? null,
+    marketType: selection.marketType ?? null,
+    marketFamily: selection.marketFamily ?? null,
+    displayLabel: selection.displayLabel ?? null,
+    period: selection.period ?? null,
+    line: selection.line ?? null,
+    lineValue: typeof selection.lineValue === "number" ? selection.lineValue : asNumberOrNull(selection.lineValue),
+    unit: selection.unit ?? null,
+    chart: selection.chart ? {
+      targetMarketId: selection.chart.targetMarketId ?? null,
+      status: selection.chart.status ?? null,
+      source: selection.chart.source ?? null,
+      pointCount: typeof selection.chart.pointCount === "number" ? selection.chart.pointCount : null,
+      outcomeCount: typeof selection.chart.outcomeCount === "number" ? selection.chart.outcomeCount : null,
+      range: selection.chart.range ?? null,
+      ranges: selection.chart.ranges ?? [],
+      emptyState: selection.chart.emptyState ?? null,
+    } : undefined,
+    outcomes: selection.outcomes?.map((outcome) => ({
+      id: outcome.id ?? null,
+      outcomeId: outcome.outcomeId ?? null,
+      side: outcome.side ?? null,
+      label: outcome.label ?? null,
+      tokenId: outcome.tokenId ?? null,
+      referenceTokenId: outcome.referenceTokenId ?? null,
+      referenceOutcomeLabel: outcome.referenceOutcomeLabel ?? null,
+      isTradable: outcome.isTradable ?? null,
+    })) ?? [],
+  };
 };
 
 const eventStatus = (event: BackendEventSummary): Event["status"] => {
@@ -199,6 +238,7 @@ export const normalizeMarket = (market: BackendMarket): Market => ({
   externalSlug: market.externalSlug ?? null,
   externalMarketId: market.externalMarketId ?? null,
   conditionId: market.conditionId ?? null,
+  selection: asMarketSelection(market.selection),
   title: market.marketGroupTitle || market.title,
   zhTitle: zhPassthrough(market.marketGroupTitle || market.title),
   type: marketType(market),

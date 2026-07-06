@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { resolveLineTicketTarget } from "../services/eventDetailLineTicketService";
+import { resolveLineTicketTarget, ticketSelectionFromBackendMarket } from "../services/eventDetailLineTicketService";
 import type { Market, Outcome } from "../mocks/worldCup";
 
 const outcome = (id: string, label = id): Outcome => ({
@@ -167,6 +167,75 @@ describe("event detail line ticket resolver", () => {
       source: "deterministic-line-fixture",
       market: { id: "display-team-total-market" },
       outcome: { id: "display-team-total-over" },
+    });
+  });
+
+  test("builds ticket selection identity from backend market selection contract", () => {
+    const backendOutcome = outcome("backend-over", "Over 2.5");
+    const backendMarket = market("total-25-1h", "totals", [backendOutcome], {
+      period: "first-half",
+      line: "2.5",
+      externalMarketId: "gamma-total-25-1h",
+      conditionId: "condition-total-25-1h",
+      selection: {
+        selectorKey: "totals:first-half:2.5",
+        marketId: "total-25-1h",
+        marketGroupId: "totals",
+        marketGroupKey: "totals",
+        marketGroupTitle: "Totals",
+        marketType: "total_goals",
+        marketFamily: "total",
+        displayLabel: "Totals first-half 2.5",
+        period: "first-half",
+        line: "2.5",
+        lineValue: 2.5,
+        unit: "goals",
+        outcomes: [{
+          id: "backend-over",
+          outcomeId: "backend-over",
+          side: "over",
+          label: "Over 2.5",
+          tokenId: "token-over-25-1h",
+          referenceTokenId: "token-over-25-1h",
+          referenceOutcomeLabel: "Over 2.5 first half",
+          isTradable: true,
+        }],
+      },
+    });
+
+    const selection = ticketSelectionFromBackendMarket(
+      { marketType: "totals", line: "2.5", period: "1st Half", displayLabel: "Over 2.5 1H" },
+      backendMarket,
+      backendOutcome,
+    );
+
+    expect(selection).toMatchObject({
+      marketType: "totals",
+      marketId: "total-25-1h",
+      outcomeId: "backend-over",
+      marketGroupId: "totals",
+      line: "2.5",
+      period: "first-half",
+      side: "over",
+      displayLabel: "Over 2.5 1H",
+      externalMarketId: "gamma-total-25-1h",
+      conditionId: "condition-total-25-1h",
+      referenceTokenId: "token-over-25-1h",
+      referenceOutcomeLabel: "Over 2.5 first half",
+    });
+
+    const target = resolveLineTicketTarget({
+      selection,
+      backendMarket,
+      backendOutcome,
+      syntheticOutcome: outcome("display-over-25-1h", "Over 2.5 1H"),
+      syntheticMarkets: { totals: market("display-totals-25-1h", "totals", [], { line: "2.5", period: "first-half" }) },
+    });
+
+    expect(target).toMatchObject({
+      source: "backend-line-market",
+      market: { id: "total-25-1h" },
+      outcome: { id: "backend-over" },
     });
   });
 });

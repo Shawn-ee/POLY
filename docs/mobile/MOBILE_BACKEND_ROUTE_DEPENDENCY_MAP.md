@@ -2,6 +2,20 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KA - Line Selector Backend Selection Contract
+
+Cycle KA tightens Event Detail Game Lines line-selector identity so visible Totals/Team Total/Spread row tickets can use backend route-owned `markets[].selection` instead of frontend reconstruction:
+
+- Route/adapter proof: `docs/mobile/harness/cycle-KA-line-selector-backend-selection/cycle-KA-line-selector-backend-selection.json`.
+- Proof script: `scripts/prove_mobile_line_selector_backend_selection.ts`.
+- Focused mobile tests: `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/eventDetailLineTicketService.test.ts`, and mobile typecheck.
+- Focused backend route test: `src/__tests__/mobile-live-event-detail.test.ts`.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail Game Lines selector identity | `/api/mobile/events/:slug/live-detail` | GET | Public/mobile route | None | `markets[].selection.selectorKey`, `marketId`, `marketGroupId`, `marketFamily`, `marketType`, `period`, `line`, `lineValue`, `outcomes[].outcomeId`, `side`, `referenceTokenId`, `referenceOutcomeLabel` | Existing `Event`, `Market`, `Outcome`, provider quote/chart/depth snapshot rows | Deterministic line fixtures remain only when backend line markets are absent. When backend selection is present, ticket metadata is built from the route-owned market/outcome selection. | P1: broader real-provider line-family replay for spread/totals/team-total when Polymarket exposes those exact markets. |
+| Line ticket submit identity | `/api/orders` after ticket open | POST | Canonical API key/session with `orders:write` | Existing ticket `selection` snapshot now includes backend line selector identity when opened from Game Lines | Order submit consumes `selection.marketId`, `outcomeId`, `marketType`, `line`, `period`, provider market/condition/token fields | `ApiOrderRequest.requestBody.selection`, `Order`, `Market`, `Outcome` | Local/mock ticket mode still works, but server-mode line tickets no longer need to infer the selected backend market from UI labels alone. | P1: immutable first-class line selection snapshot remains future hardening. |
+
 ## Cycle JZ - Account Preferences Contract
 
 Cycle JZ tightens the visible Account/settings profile preferences contract:

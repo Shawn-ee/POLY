@@ -16,6 +16,63 @@ type ResolveLineTicketTargetInput = {
   fallbackMarket?: Market;
 };
 
+const ticketMarketTypeFromBackendSelection = (market: Market): TicketSelection["marketType"] => {
+  const value = `${market.selection?.marketFamily ?? market.selection?.marketType ?? market.marketType ?? ""}`.toLowerCase().replace(/_/g, "-");
+  if (value === "spread" || value === "handicap" || value === "asian-handicap") return "spread";
+  if (value === "total" || value === "totals" || value === "total-goals") return "totals";
+  if (value === "team-total" || value === "team-totals" || value === "team-total-goals") return "team-total";
+  if (value === "prop") return "prop";
+  if (value === "future" || value === "outright") return "future";
+  if (market.type === "live") return "live";
+  return "winner";
+};
+
+const selectionOutcomeForBackendOutcome = (market: Market, outcome: Outcome | undefined) => {
+  if (!outcome) return undefined;
+  return market.selection?.outcomes?.find((selectionOutcome) => {
+    const ids = [selectionOutcome.id, selectionOutcome.outcomeId, selectionOutcome.referenceTokenId, selectionOutcome.tokenId].filter(Boolean);
+    if (ids.includes(outcome.id) || ids.includes(outcome.referenceTokenId ?? "")) return true;
+    if (selectionOutcome.referenceOutcomeLabel && selectionOutcome.referenceOutcomeLabel === outcome.referenceOutcomeLabel) return true;
+    if (selectionOutcome.side && selectionOutcome.side === outcome.side) return true;
+    return Boolean(selectionOutcome.label && selectionOutcome.label === outcome.label);
+  });
+};
+
+const contractSideForOutcome = (market: Market, outcome: Outcome | undefined) => {
+  const index = outcome ? market.outcomes.findIndex((item) => item.id === outcome.id) : -1;
+  if (outcome?.side === "no" || outcome?.label.toLowerCase().startsWith("no") || (market.outcomes.length === 2 && index === 1)) return "no" as const;
+  return "yes" as const;
+};
+
+export const ticketSelectionFromBackendMarket = (
+  baseSelection: TicketSelection | undefined,
+  backendMarket: Market | undefined,
+  backendOutcome: Outcome | undefined,
+): TicketSelection | undefined => {
+  if (!backendMarket || !backendOutcome || !backendMarket.selection) return baseSelection;
+  const selectionOutcome = selectionOutcomeForBackendOutcome(backendMarket, backendOutcome);
+  return {
+    marketType: ticketMarketTypeFromBackendSelection(backendMarket),
+    marketId: backendMarket.selection.marketId ?? backendMarket.id,
+    outcomeId: selectionOutcome?.outcomeId ?? selectionOutcome?.id ?? backendOutcome.id,
+    marketGroupId: backendMarket.selection.marketGroupId ?? backendMarket.selection.marketGroupKey ?? backendMarket.marketGroupId,
+    line: backendMarket.selection.line ?? backendMarket.line ?? baseSelection?.line,
+    period: backendMarket.selection.period ?? backendMarket.period ?? baseSelection?.period,
+    side: selectionOutcome?.side ?? backendOutcome.side ?? baseSelection?.side,
+    displayLabel: baseSelection?.displayLabel ?? backendMarket.selection.displayLabel ?? backendMarket.title,
+    contractSide: baseSelection?.contractSide ?? contractSideForOutcome(backendMarket, backendOutcome),
+    referenceSource: backendMarket.referenceSource ?? baseSelection?.referenceSource,
+    externalSlug: backendMarket.externalSlug ?? baseSelection?.externalSlug,
+    externalMarketId: backendMarket.externalMarketId ?? baseSelection?.externalMarketId,
+    conditionId: backendMarket.conditionId ?? baseSelection?.conditionId,
+    referenceTokenId: selectionOutcome?.referenceTokenId ?? selectionOutcome?.tokenId ?? backendOutcome.referenceTokenId ?? baseSelection?.referenceTokenId,
+    referenceOutcomeLabel: selectionOutcome?.referenceOutcomeLabel ?? backendOutcome.referenceOutcomeLabel ?? baseSelection?.referenceOutcomeLabel,
+    limitPrice: baseSelection?.limitPrice,
+    limitSide: baseSelection?.limitSide,
+    limitShares: baseSelection?.limitShares,
+  };
+};
+
 const syntheticMarketForSelection = (selection: TicketSelection | undefined, markets: SyntheticLineMarkets) => {
   if (selection?.marketType === "spread") return markets.spread;
   if (selection?.marketType === "totals") return markets.totals;

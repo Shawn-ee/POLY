@@ -7,7 +7,7 @@ import {
 } from "../domain/portfolioPositionMetrics";
 import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
 import { label, money } from "../presentation/formatters";
-import { resolveLineTicketTarget } from "../services/eventDetailLineTicketService";
+import { resolveLineTicketTarget, ticketSelectionFromBackendMarket } from "../services/eventDetailLineTicketService";
 import type { Position } from "./Portfolio";
 import type { TicketSelection } from "./TradeTicket";
 
@@ -1354,8 +1354,9 @@ export function EventDetail({
     );
   };
   const renderParityOutcomeRow = (outcome: DisplayOutcome, marketId: string, matchingOutcome?: Outcome, groupMarket?: Market) => {
+    const ticketSelection = ticketSelectionFromBackendMarket(outcome.ticketSelection, groupMarket, matchingOutcome);
     const ticketTarget = resolveLineTicketTarget({
-      selection: outcome.ticketSelection,
+      selection: ticketSelection,
       backendMarket: groupMarket,
       backendOutcome: matchingOutcome,
       syntheticOutcome: outcome.ticketOutcome ?? matchingOutcome,
@@ -1379,10 +1380,10 @@ export function EventDetail({
       </View>
       <Text style={styles.oddsMultiplier}>{outcome.odds}</Text>
       <Pressable
-        accessibilityLabel={`event-detail-outcome-${marketId}-${outcome.id} ticket-source-${ticketTarget?.source ?? "unavailable"} ticket-market-${ticketTarget?.market.id ?? "none"} ticket-outcome-${ticketTarget?.outcome.id ?? "none"} ${ticketSelectionIdentityLabel(outcome.ticketSelection)} ${providerIdentityLabel(ticketTarget?.market ?? groupMarket, ticketTarget?.outcome ?? outcome.ticketOutcome ?? matchingOutcome)}`}
+        accessibilityLabel={`event-detail-outcome-${marketId}-${outcome.id} ticket-source-${ticketTarget?.source ?? "unavailable"} ticket-market-${ticketTarget?.market.id ?? "none"} ticket-outcome-${ticketTarget?.outcome.id ?? "none"} ${ticketSelectionIdentityLabel(ticketSelection)} ${providerIdentityLabel(ticketTarget?.market ?? groupMarket, ticketTarget?.outcome ?? outcome.ticketOutcome ?? matchingOutcome)}`}
         onPress={() => {
           if (!ticketTarget) return;
-          openTicket(ticketTarget.market, ticketTarget.outcome, event, defaultSide, outcome.ticketSelection);
+          openTicket(ticketTarget.market, ticketTarget.outcome, event, defaultSide, ticketSelection);
         }}
         style={[styles.parityProbButton, { backgroundColor: outcome.color }]}
         testID={`event-detail-outcome-${marketId}-${outcome.id}`}

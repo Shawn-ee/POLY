@@ -30,6 +30,42 @@ export type Outcome = {
   color: string;
 };
 
+export type MarketSelection = {
+  selectorKey?: string | null;
+  marketId?: string | null;
+  outcomeId?: string | null;
+  marketGroupKey?: string | null;
+  marketGroupId?: string | null;
+  marketGroupTitle?: string | null;
+  marketType?: string | null;
+  marketFamily?: string | null;
+  displayLabel?: string | null;
+  period?: string | null;
+  line?: string | null;
+  lineValue?: number | null;
+  unit?: string | null;
+  chart?: {
+    targetMarketId?: string | null;
+    status?: string | null;
+    source?: string | null;
+    pointCount?: number | null;
+    outcomeCount?: number | null;
+    range?: string | null;
+    ranges?: string[];
+    emptyState?: string | null;
+  };
+  outcomes?: Array<{
+    id?: string | null;
+    outcomeId?: string | null;
+    side?: string | null;
+    label?: string | null;
+    tokenId?: string | null;
+    referenceTokenId?: string | null;
+    referenceOutcomeLabel?: string | null;
+    isTradable?: boolean | null;
+  }>;
+};
+
 export type Market = {
   id: string;
   marketGroupId?: string;
@@ -40,6 +76,7 @@ export type Market = {
   externalSlug?: string | null;
   externalMarketId?: string | null;
   conditionId?: string | null;
+  selection?: MarketSelection | null;
   title: string;
   zhTitle: string;
   type: "game-line" | "prop" | "future" | "live";

@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KA - Line Selector Backend Selection Contract
+
+Closed or narrowed:
+
+- `/api/mobile/events/:slug/live-detail` already emits route-owned `markets[].selection` for line selector identity; Cycle KA carries that block through mobile types and `normalizeEventDetail`.
+- Event Detail line tickets now build selection metadata from backend `market.selection` when present, preserving market id, outcome id, group id, line, period, provider market id, condition id, token id, and provider outcome label.
+- Focused tests prove `total_goals` maps to mobile `totals`, `team_total_goals` maps to `team-total`, and resolver output stays on `backend-line-market` for matching selected line/period.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Broader real-provider replay for every visible line family when Polymarket exposes exact spread/totals/team-total markets.
+- Durable first-class line selection snapshots remain future hardening; current order lifecycle still stores the client/request selection snapshot in `ApiOrderRequest.requestBody.selection`.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Market`, `Outcome`, provider identity fields, and `ApiOrderRequest.requestBody.selection` support the KA contract.
+
+Temporary mock/static data:
+
+- KA proof uses a route-shaped live-detail payload and does not add frontend-only line markets. Deterministic line fixtures remain only as fallback when backend line markets are absent.
+
 ## Cycle JZ - Account Preferences Contract
 
 Closed or narrowed:

@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle KA",
+  "generatedAt": "2026-07-06T06:58:42.503Z",
+  "status": "pass",
+  "checks": {
+    "backendRouteShapeIncludesSelection": true,
+    "mobileAdapterPreservesSelection": true,
+    "totalGoalsMapsToTotalsTicket": true,
+    "teamTotalGoalsMapsToTeamTotalTicket": true,
+    "lineTicketResolvesToBackendMarket": true,
+    "providerIdentityPreserved": {
+      "externalMarketId": "gamma-cycle-ka-total-25-1h",
+      "conditionId": "condition-cycle-ka-total-25-1h",
+      "referenceTokenId": "token-cycle-ka-total-over",
+      "referenceOutcomeLabel": "Over 2.5 first half"
+    }
+  }
+}
