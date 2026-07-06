@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NM
+
+Gate status: Pass
+
+Scope: Portfolio open-order status contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NM-portfolio-open-order-status-contract/cycle-NM-portfolio-open-order-status-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NM-portfolio-open-order-status-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio openOrders reject terminal statuses and zero-remaining rows before visible Orders state applies.
+
 ## Cycle NL
 
 Gate status: Pass

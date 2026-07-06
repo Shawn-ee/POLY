@@ -68,12 +68,28 @@ const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
   return value as T[];
 };
 
+const activeOpenOrderStatuses = new Set(["OPEN", "PARTIAL", "PARTIALLY_FILLED", "PENDING"]);
+
+const requireOpenOrderStatus = (value: unknown) => {
+  if (typeof value !== "string" || !value.trim()) {
+    throw new Error("Portfolio snapshot response had invalid openOrders[].status.");
+  }
+  const normalized = value.trim().toUpperCase();
+  if (!activeOpenOrderStatuses.has(normalized)) {
+    throw new Error("Portfolio snapshot response had terminal openOrders[].status.");
+  }
+  return value;
+};
+
 const parseOpenOrderEconomics = (order: PortfolioOpenOrderItem) => {
   const price = requireProbabilityNumber(order.price, "openOrders[].price");
   const remaining = requireNonNegativeNumber(order.remaining, "openOrders[].remaining");
   const size = requireNonNegativeNumber(order.size, "openOrders[].size");
   if (remaining > size) {
     throw new Error("Portfolio snapshot response had openOrders[].remaining above openOrders[].size.");
+  }
+  if (remaining <= 0) {
+    throw new Error("Portfolio snapshot response had non-open openOrders[].remaining.");
   }
   return {
     price,
@@ -117,7 +133,7 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
         outcome: order.outcome.name,
         selection: portfolioSelectionFromBackend(order.selection, "openOrders[].selection"),
         side: order.side === "SELL" ? "sell" : "buy",
-        status: order.status,
+        status: requireOpenOrderStatus(order.status),
         price: economics.price,
         remaining: economics.remaining,
         originalShares: economics.size,

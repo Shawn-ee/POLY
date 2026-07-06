@@ -346,6 +346,65 @@ describe("portfolio snapshot service", () => {
     });
   });
 
+  test("rejects terminal statuses in open orders before applying Portfolio Orders state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            status: "CANCELED",
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had terminal openOrders[].status.");
+  });
+
+  test("rejects zero-remaining open orders before applying Portfolio Orders state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            status: "OPEN",
+            remaining: 0,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had non-open openOrders[].remaining.");
+  });
+
+  test("accepts partial active open orders with positive remaining shares", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            status: "PARTIAL",
+            size: 100,
+            remaining: 25,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).resolves.toMatchObject({
+      openOrders: [
+        {
+          status: "PARTIAL",
+          originalShares: 100,
+          remainingShares: 25,
+        },
+      ],
+    });
+  });
+
   test("rejects open orders with remaining above original size before applying Portfolio state", async () => {
     const getPortfolio = vi.fn(async () =>
       snapshot({

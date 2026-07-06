@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NM - Portfolio Open-Order Status Contract
+
+Cycle NM hardens Portfolio server-mode open-order rows before visible Orders state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NM-portfolio-open-order-status-contract/cycle-NM-portfolio-open-order-status-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_open_order_status_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio visible open-order status | `/api/portfolio` through `PolyApi.getPortfolio()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | `openOrders[].status`, `remaining`, `size`, `price`; visible open orders require active status and positive remaining shares | `Order`, `Market`, `Outcome`, open-order projection | Mock/local Portfolio remains unchanged. Server-mode terminal or zero-remaining rows reject before visible Orders state applies. | None for focused Portfolio open-order status contract. P2 optional stale-row copy. |
+
 ## Cycle NL - Position Re-Trade Availability Contract
 
 Cycle NL hardens Portfolio position Buy/Sell re-trade targets so backend Portfolio market availability remains authoritative:

@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NM - Portfolio Open-Order Status Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio `openOrders` no longer accepts terminal statuses into visible Orders rows.
+- Active open-order statuses are limited to `OPEN`, `PARTIAL`, `PARTIALLY_FILLED`, and `PENDING`.
+- Server-mode Portfolio `openOrders` rows must have positive remaining shares; zero-remaining rows belong in history/activity routes.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio open-order status contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` open-order `status`, `remaining`, and `size` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio behavior remains unchanged. Server-mode terminal or zero-remaining open orders reject before visible Orders state applies.
+
 ## Cycle NL - Position Re-Trade Availability Contract
 
 Closed or narrowed:

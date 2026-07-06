@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle NM",
+  "feature": "Portfolio open-order status contract",
+  "generatedAt": "2026-07-06T14:02:51.304Z",
+  "route": "/api/portfolio",
+  "contract": {
+    "validPayload": "server-mode Portfolio openOrders must contain active order statuses and positive remaining shares.",
+    "malformedPayload": "terminal statuses or zero-remaining rows reject before visible Portfolio Orders state applies."
+  },
+  "assertions": {
+    "acceptsOpenStatus": true,
+    "acceptsPartialWithPositiveRemaining": true,
+    "rejectsTerminalCanceledStatus": true,
+    "rejectsTerminalFilledStatus": true,
+    "rejectsZeroRemainingOpenOrder": true
+  }
+}
