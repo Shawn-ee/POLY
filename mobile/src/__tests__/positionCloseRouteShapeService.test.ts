@@ -70,4 +70,26 @@ describe("position close route shape service", () => {
       fills: [{ size: "250.50" }, { size: "250.00" }],
     }, 500)).toThrow("filled size above order size");
   });
+
+  test("accepts close confirmations with filled plus remaining equal to order size", () => {
+    expect(() => assertPositionCloseOrderResponseShape({
+      order: {
+        id: "close-order-1",
+        size: "500.00",
+        remaining: "125.00",
+      },
+      fills: [{ size: "250.00" }, { size: "125.00" }],
+    }, 500)).not.toThrow();
+  });
+
+  test("rejects close confirmations with filled plus remaining above order size", () => {
+    expect(() => assertPositionCloseOrderResponseShape({
+      order: {
+        id: "close-order-1",
+        size: "500.00",
+        remaining: "250.00",
+      },
+      fills: [{ size: "150.00" }, { size: "125.00" }],
+    }, 500)).toThrow("filled plus remaining size above order size");
+  });
 });

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MR - Cashout Fill Plus Remaining Contract
+
+Cycle MR hardens server-mode cashout lifecycle totals before Portfolio refresh treats a close as accepted:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MR-cashout-fill-remaining-contract/cycle-MR-cashout-fill-remaining-contract.json`.
+- Proof script: `scripts/prove_mobile_cashout_fill_remaining_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio cashout fill/remaining lifecycle | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Sell order with market id, outcome id, side `SELL`, bounded current price, and full visible `position.shares` size | Nested or top-level order `size` and `remaining`; returned `fills[].size`; when all are returned, fill total plus remaining must be less than or equal to order `size` | `Order`, `Fill`, `Position`, matching/reservation service | Mock/local cashout remains unchanged. Server-mode impossible lifecycle totals reject before Portfolio refresh treats cashout as accepted. | None for focused cashout fill plus remaining contract. P2 optional richer lifecycle mismatch copy. |
+
 ## Cycle MQ - Event Detail Quote Price Bounds Contract
 
 Cycle MQ hardens route-backed Event Detail quote prices before game-page market rows apply:

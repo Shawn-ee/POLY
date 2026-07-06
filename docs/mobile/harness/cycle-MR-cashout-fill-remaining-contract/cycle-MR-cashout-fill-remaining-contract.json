@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle MR",
+  "feature": "Cashout fill plus remaining consistency contract",
+  "generatedAt": "2026-07-06T12:41:13.433Z",
+  "route": "/api/orders via server-mode cashout",
+  "contract": {
+    "validPayload": "Cashout confirmation fill total plus remaining size must be less than or equal to order size when all are returned",
+    "malformedPayload": "fill total plus remaining above order size rejects before Portfolio refresh treats cashout as accepted"
+  },
+  "assertions": {
+    "partialFillPlusRemainingAccepted": true,
+    "fullFillPlusZeroRemainingAccepted": true,
+    "nestedFillPlusRemainingAboveSizeRejects": true,
+    "topLevelFillPlusRemainingAboveSizeRejects": true
+  }
+}

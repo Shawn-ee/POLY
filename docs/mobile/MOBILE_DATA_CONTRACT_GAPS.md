@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MR - Cashout Fill Plus Remaining Contract
+
+Closed or narrowed:
+
+- Server-mode cashout confirmation validation now rejects lifecycle payloads where `sum(fills[].size) + remaining > size`.
+- The check applies to nested `order.*` and legacy top-level order confirmation fields.
+- Impossible over-accounted cashout confirmations no longer allow Portfolio refresh to treat cashout as accepted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cashout fill plus remaining contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/orders` confirmation order and fill fields support this contract when returned.
+
+Temporary mock/static data:
+
+- Mock/local cashout remains unchanged. Server-mode impossible lifecycle totals reject before Portfolio refresh.
+
 ## Cycle MQ - Event Detail Quote Price Bounds Contract
 
 Closed or narrowed:
