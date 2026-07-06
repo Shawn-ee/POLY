@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle MS
+
+Gate status: Pass
+
+Scope: Event list quote price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-MS-event-list-quote-price-bounds-contract/cycle-MS-event-list-quote-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/eventListRouteShapeService.test.ts`, `mobile/src/__tests__/liveEventFeedService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-MS-event-list-quote-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Home/Search/Live/Futures compact event-list routes reject outcome quote prices outside `0` to `1` before frontend normalization or visible card rendering while still accepting large backend depth sizes.
+
 ## Cycle MR
 
 Gate status: Pass
@@ -48,6 +62,7 @@ Decision: pass for focused backend/data-contract scope. Server-mode Event Detail
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Event list quote price bounds contract | Cycle MS | Pass for backend/data-contract scope | 0 for focused event-list quote bounds scope | P2 optional field-specific event-list quote error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MS-event-list-quote-price-bounds-contract/cycle-MS-event-list-quote-price-bounds-contract.json`; tests: `mobile/src/__tests__/eventListRouteShapeService.test.ts`, `mobile/src/__tests__/liveEventFeedService.test.ts`; audit: `mobile/docs/audits/cycle-MS-event-list-quote-price-bounds-contract.md` | Server-mode Home/Search/Live/Futures compact event-list routes now reject outcome quote prices outside `0` to `1` before frontend normalization or visible card rendering while still accepting large backend depth sizes. |
 | Cashout fill plus remaining contract | Cycle MR | Pass for backend/data-contract scope | 0 for focused cashout fill plus remaining scope | P2 optional richer cashout lifecycle mismatch copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MR-cashout-fill-remaining-contract/cycle-MR-cashout-fill-remaining-contract.json`; tests: `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`; audit: `mobile/docs/audits/cycle-MR-cashout-fill-remaining-contract.md` | Server-mode cashout now rejects impossible confirmations where total returned fill size plus returned remaining exceeds returned order size before Portfolio refresh treats cashout as accepted. |
 | Event Detail quote price bounds contract | Cycle MQ | Pass for backend/data-contract scope | 0 for focused Event Detail quote bounds scope | P2 optional field-specific Event Detail quote error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MQ-event-detail-quote-price-bounds-contract/cycle-MQ-event-detail-quote-price-bounds-contract.json`; tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`; audit: `mobile/docs/audits/cycle-MQ-event-detail-quote-price-bounds-contract.md` | Server-mode Event Detail now rejects outcome quote prices outside `0` to `1` before frontend normalization or game-page market rendering while still accepting large backend depth sizes. |
 | Cashout fill size contract | Cycle MP | Pass for backend/data-contract scope | 0 for focused cashout fill size scope | P2 optional richer cashout fill mismatch copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MP-cashout-fill-size-contract/cycle-MP-cashout-fill-size-contract.json`; tests: `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`; audit: `mobile/docs/audits/cycle-MP-cashout-fill-size-contract.md` | Server-mode cashout now rejects impossible confirmations where total returned fill size exceeds returned order size before Portfolio refresh treats cashout as accepted. |

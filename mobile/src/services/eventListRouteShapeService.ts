@@ -15,6 +15,16 @@ const isFiniteNonNegativeNumberLike = (value: unknown) => {
   return false;
 };
 
+const isProbabilityNumberLike = (value: unknown) => {
+  if (value === null || value === undefined || value === "") return true;
+  if (typeof value === "number") return Number.isFinite(value) && value >= 0 && value <= 1;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1;
+  }
+  return false;
+};
+
 const assertEventListOutcomeShape = (outcome: unknown, marketId: string): asserts outcome is Outcome => {
   if (!isRecord(outcome)) {
     throw new Error(`Event list route returned malformed outcome for market ${marketId}.`);
@@ -28,7 +38,12 @@ const assertEventListOutcomeShape = (outcome: unknown, marketId: string): assert
   if (typeof outcome.isTradable !== "boolean") {
     throw new Error(`Event list route returned outcome ${outcome.id} without tradability state.`);
   }
-  for (const field of ["price", "bestBid", "bestAsk", "bestBidSize", "bestAskSize"] as const) {
+  for (const field of ["price", "bestBid", "bestAsk"] as const) {
+    if (!isProbabilityNumberLike(outcome[field])) {
+      throw new Error(`Event list route returned invalid ${field} for outcome ${outcome.id}.`);
+    }
+  }
+  for (const field of ["bestBidSize", "bestAskSize"] as const) {
     if (!isFiniteNonNegativeNumberLike(outcome[field])) {
       throw new Error(`Event list route returned invalid ${field} for outcome ${outcome.id}.`);
     }

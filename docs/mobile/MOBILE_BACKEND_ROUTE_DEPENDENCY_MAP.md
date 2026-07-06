@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MS - Event List Quote Price Bounds Contract
+
+Cycle MS hardens compact event-list quote prices before Home, Search, Live, and Futures card state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MS-event-list-quote-price-bounds-contract/cycle-MS-event-list-quote-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_event_list_quote_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventListRouteShapeService.test.ts`, `mobile/src/__tests__/liveEventFeedService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home/Search/Live/Futures compact event quote bounds | `/api/events?includeMobileMarkets=1`; `/api/events?statusGroup=live&includeMobileMarkets=1` | GET | Public/mobile route | Query filters, cursor, limit, optional saved ids/status/sort | Outcome `price`, `bestBid`, and `bestAsk` must be probability values from `0` to `1`; `bestBidSize` and `bestAskSize` remain non-negative depth values and may exceed `1` | `Event`, listed public `Market`, compact mobile market projection, quote/depth provider rows | Mock/local card data remains unchanged. Server-mode impossible quote prices reject before card normalization or visible card rendering. | None for focused event-list quote bounds contract. P2 optional field-specific quote error copy. |
+
 ## Cycle MR - Cashout Fill Plus Remaining Contract
 
 Cycle MR hardens server-mode cashout lifecycle totals before Portfolio refresh treats a close as accepted:

@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MS - Event List Quote Price Bounds Contract
+
+Closed or narrowed:
+
+- Event-list route validation now rejects compact outcome `price`, `bestBid`, and `bestAsk` values outside the probability range `0` to `1`.
+- Home, Search, Live, and Futures card feeds no longer accept above-one route quote values that frontend normalization could reinterpret as fake percentages.
+- Backend depth sizes remain separate from quote prices, so large `bestBidSize` and `bestAskSize` values are still accepted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused event-list quote bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing compact mobile market quote and depth fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local card data remains unchanged. Server-mode invalid compact quote prices reject before visible card state applies.
+
 ## Cycle MR - Cashout Fill Plus Remaining Contract
 
 Closed or narrowed:

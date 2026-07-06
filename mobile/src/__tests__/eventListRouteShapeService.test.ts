@@ -81,10 +81,25 @@ describe("event list route shape service", () => {
     expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/invalid price/);
   });
 
+  test("rejects outcome quote prices above probability bounds before visible card state", () => {
+    const payload = eventListPayload();
+    (payload.events[0].markets[0].outcomes[0] as { bestAsk: unknown }).bestAsk = "1.2";
+
+    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/invalid bestAsk/);
+  });
+
   test("rejects negative outcome depth sizes before visible card state", () => {
     const payload = eventListPayload();
     (payload.events[0].markets[0].outcomes[0] as unknown as { bestAskSize: unknown }).bestAskSize = -1;
 
     expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/invalid bestAskSize/);
+  });
+
+  test("allows large backend depth sizes on compact event-list outcomes", () => {
+    const payload = eventListPayload();
+    (payload.events[0].markets[0].outcomes[0] as unknown as { bestBidSize: unknown }).bestBidSize = "1200.5";
+    (payload.events[0].markets[0].outcomes[0] as unknown as { bestAskSize: unknown }).bestAskSize = 2400;
+
+    expect(() => assertEventListRoutePayloadShape(payload)).not.toThrow();
   });
 });

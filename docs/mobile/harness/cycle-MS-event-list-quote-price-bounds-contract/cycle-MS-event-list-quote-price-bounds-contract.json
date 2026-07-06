@@ -1,0 +1,22 @@
+{
+  "cycle": "Cycle MS",
+  "feature": "Event list outcome quote price bounds contract",
+  "generatedAt": "2026-07-06T12:44:45.592Z",
+  "routes": [
+    "/api/events?includeMobileMarkets=1",
+    "/api/events?statusGroup=live&includeMobileMarkets=1"
+  ],
+  "contract": {
+    "validPayload": "Home, Search, Live, and Futures event-list outcome price, bestBid, and bestAsk must be probability values from 0 to 1.",
+    "malformedPayload": "Above-one or malformed quote prices reject before frontend card normalization; depth sizes remain allowed above one."
+  },
+  "assertions": {
+    "validProbabilityQuotesAccepted": true,
+    "largeDepthSizeAccepted": true,
+    "priceAboveOneRejects": true,
+    "bidAboveOneRejects": true,
+    "askAboveOneRejects": true,
+    "malformedQuoteRejects": true,
+    "negativeDepthSizeRejects": true
+  }
+}
