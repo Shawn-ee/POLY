@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle NB",
+  "feature": "Trade Ticket order submit price bounds contract",
+  "generatedAt": "2026-07-06T13:19:48.793Z",
+  "route": "/api/orders",
+  "contract": {
+    "validPayload": "Trade Ticket submit derives canonical order price from a finite contract probability in 1..100 cents.",
+    "malformedPayload": "zero, negative, and above-100 computed probabilities reject before calling /api/orders.",
+    "sizePayload": "share size is derived from the same validated contract probability used for request price."
+  },
+  "assertions": {
+    "validYesPriceAccepted": true,
+    "validNoInversePriceAccepted": true,
+    "zeroYesPriceRejectsBeforeApi": true,
+    "aboveOneYesPriceRejectsBeforeApi": true,
+    "zeroNoPriceRejectsBeforeApi": true
+  }
+}

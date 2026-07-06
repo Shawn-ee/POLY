@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NB - Order Submit Price Bounds Contract
+
+Cycle NB hardens Trade Ticket order submit price derivation before `/api/orders` is called:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NB-order-submit-price-bounds-contract/cycle-NB-order-submit-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_order_submit_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket submit price bounds | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Market id, outcome id, side, contract side, validated price, derived size, and selection identity | Computed contract probability must be finite and within `1` to `100` cents before `price` and `size` are sent | `Order`, `Market`, `Outcome`, matching/reservation service | Mock order mode uses the same validated contract probability. Server-mode invalid prices reject before route call. | None for focused order submit price bounds contract. P2 optional Trade Ticket-specific invalid-price copy. |
+
 ## Cycle NA - Portfolio Open-Order Price Bounds Contract
 
 Cycle NA hardens Portfolio open-order price fields before visible Orders and cancel activity state applies:

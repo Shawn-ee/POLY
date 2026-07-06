@@ -65,6 +65,14 @@ const contractProbability = (input: TicketOrderInput) => {
   return contractSideForOrder(input) === "no" ? 100 - probability : probability;
 };
 
+const requireContractProbability = (input: TicketOrderInput) => {
+  const probability = contractProbability(input);
+  if (!Number.isFinite(probability) || probability <= 0 || probability > 100) {
+    throw new Error("Order price must be between 1 and 100 cents.");
+  }
+  return probability;
+};
+
 const ticketMarketType = (input: TicketOrderInput): TicketSelection["marketType"] => {
   if (input.selection?.marketType) return input.selection.marketType;
   if (input.market.type === "live") return "live";
@@ -112,7 +120,7 @@ const mockOrder = (input: TicketOrderInput): TicketOrderResult => ({
   contractSide: contractSideForOrder(input),
   side: input.side,
   amount: input.amount,
-  probability: contractProbability(input),
+  probability: requireContractProbability(input),
 });
 
 const numericField = (value: string | number | null | undefined) => {
@@ -241,13 +249,14 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
   }
 
   const expectedSelection = selectionForOrder(input);
+  const probability = requireContractProbability(input);
   const orderInput = {
     marketId: input.market.id,
     outcomeId: input.outcome.id,
     side: input.side.toUpperCase() as "BUY" | "SELL",
     contractSide: contractSideForOrder(input).toUpperCase() as "YES" | "NO",
-    price: (contractProbability(input) / 100).toFixed(2),
-    size: sharesFromAmount(input.amount, contractProbability(input)).toFixed(2),
+    price: (probability / 100).toFixed(2),
+    size: sharesFromAmount(input.amount, probability).toFixed(2),
     selection: expectedSelection,
   };
   const payload = await input.api.placeLimitOrder(orderInput);

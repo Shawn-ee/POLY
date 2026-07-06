@@ -762,6 +762,73 @@ describe("ticket order service", () => {
     expect(placeLimitOrder).not.toHaveBeenCalled();
   });
 
+  test("rejects invalid contract probabilities before calling the API", async () => {
+    const placeLimitOrder = vi.fn();
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome: { ...outcome, probability: 0 },
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Order price must be between 1 and 100 cents.");
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome: { ...outcome, probability: 101 },
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Order price must be between 1 and 100 cents.");
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome: { ...outcome, probability: 100 },
+        selection: { marketType: "future", displayLabel: "France", contractSide: "no" },
+        contractSide: "no",
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Order price must be between 1 and 100 cents.");
+    expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("allows inverse no-side order when computed contract probability is in bounds", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-valid-no-price-order" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    const result = await submitTicketOrder({
+      mode: "server",
+      api,
+      market,
+      outcome: { ...outcome, probability: 99 },
+      selection: { marketType: "future", displayLabel: "France", contractSide: "no" },
+      contractSide: "no",
+      side: "buy",
+      amount: 25,
+    });
+
+    expect(placeLimitOrder).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contractSide: "NO",
+        price: "0.01",
+        size: "2500.00",
+      }),
+    );
+    expect(result).toMatchObject({
+      id: "server-valid-no-price-order",
+      probability: 1,
+    });
+  });
+
   test("blocks server-mode submit for backend unavailable markets before calling the API", async () => {
     const placeLimitOrder = vi.fn();
     const api = { placeLimitOrder } as unknown as PolyApi;

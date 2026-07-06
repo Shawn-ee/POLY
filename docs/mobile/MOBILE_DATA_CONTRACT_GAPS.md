@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NB - Order Submit Price Bounds Contract
+
+Closed or narrowed:
+
+- Trade Ticket submit now rejects computed contract probabilities outside `1` to `100` cents before calling `/api/orders`.
+- Request `price`, request `size`, and returned order probability now use the same validated contract probability.
+- The old hidden size clamp no longer lets a zero-cent request price pair with a one-cent size calculation.
+- Inverse No orders are accepted when the computed No-side contract probability remains in bounds.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused order submit price bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/orders` request fields support this contract.
+
+Temporary mock/static data:
+
+- Mock order mode now uses the same validated contract probability. Server-mode invalid prices reject before route call.
+
 ## Cycle NA - Portfolio Open-Order Price Bounds Contract
 
 Closed or narrowed:

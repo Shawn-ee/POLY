@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NB
+
+Gate status: Pass
+
+Scope: Trade Ticket order submit price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NB-order-submit-price-bounds-contract/cycle-NB-order-submit-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/orderService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NB-order-submit-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Trade Ticket submit rejects zero or above-one computed order prices before `/api/orders` and derives request size from the same validated contract probability.
+
 ## Cycle NA
 
 Gate status: Pass
