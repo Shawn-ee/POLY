@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle NJ",
+  "feature": "Trade Ticket order submit status contract",
+  "generatedAt": "2026-07-06T13:52:01.578Z",
+  "route": "/api/orders",
+  "contract": {
+    "validPayload": "server-mode order submit may apply an order id with active/success status, or legacy missing status.",
+    "malformedPayload": "server-mode order submit must reject explicit terminal failed statuses even when an id is returned."
+  },
+  "assertions": {
+    "acceptsOpenStatus": true,
+    "acceptsLegacyMissingStatus": true,
+    "rejectsNestedRejectedStatus": true,
+    "rejectsTopLevelCanceledStatus": true,
+    "rejectsFailedStatus": true
+  }
+}

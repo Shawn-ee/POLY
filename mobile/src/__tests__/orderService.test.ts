@@ -484,6 +484,46 @@ describe("ticket order service", () => {
     });
   });
 
+  test("rejects server-mode submit when backend confirms a failed terminal status", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-rejected",
+        status: "REJECTED",
+      },
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit was rejected by the server with status REJECTED.");
+  });
+
+  test("rejects server-mode submit when top-level status is canceled", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      id: "server-order-canceled",
+      status: "CANCELED",
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit was rejected by the server with status CANCELED.");
+  });
+
   test("rejects malformed non-line selection echo before applying server order state", async () => {
     const placeLimitOrder = vi.fn(async () => ({
       order: {

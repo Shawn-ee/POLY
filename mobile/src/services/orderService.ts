@@ -183,6 +183,7 @@ const sharesFromAmount = (amount: number, probability: number) => {
 const lineSelectionFamilies: Array<TicketSelection["marketType"]> = ["spread", "totals", "team-total"];
 
 const blockedAvailabilityStatuses = new Set(["suspended", "unavailable"]);
+const failedOrderStatuses = new Set(["CANCELED", "CANCELLED", "REJECTED", "FAILED", "EXPIRED"]);
 
 export const marketOrderBlockReason = (market: Market) => {
   const status = market.availability?.status;
@@ -234,6 +235,15 @@ const validateServerSelectionEcho = (expected: TicketSelection, response: Server
   } as TicketSelection;
 };
 
+const validateServerOrderStatus = (status: string | undefined) => {
+  if (!status) return undefined;
+  const normalized = status.trim().toUpperCase();
+  if (failedOrderStatuses.has(normalized)) {
+    throw new Error(`Order submit was rejected by the server with status ${normalized}.`);
+  }
+  return status;
+};
+
 export const submitTicketOrder = async (input: TicketOrderInput): Promise<TicketOrderResult> => {
   if (input.amount <= 0) {
     throw new Error("Order amount must be greater than zero.");
@@ -265,9 +275,9 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
   if (!orderId) {
     throw new Error("Order submit was not confirmed by the server.");
   }
+  const status = validateServerOrderStatus(response.order?.status ?? response.status);
   const confirmedSelection = validateServerSelectionEcho(expectedSelection, response);
   const lifecycle = lifecycleFromResponse(response);
-  const status = response.order?.status ?? response.status;
 
   return {
     ...mockOrder(input),

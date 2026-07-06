@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NJ - Order Submit Status Contract
+
+Closed or narrowed:
+
+- Server-mode Trade Ticket submit no longer treats returned order ids with explicit failed terminal statuses as successful submitted orders.
+- `CANCELED`, `CANCELLED`, `REJECTED`, `FAILED`, and `EXPIRED` statuses now reject before visible order state applies.
+- Legacy `/api/orders` responses that return an id without status remain accepted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused order submit status contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/orders` id/status response fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Trade Ticket behavior remains unchanged. Server-mode explicit terminal failure statuses block success state.
+
 ## Cycle NI - Event Detail Period Market Support Contract
 
 Closed or narrowed:

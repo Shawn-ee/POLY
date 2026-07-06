@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NJ
+
+Gate status: Pass
+
+Scope: Order submit status contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NJ-order-submit-status-contract/cycle-NJ-order-submit-status-contract.json`
+- Focused tests: `mobile/src/__tests__/orderService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NJ-order-submit-status-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Trade Ticket submit rejects explicit terminal failed statuses even when the backend returns an order id, while preserving legacy id-only and active-status confirmations.
+
 ## Cycle NI
 
 Gate status: Pass

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NJ - Order Submit Status Contract
+
+Cycle NJ hardens Trade Ticket server-mode order submit confirmation before visible submitted-order state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NJ-order-submit-status-contract/cycle-NJ-order-submit-status-contract.json`.
+- Proof script: `scripts/prove_mobile_order_submit_status_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket server-mode submit status confirmation | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Market id, outcome id, side, contract side, validated price, derived size, and selection identity | Returned order id plus optional status; explicit failed terminal statuses are rejected before visible submitted-order state applies | `Order`, matching/reservation service, status projection | Mock/local order submit remains unchanged. Server-mode legacy id-only confirmations remain accepted; explicit failed statuses block success state. | None for focused order submit status contract. P2 optional rejected-status copy. |
+
 ## Cycle NI - Event Detail Period Market Support Contract
 
 Cycle NI hardens route-backed Event Detail first-half and second-half winner market availability before rendering visible period rows:
