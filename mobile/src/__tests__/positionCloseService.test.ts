@@ -25,6 +25,7 @@ describe("position close service", () => {
     expect(canCashOutPosition({ ...position, shares: 0 })).toBe(false);
     expect(canCashOutPosition({ ...position, shares: undefined })).toBe(false);
     expect(canCashOutPosition({ ...position, currentPrice: undefined })).toBe(false);
+    expect(canCashOutPosition({ ...position, currentPrice: 1.01 })).toBe(false);
     expect(canCashOutPosition({ ...position, mode: "mock", shares: undefined })).toBe(true);
   });
 
@@ -71,7 +72,24 @@ describe("position close service", () => {
           currentPrice: undefined,
         },
       }),
-    ).rejects.toThrow("Cash out requires a current market price.");
+    ).rejects.toThrow("Cash out requires a valid current market price.");
+    expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("rejects server cashout when current price is above contract bounds", async () => {
+    const placeLimitOrder = vi.fn();
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position: {
+          ...position,
+          currentPrice: 1.01,
+        },
+      }),
+    ).rejects.toThrow("Cash out requires a valid current market price.");
     expect(placeLimitOrder).not.toHaveBeenCalled();
   });
 

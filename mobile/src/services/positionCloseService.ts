@@ -15,7 +15,12 @@ const hasAvailableShares = (position: Position) => {
 };
 
 const closePrice = (position: Position) => {
-  if (typeof position.currentPrice !== "number" || !Number.isFinite(position.currentPrice) || position.currentPrice <= 0) {
+  if (
+    typeof position.currentPrice !== "number" ||
+    !Number.isFinite(position.currentPrice) ||
+    position.currentPrice <= 0 ||
+    position.currentPrice > 1
+  ) {
     return undefined;
   }
   return position.currentPrice.toFixed(2);
@@ -52,7 +57,7 @@ export const closePositionOnServer = async ({ mode, api, position }: ClosePositi
     throw new Error("Server position close requires market, outcome, and share identity.");
   }
   if (!price) {
-    throw new Error("Cash out requires a current market price.");
+    throw new Error("Cash out requires a valid current market price.");
   }
 
   const response = await api.placeLimitOrder({

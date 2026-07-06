@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MM - Cashout Price Bounds Contract
+
+Cycle MM bounds server-mode cashout current price to the binary contract price range before submit:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MM-cashout-price-bounds-contract/cycle-MM-cashout-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_cashout_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionCloseService.test.ts`, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio cashout current price bounds | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Sell order with market id, outcome id, side `SELL`, finite positive `position.currentPrice <= 1`, and full visible `position.shares` size | Confirmation handled by Cycle MK; submit is blocked before route call when current price is missing, zero, negative, or above one | `Position`, `Market`, current quote/price projection, `Order` | Mock/local cashout remains unchanged. Server-mode invalid current price blocks cashout instead of submitting impossible limit price. | None for focused cashout price bounds contract. P2 optional richer invalid-price copy. |
+
 ## Cycle ML - Cashout Current Price Contract
 
 Cycle ML requires server-mode cashout to use a current market price instead of falling back to entry probability:

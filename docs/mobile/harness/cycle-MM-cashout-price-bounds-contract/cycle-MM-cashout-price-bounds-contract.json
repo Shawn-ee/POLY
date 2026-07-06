@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle MM",
+  "feature": "Cashout current price bounds contract",
+  "generatedAt": "2026-07-06T12:22:16.104Z",
+  "route": "/api/orders via server-mode cashout",
+  "contract": {
+    "validPayload": "Server-mode cashout current price must be finite and within the binary contract price range (0, 1]",
+    "malformedPayload": "missing, zero, or above-one current price blocks cashout before submit"
+  },
+  "assertions": {
+    "oneDollarPriceAvailable": true,
+    "aboveOneDollarPriceUnavailable": true,
+    "zeroPriceUnavailable": true,
+    "oneDollarCashoutSubmitsPriceOne": true,
+    "aboveOneDollarRejectsBeforeSubmit": true,
+    "missingPriceRejectsBeforeSubmit": true
+  }
+}
