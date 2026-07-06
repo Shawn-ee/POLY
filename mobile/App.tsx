@@ -372,6 +372,10 @@ export default function App() {
   );
   const homeStatusGroup: "live" | "today" | null =
     homeFilter === "live" || homeFilter === "today" ? homeFilter : null;
+  const homeSavedEventIds = useMemo(
+    () => homeFilter === "saved" ? [...savedEventIds] : undefined,
+    [homeFilter, savedEventIds],
+  );
 
   useEffect(() => {
     return () => {
@@ -941,7 +945,14 @@ export default function App() {
 
   const loadBackendWorldCup = useCallback(async (cursor: string | null = null, append = false) => {
     try {
-      const payload = await api.listWorldCupEvents({ limit: HOME_EVENT_PAGE_SIZE, cursor, statusGroup: homeStatusGroup });
+      if (MARKET_DATA_MODE === "server" && homeFilter === "saved" && !homeSavedEventIds?.length) {
+        if (mounted.current) {
+          setEvents([]);
+          setEventNextCursor(null);
+        }
+        return;
+      }
+      const payload = await api.listWorldCupEvents({ limit: HOME_EVENT_PAGE_SIZE, cursor, statusGroup: homeStatusGroup, eventIds: homeSavedEventIds });
       const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
@@ -985,7 +996,7 @@ export default function App() {
         setEventNextCursor(null);
       }
     }
-  }, [api, homeStatusGroup]);
+  }, [api, homeFilter, homeSavedEventIds, homeStatusGroup]);
 
   const loadMoreBackendEvents = useCallback(() => {
     if (MARKET_DATA_MODE !== "server" || !eventNextCursor || isLoadingMoreEvents) return;

@@ -64,6 +64,9 @@ const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
     }
     : {};
 
+const eventIdsFilter = (eventIds: string[]): Prisma.EventWhereInput =>
+  eventIds.length ? { id: { in: eventIds } } : {};
+
 const eventStatusGroupFilter = (statusGroup: string): Prisma.EventWhereInput =>
   statusGroup === "live"
     ? { status: { in: ["live", "LIVE"] } }
@@ -92,6 +95,11 @@ export async function GET(request: NextRequest) {
   const source = url.searchParams.get("source")?.trim() ?? "";
   const status = url.searchParams.get("status")?.trim() ?? "";
   const statusGroup = url.searchParams.get("statusGroup")?.trim() ?? "";
+  const eventIds = (url.searchParams.get("eventIds") ?? "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean)
+    .slice(0, 100);
   const includeMobileMarkets = url.searchParams.get("includeMobileMarkets") === "1";
   const limit = paginationLimit(url.searchParams.get("limit"));
   const cursorId = url.searchParams.get("cursor")?.trim() ?? "";
@@ -105,6 +113,7 @@ export async function GET(request: NextRequest) {
 
   const eventFilters: Prisma.EventWhereInput[] = [
     eventCursorFilter(cursor),
+    eventIdsFilter(eventIds),
     {
     ...eventSearchFilter(search),
     ...(category ? { category } : {}),

@@ -169,6 +169,7 @@ describe("Holiwyn mobile API client", () => {
       cursor: "event-1",
       search: "mexico",
       statusGroup: "today",
+      eventIds: ["event-a", "event-b"],
     });
 
     const [url] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
@@ -177,6 +178,7 @@ describe("Holiwyn mobile API client", () => {
     expect(parsedUrl.searchParams.get("cursor")).toBe("event-1");
     expect(parsedUrl.searchParams.get("search")).toBe("mexico");
     expect(parsedUrl.searchParams.get("statusGroup")).toBe("today");
+    expect(parsedUrl.searchParams.get("eventIds")).toBe("event-a,event-b");
     expect(parsedUrl.searchParams.get("includeMobileMarkets")).toBe("1");
     expect(payload.nextCursor).toBe("event-2");
   });

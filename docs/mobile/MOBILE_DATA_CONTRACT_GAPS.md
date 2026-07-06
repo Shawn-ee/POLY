@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KK - Home Saved Filter
+
+Closed or narrowed:
+
+- Backend `/api/events` now supports `eventIds` filtering for route-backed saved Home pages.
+- Mobile `PolyApi.listWorldCupEvents()` can send saved event ids to the backend.
+- Home server mode sends saved ids when the Saved chip is selected and treats the response as route-filtered.
+- Empty Saved state is handled in-app as an empty list instead of falling back to stale unfiltered events.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- First-class saved/followed market route remains future work if saved state moves beyond profile preferences.
+- Saved ids are still synchronized through the existing profile preferences contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.id`, `Market`, `Outcome`, and profile preference `savedEventIds` support the KK contract.
+
+Temporary mock/static data:
+
+- KK proof creates disposable backend saved and unsaved events with listed public markets. It does not add frontend-only Home rows.
+
 ## Cycle KJ - Home Status Filters
 
 Closed or narrowed:

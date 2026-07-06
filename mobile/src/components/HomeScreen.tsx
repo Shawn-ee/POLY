@@ -78,7 +78,7 @@ export function HomeScreen({
   ];
   const visibleEvents = useMemo(
     () =>
-      routeFiltered && (activeHomeFilter === "live" || activeHomeFilter === "today")
+      routeFiltered && (activeHomeFilter === "live" || activeHomeFilter === "today" || activeHomeFilter === "saved")
         ? events
         : activeHomeFilter === "live"
         ? events.filter((event) => event.status === "live")

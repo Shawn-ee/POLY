@@ -1,0 +1,51 @@
+{
+  "pass": true,
+  "cycle": "Cycle KK",
+  "createdAt": "2026-07-06T07:48:34.118Z",
+  "route": "/api/events",
+  "query": {
+    "includeMobileMarkets": true,
+    "sportKey": "soccer",
+    "leagueKey": "world_cup",
+    "eventIds": [
+      "3983ebc0-567c-4115-8805-c8f0aecc1058",
+      "f48f1279-4ce0-4c53-802f-5d62c4b8c9c0"
+    ]
+  },
+  "seededEvents": {
+    "savedA": {
+      "id": "3983ebc0-567c-4115-8805-c8f0aecc1058",
+      "slug": "mobile-kk-saved-a-9ebdc4cd"
+    },
+    "savedB": {
+      "id": "f48f1279-4ce0-4c53-802f-5d62c4b8c9c0",
+      "slug": "mobile-kk-saved-b-9ebdc4cd"
+    },
+    "unsaved": {
+      "id": "642e09aa-23a8-4a7b-ba2b-3ee1eb35243f",
+      "slug": "mobile-kk-unsaved-9ebdc4cd"
+    }
+  },
+  "results": {
+    "savedSlugs": [
+      "mobile-kk-saved-b-9ebdc4cd",
+      "mobile-kk-saved-a-9ebdc4cd"
+    ],
+    "savedCompactMarketCounts": [
+      {
+        "slug": "mobile-kk-saved-b-9ebdc4cd",
+        "markets": 1
+      },
+      {
+        "slug": "mobile-kk-saved-a-9ebdc4cd",
+        "markets": 1
+      }
+    ],
+    "emptyEventIdsFallbackCount": 3,
+    "nextCursor": null
+  },
+  "mobileBehavior": {
+    "emptySavedStateHandledInApp": true,
+    "routeFilteredHomeSaved": true
+  }
+}

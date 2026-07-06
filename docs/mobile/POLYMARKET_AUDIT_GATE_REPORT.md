@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Home Saved filter | Cycle KK | Pass for backend/data-contract scope | 0 for focused Home Saved event-id route filter scope | P1 first-class saved/followed market route if saved state outgrows profile preferences | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KK-home-saved-filter/cycle-KK-home-saved-filter.json`; tests: `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KK-home-saved-filter.md` | Home server mode now sends saved event ids to `/api/events`; the route returns only selected event ids with compact mobile markets, and empty Saved is handled in-app as empty state. |
 | Home status filters | Cycle KJ | Pass for backend/data-contract scope | 0 for focused Home Live/Today route filter scope | P1 backend-owned saved filter; P1 user-local timezone day boundary if required | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KJ-home-status-filters/cycle-KJ-home-status-filters.json`; tests: `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KJ-home-status-filters.md` | Home server mode now sends selected Live/Today filter to `/api/events`; route returns compact mobile markets and paginates filtered results instead of filtering only the current client page. |
 | Account profile contract | Cycle KI | Pass for backend/data-contract scope | 0 for focused Account profile identity route scope | P1 full server-authored Account menu destinations/actions; P1 richer Account-specific sync/error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KI-account-profile-contract/cycle-KI-account-profile-contract.json`; tests: `mobile/src/__tests__/accountProfileService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KI-account-profile-contract.md` | Mobile server mode now calls canonical `/api/account/profile`, maps backend `displayName`, and replaces the hardcoded demo Account name when profile sync succeeds. |
 | Account balance contract | Cycle KH | Pass for backend/data-contract scope | 0 for focused Account visible balance route scope | P1 full server-authored account identity/session/menu metadata; P1 richer account sync status/error surface | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KH-account-balance-contract/cycle-KH-account-balance-contract.json`; tests: `mobile/src/__tests__/accountBalanceService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KH-account-balance-contract.md` | Mobile server mode now calls canonical `/api/account/balance`, normalizes decimal-string balances for visible Account state, and proof verifies `/api/portfolio` wallet consistency for the same user. |
@@ -128,6 +129,28 @@ Fail the feature when:
 | Trade ticket | Cycle AG | Pass | 0 | P1 binary NO/share contract semantics; P1 production auth/location eligibility gates | `docs/mobile/reference/screenshots/cycle-AG-polymarket-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-amount.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-trade.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/harness/cycle-current-holiwyn-event-detail-ticket-details.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade` | Focused pass only. First view is now sparse and settings opens advanced controls. |
 | Trade ticket surface | Cycle AI | Pass | 0 | P1 production auth/location eligibility gate; P2 native motion polish | `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-start.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-france-ticket.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-after-france-row-tap.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/screenshots/cycle-current-holiwyn-future-list-buy-no-ticket.png`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade`; `cmd /c npm.cmd run smoke:tablet:future-list-buy-no` | Logged-in Polymarket World Cup selection opened a tall location-verification sheet; Holiwyn now uses a taller dimmed fake-token ticket with fixed swipe-up submit rail. |
 | Game page compact scrolled header | Cycle AJ | Pass | 0 | P1 phone visual density/sticky tab polish; P1 backend market/live data; P1 Player Props reference scope | `docs/mobile/reference/screenshots/cycle-AJ-polymarket-live-tab.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-top.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-lines-mid.png` | `docs/mobile/screenshots/cycle-current-holiwyn-game-page-full-markets.png`; `docs/mobile/harness/cycle-current-holiwyn-game-page-full-markets.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-full-page` | Logged-in Polymarket keeps compact match context when scrolled into Game Lines; Holiwyn now shows a compact match header in that state and full game-page smoke passed. |
+
+## Cycle KK
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for visible Home Saved route filter.
+
+Evidence:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KK-home-saved-filter/cycle-KK-home-saved-filter.json`.
+- Cycle audit: `mobile/docs/audits/cycle-KK-home-saved-filter.md`.
+- Focused mobile test:
+  - `mobile/src/__tests__/api.test.ts`
+- Proof script:
+  - `scripts/prove_mobile_home_saved_filter.ts`
+
+Decision:
+
+- Pass for focused backend/data-contract scope.
+- Home server mode sends saved event ids to `/api/events`.
+- `/api/events` filters explicit event ids before pagination and returns compact mobile markets.
+- Remaining P1: first-class saved/followed market route if saved state moves beyond profile preferences.
 
 ## Cycle KJ
 
