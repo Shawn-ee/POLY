@@ -10,7 +10,7 @@ describe("position close route shape service", () => {
         remaining: "500.00",
       },
       fills: [{ size: "0" }],
-    })).not.toThrow();
+    }, 500)).not.toThrow();
   });
 
   test("accepts legacy top-level order id confirmation", () => {
@@ -40,5 +40,14 @@ describe("position close route shape service", () => {
       },
       fills: [{ size: -1 }],
     })).toThrow("invalid fills[0].size");
+  });
+
+  test("rejects close confirmations with mismatched full-position size", () => {
+    expect(() => assertPositionCloseOrderResponseShape({
+      order: {
+        id: "close-order-1",
+        size: "250.00",
+      },
+    }, 500)).toThrow("did not match the requested full position size");
   });
 });

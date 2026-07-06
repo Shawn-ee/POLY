@@ -132,4 +132,17 @@ describe("position close service", () => {
       }),
     ).rejects.toThrow("Cash out order response had invalid order.remaining.");
   });
+
+  test("rejects server cashout when backend confirms a different size than the full position", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "close-order-mismatch", size: "250.00" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position,
+      }),
+    ).rejects.toThrow("did not match the requested full position size");
+  });
 });

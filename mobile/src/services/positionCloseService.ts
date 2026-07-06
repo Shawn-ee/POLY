@@ -50,5 +50,5 @@ export const closePositionOnServer = async ({ mode, api, position }: ClosePositi
     price: closePrice(position),
     size,
   });
-  assertPositionCloseOrderResponseShape(response);
+  assertPositionCloseOrderResponseShape(response, Number(size));
 };

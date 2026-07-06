@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MK - Cashout Confirmation Size Contract
+
+Closed or narrowed:
+
+- Server-mode cashout confirmation validation now rejects backend responses that confirm a different `size` than the requested sell-all full-position size.
+- Cashout remains sell-all only: the requested close size is derived from the full visible `position.shares`.
+- Id-only confirmations remain accepted for legacy compatibility.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cashout confirmation size contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/orders` confirmation `size` fields support this contract when returned.
+
+Temporary mock/static data:
+
+- Mock/local cashout remains unchanged. Server-mode mismatched confirmation size rejects before Portfolio refresh.
+
 ## Cycle MJ - Event Detail Rule Consistency Contract
 
 Closed or narrowed:

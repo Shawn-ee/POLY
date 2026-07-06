@@ -14,14 +14,15 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 const optionalFiniteNumber = (value: unknown, field: string) => {
-  if (value === undefined || value === null || value === "") return;
+  if (value === undefined || value === null || value === "") return undefined;
   const numeric = typeof value === "number" ? value : typeof value === "string" ? Number(value) : Number.NaN;
   if (!Number.isFinite(numeric) || numeric < 0) {
     throw new Error(`Cash out order response had invalid ${field}.`);
   }
+  return numeric;
 };
 
-export function assertPositionCloseOrderResponseShape(payload: unknown): asserts payload is CloseOrderResponse {
+export function assertPositionCloseOrderResponseShape(payload: unknown, expectedSize?: number): asserts payload is CloseOrderResponse {
   if (!isRecord(payload)) {
     throw new Error("Cash out order was not confirmed by the server.");
   }
@@ -30,7 +31,10 @@ export function assertPositionCloseOrderResponseShape(payload: unknown): asserts
   if (typeof orderId !== "string" || !orderId.trim()) {
     throw new Error("Cash out order was not confirmed by the server.");
   }
-  optionalFiniteNumber(order?.size ?? payload.size, "order.size");
+  const confirmedSize = optionalFiniteNumber(order?.size ?? payload.size, "order.size");
+  if (expectedSize !== undefined && confirmedSize !== undefined && Math.abs(confirmedSize - expectedSize) > 0.000001) {
+    throw new Error("Cash out order response did not match the requested full position size.");
+  }
   optionalFiniteNumber(order?.remaining ?? payload.remaining, "order.remaining");
   if (payload.fills !== undefined) {
     if (!Array.isArray(payload.fills)) {

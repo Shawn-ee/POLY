@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MK - Cashout Confirmation Size Contract
+
+Cycle MK hardens server-mode cashout sell-all confirmations before Portfolio refresh treats a close as accepted:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MK-cashout-confirmation-size-contract/cycle-MK-cashout-confirmation-size-contract.json`.
+- Proof script: `scripts/prove_mobile_cashout_confirmation_size_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionCloseRouteShapeService.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio cashout sell-all confirmation | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Sell order with market id, outcome id, side `SELL`, current close price, and full visible `position.shares` size | Nested `order.id` or top-level `id`; optional `order.size`/top-level `size` must match the requested sell-all full-position size when present | `Order`, `Position`, matching/reservation service | Mock/local cashout remains unchanged. Server-mode mismatched confirmation size rejects before Portfolio refresh treats cashout as accepted. | None for focused cashout confirmation size contract. P2 optional richer mismatch copy. |
+
 ## Cycle MJ - Event Detail Rule Consistency Contract
 
 Cycle MJ hardens backend-owned Event Detail game-rule metadata before route-backed game page state applies:

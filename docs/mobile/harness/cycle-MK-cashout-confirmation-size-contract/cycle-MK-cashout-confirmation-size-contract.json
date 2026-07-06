@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle MK",
+  "feature": "Cashout confirmation size contract",
+  "generatedAt": "2026-07-06T12:15:51.645Z",
+  "route": "/api/orders via server-mode cashout",
+  "contract": {
+    "validPayload": "Cashout confirmation size, when returned, must match the requested sell-all position size",
+    "malformedPayload": "mismatched confirmed size rejects before Portfolio refresh treats cashout as accepted"
+  },
+  "assertions": {
+    "matchingFullPositionSizeAccepted": true,
+    "legacyIdOnlyConfirmationAccepted": true,
+    "smallerConfirmedSizeRejects": true,
+    "largerConfirmedSizeRejects": true
+  }
+}
