@@ -636,6 +636,99 @@ describe("ticket order service", () => {
     ).rejects.toThrow("Order submit response had invalid fills[].size.");
   });
 
+  test("rejects server-mode submit when backend returns negative lifecycle size", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-negative-size",
+        status: "OPEN",
+        size: "-10",
+        remaining: "0",
+      },
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit response had invalid order.size.");
+  });
+
+  test("rejects server-mode submit when remaining exceeds order size", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-bad-remaining",
+        status: "OPEN",
+        size: "100",
+        remaining: "101",
+      },
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit response had remaining size above order size.");
+  });
+
+  test("rejects server-mode submit when fill total exceeds order size", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-overfilled",
+        status: "PARTIAL",
+        size: "100",
+      },
+      fills: [{ size: "60" }, { size: "41" }],
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit response had filled size above order size.");
+  });
+
+  test("rejects server-mode submit when filled plus remaining exceeds order size", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-over-accounted",
+        status: "PARTIAL",
+        size: "100",
+        remaining: "60",
+      },
+      fills: [{ size: "25" }, { size: "20" }],
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit response had filled plus remaining size above order size.");
+  });
+
   test("rejects server-mode submit when the backend does not confirm an order id", async () => {
     const placeLimitOrder = vi.fn(async () => ({ order: { status: "OPEN" } }));
     const api = { placeLimitOrder } as unknown as PolyApi;

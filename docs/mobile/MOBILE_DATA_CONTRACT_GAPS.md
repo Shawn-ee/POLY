@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MT - Order Lifecycle Consistency Contract
+
+Closed or narrowed:
+
+- Server-mode Trade Ticket submit now rejects negative `size`, `remaining`, and `fills[].size` lifecycle values in `/api/orders` confirmations.
+- Order submit confirmation validation now rejects `remaining > size`, `sum(fills[].size) > size`, and `sum(fills[].size) + remaining > size`.
+- Impossible order lifecycle confirmations no longer become visible submitted-order state.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused order lifecycle consistency contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/orders` confirmation order and fill fields support this contract when returned.
+
+Temporary mock/static data:
+
+- Mock/local order submit remains unchanged. Server-mode impossible lifecycle totals reject before visible order state applies.
+
 ## Cycle MS - Event List Quote Price Bounds Contract
 
 Closed or narrowed:

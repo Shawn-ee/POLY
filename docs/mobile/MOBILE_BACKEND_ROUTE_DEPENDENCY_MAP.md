@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MT - Order Lifecycle Consistency Contract
+
+Cycle MT hardens server-mode Trade Ticket order lifecycle totals before visible submitted-order state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MT-order-lifecycle-consistency-contract/cycle-MT-order-lifecycle-consistency-contract.json`.
+- Proof script: `scripts/prove_mobile_order_lifecycle_consistency_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket submit lifecycle confirmation | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Buy/sell order with market id, outcome id, contract side, limit price, size, and selected market identity | Nested or top-level order `size` and `remaining`; returned `fills[].size`; lifecycle numbers must be non-negative, `remaining <= size`, fill total <= `size`, and fill total plus remaining <= `size` when returned | `Order`, `Fill`, `Position`, matching/reservation service | Mock/local order submit remains unchanged. Server-mode impossible lifecycle totals reject before visible submitted-order state applies. | None for focused order lifecycle consistency contract. P2 optional richer inline lifecycle error copy. |
+
 ## Cycle MS - Event List Quote Price Bounds Contract
 
 Cycle MS hardens compact event-list quote prices before Home, Search, Live, and Futures card state applies:

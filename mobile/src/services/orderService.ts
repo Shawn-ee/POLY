@@ -127,22 +127,44 @@ const numericField = (value: string | number | null | undefined) => {
 const optionalServerNumber = (value: string | number | null | undefined, field: string) => {
   if (value === null || value === undefined || value === "") return undefined;
   const parsed = numericField(value);
-  if (parsed === undefined) {
+  if (parsed === undefined || parsed < 0) {
     throw new Error(`Order submit response had invalid ${field}.`);
   }
   return parsed;
 };
 
-const filledSizeFromResponse = (response: ServerOrderResponse) => {
-  const totalFromFills = response.fills?.reduce((total, fill) => total + (optionalServerNumber(fill.size, "fills[].size") ?? 0), 0);
-  if (totalFromFills && totalFromFills > 0) return totalFromFills;
-
-  const size = optionalServerNumber(response.order?.size ?? response.size, "order.size");
-  const remaining = optionalServerNumber(response.order?.remaining ?? response.remaining, "order.remaining");
-  if (typeof size === "number" && typeof remaining === "number") {
-    return Math.max(0, size - remaining);
+const fillTotalFromResponse = (response: ServerOrderResponse) => {
+  if (response.fills === undefined) return undefined;
+  if (!Array.isArray(response.fills)) {
+    throw new Error("Order submit response had invalid fills.");
   }
-  return undefined;
+  return response.fills.reduce((total, fill) => total + (optionalServerNumber(fill.size, "fills[].size") ?? 0), 0);
+};
+
+const lifecycleFromResponse = (response: ServerOrderResponse) => {
+  const size = optionalServerNumber(response.order?.size ?? response.size, "order.size");
+  const remainingSize = optionalServerNumber(response.order?.remaining ?? response.remaining, "order.remaining");
+  const fillTotal = fillTotalFromResponse(response);
+  if (size !== undefined && remainingSize !== undefined && remainingSize > size) {
+    throw new Error("Order submit response had remaining size above order size.");
+  }
+  if (size !== undefined && fillTotal !== undefined && fillTotal > size) {
+    throw new Error("Order submit response had filled size above order size.");
+  }
+  if (size !== undefined && remainingSize !== undefined && fillTotal !== undefined && fillTotal + remainingSize > size + 0.000001) {
+    throw new Error("Order submit response had filled plus remaining size above order size.");
+  }
+  const filledSize =
+    fillTotal !== undefined && fillTotal > 0
+      ? fillTotal
+      : size !== undefined && remainingSize !== undefined
+        ? Math.max(0, size - remainingSize)
+        : undefined;
+  return {
+    size,
+    remainingSize,
+    filledSize,
+  };
 };
 
 const sharesFromAmount = (amount: number, probability: number) => {
@@ -235,8 +257,7 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
     throw new Error("Order submit was not confirmed by the server.");
   }
   const confirmedSelection = validateServerSelectionEcho(expectedSelection, response);
-  const size = optionalServerNumber(response.order?.size ?? response.size, "order.size");
-  const remainingSize = optionalServerNumber(response.order?.remaining ?? response.remaining, "order.remaining");
+  const lifecycle = lifecycleFromResponse(response);
   const status = response.order?.status ?? response.status;
 
   return {
@@ -245,8 +266,8 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
     mode: "server",
     status,
     selection: confirmedSelection ?? expectedSelection,
-    size,
-    filledSize: filledSizeFromResponse(response),
-    remainingSize,
+    size: lifecycle.size,
+    filledSize: lifecycle.filledSize,
+    remainingSize: lifecycle.remainingSize,
   };
 };

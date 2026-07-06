@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle MT",
+  "feature": "Trade Ticket order lifecycle consistency contract",
+  "generatedAt": "2026-07-06T12:48:57.512Z",
+  "route": "/api/orders",
+  "contract": {
+    "validPayload": "Order submit confirmation size, remaining, and fills must be non-negative and internally consistent when returned.",
+    "malformedPayload": "Negative lifecycle numbers, remaining above size, fill total above size, or fill total plus remaining above size reject before visible order state applies."
+  },
+  "assertions": {
+    "validFillPlusRemainingAccepted": true,
+    "openOrderDerivesZeroFilledSize": true,
+    "negativeSizeRejects": true,
+    "remainingAboveSizeRejects": true,
+    "fillsAboveSizeRejects": true,
+    "fillPlusRemainingAboveSizeRejects": true
+  }
+}
