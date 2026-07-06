@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NG
+
+Gate status: Pass
+
+Scope: Event Detail route-backed line ticket identity contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NG-event-detail-line-ticket-route-backed-contract/cycle-NG-event-detail-line-ticket-route-backed-contract.json`
+- Focused tests: `mobile/src/__tests__/eventDetailLineTicketService.test.ts`, `mobile/src/__tests__/eventDetailLineAvailabilityService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NG-event-detail-line-ticket-route-backed-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Route-backed Event Detail Game Lines require matching backend line market/outcome identity before opening Trade Ticket and no longer fall back to deterministic synthetic ticket identity.
+
 ## Cycle NF
 
 Gate status: Pass

@@ -1392,6 +1392,7 @@ export function EventDetail({
       backendMarket: groupMarket,
       backendOutcome: matchingOutcome,
       syntheticOutcome: outcome.ticketOutcome ?? matchingOutcome,
+      routeBacked: routeBackedEventDetail,
       syntheticMarkets: {
         spread: spreadMarket,
         totals: totalsMarket,

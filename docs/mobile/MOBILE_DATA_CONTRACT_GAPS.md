@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NG - Event Detail Line Ticket Route-Backed Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail Game Lines no longer open Trade Ticket using deterministic synthetic market identity when backend line identity is missing or mismatched.
+- Matching route-backed line markets still open tickets with backend market/outcome/provider identity.
+- Non-route-backed local/mock Event Detail keeps deterministic line fallback behavior.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused route-backed line-ticket identity contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing live-detail market/outcome selection fields support this contract.
+
+Temporary mock/static data:
+
+- Deterministic line fixtures remain local/mock fallback only. Server-mode route-backed Event Detail requires backend line identity for tickets.
+
 ## Cycle NF - Account Profile Link Consistency Contract
 
 Closed or narrowed:

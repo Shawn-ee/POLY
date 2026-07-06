@@ -90,6 +90,38 @@ describe("event detail line ticket resolver", () => {
     });
   });
 
+  test("does not invent a synthetic line ticket for route-backed mismatched backend lines", () => {
+    const backendOutcome = outcome("backend-over", "Over 2.5");
+    const backendMarket = market("backend-totals-25", "totals", [backendOutcome]);
+    const syntheticOutcome = outcome("display-over-35", "Over 3.5 2H");
+    const syntheticMarket = market("display-totals-35", "totals", [syntheticOutcome]);
+
+    const target = resolveLineTicketTarget({
+      selection: { marketType: "totals", line: "3.5", period: "2nd Half", displayLabel: "Over 3.5 2H" },
+      backendMarket,
+      backendOutcome,
+      syntheticOutcome,
+      syntheticMarkets: { totals: syntheticMarket },
+      routeBacked: true,
+    });
+
+    expect(target).toBeNull();
+  });
+
+  test("does not invent a synthetic line ticket for route-backed missing backend lines", () => {
+    const syntheticOutcome = outcome("display-team-total-over", "MEX Over 1.5");
+    const syntheticMarket = market("display-team-total-market", "team-total", [syntheticOutcome]);
+
+    const target = resolveLineTicketTarget({
+      selection: { marketType: "team-total", line: "1.5", period: "Reg. Time", displayLabel: "MEX Over 1.5 RT" },
+      syntheticOutcome,
+      syntheticMarkets: { teamTotal: syntheticMarket },
+      routeBacked: true,
+    });
+
+    expect(target).toBeNull();
+  });
+
   test("does not carry a same-line backend market when the selected period differs", () => {
     const backendOutcome = outcome("backend-over", "Over 3.5 1H");
     const backendMarket = market("backend-totals-35-1h", "totals", [backendOutcome], { line: "3.5", period: "first-half" });

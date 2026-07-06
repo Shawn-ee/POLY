@@ -14,6 +14,7 @@ type ResolveLineTicketTargetInput = {
   syntheticOutcome?: Outcome;
   syntheticMarkets: SyntheticLineMarkets;
   fallbackMarket?: Market;
+  routeBacked?: boolean;
 };
 
 const ticketMarketTypeFromBackendSelection = (market: Market): TicketSelection["marketType"] => {
@@ -115,6 +116,7 @@ export const resolveLineTicketTarget = ({
   syntheticOutcome,
   syntheticMarkets,
   fallbackMarket,
+  routeBacked = false,
 }: ResolveLineTicketTargetInput) => {
   const syntheticMarket = syntheticMarketForSelection(selection, syntheticMarkets);
   const isLineSelection = Boolean(syntheticMarket);
@@ -122,6 +124,10 @@ export const resolveLineTicketTarget = ({
 
   if (isLineSelection && backendMarket && backendOutcome && canUseBackendLineMarket) {
     return { market: backendMarket, outcome: backendOutcome, source: "backend-line-market" as const };
+  }
+
+  if (routeBacked && isLineSelection) {
+    return null;
   }
 
   if (isLineSelection && syntheticMarket && syntheticOutcome) {

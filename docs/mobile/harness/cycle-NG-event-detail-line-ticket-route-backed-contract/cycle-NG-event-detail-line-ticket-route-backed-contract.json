@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle NG",
+  "feature": "Event Detail route-backed line ticket identity contract",
+  "generatedAt": "2026-07-06T13:39:32.623Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "route-backed Game Lines may open tickets only with matching backend market/outcome identity.",
+    "malformedPayload": "route-backed mismatched or missing backend line identity returns no ticket target instead of deterministic synthetic identity.",
+    "localPayload": "non-route-backed/local Event Detail may still use deterministic fallback fixtures."
+  },
+  "assertions": {
+    "routeBackedMatchedBackendLineAccepted": true,
+    "routeBackedMismatchedLineDoesNotInventTicket": true,
+    "routeBackedMissingLineDoesNotInventTicket": true,
+    "localFallbackStillAllowed": true,
+    "backendSelectionPreservesProviderIdentity": true
+  }
+}
