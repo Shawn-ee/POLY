@@ -69,7 +69,7 @@ const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
 };
 
 const parseOpenOrderEconomics = (order: PortfolioOpenOrderItem) => {
-  const price = requireNonNegativeNumber(order.price, "openOrders[].price");
+  const price = requireProbabilityNumber(order.price, "openOrders[].price");
   const remaining = requireNonNegativeNumber(order.remaining, "openOrders[].remaining");
   const size = requireNonNegativeNumber(order.size, "openOrders[].size");
   if (remaining > size) {

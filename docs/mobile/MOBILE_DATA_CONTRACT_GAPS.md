@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NA - Portfolio Open-Order Price Bounds Contract
+
+Closed or narrowed:
+
+- Portfolio snapshot validation now rejects open-order `price` values outside the contract price range `0` to `1`.
+- Visible Portfolio Orders rows and derived cancel activity no longer accept above-one open-order prices from `/api/portfolio`.
+- Open-order `size` and `remaining` remain share counts and may be greater than `1`.
+- Existing `remaining <= size` validation remains enforced.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio open-order price bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio` open-order price and quantity fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio remains unchanged. Server-mode invalid open-order prices reject before visible Orders/cancel state applies.
+
 ## Cycle MZ - Portfolio History Price Bounds Contract
 
 Closed or narrowed:

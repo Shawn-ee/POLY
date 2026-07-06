@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NA - Portfolio Open-Order Price Bounds Contract
+
+Cycle NA hardens Portfolio open-order price fields before visible Orders and cancel activity state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NA-portfolio-open-order-price-bounds-contract/cycle-NA-portfolio-open-order-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_open_order_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/openOrderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio open-order price bounds | `/api/portfolio` through `PolyApi.getPortfolio()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | Open-order `price` must be a contract price from `0` to `1`; `size` and `remaining` remain non-negative share counts and `remaining <= size` | `Order`, `Market`, `Outcome`, selected-market snapshot metadata | Mock/local Portfolio remains unchanged. Server-mode invalid open-order prices reject before visible Orders rows or cancel activity state applies. | None for focused Portfolio open-order price bounds contract. P2 optional Portfolio Orders-specific malformed price copy. |
+
 ## Cycle MZ - Portfolio History Price Bounds Contract
 
 Cycle MZ hardens Portfolio history/activity price fields before visible History state applies:

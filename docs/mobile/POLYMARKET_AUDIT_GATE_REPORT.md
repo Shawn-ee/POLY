@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NA
+
+Gate status: Pass
+
+Scope: Portfolio open-order price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NA-portfolio-open-order-price-bounds-contract/cycle-NA-portfolio-open-order-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/openOrderService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NA-portfolio-open-order-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio snapshot rejects open-order prices outside `0` to `1` before visible Orders rows or cancel activity state applies while preserving share sizes as sizes.
+
 ## Cycle MZ
 
 Gate status: Pass
