@@ -59,6 +59,16 @@ describe("portfolio selection route shape contract", () => {
     );
   });
 
+  test("rejects selection limit prices above contract bounds while allowing large limit shares", () => {
+    expect(() => portfolioSelectionFromBackend({ ...validSelection, limitPrice: 1.2 }, "openOrders[].selection")).toThrow(
+      "Portfolio selection response had invalid openOrders[].selection.limitPrice.",
+    );
+    expect(portfolioSelectionFromBackend({ ...validSelection, limitPrice: 1, limitShares: 2400.5 }, "openOrders[].selection")).toMatchObject({
+      limitPrice: 1,
+      limitShares: 2400.5,
+    });
+  });
+
   test("uses a custom route error prefix when provided", () => {
     expect(() => portfolioSelectionFromBackend({ ...validSelection, limitPrice: -0.01 }, "order.selection", "Order submit selection response")).toThrow(
       "Order submit selection response had invalid order.selection.limitPrice.",

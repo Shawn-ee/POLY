@@ -39,6 +39,14 @@ const optionalNonNegativeFiniteNumber = (value: unknown, field: string, errorPre
   return value;
 };
 
+const optionalProbabilityNumber = (value: unknown, field: string, errorPrefix: string) => {
+  const parsed = optionalNonNegativeFiniteNumber(value, field, errorPrefix);
+  if (parsed !== undefined && parsed > 1) {
+    throw new Error(`${errorPrefix} had invalid ${field}.`);
+  }
+  return parsed;
+};
+
 const isRecord = (value: unknown): value is BackendPortfolioSelection =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -80,7 +88,7 @@ export const portfolioSelectionFromBackend = (
     conditionId: optionalString(selection.conditionId, `${fieldPrefix}.conditionId`, errorPrefix),
     referenceTokenId: optionalString(selection.referenceTokenId, `${fieldPrefix}.referenceTokenId`, errorPrefix),
     referenceOutcomeLabel: optionalString(selection.referenceOutcomeLabel, `${fieldPrefix}.referenceOutcomeLabel`, errorPrefix),
-    limitPrice: optionalNonNegativeFiniteNumber(selection.limitPrice, `${fieldPrefix}.limitPrice`, errorPrefix),
+    limitPrice: optionalProbabilityNumber(selection.limitPrice, `${fieldPrefix}.limitPrice`, errorPrefix),
     limitSide: selection.limitSide as TicketSelection["limitSide"],
     limitShares: optionalNonNegativeFiniteNumber(selection.limitShares, `${fieldPrefix}.limitShares`, errorPrefix),
   };

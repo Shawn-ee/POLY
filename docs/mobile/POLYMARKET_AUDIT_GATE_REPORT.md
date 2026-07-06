@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NC
+
+Gate status: Pass
+
+Scope: Selection limit price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NC-selection-limit-price-bounds-contract/cycle-NC-selection-limit-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioSelectionService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `mobile/src/__tests__/orderService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NC-selection-limit-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Shared selected-market snapshots reject `limitPrice` values outside `0` to `1` before visible Portfolio, History, or submitted-order state applies while preserving `limitShares` as a share size.
+
 ## Cycle NB
 
 Gate status: Pass

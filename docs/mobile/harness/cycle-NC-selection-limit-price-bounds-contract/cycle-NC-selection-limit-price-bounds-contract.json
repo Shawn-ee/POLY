@@ -1,0 +1,24 @@
+{
+  "cycle": "Cycle NC",
+  "feature": "Selection limit price bounds contract",
+  "generatedAt": "2026-07-06T13:23:12.821Z",
+  "routes": [
+    "/api/orders",
+    "/api/portfolio",
+    "/api/portfolio/history"
+  ],
+  "contract": {
+    "validPayload": "Selected-market limitPrice must be a contract price from 0 to 1.",
+    "sizePayload": "limitShares remains a share size and may be greater than 1.",
+    "malformedPayload": "above-one limitPrice rejects before visible Portfolio, History, or submitted-order state applies."
+  },
+  "assertions": {
+    "validLimitPriceOneAccepted": true,
+    "portfolioSnapshotLimitPriceAccepted": true,
+    "portfolioHistoryLimitPriceAccepted": true,
+    "directLimitPriceAboveOneRejects": true,
+    "portfolioSnapshotLimitPriceAboveOneRejects": true,
+    "portfolioHistoryLimitPriceAboveOneRejects": true,
+    "orderEchoLimitPriceAboveOneRejects": true
+  }
+}

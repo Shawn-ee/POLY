@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NC - Selection Limit Price Bounds Contract
+
+Closed or narrowed:
+
+- Shared selected-market snapshot validation now rejects `limitPrice` values outside the contract price range `0` to `1`.
+- Order selection echoes, Portfolio selection snapshots, and Portfolio History selection snapshots no longer accept above-one limit prices.
+- Selection `limitShares` remains a share size and may be greater than `1`.
+- Legacy rows without a backend selection object remain allowed.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused selection limit price bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing selection snapshot `limitPrice` and `limitShares` fields support this contract.
+
+Temporary mock/static data:
+
+- Legacy missing-selection rows remain tolerated. Server-mode malformed selection snapshots reject before visible state applies.
+
 ## Cycle NB - Order Submit Price Bounds Contract
 
 Closed or narrowed:

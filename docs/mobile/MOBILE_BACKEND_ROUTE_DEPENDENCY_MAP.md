@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NC - Selection Limit Price Bounds Contract
+
+Cycle NC hardens selected-market snapshot `limitPrice` fields before visible Portfolio, History, or submitted-order state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NC-selection-limit-price-bounds-contract/cycle-NC-selection-limit-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_selection_limit_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSelectionService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Selected-market snapshot limit price bounds | `/api/orders`, `/api/portfolio`, `/api/portfolio/history` through shared selection parsing | POST/GET | Canonical API key/session with order write or portfolio read access | Existing order submit request; no new fields | Selection `limitPrice` must be a contract price from `0` to `1`; `limitShares` remains a non-negative share size and may exceed `1` | `Order`, `Position`, `Trade`, selected-market snapshot metadata | Legacy rows without selection remain allowed. Server-mode above-one `limitPrice` rejects before visible submitted-order, Portfolio, or History state applies. | None for focused selection limit price bounds contract. P2 optional selection-specific malformed price copy. |
+
 ## Cycle NB - Order Submit Price Bounds Contract
 
 Cycle NB hardens Trade Ticket order submit price derivation before `/api/orders` is called:
