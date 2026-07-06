@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KD - Route-Backed Line Family Submit Breadth
+
+Closed or narrowed:
+
+- Route-backed selected line/provider submit echo now covers Spread and Team Total families in addition to the Cycle KC Totals proof.
+- Mobile `submitTicketOrder` accepts both route responses only because `/api/orders` echoes matching `order.selection` line, period, provider market id, condition id, and token id.
+- `/api/portfolio` open orders preserve the same selected identity for both families.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Broader filled/canceled lifecycle breadth for selected spread/totals/team-total tickets after route submit.
+- Immutable first-class selection snapshot columns for orders/fills/trades remain future hardening.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection` and canonical route response `order.selection` support the KD contract.
+
+Temporary mock/static data:
+
+- KD proof creates disposable backend user, API key, event, Spread and Team Total markets, outcomes, quote snapshots, orders, and open-order state. It does not add frontend-only ticket/order rows.
+
 ## Cycle KC - Route-Backed Order Submit Selection Echo
 
 Closed or narrowed:

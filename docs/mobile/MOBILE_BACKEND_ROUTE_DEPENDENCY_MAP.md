@@ -2,6 +2,20 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KD - Route-Backed Line Family Submit Breadth
+
+Cycle KD broadens the selected line/provider submit echo proof from KC beyond Totals:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KD-route-order-submit-line-family-breadth/cycle-KD-route-order-submit-line-family-breadth.json`.
+- Proof script: `scripts/prove_mobile_route_order_submit_line_family_breadth.ts`.
+- Focused tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Route-backed Spread line submit | `/api/orders` | POST | Canonical API key/session with `orders:write`; internal trading beta enabled in local proof | Spread line ticket with selected market/outcome, `marketType=spread`, `line=1.5`, `period=regulation`, provider market/condition/token ids, and limit metadata | `order.selection.marketType`, `line`, `period`, `externalMarketId`, `conditionId`, `referenceTokenId`; consumed by mobile `submitTicketOrder` guard | `ApiOrderRequest`, `Order`, `UserBalance`, `Market`, `Outcome`, provider quote snapshots | Mock mode remains local. Server mode requires matching route echo. | P1: filled/canceled lifecycle breadth for selected Spread line tickets. |
+| Route-backed Team Total line submit | `/api/orders` | POST | Canonical API key/session with `orders:write`; internal trading beta enabled in local proof | Team Total line ticket with `marketType=team-total`, `line=1.5`, `period=second-half`, provider market/condition/token ids, and limit metadata | Same selected identity fields as Spread, echoed by `/api/orders` and accepted by mobile guard | `ApiOrderRequest`, `Order`, `UserBalance`, `Market`, `Outcome`, provider quote snapshots | Mock mode remains local. Server mode requires matching route echo. | P1: filled/canceled lifecycle breadth for selected Team Total tickets. |
+| Post-submit Portfolio line-family echo | `/api/portfolio` | GET | Canonical API key/session with `account:read` | None | `openOrders[].selection.line`, `period`, `externalMarketId`, `referenceTokenId` for both submitted families | `Order`, `ApiOrderRequest`, `Market`, `Outcome` | Mock Portfolio path unchanged. Server Portfolio uses backend open-order echo. | P1: immutable first-class order selection snapshot columns remain future hardening. |
+
 ## Cycle KC - Route-Backed Order Submit Selection Echo
 
 Cycle KC proves the actual backend route satisfies the stricter Cycle KB mobile guard for selected line/provider tickets:

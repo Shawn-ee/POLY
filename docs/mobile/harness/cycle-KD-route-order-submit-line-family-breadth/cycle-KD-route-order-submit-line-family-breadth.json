@@ -1,0 +1,73 @@
+{
+  "pass": true,
+  "cycle": "Cycle KD",
+  "createdAt": "2026-07-06T07:10:40.493Z",
+  "routes": {
+    "submit": "/api/orders",
+    "portfolio": "/api/portfolio"
+  },
+  "families": [
+    {
+      "family": "spread",
+      "orderId": "4814c121-a0d0-4fa3-87f1-b10b5e634bbc",
+      "routeStatus": "OPEN",
+      "mobileSelection": {
+        "marketId": "c15baeb3-ecc4-41f3-b220-891643751ed6",
+        "outcomeId": "aa2e8116-4682-4b9b-944d-f5eeeaaeb13a",
+        "marketType": "spread",
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-kd-spread-94e11327",
+        "conditionId": "condition-kd-spread-94e11327",
+        "referenceTokenId": "token-kd-spread-selected-94e11327"
+      },
+      "routeSelection": {
+        "marketId": "c15baeb3-ecc4-41f3-b220-891643751ed6",
+        "outcomeId": "aa2e8116-4682-4b9b-944d-f5eeeaaeb13a",
+        "marketType": "spread",
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-kd-spread-94e11327",
+        "conditionId": "condition-kd-spread-94e11327",
+        "referenceTokenId": "token-kd-spread-selected-94e11327"
+      },
+      "portfolioSelection": {
+        "line": "1.5",
+        "period": "regulation",
+        "externalMarketId": "gamma-kd-spread-94e11327",
+        "referenceTokenId": "token-kd-spread-selected-94e11327"
+      }
+    },
+    {
+      "family": "team-total",
+      "orderId": "6e250247-9e31-4450-88a7-c0f946246258",
+      "routeStatus": "OPEN",
+      "mobileSelection": {
+        "marketId": "5aaa04a0-a722-4dbe-8b72-9e3f174d74d2",
+        "outcomeId": "4a43d231-e2cf-4a3d-a750-6783db12dbf9",
+        "marketType": "team-total",
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-kd-team-total-94e11327",
+        "conditionId": "condition-kd-team-total-94e11327",
+        "referenceTokenId": "token-kd-team-total-selected-94e11327"
+      },
+      "routeSelection": {
+        "marketId": "5aaa04a0-a722-4dbe-8b72-9e3f174d74d2",
+        "outcomeId": "4a43d231-e2cf-4a3d-a750-6783db12dbf9",
+        "marketType": "team-total",
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-kd-team-total-94e11327",
+        "conditionId": "condition-kd-team-total-94e11327",
+        "referenceTokenId": "token-kd-team-total-selected-94e11327"
+      },
+      "portfolioSelection": {
+        "line": "1.5",
+        "period": "second-half",
+        "externalMarketId": "gamma-kd-team-total-94e11327",
+        "referenceTokenId": "token-kd-team-total-selected-94e11327"
+      }
+    }
+  ]
+}
