@@ -52,8 +52,9 @@ import { applyMarketDepthErrorToEvent, applyMarketDepthLoadingToEvent, applyDept
 import {
   applyTicketQuoteToOutcome,
   applyTicketQuotesToEvent,
-  applyTicketQuotesToMarket,
   applyTicketQuotesToMarkets,
+  applyMarketQuoteStateToEvent,
+  loadMarketQuoteStateById,
   loadMarketQuotesById,
   loadTicketQuotes,
 } from "./src/services/quoteService";
@@ -1407,24 +1408,12 @@ export default function App() {
     let cancelled = false;
     const eventId = selectedEvent.id;
     const marketIds = selectedEvent.markets.map((market) => market.id);
-    loadMarketQuotesById(api, marketIds)
-      .then((quotesByMarketId) => {
+    loadMarketQuoteStateById(api, marketIds)
+      .then((quoteState) => {
         if (cancelled || !mounted.current) return;
         setSelectedEvent((current) => {
           if (!current || current.id !== eventId) return current;
-          let changed = false;
-          const markets = current.markets.map((market) => {
-            const quotes = quotesByMarketId.get(market.id);
-            if (!quotes) return market;
-            const quotedMarket = applyTicketQuotesToMarket(market, quotes);
-            if (quotedMarket !== market) changed = true;
-            return quotedMarket;
-          });
-          if (!changed) return current;
-          return {
-            ...current,
-            markets,
-          };
+          return applyMarketQuoteStateToEvent(current, quoteState);
         });
       })
       .catch(() => undefined);

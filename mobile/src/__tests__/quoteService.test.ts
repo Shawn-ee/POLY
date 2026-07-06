@@ -5,6 +5,8 @@ import {
   applyTicketQuotesToEvent,
   applyTicketQuotesToMarket,
   applyTicketQuotesToMarkets,
+  applyMarketQuoteStateToEvent,
+  loadMarketQuoteStateById,
   loadMarketQuotesById,
   loadTicketQuotes,
   quoteToTicketQuote,
@@ -224,6 +226,34 @@ describe("quote service", () => {
     expect(quotesByMarketId.has("broken")).toBe(false);
   });
 
+  test("reports failed market quote calls separately from successful quote maps", async () => {
+    const getMarketQuote = vi.fn(async (marketId: string) => {
+      if (marketId === "broken") throw new Error("quote route down");
+      return {
+        marketId,
+        quotes: [
+          {
+            outcomeId: "france",
+            outcomeName: "France",
+            bestBid: 0.41,
+            bestAsk: 0.43,
+            bestBidSize: null,
+            bestAskSize: null,
+            midPrice: 0.42,
+            lastPrice: null,
+          },
+        ],
+      };
+    });
+    const api = { getMarketQuote } as unknown as PolyApi;
+
+    const state = await loadMarketQuoteStateById(api, ["winner", "broken", "winner"]);
+
+    expect([...state.quotesByMarketId.keys()]).toEqual(["winner"]);
+    expect([...state.failedMarketIds]).toEqual(["broken"]);
+    expect(getMarketQuote).toHaveBeenCalledTimes(2);
+  });
+
   test("applies a matching ticket quote to an outcome by id", () => {
     const outcome = { id: "france", label: "France", zhLabel: "France", probability: 34, color: "#2563eb" };
 
@@ -435,6 +465,42 @@ describe("quote service", () => {
 
     expect(quotedEvent.markets[0].outcomes.map((outcome) => outcome.probability)).toEqual([66, 36]);
     expect(quotedEvent.markets[1].outcomes.map((outcome) => outcome.probability)).toEqual([47, 55]);
+  });
+
+  test("marks event markets unavailable when their quote route fails", () => {
+    const event = {
+      id: "mexico-ecuador",
+      markets: [
+        {
+          id: "match-winner",
+          availability: {
+            source: "live-detail",
+            status: "ready" as const,
+            marketStatus: "LIVE",
+            lastUpdated: null,
+            stalenessSeconds: null,
+            staleAfterSeconds: 60,
+            isStale: false,
+            isSuspended: false,
+            isDelayed: false,
+            reason: "Market accepts orders.",
+          },
+          outcomes: [{ id: "mexico", label: "Mexico", probability: 64 }],
+        },
+      ],
+    };
+
+    const quotedEvent = applyMarketQuoteStateToEvent(event, {
+      quotesByMarketId: new Map(),
+      failedMarketIds: new Set(["match-winner"]),
+    });
+
+    expect(quotedEvent.markets[0].availability).toMatchObject({
+      source: "market-quote-route",
+      status: "unavailable",
+      marketStatus: "LIVE",
+      reason: "Market quote route failed.",
+    });
   });
 
   test("keeps the original event when no market quotes match", () => {

@@ -2179,3 +2179,16 @@ Cycle LF implementation notes:
 - `/api/portfolio` now maps market status into a small availability object for position and open-order markets.
 - Mobile maps `position.marketAvailability` and carries it into backend-only position fallback tickets.
 - The existing ticket submit availability guard now blocks unavailable Portfolio re-trade fallback targets before `/api/orders`.
+
+## Cycle LG - Event Detail Quote Failure Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail server quote refresh | `/api/markets/:id/quote` | GET | Public market data | Market id and optional outcome id | Quote price/depth fields when successful; per-market failure state when route call fails | `Market`, `Outcome`, quote/read-model source behind quote route | Mock/offline mode still uses local market probabilities. Server-mode Event Detail now marks failed quote markets unavailable instead of silently keeping guessed prices. | No P0 gap for focused quote failure handling. |
+| Quote-failed ticket submit | `/api/orders` | POST | Mobile API key with `orders:write` | Existing ticket payload | Existing client-side submit block from market availability before route call | `Order`, `Market`, `Outcome` | None in server mode for quote-failed markets. | Richer retry UI/copy remains optional P2. |
+
+Cycle LG implementation notes:
+
+- Added `loadMarketQuoteStateById` so quote batching returns both successful quotes and failed market ids.
+- Event Detail server quote refresh applies quote-failure availability to failed markets.
+- The existing ticket submit guard blocks `source=market-quote-route`, `status=unavailable` markets.

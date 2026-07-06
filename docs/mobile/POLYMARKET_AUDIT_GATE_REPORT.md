@@ -4367,3 +4367,37 @@ Decision:
 - Pass/fail: Pass for focused Portfolio position availability contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional row-level closed/paused market copy.
+
+## Cycle LG - Event Detail Quote Failure Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure Event Detail server-mode quote refresh does not silently keep stale/local prices when `/api/markets/:id/quote` fails for a visible market.
+
+Reference Audit Agent: Backend/data-contract loop. Manual visual review is not required for this service-level contract.
+
+Implementation Agent: Added quote batch state, Event Detail quote-failure availability application, and focused tests.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LG-event-detail-quote-failure-contract.md`
+- `docs/mobile/harness/cycle-LG-event-detail-quote-failure-contract/cycle-LG-event-detail-quote-failure-contract.json`
+- `scripts/prove_mobile_event_detail_quote_failure_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LG-P0-01 | P0 | Pass | Successful quote route responses still update market outcome probability/depth. | N/A |
+| LG-P0-02 | P0 | Pass | Failed quote route calls are tracked by market id. | N/A |
+| LG-P0-03 | P0 | Pass | Event Detail marks quote-failed markets unavailable. | N/A |
+| LG-P0-04 | P0 | Pass | Existing ticket submit guard blocks quote-failed markets. | N/A |
+| LG-P2-01 | P2 | Open | No dedicated visible retry action for quote refresh failures. | Optional later copy/action pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused Event Detail quote failure contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional retry copy/action for quote refresh failures.

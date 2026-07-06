@@ -1,0 +1,74 @@
+{
+  "cycle": "LG",
+  "gate": "event-detail-quote-failure-contract",
+  "generatedAt": "2026-07-06T10:08:57.684Z",
+  "routes": [
+    "/api/markets/:id/quote",
+    "/api/orders"
+  ],
+  "assertions": {
+    "successfulQuotesStillUpdateMarkets": true,
+    "failedQuoteRoutesAreTrackedByMarketId": true,
+    "failedQuoteMarketsBecomeUnavailable": true,
+    "failedQuoteMarketsAreSubmitBlocked": true
+  },
+  "readyMarket": {
+    "id": "lg-market-ready",
+    "title": "Ready market",
+    "zhTitle": "Ready market",
+    "type": "game-line",
+    "availability": {
+      "source": "live-detail",
+      "status": "ready",
+      "marketStatus": "LIVE",
+      "lastUpdated": null,
+      "stalenessSeconds": null,
+      "staleAfterSeconds": 60,
+      "isStale": false,
+      "isSuspended": false,
+      "isDelayed": false,
+      "reason": "Market accepts orders."
+    },
+    "outcomes": [
+      {
+        "id": "home",
+        "label": "Home",
+        "zhLabel": "Home",
+        "probability": 45,
+        "color": "#2563eb",
+        "bestBid": 44,
+        "bestAsk": 46,
+        "bestBidSize": null,
+        "bestAskSize": null
+      }
+    ]
+  },
+  "failedMarket": {
+    "id": "lg-market-failed",
+    "title": "Failed quote market",
+    "zhTitle": "Failed quote market",
+    "type": "game-line",
+    "availability": {
+      "source": "market-quote-route",
+      "status": "unavailable",
+      "marketStatus": "LIVE",
+      "lastUpdated": null,
+      "stalenessSeconds": null,
+      "staleAfterSeconds": 60,
+      "isStale": false,
+      "isSuspended": false,
+      "isDelayed": false,
+      "reason": "Market quote route failed."
+    },
+    "outcomes": [
+      {
+        "id": "away",
+        "label": "Away",
+        "zhLabel": "Away",
+        "probability": 60,
+        "color": "#f97316"
+      }
+    ]
+  },
+  "blockReason": "Market quote route failed."
+}

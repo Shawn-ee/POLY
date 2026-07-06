@@ -4492,6 +4492,35 @@ Future migration concern:
 
 - If provider trading status becomes more granular than internal `Market.status`, extend `/api/portfolio` to expose provider-specific accept-order state from the same source used by Event Detail availability.
 
+## Cycle LG - Event Detail Quote Failure Contract
+
+Closed or narrowed:
+
+- Mobile quote batching now distinguishes successful quote responses from failed quote route calls.
+- Event Detail server-mode quote refresh marks failed market quote calls as `availability.status=unavailable` with `source=market-quote-route`.
+- Existing server-mode ticket submit guards now block quote-failed markets instead of allowing stale guessed prices to reach submit.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No P0 field gap for focused quote failure handling.
+- Optional retry metadata/copy could be added if product wants user-visible quote retry controls.
+
+Schema mismatch:
+
+- No schema migration was required. This uses the existing `/api/markets/:id/quote` route and mobile market availability shape.
+
+Route mismatch:
+
+- `/api/markets/:id/quote` and `/api/orders` are sufficient for this focused contract.
+
+Temporary mock/static data:
+
+- Mock/offline mode still uses local market probabilities. Server-mode quote failures are no longer silently treated as successful local data.
+
+Future migration concern:
+
+- A ticket-specific quote route could eventually return executable price, fees, slippage, and eligibility in one response. LG only closes per-market quote-route failure handling.
+
 ## Cycle LA - Cashout/Sell Safety Contract
 
 Closed or narrowed:

@@ -1,4 +1,5 @@
 import type { PolyApi } from "../api";
+import type { AvailabilityState } from "../mocks/worldCup";
 import type { Quote } from "../types";
 
 export type TicketQuote = {
@@ -82,6 +83,19 @@ export const loadMarketQuotesById = async (
   api: PolyApi,
   marketIds: string[],
 ): Promise<Map<string, TicketQuote[]>> => {
+  const state = await loadMarketQuoteStateById(api, marketIds);
+  return state.quotesByMarketId;
+};
+
+export type MarketQuoteState = {
+  quotesByMarketId: Map<string, TicketQuote[]>;
+  failedMarketIds: Set<string>;
+};
+
+export const loadMarketQuoteStateById = async (
+  api: PolyApi,
+  marketIds: string[],
+): Promise<MarketQuoteState> => {
   const uniqueMarketIds = [...new Set(marketIds)];
   const results = await Promise.all(
     uniqueMarketIds.map(async (marketId) => {
@@ -93,11 +107,18 @@ export const loadMarketQuotesById = async (
     }),
   );
 
-  return new Map(
-    results
-      .filter((result): result is { marketId: string; quotes: TicketQuote[] } => result.quotes !== null)
-      .map((result) => [result.marketId, result.quotes]),
-  );
+  return {
+    quotesByMarketId: new Map(
+      results
+        .filter((result): result is { marketId: string; quotes: TicketQuote[] } => result.quotes !== null)
+        .map((result) => [result.marketId, result.quotes]),
+    ),
+    failedMarketIds: new Set(
+      results
+        .filter((result) => result.quotes === null)
+        .map((result) => result.marketId),
+    ),
+  };
 };
 
 export const applyTicketQuoteToOutcome = <TOutcome extends QuoteableOutcome>(
@@ -152,6 +173,36 @@ export const applyTicketQuotesToMarket = <
   };
 };
 
+const quoteFailureAvailability = (current?: AvailabilityState): AvailabilityState => ({
+  source: "market-quote-route",
+  status: "unavailable",
+  marketStatus: current?.marketStatus ?? current?.status ?? "unknown",
+  lastUpdated: current?.lastUpdated ?? null,
+  stalenessSeconds: current?.stalenessSeconds ?? null,
+  staleAfterSeconds: current?.staleAfterSeconds ?? 60,
+  isStale: false,
+  isSuspended: false,
+  isDelayed: false,
+  reason: "Market quote route failed.",
+});
+
+export const applyMarketQuoteStateToMarket = <
+  TOutcome extends QuoteableOutcome,
+  TMarket extends { id: string; outcomes: TOutcome[]; availability?: AvailabilityState },
+>(
+  market: TMarket,
+  state: MarketQuoteState,
+): TMarket => {
+  if (state.failedMarketIds.has(market.id)) {
+    return {
+      ...market,
+      availability: quoteFailureAvailability(market.availability),
+    };
+  }
+  const quotes = state.quotesByMarketId.get(market.id);
+  return quotes ? applyTicketQuotesToMarket(market, quotes) : market;
+};
+
 export const applyTicketQuotesToEvent = <
   TOutcome extends QuoteableOutcome,
   TMarket extends { id: string; outcomes: TOutcome[] },
@@ -165,6 +216,28 @@ export const applyTicketQuotesToEvent = <
     const quotes = quotesByMarketId.get(market.id);
     if (!quotes) return market;
     const quotedMarket = applyTicketQuotesToMarket(market, quotes);
+    if (quotedMarket !== market) changed = true;
+    return quotedMarket;
+  });
+
+  if (!changed) return event;
+  return {
+    ...event,
+    markets,
+  };
+};
+
+export const applyMarketQuoteStateToEvent = <
+  TOutcome extends QuoteableOutcome,
+  TMarket extends { id: string; outcomes: TOutcome[]; availability?: AvailabilityState },
+  TEvent extends { markets: TMarket[] },
+>(
+  event: TEvent,
+  state: MarketQuoteState,
+): TEvent => {
+  let changed = false;
+  const markets = event.markets.map((market) => {
+    const quotedMarket = applyMarketQuoteStateToMarket(market, state);
     if (quotedMarket !== market) changed = true;
     return quotedMarket;
   });
