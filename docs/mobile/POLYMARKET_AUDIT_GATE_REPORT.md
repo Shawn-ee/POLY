@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NT
+
+Gate status: Pass
+
+Scope: Event Detail profile outcome contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NT-event-detail-profile-outcome-contract/cycle-NT-event-detail-profile-outcome-contract.json`
+- Focused tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NT-event-detail-profile-outcome-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Route-backed Event Detail regulation markets require draw outcomes, while advance/no-draw profile markets reject draw outcomes before visible market state applies.
+
 ## Cycle NS
 
 Gate status: Pass

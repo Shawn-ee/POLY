@@ -92,6 +92,38 @@ const periodWinnerTypeForRouteMarket = (market: Record<string, unknown>) => {
   return period;
 };
 
+const routeMarketType = (market: Record<string, unknown>) => normalizeKey(market.marketType);
+
+const outcomeSidesForRouteMarket = (market: Record<string, unknown>) =>
+  Array.isArray(market.outcomes)
+    ? market.outcomes
+        .filter(isRecord)
+        .map((outcome) => normalizeKey(outcome.side))
+        .filter(Boolean)
+    : [];
+
+const assertEventDetailMarketProfileOutcomes = (market: Record<string, unknown>, marketId: string) => {
+  const marketType = routeMarketType(market);
+  if (!marketType) return;
+
+  const sides = outcomeSidesForRouteMarket(market);
+  if (marketType === "regulation-90") {
+    if (!sides.includes("draw")) {
+      throw new Error(`Event detail route returned regulation market ${marketId} without draw outcome.`);
+    }
+    return;
+  }
+
+  if (marketType === "to-advance" || marketType === "full-match-with-overtime") {
+    if (sides.includes("draw")) {
+      throw new Error(`Event detail route returned no-draw market ${marketId} with draw outcome.`);
+    }
+    if (sides.length !== 2) {
+      throw new Error(`Event detail route returned no-draw market ${marketId} without two team outcomes.`);
+    }
+  }
+};
+
 function assertEventDetailOutcomeShape(outcome: unknown, marketId: string): asserts outcome is Outcome {
   if (!isRecord(outcome)) {
     throw new Error(`Event detail route returned malformed outcome for market ${marketId}.`);
@@ -152,6 +184,7 @@ function assertEventDetailMarketShape(market: unknown, eventSupportedMarketTypes
   if (!Array.isArray(market.outcomes) || market.outcomes.length === 0) {
     throw new Error(`Event detail route returned market ${marketId} without outcomes array.`);
   }
+  assertEventDetailMarketProfileOutcomes(market, marketId);
   const lineFamily = lineFamilyForRouteMarket(market);
   if (lineFamily && !eventSupportedMarketTypes.includes(lineFamily)) {
     throw new Error(`Event detail route returned market ${marketId} for unsupported line family ${lineFamily}.`);

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NT - Event Detail Profile Outcome Contract
+
+Cycle NT hardens Event Detail primary profile market outcome structure before visible markets apply:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NT-event-detail-profile-outcome-contract/cycle-NT-event-detail-profile-outcome-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_profile_outcome_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail primary profile outcome structure | `/api/mobile/events/:slug/live-detail` through Event Detail hydration | GET | Public/mobile route | Event slug | Market `marketType`, outcomes and outcome `side`; `regulation_90` requires a draw outcome, while `to_advance` and `full_match_with_overtime` reject draw outcomes and require two team outcomes | `Event`, listed public `Market`, `Outcome`, backend market-rule/profile derivation | Local/mock Event Detail remains unchanged. Route-backed Event Detail rejects profile markets whose outcome structure contradicts backend game rules. | None for focused Event Detail profile outcome contract. P2 optional disabled-row copy. |
+
 ## Cycle NS - Event List Pagination Contract
 
 Cycle NS hardens Home/Search/Live/Futures event-list pagination metadata before visible page state applies:

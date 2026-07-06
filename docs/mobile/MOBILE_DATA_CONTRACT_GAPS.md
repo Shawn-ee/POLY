@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NT - Event Detail Profile Outcome Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail `regulation_90` markets now require a draw outcome before visible markets apply.
+- Route-backed Event Detail `to_advance` and `full_match_with_overtime` markets reject draw outcomes and require two team outcomes.
+- Backend profile outcome shape now matches the game-rule distinction between regulation draw markets and advance/no-draw markets.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail profile outcome contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing live-detail market `marketType` and outcome `side` fields support this contract.
+
+Temporary mock/static data:
+
+- Local/mock Event Detail behavior remains unchanged. Server-mode malformed profile outcome rows reject before visible Event Detail state applies.
+
 ## Cycle NS - Event List Pagination Contract
 
 Closed or narrowed:

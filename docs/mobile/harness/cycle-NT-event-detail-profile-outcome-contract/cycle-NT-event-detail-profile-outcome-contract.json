@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle NT",
+  "feature": "Event Detail profile outcome contract",
+  "generatedAt": "2026-07-06T14:24:54.438Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "regulation_90 markets must provide a draw outcome, while no-draw advance/full-match markets must provide only two team outcomes.",
+    "malformedPayload": "profile markets with missing or unsupported draw outcome structure reject before visible Event Detail markets apply."
+  },
+  "assertions": {
+    "acceptsRegulationWithDraw": true,
+    "rejectsRegulationWithoutDraw": true,
+    "acceptsAdvanceNoDraw": true,
+    "rejectsAdvanceWithDraw": true
+  }
+}
