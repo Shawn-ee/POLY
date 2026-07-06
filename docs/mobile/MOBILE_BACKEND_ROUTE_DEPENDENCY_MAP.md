@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KR - Home Futures Chart Contract
+
+Cycle KR wires the visible Home futures chart/range controls to backend market chart history in server mode:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KR-home-futures-chart-contract/cycle-KR-home-futures-chart-contract.json`.
+- Proof script: `scripts/prove_mobile_home_futures_chart_contract.ts`.
+- Focused validation: route proof, `src/__tests__/public.market-chart.no-leak.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home futures chart/range state | `/api/markets/:marketId/chart?range=1H|1D|1W|1M|MAX` | GET | Public market visibility guard, optional user context | None | `marketId`, `source`, `range`, `ranges`, `lastUpdated`, `emptyState`, `history[].outcomeId`, `timestamp`, `probability` | `Market`, `Outcome`, `MarketOutcomeSnapshot`, public market visibility guard | Mock/offline mode keeps local deterministic chart lines. Server mode loads chart history for current futures market ids and marks `chart-status`, `chart-source`, `chart-range`, and point count on the visible futures chart. | P1: provider-backed futures volume/open-interest metrics beyond price history. |
+
 ## Cycle KQ - Home Futures Contract
 
 Cycle KQ wires the visible Home futures module to backend-filtered futures markets in server mode:

@@ -2,6 +2,8 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
 import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
 import { label, money } from "../presentation/formatters";
+import { futureChartRanges } from "../services/futuresChartService";
+import type { MarketChartRange } from "../types";
 
 type MarketStatsCopy = {
   volume: string;
@@ -51,8 +53,10 @@ const futureOutcomeVolume = (market: Market, outcome: Outcome) => {
 };
 
 const cents = (probability: number) => `${probability.toFixed(1)}¢`;
-const futureChartRanges = ["1H", "1D", "1W", "1M", "MAX"] as const;
-type FutureChartRange = typeof futureChartRanges[number];
+const latestProbabilityForOutcome = (market: Market, outcome: Outcome) => {
+  const points = market.chartHistory?.filter((point) => point.outcomeId === outcome.id) ?? [];
+  return points.at(-1)?.probability ?? outcome.probability;
+};
 
 export function MarketList({
   locale,
@@ -144,13 +148,16 @@ export function FutureList({
   futures,
   openTicket,
   statsCopy,
+  selectedRange,
+  setSelectedRange,
 }: {
   locale: Locale;
   futures: Market[];
   openTicket: (market: Market, outcome: Outcome, event?: Event, side?: "buy" | "sell", selection?: { marketType: "future"; displayLabel: string; contractSide: "yes" | "no" }) => void;
   statsCopy?: MarketStatsCopy;
+  selectedRange: MarketChartRange;
+  setSelectedRange: (range: MarketChartRange) => void;
 }) {
-  const [selectedRange, setSelectedRange] = useState<FutureChartRange>("MAX");
   const [expandedMarketIds, setExpandedMarketIds] = useState<Record<string, boolean>>({});
   return (
     <View style={styles.eventList}>
@@ -159,6 +166,9 @@ export function FutureList({
         const isExpanded = expandedMarketIds[market.id] ?? false;
         const hiddenOutcomeCount = Math.max(0, market.outcomes.length - 3);
         const visibleOutcomes = isExpanded ? market.outcomes : market.outcomes.slice(0, 3);
+        const chartStatus = market.chartHistoryStatus ?? (market.chartHistory?.length ? "ready" : "idle");
+        const chartSource = market.chartHistorySource ?? "embedded";
+        const chartPointCount = market.chartHistory?.length ?? 0;
         return (
           <View key={market.id} style={styles.futureMarketCard}>
             <View style={styles.futureMarketHeader}>
@@ -175,7 +185,11 @@ export function FutureList({
                 </Text>
               </View>
             )}
-            <View accessibilityLabel={`future-market-chart ${selectedRange}`} style={styles.futureChart} testID="future-market-chart">
+            <View
+              accessibilityLabel={`future-market-chart chart-range-${selectedRange} chart-status-${chartStatus} chart-source-${chartSource} chart-points-${chartPointCount}`}
+              style={styles.futureChart}
+              testID="future-market-chart"
+            >
               <View style={styles.futureLegend}>
                 {market.outcomes.slice(0, 4).map((outcome) => (
                   <Text key={outcome.id} style={styles.futureLegendText}>
@@ -184,7 +198,9 @@ export function FutureList({
                 ))}
               </View>
               <View style={styles.futureChartCanvas}>
-                {market.outcomes.slice(0, 4).map((outcome, index) => (
+                {market.outcomes.slice(0, 4).map((outcome, index) => {
+                  const probability = latestProbabilityForOutcome(market, outcome);
+                  return (
                   <View
                     key={outcome.id}
                     style={[
@@ -193,11 +209,12 @@ export function FutureList({
                         backgroundColor: outcome.color,
                         left: `${8 + index * 6}%`,
                         right: `${10 + (3 - index) * 5}%`,
-                        top: `${22 + index * 16}%`,
+                        top: `${Math.max(8, Math.min(84, 92 - probability))}%`,
                       },
                     ]}
                   />
-                ))}
+                  );
+                })}
                 <Text style={styles.futureChartWatermark}>Holiwyn</Text>
               </View>
               <View style={styles.futureChartMeta}>

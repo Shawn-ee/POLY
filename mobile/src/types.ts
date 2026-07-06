@@ -51,7 +51,7 @@ export type OrderbookAvailability = {
   reason: string;
 };
 
-export type MarketChartRange = "1D" | "1W" | "1M" | "MAX";
+export type MarketChartRange = "1H" | "1D" | "1W" | "1M" | "MAX";
 
 export type MarketChartHistoryPoint = {
   outcomeId: string;

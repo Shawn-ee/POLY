@@ -45,6 +45,7 @@ import { loadPortfolioValueHistory } from "./src/services/portfolioValueHistoryS
 import { resolvePositionTradeTarget } from "./src/services/positionTradeTargetService";
 import { loadProfilePreferences, saveProfilePreferences } from "./src/services/profilePreferencesService";
 import { applyChartErrorToEvent, applyChartLoadingToEvent, applyChartStateToEvent, loadMarketChartState } from "./src/services/marketChartService";
+import { applyFutureChartErrorToMarket, applyFutureChartLoadingToMarket, applyFutureChartStateToMarket, loadFutureChartState } from "./src/services/futuresChartService";
 import { applyMarketDepthErrorToEvent, applyMarketDepthLoadingToEvent, applyDepthStateToEvent, loadMarketDepthState } from "./src/services/marketDepthService";
 import {
   applyTicketQuoteToOutcome,
@@ -54,7 +55,7 @@ import {
   loadMarketQuotesById,
   loadTicketQuotes,
 } from "./src/services/quoteService";
-import type { PortfolioValueHistory } from "./src/types";
+import type { MarketChartRange, PortfolioValueHistory } from "./src/types";
 
 const DEFAULT_API_BASE = process.env.EXPO_PUBLIC_API_BASE_URL || "http://10.0.2.2:3000";
 const DEFAULT_API_KEY = process.env.EXPO_PUBLIC_API_KEY || "";
@@ -368,6 +369,7 @@ export default function App() {
   const [liveRefreshTick, setLiveRefreshTick] = useState(0);
   const [launchUrlVersion, setLaunchUrlVersion] = useState(0);
   const [futures, setFutures] = useState<Market[]>(worldCupFutures);
+  const [futureChartRange, setFutureChartRange] = useState<MarketChartRange>("MAX");
   const [runtimeApiKey, setRuntimeApiKey] = useState(DEFAULT_API_KEY);
   const [apiKeyDiagnosticEnabled, setApiKeyDiagnosticEnabled] = useState(false);
   const [apiKeyDiagnostic, setApiKeyDiagnostic] = useState<string | null>(null);
@@ -389,6 +391,10 @@ export default function App() {
   const accountOpenOrderValue = useMemo(
     () => openOrders.reduce((total, order) => total + openOrderValue(order), 0),
     [openOrders],
+  );
+  const futureMarketIds = useMemo(
+    () => futures.filter((market) => market.type === "future").map((market) => market.id).join("|"),
+    [futures],
   );
   const homeStatusGroup: "live" | "today" | null =
     homeFilter === "live" || homeFilter === "today" ? homeFilter : null;
@@ -1142,6 +1148,41 @@ export default function App() {
     };
   }, [api]);
 
+  useEffect(() => {
+    if (MARKET_DATA_MODE !== "server" || !futureMarketIds) return undefined;
+    let cancelled = false;
+    const currentFutures = futures.filter((market) => market.type === "future");
+    setFutures((current) =>
+      current.map((market) =>
+        market.type === "future" ? applyFutureChartLoadingToMarket(market, futureChartRange) : market,
+      ),
+    );
+    Promise.all(
+      currentFutures.map(async (market) => {
+        try {
+          return { marketId: market.id, result: await loadFutureChartState(api, market, futureChartRange) };
+        } catch {
+          return { marketId: market.id, result: null };
+        }
+      }),
+    ).then((results) => {
+      if (cancelled || !mounted.current) return;
+      const resultByMarketId = new Map(results.map((item) => [item.marketId, item.result]));
+      setFutures((current) =>
+        current.map((market) => {
+          if (market.type !== "future") return market;
+          const result = resultByMarketId.get(market.id);
+          return result
+            ? applyFutureChartStateToMarket(market, result)
+            : applyFutureChartErrorToMarket(market, futureChartRange);
+        }),
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [api, futureChartRange, futureMarketIds]);
+
   const applyServerState = useCallback((serverState: Awaited<ReturnType<typeof loadServerPortfolioState>>) => {
     setPortfolioSyncStatus(serverState.syncStatus);
     setBalance((current) =>
@@ -1674,6 +1715,8 @@ export default function App() {
                 isLoadingMoreEvents={isLoadingMoreEvents}
                 loadMoreEvents={MARKET_DATA_MODE === "server" ? loadMoreBackendEvents : undefined}
                 futures={futures}
+                futureChartRange={futureChartRange}
+                setFutureChartRange={setFutureChartRange}
                 savedEventIds={savedEventIds}
                 toggleSavedEvent={toggleSavedEvent}
                 homeFilter={homeFilter}

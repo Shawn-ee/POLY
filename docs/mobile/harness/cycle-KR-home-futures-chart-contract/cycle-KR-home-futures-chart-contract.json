@@ -1,0 +1,65 @@
+{
+  "pass": true,
+  "cycle": "Cycle KR",
+  "createdAt": "2026-07-06T08:41:00.588Z",
+  "routes": {
+    "futures": {
+      "path": "/api/events",
+      "query": {
+        "sportKey": "soccer",
+        "leagueKey": "world_cup",
+        "search": "c08c3ba3",
+        "includeMobileMarkets": "1",
+        "marketType": "future",
+        "limit": "10"
+      }
+    },
+    "chart": {
+      "path": "/api/markets/c92924e2-fed5-44d3-8550-d166c7c484fb/chart",
+      "query": {
+        "range": "1H"
+      }
+    }
+  },
+  "seeded": {
+    "event": {
+      "id": "38bec6ec-acf5-48eb-be16-ca9060739de2",
+      "slug": "mobile-kr-futures-chart-c08c3ba3"
+    },
+    "market": {
+      "id": "c92924e2-fed5-44d3-8550-d166c7c484fb",
+      "marketType": "future"
+    },
+    "outcomes": [
+      {
+        "id": "b98a43a2-f874-40b1-bbbe-30875c08d259",
+        "label": "France"
+      },
+      {
+        "id": "c8720e28-d44d-43a2-a7f5-f7cc95ed6959",
+        "label": "Brazil"
+      }
+    ]
+  },
+  "chartRoute": {
+    "source": "market-outcome-snapshot",
+    "range": "1H",
+    "ranges": [
+      "1H",
+      "1D",
+      "1W",
+      "1M",
+      "MAX"
+    ],
+    "historyPointCount": 4,
+    "lastUpdated": "2026-07-06T08:36:00.506Z",
+    "emptyState": null
+  },
+  "mobileFuturesChart": {
+    "marketId": "c92924e2-fed5-44d3-8550-d166c7c484fb",
+    "chartHistoryStatus": "ready",
+    "chartHistorySource": "market-chart-route",
+    "chartHistoryRange": "1H",
+    "chartHistoryPointCount": 4
+  }
+}

@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
+import type { MarketChartRange } from "../types";
 import { FeaturedFuture } from "./FeaturedFuture";
 import { FutureList, MarketList } from "./MarketLists";
 import { SportNav } from "./SportNav";
@@ -39,6 +40,8 @@ export function HomeScreen({
   isLoadingMoreEvents = false,
   loadMoreEvents,
   futures,
+  futureChartRange,
+  setFutureChartRange,
   savedEventIds,
   toggleSavedEvent,
   homeFilter,
@@ -58,6 +61,8 @@ export function HomeScreen({
   isLoadingMoreEvents?: boolean;
   loadMoreEvents?: () => void;
   futures: Market[];
+  futureChartRange: MarketChartRange;
+  setFutureChartRange: (range: MarketChartRange) => void;
   savedEventIds: Set<string>;
   toggleSavedEvent: (event: Event) => void;
   homeFilter?: HomeFilter;
@@ -149,7 +154,14 @@ export function HomeScreen({
           />
         )
       ) : (
-        <FutureList locale={locale} futures={futures} openTicket={openTicket} statsCopy={{ volume: t.volume, liquidity: t.liquidity }} />
+        <FutureList
+          locale={locale}
+          futures={futures}
+          openTicket={openTicket}
+          selectedRange={futureChartRange}
+          setSelectedRange={setFutureChartRange}
+          statsCopy={{ volume: t.volume, liquidity: t.liquidity }}
+        />
       )}
       {worldCupTab === "games" && canLoadMore && (
         <Pressable

@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KR - Home Futures Chart Contract
+
+Closed or narrowed:
+
+- Backend `/api/markets/:marketId/chart` now supports the visible `1H` futures chart range in addition to `1D`, `1W`, `1M`, and `MAX`.
+- Mobile now has a dedicated futures chart service that validates route chart history and maps it onto futures market state.
+- Server-mode Home reloads futures chart history from `/api/markets/:id/chart?range=<selected>` for current futures market ids.
+- The visible futures chart now exposes auditable `chart-status`, `chart-source`, `chart-range`, and point-count state instead of only local deterministic line math.
+- Route/mobile proof verifies Home futures discovery, chart route history, selected `1H` range, and mobile futures chart hydration.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Real futures volume/open-interest metrics remain separate provider work.
+- Production breadth depends on `MarketOutcomeSnapshot` coverage for each listed futures market.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Market`, `Outcome`, and `MarketOutcomeSnapshot` support the focused chart contract.
+
+Temporary mock/static data:
+
+- Mock/offline mode keeps local deterministic futures chart visuals. Server mode hydrates route history and falls back only when the backend route is unavailable or empty.
+
 ## Cycle KQ - Home Futures Contract
 
 Closed or narrowed:

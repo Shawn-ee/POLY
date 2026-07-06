@@ -83,6 +83,12 @@ export type Market = {
   liquidity?: number;
   orderbookDepth?: Array<{ outcomeId?: string; side: "bid" | "ask"; price: number; shares: number; total: number }>;
   availability?: AvailabilityState;
+  chartHistory?: Array<{ outcomeId: string; timestamp: string; probability: number }>;
+  chartHistorySource?: "embedded" | "market-chart-route" | "polymarket-clob-prices-history" | "market-outcome-snapshot" | "empty";
+  chartHistoryStatus?: "idle" | "loading" | "ready" | "empty" | "error";
+  chartHistoryRange?: "1H" | "1D" | "1W" | "1M" | "MAX";
+  chartHistoryLastUpdated?: string | null;
+  chartHistoryEmptyState?: "no-history" | null;
   outcomes: Outcome[];
 };
 
@@ -124,7 +130,7 @@ export type Event = {
   chartHistory?: Array<{ outcomeId: string; timestamp: string; probability: number }>;
   chartHistorySource?: "embedded" | "market-chart-route" | "polymarket-clob-prices-history";
   chartHistoryStatus?: "idle" | "loading" | "ready" | "empty" | "error";
-  chartHistoryRange?: "1D" | "1W" | "1M" | "MAX";
+  chartHistoryRange?: "1H" | "1D" | "1W" | "1M" | "MAX";
   chartHistoryLastUpdated?: string | null;
   chartHistoryEmptyState?: "no-history" | null;
   orderbookDepthSource?: "embedded" | "orderbook-route";

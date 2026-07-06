@@ -134,7 +134,7 @@ describe("public market chart API no-leak checks", () => {
       marketId: "market-1",
       source: "market-outcome-snapshot",
       range: "1W",
-      ranges: ["1D", "1W", "1M", "MAX"],
+      ranges: ["1H", "1D", "1W", "1M", "MAX"],
       generatedAt: expect.any(String),
       lastUpdated: now.toISOString(),
       emptyState: null,
@@ -151,6 +151,21 @@ describe("public market chart API no-leak checks", () => {
         no: [{ ts: now.toISOString(), price: 0.43 }],
       },
     });
+    expectNoForbiddenKeys(body);
+  });
+
+  test("GET /api/markets/[id]/chart supports the visible 1H range", async () => {
+    const response = await getMarketChart(new NextRequest("http://localhost/api/markets/market-1/chart?range=1H"), {
+      params: Promise.resolve({ id: "market-1" }),
+    });
+
+    expect(response.status).toBe(200);
+    const findInput = mockPrisma.marketOutcomeSnapshot.findMany.mock.calls[0]?.[0];
+    expect(findInput.where.ts.gte).toBeInstanceOf(Date);
+    expect(now.getTime() - findInput.where.ts.gte.getTime()).toBeLessThanOrEqual(60 * 60 * 1000 + 1000);
+    const body = await response.json();
+    expect(body.range).toBe("1H");
+    expect(body.ranges).toEqual(["1H", "1D", "1W", "1M", "MAX"]);
     expectNoForbiddenKeys(body);
   });
 
@@ -177,7 +192,7 @@ describe("public market chart API no-leak checks", () => {
       marketId: "market-1",
       source: "empty",
       range: "1M",
-      ranges: ["1D", "1W", "1M", "MAX"],
+      ranges: ["1H", "1D", "1W", "1M", "MAX"],
       generatedAt: expect.any(String),
       lastUpdated: null,
       emptyState: "no-history",
