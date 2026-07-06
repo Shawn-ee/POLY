@@ -1,0 +1,20 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:35:16.395Z",
+  "route": "/api/portfolio/history",
+  "auth": "canonical account:read API key",
+  "canceledOrder": {
+    "id": "c8ee075c-78ba-4956-a10b-7afec9673155",
+    "contractSide": "no",
+    "displayLabel": "No Over 2.5",
+    "referenceTokenId": "token-jv-no-98d29d20",
+    "limitSide": "bid"
+  },
+  "recentTrade": {
+    "id": "b13a2295-9107-4b45-adb4-36ec608ad23d",
+    "contractSide": "no",
+    "displayLabel": "No Over 2.5",
+    "referenceTokenId": "token-jv-no-98d29d20",
+    "limitSide": "bid"
+  }
+}

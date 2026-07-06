@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JV - Portfolio History Contract-Side Snapshot
+
+Closed or narrowed:
+
+- Mobile Portfolio history/activity types already accept `selection.contractSide`; focused tests now prove recent-trade and canceled-order activity preserve `contractSide=no`.
+- `/api/portfolio/history` route proof reads a seeded No-side canceled order and No-side recent trade through canonical `account:read` API-key auth and verifies contract side, provider token, and limit metadata.
+- The visible Portfolio History/Orders activity path can distinguish No contracts from Yes contracts in server mode when the backend request snapshot contains the selected side.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- First-class immutable `Order.selection` and `Trade.selection` or fill snapshot columns. Current route still bridges through matching `ApiOrderRequest.requestBody.selection`.
+- Broader resolved-history economics proof is still separate from this focused canceled-order/recent-trade contract-side cycle.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection`, `Order`, `Trade`, `Market`, and `Outcome` fields support the JV contract.
+
+Temporary mock/static data:
+
+- JV proof creates disposable backend account, market, canceled order, filled order, trade, and API key rows. It does not add frontend-only Portfolio history rows.
+
 ## Cycle JU - Portfolio Contract-Side Snapshot
 
 Closed or narrowed:

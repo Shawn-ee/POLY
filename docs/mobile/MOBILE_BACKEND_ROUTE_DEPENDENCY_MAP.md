@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JV - Portfolio History Contract-Side Snapshot
+
+Cycle JV tightens the visible Portfolio history/activity contract for canceled orders and recent trades:
+
+- Route proof: `docs/mobile/harness/cycle-JV-portfolio-history-contract-side/cycle-JV-portfolio-history-contract-side.json`.
+- Proof script: `scripts/prove_mobile_portfolio_history_contract_side.ts`.
+- Focused mobile tests: `mobile/src/__tests__/portfolioHistoryService.test.ts` and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio canceled-order contract side | `/api/portfolio/history` | GET | Session or canonical API key with `account:read` | None | `canceledOrders[].selection.contractSide`, `displayLabel`, provider token fields, limit side/price/shares | `Order`, `ApiOrderRequest`, `Market`, `Outcome` | Mock mode keeps local activity state. Server mode consumes the route snapshot. | P1: first-class immutable `Order.selection` column remains future hardening. |
+| Portfolio recent-trade contract side | `/api/portfolio/history` | GET | Session or canonical API key with `account:read` | None | `recentTrades[].selection.contractSide`, provider token fields, limit metadata, side and cost/share fields | `Trade`, `Order`, `ApiOrderRequest`, `Market`, `Outcome` | Mock mode keeps local activity state. Server mode consumes the route snapshot. | P1: first-class immutable `Trade.selection` or fill snapshot remains future hardening. |
+
 ## Cycle JU - Portfolio Contract-Side Snapshot
 
 Cycle JU tightens the visible Portfolio positions/open-orders contract for Yes/No side preservation:
