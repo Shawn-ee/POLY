@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JZ - Account Preferences Contract
+
+Cycle JZ tightens the visible Account/settings profile preferences contract:
+
+- Route proof: `docs/mobile/harness/cycle-JZ-account-preferences-contract/cycle-JZ-account-preferences-contract.json`.
+- Proof script: `scripts/prove_mobile_account_preferences_contract.ts`.
+- Focused mobile tests: `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account preferences load | `/api/profile/preferences` | GET | Canonical API key/session with `account:read` | None | `preferences.locale`, `ticketDefaultAmount`, `ticketDefaultSide`, `ticketDefaultSlippage`, `savedEventIds` | `UserProfilePreference`, `User`, `ApiCredential` | Mock/local mode uses AsyncStorage and hides profile sync row. Server mode shows syncing/synced/error from this route. | P1: full server-authored account menu/session/wallet destination metadata remains future work. |
+| Account preferences save | `/api/profile/preferences` | PUT | Canonical API key/session with `account:write` | Same preferences envelope, including slippage and saved event ids | Normalized persisted preferences used by Account row, Trade Ticket defaults, language, and saved market count | `UserProfilePreference` JSONB row keyed by user | Local fallback remains when server preference sync is unavailable. Malformed server responses now fail clearly in mobile service. | P1: richer mobile retry/conflict state if sync fails mid-session. |
+
 ## Cycle JY - Trade Ticket Filled Lifecycle
 
 Cycle JY proves the visible Trade Ticket server submit path when the order crosses existing liquidity:

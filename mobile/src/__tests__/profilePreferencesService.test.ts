@@ -124,4 +124,14 @@ describe("Holiwyn profile preferences service", () => {
       },
     ]);
   });
+
+  test("rejects malformed server preference responses clearly", async () => {
+    const api = {
+      getProfilePreferences: async () => ({}),
+    };
+
+    await expect(loadProfilePreferences(api as unknown as Parameters<typeof loadProfilePreferences>[0])).rejects.toThrow(
+      "Profile preferences response was missing preferences.",
+    );
+  });
 });

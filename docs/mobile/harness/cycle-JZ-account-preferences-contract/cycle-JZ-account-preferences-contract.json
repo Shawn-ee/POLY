@@ -1,0 +1,34 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:52:11.421Z",
+  "route": "/api/profile/preferences",
+  "auth": "canonical API key with account:read and account:write",
+  "accountScreenFields": {
+    "locale": "zh",
+    "ticketDefaultAmount": "250",
+    "ticketDefaultSide": "SELL",
+    "ticketDefaultSlippage": "2%",
+    "savedMarketCount": 2
+  },
+  "defaultPreferences": {
+    "locale": "en",
+    "ticketDefaultAmount": "100",
+    "ticketDefaultSide": "BUY",
+    "ticketDefaultSlippage": "1%",
+    "savedEventIds": []
+  },
+  "savedPreferences": {
+    "locale": "zh",
+    "ticketDefaultAmount": "250",
+    "ticketDefaultSide": "SELL",
+    "ticketDefaultSlippage": "2%",
+    "savedEventIds": [
+      "world-cup-winner",
+      "mexico-ecuador"
+    ]
+  },
+  "invalidPayload": {
+    "status": 400,
+    "message": "ticketDefaultSlippage is required."
+  }
+}

@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JZ - Account Preferences Contract
+
+Closed or narrowed:
+
+- `/api/profile/preferences` route proof covers default load, save, persisted reload, and invalid payload rejection through canonical `account:read`/`account:write` auth.
+- The route contract now has proof for every AccountScreen-visible preference field: locale, ticket default amount, ticket default side, ticket slippage, and saved market count.
+- Mobile preference sync service now rejects malformed server responses with a clear error instead of crashing when `preferences` is missing.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Full server-authored account/session menu state, login state, wallet destination metadata, notification settings, and help/API destination metadata.
+- Richer mobile retry/conflict state if Account preference sync fails mid-session.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `UserProfilePreference.preferences` JSONB storage supports the JZ contract.
+
+Temporary mock/static data:
+
+- JZ proof creates a disposable backend user, API key, and profile preference row. It does not add frontend-only Account rows.
+
 ## Cycle JY - Trade Ticket Filled Lifecycle
 
 Closed or narrowed:

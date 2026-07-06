@@ -26,9 +26,16 @@ export const fromProfilePreferencesPayload = (preferences: ProfilePreferences): 
   savedEventIds: [...preferences.savedEventIds],
 });
 
+const requirePreferences = (response: { preferences?: ProfilePreferences }) => {
+  if (!response.preferences) {
+    throw new Error("Profile preferences response was missing preferences.");
+  }
+  return response.preferences;
+};
+
 export const loadProfilePreferences = async (api: PolyApi): Promise<LocalProfilePreferences> => {
   const response = await api.getProfilePreferences();
-  return fromProfilePreferencesPayload(response.preferences);
+  return fromProfilePreferencesPayload(requirePreferences(response));
 };
 
 export const saveProfilePreferences = async (
@@ -36,5 +43,5 @@ export const saveProfilePreferences = async (
   preferences: LocalProfilePreferences,
 ): Promise<LocalProfilePreferences> => {
   const response = await api.saveProfilePreferences(toProfilePreferencesPayload(preferences));
-  return fromProfilePreferencesPayload(response.preferences);
+  return fromProfilePreferencesPayload(requirePreferences(response));
 };
