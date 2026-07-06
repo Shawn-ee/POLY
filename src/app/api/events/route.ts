@@ -36,6 +36,62 @@ const buildMobileEventMetrics = ({
   };
 };
 
+const mobileSortBy = (value: string | null) => {
+  const normalized = `${value ?? ""}`.trim().toLowerCase();
+  return normalized === "popular" || normalized === "live" ? normalized : null;
+};
+
+const asTime = (value: unknown) => {
+  const time = value instanceof Date ? value.getTime() : new Date(String(value ?? "")).getTime();
+  return Number.isFinite(time) ? time : 0;
+};
+
+const isLiveEventStatus = (event: { status?: unknown; liveStatus?: unknown }) => {
+  const status = `${event.status ?? ""}`.trim().toLowerCase();
+  const liveStatus = `${event.liveStatus ?? ""}`.trim().toLowerCase();
+  return status === "live" || liveStatus === "live" || liveStatus === "in_progress";
+};
+
+const sortMobileEventRows = <T extends {
+  id: string;
+  status?: unknown;
+  liveStatus?: unknown;
+  updatedAt?: unknown;
+  createdAt?: unknown;
+  metrics?: { marketCount?: number | string | null; activeMarketCount?: number | string | null; liquidity?: number | string | null };
+  marketCount?: number | string | null;
+  activeMarketCount?: number | string | null;
+}>(events: T[], sortBy: "popular" | "live") =>
+  [...events].sort((left, right) => {
+    if (sortBy === "live") {
+      const liveDelta = Number(isLiveEventStatus(right)) - Number(isLiveEventStatus(left));
+      if (liveDelta !== 0) return liveDelta;
+    }
+
+    const activeMarketDelta =
+      (asNumberOrNull(right.metrics?.activeMarketCount ?? right.activeMarketCount) ?? 0) -
+      (asNumberOrNull(left.metrics?.activeMarketCount ?? left.activeMarketCount) ?? 0);
+    if (activeMarketDelta !== 0) return activeMarketDelta;
+
+    const marketDelta =
+      (asNumberOrNull(right.metrics?.marketCount ?? right.marketCount) ?? 0) -
+      (asNumberOrNull(left.metrics?.marketCount ?? left.marketCount) ?? 0);
+    if (marketDelta !== 0) return marketDelta;
+
+    const liquidityDelta =
+      (asNumberOrNull(right.metrics?.liquidity) ?? 0) -
+      (asNumberOrNull(left.metrics?.liquidity) ?? 0);
+    if (liquidityDelta !== 0) return liquidityDelta;
+
+    const updatedDelta = asTime(right.updatedAt) - asTime(left.updatedAt);
+    if (updatedDelta !== 0) return updatedDelta;
+
+    const createdDelta = asTime(right.createdAt) - asTime(left.createdAt);
+    if (createdDelta !== 0) return createdDelta;
+
+    return right.id.localeCompare(left.id);
+  });
+
 const paginationLimit = (value: string | null) => {
   const parsed = Number(value ?? DEFAULT_LIMIT);
   if (!Number.isFinite(parsed)) return DEFAULT_LIMIT;
@@ -123,12 +179,14 @@ export async function GET(request: NextRequest) {
   const source = url.searchParams.get("source")?.trim() ?? "";
   const status = url.searchParams.get("status")?.trim() ?? "";
   const statusGroup = url.searchParams.get("statusGroup")?.trim() ?? "";
+  const sortBy = mobileSortBy(url.searchParams.get("sortBy"));
   const eventIds = (url.searchParams.get("eventIds") ?? "")
     .split(",")
     .map((id) => id.trim())
     .filter(Boolean)
     .slice(0, 100);
   const includeMobileMarkets = url.searchParams.get("includeMobileMarkets") === "1";
+  const useMobileSortedPage = includeMobileMarkets && Boolean(sortBy);
   const limit = paginationLimit(url.searchParams.get("limit"));
   const cursorId = url.searchParams.get("cursor")?.trim() ?? "";
   const cursor = cursorId
@@ -140,7 +198,7 @@ export async function GET(request: NextRequest) {
   }
 
   const eventFilters: Prisma.EventWhereInput[] = [
-    eventCursorFilter(cursor),
+    useMobileSortedPage ? {} : eventCursorFilter(cursor),
     eventIdsFilter(eventIds),
     {
     ...eventSearchFilter(search),
@@ -158,7 +216,7 @@ export async function GET(request: NextRequest) {
     const rows = await prisma.event.findMany({
       where,
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
-      take: limit + 1,
+      take: useMobileSortedPage ? MAX_LIMIT : limit + 1,
       include: {
         markets: {
           where: { visibility: "PUBLIC", isListed: true },
@@ -167,11 +225,9 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-    const events = rows.slice(0, limit);
-    const nextCursor = rows.length > limit ? events[events.length - 1]?.id ?? null : null;
+    const events = useMobileSortedPage ? rows : rows.slice(0, limit);
 
-    return NextResponse.json({
-      events: (await Promise.all(
+    const mobileEvents = (await Promise.all(
         events.map(async (event) => {
           const base = serializeEventSummary(event);
           const metadata =
@@ -225,12 +281,23 @@ export async function GET(request: NextRequest) {
             markets: mobileMarkets,
           };
         }),
-      )).filter((event) => event.marketCount > 0),
+      )).filter((event) => event.marketCount > 0);
+    const orderedEvents = sortBy ? sortMobileEventRows(mobileEvents, sortBy) : mobileEvents;
+    const startIndex = sortBy && cursorId ? orderedEvents.findIndex((event) => event.id === cursorId) + 1 : 0;
+    const pageStart = startIndex > 0 ? startIndex : 0;
+    const pageEvents = sortBy ? orderedEvents.slice(pageStart, pageStart + limit) : orderedEvents;
+    const nextCursor = sortBy
+      ? orderedEvents.length > pageStart + limit ? pageEvents[pageEvents.length - 1]?.id ?? null : null
+      : rows.length > limit ? pageEvents[pageEvents.length - 1]?.id ?? null : null;
+
+    return NextResponse.json({
+      events: pageEvents,
       nextCursor,
       page: {
         limit,
         nextCursor,
         hasMore: Boolean(nextCursor),
+        sortBy,
       },
     });
   }

@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KO - Search Sort Contract
+
+Closed or narrowed:
+
+- Search server mode now sends `sortBy=popular` or `sortBy=live` to `/api/events`.
+- Backend `/api/events?includeMobileMarkets=1` returns route-owned sorted pages for the visible Search sort controls.
+- Mobile Search no longer re-sorts server-mode results after the route has ordered them.
+- Route proof verifies Popular order by backend market-count metrics and Live-first promotion with backend cursor metadata.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Popular sort currently uses backend-owned active/listed market counts, liquidity, and recency tiebreaks.
+- Real 24h volume/open-interest ranking remains future work if those provider metrics become product requirements.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.status`, `Event.liveStatus`, listed `Market`, active `Outcome`, and Cycle KN metrics support the focused sort contract.
+
+Temporary mock/static data:
+
+- Mock mode keeps local sorting over local fixtures. Server mode passes `sortBy` to the backend and preserves the backend event order.
+
 ## Cycle KN - Search Metrics Contract
 
 Closed or narrowed:

@@ -422,6 +422,61 @@ describe("public event API no-leak checks", () => {
     expectNoForbiddenKeys(body);
   });
 
+  test("GET /api/events supports backend-owned mobile Search sorting", async () => {
+    const listedMarket = (id: string) => ({
+      ...mobileListMarket,
+      id,
+      slug: id,
+      outcomes: mobileListMarket.outcomes.map((outcome, index) => ({
+        ...outcome,
+        id: `${id}-outcome-${index}`,
+      })),
+    });
+    const oneMarketEvent = {
+      ...baseEvent,
+      id: "one-market-event",
+      slug: "one-market-event",
+      status: "upcoming",
+      liveStatus: null,
+      markets: [listedMarket("one-market")],
+    };
+    const threeMarketEvent = {
+      ...baseEvent,
+      id: "three-market-event",
+      slug: "three-market-event",
+      status: "upcoming",
+      liveStatus: null,
+      markets: [listedMarket("three-market-a"), listedMarket("three-market-b"), listedMarket("three-market-c")],
+    };
+    const liveTwoMarketEvent = {
+      ...baseEvent,
+      id: "live-two-market-event",
+      slug: "live-two-market-event",
+      status: "live",
+      liveStatus: "in_progress",
+      markets: [listedMarket("live-market-a"), listedMarket("live-market-b")],
+    };
+
+    mockPrisma.event.findMany.mockResolvedValueOnce([oneMarketEvent, threeMarketEvent, liveTwoMarketEvent]);
+    const popularResponse = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&sortBy=popular&limit=2"),
+    );
+    expect(popularResponse.status).toBe(200);
+    const popularBody = await popularResponse.json();
+    expect(popularBody.events.map((event: any) => event.slug)).toEqual(["three-market-event", "live-two-market-event"]);
+    expect(popularBody.page).toEqual({ limit: 2, nextCursor: "live-two-market-event", hasMore: true, sortBy: "popular" });
+
+    mockPrisma.event.findMany.mockResolvedValueOnce([oneMarketEvent, threeMarketEvent, liveTwoMarketEvent]);
+    const liveResponse = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&sortBy=live&limit=2"),
+    );
+    expect(liveResponse.status).toBe(200);
+    const liveBody = await liveResponse.json();
+    expect(liveBody.events.map((event: any) => event.slug)).toEqual(["live-two-market-event", "three-market-event"]);
+    expect(liveBody.page).toEqual({ limit: 2, nextCursor: "three-market-event", hasMore: true, sortBy: "live" });
+    expectNoForbiddenKeys(liveBody);
+  });
+
   test("GET /api/events/[slug] returns event detail without sensitive keys", async () => {
     mockPrisma.event.findUnique.mockResolvedValue({
       ...baseEvent,

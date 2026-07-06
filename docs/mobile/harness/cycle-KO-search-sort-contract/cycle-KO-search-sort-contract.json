@@ -1,0 +1,68 @@
+{
+  "pass": true,
+  "cycle": "Cycle KO",
+  "createdAt": "2026-07-06T08:16:17.576Z",
+  "route": "/api/events",
+  "seededEvents": {
+    "oneMarket": {
+      "id": "c34be8ad-5f78-487e-93ce-617f86101efd",
+      "slug": "mobile-ko-search-sort-one-8eeecfc0",
+      "marketCount": 1,
+      "status": "upcoming"
+    },
+    "threeMarkets": {
+      "id": "d92b0510-c5cb-4db4-9817-7f6992344897",
+      "slug": "mobile-ko-search-sort-three-8eeecfc0",
+      "marketCount": 3,
+      "status": "upcoming"
+    },
+    "liveTwoMarkets": {
+      "id": "06216144-30ba-49b8-9855-f3f0c5025154",
+      "slug": "mobile-ko-search-sort-live-two-8eeecfc0",
+      "marketCount": 2,
+      "status": "live"
+    }
+  },
+  "popular": {
+    "slugs": [
+      "mobile-ko-search-sort-three-8eeecfc0",
+      "mobile-ko-search-sort-live-two-8eeecfc0"
+    ],
+    "nextCursor": "06216144-30ba-49b8-9855-f3f0c5025154",
+    "sortBy": "popular",
+    "marketCounts": [
+      {
+        "slug": "mobile-ko-search-sort-three-8eeecfc0",
+        "marketCount": 3
+      },
+      {
+        "slug": "mobile-ko-search-sort-live-two-8eeecfc0",
+        "marketCount": 2
+      }
+    ]
+  },
+  "live": {
+    "slugs": [
+      "mobile-ko-search-sort-live-two-8eeecfc0",
+      "mobile-ko-search-sort-three-8eeecfc0"
+    ],
+    "nextCursor": "d92b0510-c5cb-4db4-9817-7f6992344897",
+    "sortBy": "live",
+    "statuses": [
+      {
+        "slug": "mobile-ko-search-sort-live-two-8eeecfc0",
+        "status": "live",
+        "liveStatus": "in_progress"
+      },
+      {
+        "slug": "mobile-ko-search-sort-three-8eeecfc0",
+        "status": "upcoming",
+        "liveStatus": null
+      }
+    ]
+  },
+  "mobileBehavior": {
+    "searchSortParam": "PolyApi.listWorldCupEvents(sortBy)",
+    "serverModeUsesRouteOrder": true
+  }
+}

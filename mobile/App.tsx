@@ -304,6 +304,7 @@ const openOrderValue = (order: OpenOrder) => order.orderValue ?? openOrderRemain
 
 type MainTab = "home" | "live" | "portfolio" | "search" | "account";
 type HomeFilter = "all" | "live" | "today" | "saved";
+type SearchSort = "popular" | "live";
 type StoredPortfolio = {
   balance?: number;
   positions?: Position[];
@@ -356,6 +357,7 @@ export default function App() {
   const [searchEventError, setSearchEventError] = useState<string | null>(null);
   const [searchStatusGroup, setSearchStatusGroup] = useState<"live" | "upcoming" | null>(null);
   const [searchSavedOnly, setSearchSavedOnly] = useState(false);
+  const [searchSort, setSearchSort] = useState<SearchSort>("popular");
   const [savedEventIds, setSavedEventIds] = useState<Set<string>>(() => new Set());
   const [savedEventIdsHydrated, setSavedEventIdsHydrated] = useState(false);
   const [forceAccountSignedIn, setForceAccountSignedIn] = useState(false);
@@ -1031,6 +1033,7 @@ export default function App() {
     cursor: string | null = null,
     append = false,
     statusGroup: "live" | "upcoming" | null = null,
+    sortBy: SearchSort = searchSort,
   ) => {
     try {
       if (searchSavedOnly && !searchSavedEventIds?.length) {
@@ -1041,7 +1044,7 @@ export default function App() {
         }
         return;
       }
-      const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search, statusGroup, eventIds: searchSavedEventIds });
+      const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search, statusGroup, eventIds: searchSavedEventIds, sortBy });
       const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
@@ -1087,16 +1090,16 @@ export default function App() {
       }
       setSearchEventError("Search is unavailable. Try again.");
     }
-  }, [api, searchSavedEventIds, searchSavedOnly]);
+  }, [api, searchSavedEventIds, searchSavedOnly, searchSort]);
 
   const loadMoreBackendSearchEvents = useCallback(() => {
     if (MARKET_DATA_MODE !== "server" || !searchNextCursor || isLoadingSearchEvents) return;
     setIsLoadingSearchEvents(true);
-    loadBackendSearchEvents(query, searchNextCursor, true, searchStatusGroup)
+    loadBackendSearchEvents(query, searchNextCursor, true, searchStatusGroup, searchSort)
       .finally(() => {
         if (mounted.current) setIsLoadingSearchEvents(false);
       });
-  }, [isLoadingSearchEvents, loadBackendSearchEvents, query, searchNextCursor, searchStatusGroup]);
+  }, [isLoadingSearchEvents, loadBackendSearchEvents, query, searchNextCursor, searchSort, searchStatusGroup]);
 
   useEffect(() => {
     loadBackendWorldCup();
@@ -1106,14 +1109,14 @@ export default function App() {
     if (MARKET_DATA_MODE !== "server" || mainTab !== "search") return undefined;
     let cancelled = false;
     setIsLoadingSearchEvents(true);
-    loadBackendSearchEvents(query, null, false, searchStatusGroup)
+    loadBackendSearchEvents(query, null, false, searchStatusGroup, searchSort)
       .finally(() => {
         if (!cancelled && mounted.current) setIsLoadingSearchEvents(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [loadBackendSearchEvents, mainTab, query, searchSavedEventIds, searchStatusGroup]);
+  }, [loadBackendSearchEvents, mainTab, query, searchSavedEventIds, searchSort, searchStatusGroup]);
 
   useEffect(() => {
     if (ORDER_MODE !== "server") return undefined;
@@ -1700,6 +1703,9 @@ export default function App() {
                 routeError={MARKET_DATA_MODE === "server" ? searchEventError : null}
                 setServerStatusGroup={MARKET_DATA_MODE === "server" ? setSearchStatusGroup : undefined}
                 setServerSavedOnly={MARKET_DATA_MODE === "server" ? setSearchSavedOnly : undefined}
+                sort={searchSort}
+                setSort={setSearchSort}
+                useServerSorting={MARKET_DATA_MODE === "server"}
                 savedEventIds={savedEventIds}
                 toggleSavedEvent={toggleSavedEvent}
               />

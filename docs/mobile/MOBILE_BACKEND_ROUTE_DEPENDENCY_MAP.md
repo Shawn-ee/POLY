@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KO - Search Sort Contract
+
+Cycle KO wires the visible Search `Popular` and `Live first` controls to backend route sorting instead of sorting only the current client page:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KO-search-sort-contract/cycle-KO-search-sort-contract.json`.
+- Proof script: `scripts/prove_mobile_search_sort_contract.ts`.
+- Focused validation: route proof, `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Search Popular sort | `/api/events?search=...&includeMobileMarkets=1&sortBy=popular` | GET | Public/mobile route | None | Backend-sorted `events[]`, `nextCursor`, `page.sortBy=popular`, `events[].metrics.marketCount`, `activeMarketCount`, `liquidity` | `Event`, listed public `Market`, active `Outcome`; mobile route metrics from compact market read models | Mock mode keeps local sort over local fixtures. Server mode sends `sortBy=popular` and preserves route order. | P1: provider-backed 24h volume/open-interest ranking when a real popularity source is added. |
+| Search Live first sort | `/api/events?search=...&includeMobileMarkets=1&sortBy=live` | GET | Public/mobile route | None | Backend-sorted `events[]`, `nextCursor`, `page.sortBy=live`, `status`, `liveStatus`, metrics tiebreaks | `Event.status`, `Event.liveStatus`, listed public `Market`, active `Outcome` | Mock mode keeps local live-first sort. Server mode sends `sortBy=live` and does not reorder route results on-device. | P1: richer event-state ranking if provider live state becomes more granular. |
+
 ## Cycle KN - Search Metrics Contract
 
 Cycle KN removes frontend-invented Search row volume/liquidity/chat metrics and makes visible Search event rows consume an explicit backend event metrics contract:

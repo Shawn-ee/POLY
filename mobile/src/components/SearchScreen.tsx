@@ -40,6 +40,9 @@ export function SearchScreen({
   routeError,
   setServerStatusGroup,
   setServerSavedOnly,
+  sort,
+  setSort,
+  useServerSorting = false,
   savedEventIds,
   toggleSavedEvent,
 }: {
@@ -56,11 +59,13 @@ export function SearchScreen({
   routeError?: string | null;
   setServerStatusGroup?: (statusGroup: "live" | "upcoming" | null) => void;
   setServerSavedOnly?: (savedOnly: boolean) => void;
+  sort: SearchSort;
+  setSort: (sort: SearchSort) => void;
+  useServerSorting?: boolean;
   savedEventIds: Set<string>;
   toggleSavedEvent: (event: Event) => void;
 }) {
   const [filter, setFilter] = useState<SearchFilter>("all");
-  const [sort, setSort] = useState<SearchSort>("popular");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const disableSoftInputForSmoke = process.env.EXPO_PUBLIC_SMOKE_DISABLE_SOFT_INPUT === "1";
@@ -73,7 +78,7 @@ export function SearchScreen({
         : filter === "saved"
           ? events.filter((event) => savedEventIds.has(event.id))
         : events;
-  const visibleEvents = [...filteredEvents].sort((left, right) => {
+  const visibleEvents = useServerSorting ? filteredEvents : [...filteredEvents].sort((left, right) => {
     if (sort === "live") {
       const leftLive = left.status === "live" ? 0 : 1;
       const rightLive = right.status === "live" ? 0 : 1;
