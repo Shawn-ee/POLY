@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MA - Portfolio Value History Route Shape Contract
+
+Closed or narrowed:
+
+- Portfolio value-history responses now must match the requested range before visible chart state applies.
+- Route metadata `generatedAt`, nullable `lastUpdated`, and `emptyState` are validated.
+- Point `value`, `cash`, and `positionsValue` must be finite and non-negative; `pnl` may remain negative.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio value-history route-shape contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio/value-history` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio remains unchanged. Server-mode malformed value-history payloads reject instead of applying incorrect chart state.
+
 ## Cycle LZ - Account Navigation Enabled Contract
 
 Closed or narrowed:

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MA - Portfolio Value History Route Shape Contract
+
+Cycle MA hardens Portfolio value-history data before visible chart state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MA-portfolio-value-history-route-shape-contract/cycle-MA-portfolio-value-history-route-shape-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_value_history_route_shape_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioValueHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio value chart history | `/api/portfolio/value-history?range=<range>` | GET | Canonical API key/session with `account:read` | Range query (`1D`, `1W`, `1M`, `All`) | `range` must match requested range; `ranges[]`, `source`, `status`, `generatedAt`, nullable `lastUpdated`, `emptyState`, and `points[]`; point `value`, `cash`, and `positionsValue` must be non-negative, while `pnl` may be negative | `Position`, `UserBalance`, market price snapshots/value-history route service | Mock/local Portfolio remains unchanged. Server-mode malformed value-history payloads reject before visible chart state applies. | None for focused value-history route-shape contract. P2 optional route-specific retry/error copy. |
+
 ## Cycle LZ - Account Navigation Enabled Contract
 
 Cycle LZ hardens Account navigation enabled-state fields so malformed backend booleans cannot silently enable or disable visible Account menu actions:

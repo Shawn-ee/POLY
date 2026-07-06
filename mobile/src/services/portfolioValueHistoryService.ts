@@ -8,6 +8,11 @@ const isRange = (value: unknown): value is PortfolioValueHistoryRange =>
 const isNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
 
+const isNonNegativeNumber = (value: unknown): value is number =>
+  isNumber(value) && value >= 0;
+
+const isNullableString = (value: unknown) => value === null || typeof value === "string";
+
 export async function loadPortfolioValueHistory({
   getPortfolioValueHistory,
   range = "1D",
@@ -17,6 +22,7 @@ export async function loadPortfolioValueHistory({
 }) {
   const history = await getPortfolioValueHistory(range);
   if (!isRange(history.range)) throw new Error("Malformed portfolio value history: invalid range.");
+  if (history.range !== range) throw new Error("Malformed portfolio value history: wrong range.");
   if (!Array.isArray(history.ranges) || !history.ranges.every(isRange)) {
     throw new Error("Malformed portfolio value history: invalid ranges.");
   }
@@ -26,15 +32,24 @@ export async function loadPortfolioValueHistory({
   if (history.status !== "ready" && history.status !== "empty") {
     throw new Error("Malformed portfolio value history: invalid status.");
   }
+  if (typeof history.generatedAt !== "string" || !history.generatedAt.trim()) {
+    throw new Error("Malformed portfolio value history: missing generatedAt.");
+  }
+  if (!isNullableString(history.lastUpdated)) {
+    throw new Error("Malformed portfolio value history: invalid lastUpdated.");
+  }
+  if (history.emptyState !== null && history.emptyState !== "no-history") {
+    throw new Error("Malformed portfolio value history: invalid emptyState.");
+  }
   if (!Array.isArray(history.points)) {
     throw new Error("Malformed portfolio value history: missing points.");
   }
   for (const point of history.points) {
     if (
       typeof point.timestamp !== "string" ||
-      !isNumber(point.value) ||
-      !isNumber(point.cash) ||
-      !isNumber(point.positionsValue) ||
+      !isNonNegativeNumber(point.value) ||
+      !isNonNegativeNumber(point.cash) ||
+      !isNonNegativeNumber(point.positionsValue) ||
       !isNumber(point.pnl)
     ) {
       throw new Error("Malformed portfolio value history: invalid point.");

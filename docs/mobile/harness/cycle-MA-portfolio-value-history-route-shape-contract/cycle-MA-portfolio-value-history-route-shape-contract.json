@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle MA",
+  "feature": "Portfolio value history route shape contract",
+  "generatedAt": "2026-07-06T11:35:47.233Z",
+  "route": "/api/portfolio/value-history",
+  "contract": {
+    "validPayload": "requested range, route metadata, empty state, and non-negative value fields validate before visible Portfolio chart state applies",
+    "malformedPayload": "wrong range, missing metadata, invalid empty state, or negative value/cash/positions values reject"
+  },
+  "assertions": {
+    "validRequestedRangeApplies": true,
+    "wrongRangeRejects": true,
+    "missingGeneratedAtRejects": true,
+    "invalidEmptyStateRejects": true,
+    "negativeValueFieldRejects": true
+  }
+}

@@ -32,4 +32,36 @@ describe("portfolio value history service", () => {
 
     await expect(loadPortfolioValueHistory({ getPortfolioValueHistory })).rejects.toThrow("invalid point");
   });
+
+  test("rejects wrong-range value history responses", async () => {
+    const getPortfolioValueHistory = vi.fn(async () => ({
+      ...validHistory,
+      range: "1W",
+    } as PortfolioValueHistory));
+
+    await expect(loadPortfolioValueHistory({ getPortfolioValueHistory, range: "1D" })).rejects.toThrow("wrong range");
+  });
+
+  test("rejects missing route metadata", async () => {
+    const getPortfolioValueHistory = vi.fn(async () => ({
+      ...validHistory,
+      generatedAt: "",
+    }));
+
+    await expect(loadPortfolioValueHistory({ getPortfolioValueHistory })).rejects.toThrow("missing generatedAt");
+  });
+
+  test("rejects invalid empty state and negative value fields", async () => {
+    const invalidEmptyState = vi.fn(async () => ({
+      ...validHistory,
+      emptyState: "placeholder",
+    } as unknown as PortfolioValueHistory));
+    const negativeValue = vi.fn(async () => ({
+      ...validHistory,
+      points: [{ ...validHistory.points[0], cash: -1 }],
+    }));
+
+    await expect(loadPortfolioValueHistory({ getPortfolioValueHistory: invalidEmptyState })).rejects.toThrow("invalid emptyState");
+    await expect(loadPortfolioValueHistory({ getPortfolioValueHistory: negativeValue })).rejects.toThrow("invalid point");
+  });
 });
