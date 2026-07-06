@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KH - Account Balance Contract
+
+Closed or narrowed:
+
+- Mobile now has a first-class `PolyApi.getAccountBalance()` client method for canonical `GET /api/account/balance`.
+- Server-mode app startup refreshes the visible Account balance through the canonical account balance route when an API key is present.
+- Mobile account balance validation normalizes backend decimal strings into numeric UI state and rejects malformed balance payloads clearly.
+- Route proof verifies `/api/account/balance` and `/api/portfolio` report the same available, locked, and total wallet state for the same canonical user.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Full server-authored account identity/session/menu metadata remains future work.
+- A richer account-specific sync status/error surface can be added later if Account needs to distinguish account-balance failures from Portfolio sync.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `UserBalance`, custody balance helper, canonical auth, `/api/account/balance`, and `/api/portfolio` wallet fields support the KH contract.
+
+Temporary mock/static data:
+
+- KH proof creates a disposable backend user, API key, and `UserBalance` row. It does not add frontend-only account rows or deposit/withdraw behavior.
+
 ## Cycle KG - Route Sell/Cashout Safety
 
 Closed or narrowed:

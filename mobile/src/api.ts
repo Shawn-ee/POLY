@@ -1,4 +1,4 @@
-import type { EventDetail, EventSummary, Market, MarketChart, MarketChartRange, OrderbookBook, PortfolioCanceledOrderItem, PortfolioHistoryItem, PortfolioRecentTradeItem, PortfolioSnapshot, ProfilePreferences, Quote } from "./types";
+import type { AccountBalance, EventDetail, EventSummary, Market, MarketChart, MarketChartRange, OrderbookBook, PortfolioCanceledOrderItem, PortfolioHistoryItem, PortfolioRecentTradeItem, PortfolioSnapshot, ProfilePreferences, Quote } from "./types";
 
 export type CancelOrderResponse = {
   order?: {
@@ -121,6 +121,10 @@ export class PolyApi {
 
   getPortfolio() {
     return this.request<PortfolioSnapshot>(`/api/portfolio`);
+  }
+
+  getAccountBalance() {
+    return this.request<AccountBalance>(`/api/account/balance`);
   }
 
   placeLimitOrder(input: {

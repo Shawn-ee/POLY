@@ -70,6 +70,26 @@ describe("Holiwyn mobile API client", () => {
     expect(headers.get("Authorization")).toBe("Bearer pk_live_test.secret");
   });
 
+  test("loads canonical account balance with auth headers", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse({
+        availableUSDC: "140.86",
+        lockedUSDC: "12.00",
+        totalUSDC: "152.86",
+        updatedAt: "2026-07-06T07:30:00.000Z",
+      }),
+    );
+    vi.stubGlobal("fetch", fetchImpl);
+
+    const balance = await new PolyApi("https://api.example.test", "pk_live_test.secret").getAccountBalance();
+
+    const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    const headers = init.headers as Headers;
+    expect(url).toBe("https://api.example.test/api/account/balance");
+    expect(headers.get("Authorization")).toBe("Bearer pk_live_test.secret");
+    expect(balance.availableUSDC).toBe("140.86");
+  });
+
   test("loads range-aware market chart history", async () => {
     const fetchImpl = vi.fn(async () =>
       jsonResponse({

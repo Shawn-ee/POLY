@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KH - Account Balance Contract
+
+Cycle KH wires the visible Account balance state to the canonical account balance route:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KH-account-balance-contract/cycle-KH-account-balance-contract.json`.
+- Proof script: `scripts/prove_mobile_account_balance_contract.ts`.
+- Focused tests: `mobile/src/__tests__/accountBalanceService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account visible balance | `/api/account/balance` | GET | Canonical API key/session with `account:read` | None | `availableUSDC`, `lockedUSDC`, `totalUSDC`, `updatedAt`; backend emits decimal strings and mobile normalizes to numbers | `UserBalance`, custody balance helper, canonical auth/API request logging | Mock mode keeps local demo balance. Server mode now refreshes visible balance through the canonical account route when an API key is present. | P1: full server-authored account identity/session/menu metadata remains future work. |
+| Account/Portfolio wallet consistency | `/api/account/balance` and `/api/portfolio` | GET | Canonical API key/session with `account:read` | None | Account available/locked/total balance matches Portfolio wallet fields for the same user | `UserBalance`, `Position`, `Order` for Portfolio envelope | Local Portfolio fixtures remain available for mock/device harness paths. | P1: richer account sync status/error surface outside Portfolio sync. |
+
 ## Cycle KG - Route Sell/Cashout Safety
 
 Cycle KG proves the production-like route path for mobile cashout/sell safety:

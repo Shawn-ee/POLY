@@ -35,6 +35,7 @@ import {
 import { OrderMode, submitTicketOrder } from "./src/services/orderService";
 import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity } from "./src/services/openOrderService";
 import { closePositionOnServer } from "./src/services/positionCloseService";
+import { loadAccountBalance } from "./src/services/accountBalanceService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
 import { applyServerPortfolioState } from "./src/services/portfolioStateApplyService";
 import { loadServerPortfolioState } from "./src/services/portfolioSyncService";
@@ -1108,6 +1109,9 @@ export default function App() {
   useEffect(() => {
     if (ORDER_MODE !== "server" || runtimeApiKey.length === 0) return undefined;
     let cancelled = false;
+    loadAccountBalance(api).then((accountBalance) => {
+      if (!cancelled && mounted.current) setBalance(accountBalance.availableUSDC);
+    }).catch(() => undefined);
     setPortfolioSyncStatus("syncing");
     loadServerPortfolioState(api).then((serverState) => {
       if (!cancelled && mounted.current) applyServerState(serverState);

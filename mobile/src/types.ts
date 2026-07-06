@@ -415,6 +415,13 @@ export type PortfolioSnapshot = {
   comboOrders: unknown[];
 };
 
+export type AccountBalance = {
+  availableUSDC: number | string;
+  lockedUSDC: number | string;
+  totalUSDC: number | string;
+  updatedAt?: string | null;
+};
+
 export type ProfilePreferences = {
   locale: "en" | "zh";
   ticketDefaultAmount: string;

@@ -1,0 +1,33 @@
+{
+  "pass": true,
+  "cycle": "Cycle KH",
+  "createdAt": "2026-07-06T07:34:59.988Z",
+  "routes": {
+    "accountBalance": "/api/account/balance",
+    "portfolio": "/api/portfolio"
+  },
+  "account": {
+    "userId": "0507f031-2b8e-4fc5-b1d0-e750c2e810ac",
+    "displayName": "KH Account 8ae36908",
+    "auth": "canonical API key with account:read"
+  },
+  "routeBalance": {
+    "availableUSDC": "140.860000",
+    "lockedUSDC": "12.340000",
+    "totalUSDC": "153.200000",
+    "updatedAt": "2026-07-06T07:34:59.886Z"
+  },
+  "mobileBalance": {
+    "availableUSDC": 140.86,
+    "lockedUSDC": 12.34,
+    "totalUSDC": 153.2,
+    "updatedAt": "2026-07-06T07:34:59.886Z"
+  },
+  "portfolioWallet": {
+    "walletAvailableUSDC": 140.86,
+    "walletLockedUSDC": 12.34,
+    "walletTotalUSDC": 153.20000000000002,
+    "positions": 0,
+    "openOrders": 0
+  }
+}
