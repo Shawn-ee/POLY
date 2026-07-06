@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JX - Trade Ticket Submit Contract
+
+Cycle JX tightens the visible Trade Ticket server submit contract:
+
+- Route proof: `docs/mobile/harness/cycle-JX-trade-ticket-submit-contract/cycle-JX-trade-ticket-submit-contract.json`.
+- Proof script: `scripts/prove_mobile_trade_ticket_submit_contract.ts`.
+- Focused mobile tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/api.test.ts`, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket server submit | `/api/orders` | POST | Canonical API key/session with `orders:write`; local/internal proof requires `INTERNAL_TRADING_BETA_ENABLED=true` and `TRADING_KILL_SWITCH=false` | `marketId`, `outcomeId`, `side`, `type=LIMIT`, `price`, `size`, `contractSide`, `clientOrderId`, and `selection` with market type, line, period, provider ids/tokens, and limit metadata | `order.id`, `status`, `size`, `remaining`, `contractSide`, `selection`, `fills`, `balance`, `position` | `ApiOrderRequest`, `Order`, `UserBalance`, `Market`, `Outcome`, provider quote snapshots | Mock mode keeps local ticket order state. Server mode now rejects malformed backend responses with no confirmed order id. | P1: route-backed filled lifecycle for this same simple ticket path when counterparty liquidity is present. |
+| Post-submit Portfolio open order | `/api/portfolio` | GET | Canonical API key/session with `account:read` | None | Submitted order appears in `openOrders[]` with `selection.contractSide`, provider token, external market id, and limit metadata | `Order`, `ApiOrderRequest`, `Market`, `Outcome`, `UserBalance` | Mock mode maps local order state. Server mode consumes backend open-order snapshot. | P1: durable first-class order selection snapshot remains future hardening. |
+
 ## Cycle JW - Portfolio Open-Order Cancel Flow
 
 Cycle JW tightens the visible Portfolio open-order cancel contract:

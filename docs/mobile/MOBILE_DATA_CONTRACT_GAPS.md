@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JX - Trade Ticket Submit Contract
+
+Closed or narrowed:
+
+- Mobile server-mode ticket submit now rejects backend responses that do not confirm a real order id, instead of inventing a local server id fallback.
+- `/api/orders` route proof submits a seeded provider-backed No-side ticket through canonical `orders:write` auth with selected market/outcome/provider/limit metadata.
+- `/api/portfolio` proof verifies the submitted backend order appears in open orders with `selection.contractSide=no`, provider market id, provider token, and limit side.
+- Idempotent replay proof verifies the same `Idempotency-Key` and payload return the same backend order id.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Route-backed filled lifecycle for this same simple ticket path when counterparty liquidity exists.
+- Better mobile-visible server submit error states for trading gate, unavailable provider, and insufficient collateral errors.
+- First-class immutable order/fill/trade selection snapshots remain future hardening.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection`, `Order`, `UserBalance`, `Market`, `Outcome`, and provider quote snapshot fields support the JX contract.
+
+Temporary mock/static data:
+
+- JX proof creates disposable backend account, provider-backed market, accepting quote snapshots, order request, and API key rows. It does not add frontend-only ticket/order rows.
+
 ## Cycle JW - Portfolio Open-Order Cancel Flow
 
 Closed or narrowed:

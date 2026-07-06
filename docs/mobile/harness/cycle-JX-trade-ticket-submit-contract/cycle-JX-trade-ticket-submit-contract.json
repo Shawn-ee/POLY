@@ -1,0 +1,29 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:44:23.811Z",
+  "submitRoute": "/api/orders",
+  "portfolioRoute": "/api/portfolio",
+  "auth": "canonical API key with orders:write and account:read",
+  "tradingGate": "internal beta enabled required",
+  "submittedOrder": {
+    "id": "0a34cfcf-a691-424b-814a-099e868fa7a1",
+    "status": "OPEN",
+    "side": "BUY",
+    "contractSide": "NO",
+    "clientOrderId": "mobile-jx-client-7fe126be",
+    "selectionContractSide": "no",
+    "referenceTokenId": "token-jx-no-7fe126be",
+    "limitSide": "bid"
+  },
+  "portfolioOpenOrder": {
+    "id": "0a34cfcf-a691-424b-814a-099e868fa7a1",
+    "status": "OPEN",
+    "contractSide": "no",
+    "externalMarketId": "gamma-jx-submit-7fe126be",
+    "referenceTokenId": "token-jx-no-7fe126be",
+    "limitSide": "bid"
+  },
+  "idempotentReplay": {
+    "sameOrderId": true
+  }
+}

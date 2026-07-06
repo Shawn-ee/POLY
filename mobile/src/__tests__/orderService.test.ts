@@ -400,6 +400,22 @@ describe("ticket order service", () => {
     });
   });
 
+  test("rejects server-mode submit when the backend does not confirm an order id", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { status: "OPEN" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit was not confirmed by the server.");
+  });
+
   test("rejects non-positive ticket amounts before calling the API", async () => {
     const placeLimitOrder = vi.fn();
     const api = { placeLimitOrder } as unknown as PolyApi;

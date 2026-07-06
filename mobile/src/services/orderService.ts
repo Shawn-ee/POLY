@@ -158,13 +158,17 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
   };
   const payload = await input.api.placeLimitOrder(orderInput);
   const response = payload && typeof payload === "object" ? (payload as ServerOrderResponse) : {};
+  const orderId = response.order?.id ?? response.id;
+  if (!orderId) {
+    throw new Error("Order submit was not confirmed by the server.");
+  }
   const size = numericField(response.order?.size ?? response.size);
   const remainingSize = numericField(response.order?.remaining ?? response.remaining);
   const status = response.order?.status ?? response.status;
 
   return {
     ...mockOrder(input),
-    id: response.order?.id ?? response.id ?? `server-${Date.now()}`,
+    id: orderId,
     mode: "server",
     status,
     size,
