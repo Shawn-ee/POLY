@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:48:32.654Z",
+  "submitRoute": "/api/orders",
+  "portfolioRoute": "/api/portfolio",
+  "historyRoute": "/api/portfolio/history",
+  "auth": "canonical API keys with orders:write and account:read",
+  "tradingGate": "internal beta enabled required",
+  "makerOrder": {
+    "id": "42c8753a-2d1b-428f-a318-f42dd7325c76",
+    "status": "OPEN",
+    "side": "SELL",
+    "remaining": "20"
+  },
+  "takerOrder": {
+    "id": "15c4fb53-66bc-45c8-935b-496ab046c2cf",
+    "status": "FILLED",
+    "side": "BUY",
+    "remaining": "0",
+    "contractSide": "NO",
+    "selectionContractSide": "no",
+    "referenceTokenId": "token-jy-no-1925f957",
+    "fills": 1,
+    "filledSize": "20"
+  },
+  "portfolioPosition": {
+    "marketId": "8ce0e439-93b3-4794-ae70-c3edf0140646",
+    "outcomeId": "fe66e427-cc10-4243-a953-436c4ebd7b18",
+    "shares": 20,
+    "contractSide": "no",
+    "externalMarketId": "gamma-jy-filled-1925f957",
+    "referenceTokenId": "token-jy-no-1925f957"
+  },
+  "recentTrade": {
+    "id": "9bd590f2-30dd-48cb-b426-c037d9dd2491",
+    "side": "BUY",
+    "shares": 20,
+    "contractSide": "no",
+    "referenceTokenId": "token-jy-no-1925f957",
+    "limitSide": "bid"
+  }
+}

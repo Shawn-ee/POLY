@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JY - Trade Ticket Filled Lifecycle
+
+Closed or narrowed:
+
+- `/api/orders` route proof now covers a filled Trade Ticket lifecycle: maker liquidity is created through the route, taker ticket submit fills against it, and the response returns `status=FILLED`, `remaining=0`, one fill, and buyer position shares.
+- `/api/portfolio` proof verifies the filled buyer position preserves `selection.contractSide=no`, provider market id, and provider token.
+- `/api/portfolio/history` proof verifies the buyer recent trade preserves `selection.contractSide=no`, provider token, and buyer limit side.
+- The proof uses complete-set minting for maker inventory so the public orderbook collateral invariant remains intact.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Broader route-backed filled lifecycle breadth for spread/team-total families and partial-fill states.
+- Richer mobile-visible filled/partial status copy after server submit.
+- First-class immutable fill/trade selection snapshots remain future hardening.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection`, `Order`, `Fill`, `Trade`, `Position`, `UserBalance`, `Market`, `Outcome`, and collateral fields support the JY contract.
+
+Temporary mock/static data:
+
+- JY proof creates disposable backend users, provider-backed market, complete-set inventory, maker/taker orders, fill, position, trade, and API key rows. It does not add frontend-only ticket/order rows.
+
 ## Cycle JX - Trade Ticket Submit Contract
 
 Closed or narrowed:

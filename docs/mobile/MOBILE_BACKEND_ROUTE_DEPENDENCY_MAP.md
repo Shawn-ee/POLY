@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JY - Trade Ticket Filled Lifecycle
+
+Cycle JY proves the visible Trade Ticket server submit path when the order crosses existing liquidity:
+
+- Route proof: `docs/mobile/harness/cycle-JY-trade-ticket-filled-lifecycle/cycle-JY-trade-ticket-filled-lifecycle.json`.
+- Proof script: `scripts/prove_mobile_trade_ticket_filled_lifecycle.ts`.
+- Focused mobile tests: `mobile/src/__tests__/orderService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket filled submit | `/api/orders` | POST | Canonical API key/session with `orders:write`; local/internal proof requires `INTERNAL_TRADING_BETA_ENABLED=true` and `TRADING_KILL_SWITCH=false` | Taker `BUY LIMIT` with `contractSide=NO`, selected totals line/provider token metadata, and idempotency key; maker liquidity is a resting `SELL` created through the same route | `order.status=FILLED`, `order.remaining=0`, `fills[]`, `position.shares`, `order.selection` | `ApiOrderRequest`, `Order`, `Fill`, `Trade`, `Position`, `UserBalance`, `Market`, `Outcome`, complete-set collateral | Mock mode keeps local ticket order state. Server mode consumes confirmed backend fills and Portfolio/history refreshes. | P1: broader filled lifecycle breadth across spread/team-total and partial-fill states. |
+| Post-fill Portfolio position/history | `/api/portfolio` and `/api/portfolio/history` | GET | Canonical API key/session with `account:read` | None | Filled position appears in `positions[]` and recent trade appears in `recentTrades[]`, both preserving `selection.contractSide`, provider token, external market id, and limit metadata | `Position`, `Trade`, `Order`, `ApiOrderRequest`, `Market`, `Outcome` | Mock mode maps local Portfolio state. Server mode consumes backend snapshots. | P1: durable first-class fill/trade selection snapshots remain future hardening. |
+
 ## Cycle JX - Trade Ticket Submit Contract
 
 Cycle JX tightens the visible Trade Ticket server submit contract:
