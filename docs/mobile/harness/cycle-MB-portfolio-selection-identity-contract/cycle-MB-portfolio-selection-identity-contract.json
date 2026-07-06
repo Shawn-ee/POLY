@@ -1,0 +1,20 @@
+{
+  "cycle": "Cycle MB",
+  "feature": "Portfolio selection identity contract",
+  "generatedAt": "2026-07-06T11:41:57.523Z",
+  "routes": [
+    "/api/portfolio",
+    "/api/portfolio/history"
+  ],
+  "contract": {
+    "validPayload": "backend selection identity for positions, open orders, recent trades, and canceled orders is preserved for visible Portfolio rows",
+    "malformedPayload": "unknown market types, missing display labels, and invalid limit fields reject before visible Portfolio state applies"
+  },
+  "assertions": {
+    "validSnapshotSelectionPreserved": true,
+    "validHistorySelectionPreserved": true,
+    "unknownMarketTypeRejects": true,
+    "missingDisplayLabelRejects": true,
+    "invalidLimitFieldsReject": true
+  }
+}

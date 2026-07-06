@@ -1,7 +1,7 @@
 import type { PolyApi } from "../api";
 import type { PortfolioActivity } from "../components/Portfolio";
-import type { TicketSelection } from "../components/TradeTicket";
 import type { PortfolioCanceledOrderItem, PortfolioHistoryItem, PortfolioRecentTradeItem } from "../types";
+import { portfolioSelectionFromBackend } from "./portfolioSelectionService";
 
 const formatHistoryTimestamp = (value: string | null) => {
   if (!value) return undefined;
@@ -16,8 +16,6 @@ const formatHistoryTimestamp = (value: string | null) => {
   }).format(parsed);
 };
 
-const knownMarketTypes: TicketSelection["marketType"][] = ["spread", "totals", "team-total", "winner", "prop", "future", "live"];
-
 const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
   if (!Array.isArray(value)) {
     throw new Error(`Portfolio history response had invalid ${field}.`);
@@ -31,54 +29,6 @@ const requireFiniteNumber = (value: unknown, field: string) => {
     throw new Error(`Portfolio history response had invalid ${field}.`);
   }
   return parsed;
-};
-
-const selectionFromBackend = (
-  selection?: {
-    marketId?: string;
-    outcomeId?: string;
-    marketGroupId?: string;
-    marketType?: string;
-    line?: string;
-    period?: string;
-    side?: string;
-    displayLabel?: string;
-    contractSide?: "yes" | "no";
-    referenceSource?: string;
-    externalSlug?: string;
-    externalMarketId?: string;
-    conditionId?: string;
-    referenceTokenId?: string;
-    referenceOutcomeLabel?: string;
-    limitPrice?: number;
-    limitSide?: "bid" | "ask";
-    limitShares?: number;
-  } | null,
-): TicketSelection | undefined => {
-  if (!selection?.displayLabel) return undefined;
-  const marketType = knownMarketTypes.includes(selection.marketType as TicketSelection["marketType"])
-    ? (selection.marketType as TicketSelection["marketType"])
-    : "prop";
-  return {
-    marketType,
-    marketId: selection.marketId,
-    outcomeId: selection.outcomeId,
-    marketGroupId: selection.marketGroupId,
-    line: selection.line,
-    period: selection.period,
-    side: selection.side,
-    displayLabel: selection.displayLabel,
-    contractSide: selection.contractSide,
-    referenceSource: selection.referenceSource,
-    externalSlug: selection.externalSlug,
-    externalMarketId: selection.externalMarketId,
-    conditionId: selection.conditionId,
-    referenceTokenId: selection.referenceTokenId,
-    referenceOutcomeLabel: selection.referenceOutcomeLabel,
-    limitPrice: selection.limitPrice,
-    limitSide: selection.limitSide,
-    limitShares: selection.limitShares,
-  };
 };
 
 export const portfolioHistoryToActivity = (history: Awaited<ReturnType<PolyApi["getPortfolioHistory"]>>["history"]): PortfolioActivity[] =>
@@ -102,7 +52,7 @@ export const canceledOrdersToActivity = (orders: PortfolioCanceledOrderItem[] = 
     action: "canceled",
     title: order.market.title,
     outcome: order.outcome.name,
-    selection: selectionFromBackend(order.selection),
+    selection: portfolioSelectionFromBackend(order.selection, "canceledOrders[].selection"),
     amount: requireFiniteNumber(order.remaining, "canceledOrders[].remaining") * requireFiniteNumber(order.price, "canceledOrders[].price"),
     shares: requireFiniteNumber(order.remaining, "canceledOrders[].remaining"),
     side: order.side === "SELL" ? "sell" : "buy",
@@ -120,7 +70,7 @@ export const recentTradesToActivity = (trades: PortfolioRecentTradeItem[] = []):
       action: trade.side === "SELL" ? "sold" : "opened",
       title: trade.market.title,
       outcome: trade.outcome.name,
-      selection: selectionFromBackend(trade.selection),
+      selection: portfolioSelectionFromBackend(trade.selection, "recentTrades[].selection"),
       amount: cost,
       shares,
       side: trade.side === "SELL" ? "sell" : "buy",

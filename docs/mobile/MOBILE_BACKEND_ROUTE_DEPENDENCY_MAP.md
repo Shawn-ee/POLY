@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MB - Portfolio Selection Identity Contract
+
+Cycle MB hardens Portfolio selection identity so visible positions, open orders, recent trades, and canceled order rows cannot silently downgrade malformed backend market data:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MB-portfolio-selection-identity-contract/cycle-MB-portfolio-selection-identity-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_selection_identity_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSelectionService.test.ts`, `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio selected market identity | `/api/portfolio` and `/api/portfolio/history` | GET + GET | Canonical API key/session with `account:read` | None | Optional `selection` objects on positions, open orders, recent trades, and canceled orders. When present, `displayLabel` must be non-empty, `marketType` must be one of `spread`, `totals`, `team-total`, `winner`, `prop`, `future`, or `live`, optional text identity fields must be strings, `contractSide` must be `yes`/`no`, `limitSide` must be `bid`/`ask`, and optional limit numbers must be finite non-negative values. | `Position`, `Order`, `Trade`, `Fill`, market/outcome selection snapshot fields | Mock/local Portfolio remains unchanged. Server-mode malformed selection payloads reject before visible Portfolio state/activity applies. Legacy rows with no selection object remain renderable. | None for focused selection identity contract. P2 optional route-specific Portfolio selection error copy. |
+
 ## Cycle MA - Portfolio Value History Route Shape Contract
 
 Cycle MA hardens Portfolio value-history data before visible chart state applies:

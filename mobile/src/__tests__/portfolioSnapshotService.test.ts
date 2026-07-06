@@ -353,4 +353,43 @@ describe("portfolio snapshot service", () => {
       ],
     });
   });
+
+  test("rejects malformed backend selection identity before applying Portfolio state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        positions: [
+          {
+            ...snapshot().positions[0],
+            selection: {
+              marketType: "mystery",
+              displayLabel: "Unknown line",
+            },
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio selection response had invalid positions[].selection.marketType.");
+  });
+
+  test("rejects malformed backend open-order selection limits before applying Portfolio state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            selection: {
+              marketType: "totals",
+              displayLabel: "Over 3.5 RT",
+              limitSide: "middle",
+            } as unknown as NonNullable<PortfolioSnapshot["openOrders"][number]["selection"]>,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio selection response had invalid openOrders[].selection.limitSide.");
+  });
 });

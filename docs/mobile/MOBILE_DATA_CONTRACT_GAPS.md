@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MB - Portfolio Selection Identity Contract
+
+Closed or narrowed:
+
+- Portfolio snapshot/history now share one backend selection validator.
+- Unknown backend `selection.marketType` values reject instead of being coerced to `prop`.
+- Present selection objects must include a non-empty `displayLabel`.
+- Optional selected-market text fields, contract side, limit side, and limit number fields are validated before visible Portfolio rows apply.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio selection identity contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing selection snapshots on portfolio/order/history payloads support this contract when they emit valid known market types and labels.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio remains unchanged. Server-mode malformed selection payloads reject instead of hiding backend identity mistakes.
+
 ## Cycle MA - Portfolio Value History Route Shape Contract
 
 Closed or narrowed:

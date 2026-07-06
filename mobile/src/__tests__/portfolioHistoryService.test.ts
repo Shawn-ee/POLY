@@ -342,4 +342,62 @@ describe("portfolio history activity mapping", () => {
       }),
     ]);
   });
+
+  test("rejects malformed recent trade selection identity before applying activity", () => {
+    expect(() =>
+      recentTradesToActivity([
+        {
+          id: "bad-line-trade",
+          market: {
+            id: "mexico-ecuador-spread",
+            title: "Mexico vs. Ecuador",
+            status: "ACTIVE",
+          },
+          outcome: {
+            id: "spread-yes",
+            name: "YES",
+          },
+          selection: {
+            marketType: "mystery",
+            displayLabel: "Unknown line",
+          },
+          side: "BUY",
+          shares: 1000,
+          cost: 30,
+          fee: 0,
+          createdAt: "2026-07-02T06:10:00.000Z",
+        },
+      ]),
+    ).toThrow("Portfolio selection response had invalid recentTrades[].selection.marketType.");
+  });
+
+  test("rejects malformed canceled order selection limits before applying activity", () => {
+    expect(() =>
+      canceledOrdersToActivity([
+        {
+          id: "bad-line-order",
+          market: {
+            id: "mexico-ecuador-total",
+            title: "Mexico vs. Ecuador",
+            status: "ACTIVE",
+          },
+          outcome: {
+            id: "over",
+            name: "YES",
+          },
+          selection: {
+            marketType: "totals",
+            displayLabel: "Over 3.5 RT",
+            limitPrice: -0.01,
+          },
+          side: "BUY",
+          status: "CANCELED",
+          price: 0.22,
+          size: 100,
+          remaining: 100,
+          canceledAt: "2026-07-02T05:55:00.000Z",
+        },
+      ]),
+    ).toThrow("Portfolio selection response had invalid canceledOrders[].selection.limitPrice.");
+  });
 });

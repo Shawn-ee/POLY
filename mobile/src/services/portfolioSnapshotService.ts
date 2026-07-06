@@ -1,7 +1,7 @@
 import type { PolyApi } from "../api";
 import type { OpenOrder, Position } from "../components/Portfolio";
-import type { TicketSelection } from "../components/TradeTicket";
 import type { PortfolioOpenOrderItem, PortfolioPositionItem } from "../types";
+import { portfolioSelectionFromBackend } from "./portfolioSelectionService";
 
 export type PortfolioSnapshotResult = {
   balance: number;
@@ -50,56 +50,6 @@ const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
   return value as T[];
 };
 
-const knownMarketTypes: TicketSelection["marketType"][] = ["spread", "totals", "team-total", "winner", "prop", "future", "live"];
-
-const selectionFromBackend = (
-  selection?: {
-    marketId?: string;
-    outcomeId?: string;
-    marketGroupId?: string;
-    marketType?: string;
-    line?: string;
-    period?: string;
-    side?: string;
-    displayLabel?: string;
-    contractSide?: "yes" | "no";
-    referenceSource?: string;
-    externalSlug?: string;
-    externalMarketId?: string;
-    conditionId?: string;
-    referenceTokenId?: string;
-    referenceOutcomeLabel?: string;
-    limitPrice?: number;
-    limitSide?: "bid" | "ask";
-    limitShares?: number;
-  } | null,
-): TicketSelection | undefined => {
-  if (!selection?.displayLabel) return undefined;
-  const marketType = knownMarketTypes.includes(selection.marketType as TicketSelection["marketType"])
-    ? (selection.marketType as TicketSelection["marketType"])
-    : "prop";
-  return {
-    marketType,
-    marketId: selection.marketId,
-    outcomeId: selection.outcomeId,
-    marketGroupId: selection.marketGroupId,
-    line: selection.line,
-    period: selection.period,
-    side: selection.side,
-    displayLabel: selection.displayLabel,
-    contractSide: selection.contractSide,
-    referenceSource: selection.referenceSource,
-    externalSlug: selection.externalSlug,
-    externalMarketId: selection.externalMarketId,
-    conditionId: selection.conditionId,
-    referenceTokenId: selection.referenceTokenId,
-    referenceOutcomeLabel: selection.referenceOutcomeLabel,
-    limitPrice: selection.limitPrice,
-    limitSide: selection.limitSide,
-    limitShares: selection.limitShares,
-  };
-};
-
 export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnapshotResult> => {
   const snapshot = await api.getPortfolio();
   const positions = requireArray<PortfolioPositionItem>(snapshot.positions, "positions");
@@ -113,7 +63,7 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       outcomeId: position.outcomeId,
       title: position.market.title,
       outcome: position.outcome,
-      selection: selectionFromBackend(position.selection),
+      selection: portfolioSelectionFromBackend(position.selection, "positions[].selection"),
       side: "buy",
       amount: requireFiniteNumber(position.costBasisTokens, "positions[].costBasisTokens"),
       probability: Math.round(requireFiniteNumber(position.avgCost, "positions[].avgCost") * 100),
@@ -131,7 +81,7 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       id: order.id,
       title: order.market.title,
       outcome: order.outcome.name,
-      selection: selectionFromBackend(order.selection),
+      selection: portfolioSelectionFromBackend(order.selection, "openOrders[].selection"),
       side: order.side === "SELL" ? "sell" : "buy",
       status: order.status,
       price: requireFiniteNumber(order.price, "openOrders[].price"),
