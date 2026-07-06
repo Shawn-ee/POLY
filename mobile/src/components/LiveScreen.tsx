@@ -17,8 +17,11 @@ export function LiveScreen({
   t,
   events,
   isRefreshing,
+  isLoadingMoreEvents = false,
   refreshTick,
   onRefresh,
+  canLoadMoreEvents,
+  loadMoreEvents,
   openEvent,
   openTicket,
 }: {
@@ -26,8 +29,11 @@ export function LiveScreen({
   t: LiveScreenCopy;
   events: Event[];
   isRefreshing: boolean;
+  isLoadingMoreEvents?: boolean;
   refreshTick: number;
   onRefresh: () => void;
+  canLoadMoreEvents?: boolean;
+  loadMoreEvents?: () => void;
   openEvent: (event: Event) => void;
   openTicket: (market: Market, outcome: Outcome, event?: Event) => void;
 }) {
@@ -36,6 +42,11 @@ export function LiveScreen({
     (total, event) => total + event.markets.reduce((marketTotal, market) => marketTotal + market.outcomes.length, 0),
     0,
   );
+  const canLoadMore = Boolean(canLoadMoreEvents && loadMoreEvents);
+  const loadMoreLiveEvents = () => {
+    if (!canLoadMore || isLoadingMoreEvents) return;
+    loadMoreEvents?.();
+  };
 
   return (
     <ScrollView style={styles.content} contentContainerStyle={styles.scrollPad}>
@@ -71,6 +82,19 @@ export function LiveScreen({
         </View>
       </View>
       <MarketList locale={locale} events={events} empty={t.noLive} openEvent={openEvent} openTicket={openTicket} />
+      {canLoadMore && (
+        <Pressable
+          accessibilityLabel="load-more-live-markets"
+          disabled={isLoadingMoreEvents}
+          onPress={loadMoreLiveEvents}
+          style={[styles.loadMoreButton, isLoadingMoreEvents && styles.loadMoreButtonDisabled]}
+          testID="load-more-live-markets"
+        >
+          <Text style={styles.loadMoreText}>
+            {isLoadingMoreEvents ? (locale === "zh" ? "加载中" : "Loading") : (locale === "zh" ? "加载更多直播" : "Load 10 more")}
+          </Text>
+        </Pressable>
+      )}
     </ScrollView>
   );
 }
@@ -89,4 +113,7 @@ const styles = StyleSheet.create({
   summaryRow: { flexDirection: "row", gap: 8, marginBottom: 14 },
   summaryPill: { flex: 1, minHeight: 42, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderRadius: 10, backgroundColor: "#101827", borderWidth: 1, borderColor: "#263247" },
   summaryText: { color: "#dbeafe", fontSize: 13, fontWeight: "900" },
+  loadMoreButton: { minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: 12, borderRadius: 12, backgroundColor: "#101827", borderWidth: 1, borderColor: "#263247" },
+  loadMoreButtonDisabled: { opacity: 0.7 },
+  loadMoreText: { color: "#dbeafe", fontSize: 15, fontWeight: "900" },
 });

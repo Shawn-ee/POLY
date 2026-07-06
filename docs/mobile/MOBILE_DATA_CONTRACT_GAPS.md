@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KV - Live Tab Pagination Contract
+
+Closed or narrowed:
+
+- Mobile Live tab now stores backend `nextCursor` from the live-event route.
+- Server-mode Live tab exposes load-more only when the backend returns another cursor.
+- Live tab load-more sends the backend cursor back to `/api/events` with `statusGroup=live` and appends unique returned events.
+- Route/mobile proof verifies two seeded live events page separately with `limit=1`, page two uses page one's cursor, and the mobile service sends the same cursor.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Live tab pagination contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing event cursor ordering and compact mobile markets support this contract.
+
+Temporary mock/static data:
+
+- Mock/offline mode keeps local fixture filtering and does not expose backend pagination.
+
 ## Cycle KU - Live Tab Feed Contract
 
 Closed or narrowed:

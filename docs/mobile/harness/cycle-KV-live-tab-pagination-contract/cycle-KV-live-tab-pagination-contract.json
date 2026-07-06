@@ -1,0 +1,62 @@
+{
+  "pass": true,
+  "cycle": "Cycle KV",
+  "createdAt": "2026-07-06T09:00:09.718Z",
+  "route": "/api/events",
+  "seeded": {
+    "firstSeeded": {
+      "id": "eb94ba70-9934-43d1-aa5e-136db87bf3ee",
+      "slug": "mobile-kv-live-first-45307073"
+    },
+    "secondSeeded": {
+      "id": "defbe902-08e8-4d4a-94fc-4d3e2fabfb55",
+      "slug": "mobile-kv-live-second-45307073"
+    }
+  },
+  "firstPage": {
+    "query": {
+      "sportKey": "soccer",
+      "leagueKey": "world_cup",
+      "search": "45307073",
+      "includeMobileMarkets": "1",
+      "statusGroup": "live",
+      "limit": "1"
+    },
+    "slugs": [
+      "mobile-kv-live-second-45307073"
+    ],
+    "nextCursor": "defbe902-08e8-4d4a-94fc-4d3e2fabfb55"
+  },
+  "secondPage": {
+    "query": {
+      "sportKey": "soccer",
+      "leagueKey": "world_cup",
+      "search": "45307073",
+      "includeMobileMarkets": "1",
+      "statusGroup": "live",
+      "limit": "1",
+      "cursor": "defbe902-08e8-4d4a-94fc-4d3e2fabfb55"
+    },
+    "slugs": [
+      "mobile-kv-live-first-45307073"
+    ],
+    "nextCursor": null
+  },
+  "mobileLiveFeed": {
+    "calls": [
+      {
+        "limit": 1,
+        "cursor": null,
+        "statusGroup": "live"
+      },
+      {
+        "limit": 1,
+        "cursor": "defbe902-08e8-4d4a-94fc-4d3e2fabfb55",
+        "statusGroup": "live"
+      }
+    ],
+    "firstPageEventCount": 1,
+    "secondPageEventCount": 1,
+    "mergedUniqueEventIds": 2
+  }
+}

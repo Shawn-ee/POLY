@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KV - Live Tab Pagination Contract
+
+Cycle KV wires the visible Live tab load-more affordance to backend cursor pagination in server mode:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KV-live-tab-pagination-contract/cycle-KV-live-tab-pagination-contract.json`.
+- Proof script: `scripts/prove_mobile_live_tab_pagination_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/liveEventFeedService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Live tab load more | `/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&statusGroup=live&cursor=<eventId>` | GET | Public/mobile route | None | `events[]`, compact `events[].markets[]`, `nextCursor`/`page.nextCursor`; mobile appends unique returned events and hides load-more when cursor is absent | `Event.status`, `Event.liveStatus`, listed public `Market`, active `Outcome`, event cursor ordering by `updatedAt`, `createdAt`, and `id` | Mock/offline mode keeps local fixture filtering with no paginated route calls. Server mode uses backend cursor state. | None for the focused Live tab pagination contract. |
+
 ## Cycle KU - Live Tab Feed Contract
 
 Cycle KU wires the visible Live tab to the backend live-event route in server mode instead of borrowing the current Home feed and filtering it on-device:

@@ -7,8 +7,9 @@ export type LiveEventFeedLoader = Pick<PolyApi, "listWorldCupEvents">;
 export const loadLiveEventFeed = async (
   api: LiveEventFeedLoader,
   limit = 10,
+  cursor: string | null = null,
 ): Promise<{ events: Event[]; nextCursor: string | null; source: "events-route-statusGroup-live" }> => {
-  const payload = await api.listWorldCupEvents({ limit, statusGroup: "live" });
+  const payload = await api.listWorldCupEvents({ limit, cursor, statusGroup: "live" });
   return {
     events: payload.events
       .map((event) => normalizeEventSummary(event, event.markets ?? []))

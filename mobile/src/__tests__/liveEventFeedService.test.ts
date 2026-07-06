@@ -58,7 +58,7 @@ describe("live event feed service", () => {
 
     const feed = await loadLiveEventFeed({ listWorldCupEvents }, 10);
 
-    expect(listWorldCupEvents).toHaveBeenCalledWith({ limit: 10, statusGroup: "live" });
+    expect(listWorldCupEvents).toHaveBeenCalledWith({ limit: 10, cursor: null, statusGroup: "live" });
     expect(feed.source).toBe("events-route-statusGroup-live");
     expect(feed.nextCursor).toBe("live-event-id");
     expect(feed.events).toHaveLength(1);
@@ -68,5 +68,17 @@ describe("live event feed service", () => {
       liveDataStatus: undefined,
     });
     expect(feed.events[0].markets[0].outcomes).toHaveLength(3);
+  });
+
+  test("passes backend cursor when loading another Live tab page", async () => {
+    const listWorldCupEvents = vi.fn(async () => ({
+      events: [],
+      nextCursor: null,
+      page: { limit: 10, nextCursor: null, hasMore: false },
+    }));
+
+    await loadLiveEventFeed({ listWorldCupEvents }, 10, "live-cursor-2");
+
+    expect(listWorldCupEvents).toHaveBeenCalledWith({ limit: 10, cursor: "live-cursor-2", statusGroup: "live" });
   });
 });

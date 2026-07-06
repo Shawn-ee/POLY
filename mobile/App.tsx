@@ -355,6 +355,8 @@ export default function App() {
   );
   const [events, setEvents] = useState<Event[]>(worldCupEvents);
   const [liveEvents, setLiveEvents] = useState<Event[]>(() => worldCupEvents.filter((event) => event.status === "live"));
+  const [liveNextCursor, setLiveNextCursor] = useState<string | null>(null);
+  const [isLoadingMoreLiveEvents, setIsLoadingMoreLiveEvents] = useState(false);
   const [eventNextCursor, setEventNextCursor] = useState<string | null>(null);
   const [isLoadingMoreEvents, setIsLoadingMoreEvents] = useState(false);
   const [searchEvents, setSearchEvents] = useState<Event[]>([]);
@@ -1039,11 +1041,12 @@ export default function App() {
       });
   }, [eventNextCursor, isLoadingMoreEvents, loadBackendWorldCup]);
 
-  const loadBackendLiveEvents = useCallback(async () => {
-    const feed = await loadLiveEventFeed(api, HOME_EVENT_PAGE_SIZE);
+  const loadBackendLiveEvents = useCallback(async (cursor: string | null = null, append = false) => {
+    const feed = await loadLiveEventFeed(api, HOME_EVENT_PAGE_SIZE, cursor);
     if (!mounted.current) return;
     if (ORDER_MODE !== "server") {
-      setLiveEvents(feed.events);
+      setLiveEvents((current) => append ? appendUniqueEvents(current, feed.events) : feed.events);
+      setLiveNextCursor(feed.nextCursor);
       return;
     }
     const quotedEvents = await Promise.all(
@@ -1052,8 +1055,20 @@ export default function App() {
         return applyTicketQuotesToEvent(event, quotesByMarketId);
       }),
     );
-    if (mounted.current) setLiveEvents(quotedEvents);
+    if (mounted.current) {
+      setLiveEvents((current) => append ? appendUniqueEvents(current, quotedEvents) : quotedEvents);
+      setLiveNextCursor(feed.nextCursor);
+    }
   }, [api]);
+
+  const loadMoreBackendLiveEvents = useCallback(() => {
+    if (MARKET_DATA_MODE !== "server" || !liveNextCursor || isLoadingMoreLiveEvents) return;
+    setIsLoadingMoreLiveEvents(true);
+    loadBackendLiveEvents(liveNextCursor, true)
+      .finally(() => {
+        if (mounted.current) setIsLoadingMoreLiveEvents(false);
+      });
+  }, [isLoadingMoreLiveEvents, liveNextCursor, loadBackendLiveEvents]);
 
   const loadBackendSearchEvents = useCallback(async (
     search: string,
@@ -1765,8 +1780,11 @@ export default function App() {
                 t={t}
                 events={MARKET_DATA_MODE === "server" ? liveEvents : events.filter((event) => event.status === "live")}
                 isRefreshing={isRefreshingLive}
+                isLoadingMoreEvents={isLoadingMoreLiveEvents}
                 refreshTick={liveRefreshTick}
                 onRefresh={refreshLiveMarkets}
+                canLoadMoreEvents={MARKET_DATA_MODE === "server" && Boolean(liveNextCursor)}
+                loadMoreEvents={MARKET_DATA_MODE === "server" ? loadMoreBackendLiveEvents : undefined}
                 openEvent={openEventDetail}
                 openTicket={openTicket}
               />
