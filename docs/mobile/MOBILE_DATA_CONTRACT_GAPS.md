@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MD - Account Balance Shape Contract
+
+Closed or narrowed:
+
+- Account balance values now must be finite and non-negative before visible Account state applies.
+- `totalUSDC` must match `availableUSDC + lockedUSDC` within cent-level tolerance.
+- Malformed `updatedAt` now rejects instead of being silently treated as null.
+- Rejection feeds the existing Account bootstrap partial-error path from Cycle LI.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Account balance shape contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/account/balance` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Account balance remains unchanged. Server-mode malformed account balance payloads reject instead of applying impossible visible wallet state.
+
 ## Cycle MC - Order Selection Echo Contract
 
 Closed or narrowed:

@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle MD",
+  "feature": "Account balance shape contract",
+  "generatedAt": "2026-07-06T11:49:41.774Z",
+  "route": "/api/account/balance",
+  "contract": {
+    "validPayload": "visible Account balance fields must be finite, non-negative, and internally consistent before account state applies",
+    "malformedPayload": "negative values, inconsistent totalUSDC, or malformed updatedAt reject before visible Account state applies"
+  },
+  "assertions": {
+    "validNonNegativeBalanceApplies": true,
+    "negativeAvailableRejects": true,
+    "negativeLockedRejects": true,
+    "inconsistentTotalRejects": true,
+    "invalidUpdatedAtRejects": true
+  }
+}

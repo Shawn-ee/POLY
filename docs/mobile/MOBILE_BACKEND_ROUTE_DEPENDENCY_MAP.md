@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MD - Account Balance Shape Contract
+
+Cycle MD hardens visible Account balance data before server-mode account state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MD-account-balance-shape-contract/cycle-MD-account-balance-shape-contract.json`.
+- Proof script: `scripts/prove_mobile_account_balance_shape_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/accountBalanceService.test.ts`, `mobile/src/__tests__/accountBootstrapService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account visible wallet balance | `/api/account/balance` | GET | Canonical API key/session with `account:read` | None | `availableUSDC`, `lockedUSDC`, and `totalUSDC` as finite non-negative number-like values; `totalUSDC` must match `availableUSDC + lockedUSDC`; `updatedAt` must be string, null, or omitted | `UserBalance`, custody balance helper, canonical auth/API usage | Mock/local Account balance remains unchanged. Server-mode malformed balances reject and feed existing Account bootstrap error state. | None for focused Account balance shape contract. P2 optional field-specific Account balance error copy. |
+
 ## Cycle MC - Order Selection Echo Contract
 
 Cycle MC hardens Trade Ticket order submit selection echoes before visible submitted-order state applies:
