@@ -1,0 +1,23 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:20:01.192Z",
+  "route": "/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&search=<market-or-outcome-text>&limit=2&cursor=<event-id>",
+  "searchTokenSource": "market title, market description, and outcome name/label",
+  "firstPage": {
+    "count": 2,
+    "nextCursor": "4b95fefc-3c89-47ca-abf6-f0cd55742dfb",
+    "hasMore": true,
+    "slugs": [
+      "mobile-js-search-page-2-search08160e23",
+      "mobile-js-search-page-0-search08160e23"
+    ]
+  },
+  "secondPage": {
+    "count": 1,
+    "nextCursor": null,
+    "hasMore": false,
+    "slugs": [
+      "mobile-js-search-page-1-search08160e23"
+    ]
+  }
+}

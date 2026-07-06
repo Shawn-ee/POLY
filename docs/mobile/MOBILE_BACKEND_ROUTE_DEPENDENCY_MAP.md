@@ -2,6 +2,21 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JS - Search Event Route and Pagination
+
+Cycle JS wires the visible Search tab in server market-data mode to backend search and cursor pagination:
+
+- Route proof: `docs/mobile/harness/cycle-JS-search-event-pagination/cycle-JS-search-event-pagination.json`.
+- Proof script: `scripts/prove_mobile_search_event_pagination.ts`.
+- Focused route tests: selected Search case in `src/__tests__/public.events.no-leak.test.ts`.
+- Focused mobile tests: `mobile/src/__tests__/api.test.ts` and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Search default/top results | `/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&limit=10` | GET | Public/mobile route | Query params only | `events[]` with compact `markets[]`, `nextCursor`, `page.hasMore` | Existing `Event`, `Market`, `Outcome` rows; listed public markets only | In mock market-data mode Search keeps local fixture filtering. In server mode Search uses backend Search state and does not replace backend failures with fixtures. | P1: dedicated ranking/facet endpoint if Search expands beyond MVP World Cup scope. |
+| Typed Search results | `/api/events?...&search=<query>&limit=10` | GET | Public/mobile route | Query params only | Matching event rows with compact markets and cursor metadata | Search predicate now covers event title/description, home/away team names, market title/description, and outcome name/label | Route errors show a clear Search unavailable state rather than silently inventing rows. | P1: server-side Search status filters, saved filter integration, richer category/facet counts, and ranking metrics. |
+| Search "Load more" | `/api/events?...&search=<query>&limit=10&cursor=<event-id>` | GET | Public/mobile route | Query params only | Next matching `events[]` page, `nextCursor`, `page.limit`, `page.hasMore` | Cursor resolves against `Event.id` with stable ordering by `updatedAt`, `createdAt`, `id` descending | Failed next-page loads keep already loaded route results and show route error. | P1: Android device proof for pressing Search Load more if visual proof becomes required again. |
+
 ## Cycle JR - Home Event List and Pagination
 
 Cycle JR wires the visible Home event list "Load more" flow to backend cursor pagination in server market-data mode:

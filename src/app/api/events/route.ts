@@ -29,6 +29,38 @@ const eventCursorFilter = (cursor: { updatedAt: Date; createdAt: Date; id: strin
             id: { lt: cursor.id },
           },
         ],
+    }
+    : {};
+
+const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
+  search
+    ? {
+        OR: [
+          { title: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          { description: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          { homeTeamName: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          { awayTeamName: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          {
+            markets: {
+              some: {
+                OR: [
+                  { title: { contains: search, mode: Prisma.QueryMode.insensitive } },
+                  { description: { contains: search, mode: Prisma.QueryMode.insensitive } },
+                  {
+                    outcomes: {
+                      some: {
+                        OR: [
+                          { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
+                          { label: { contains: search, mode: Prisma.QueryMode.insensitive } },
+                        ],
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
       }
     : {};
 
@@ -54,14 +86,7 @@ export async function GET(request: NextRequest) {
   const eventFilters: Prisma.EventWhereInput[] = [
     eventCursorFilter(cursor),
     {
-    ...(search
-      ? {
-          OR: [
-            { title: { contains: search, mode: Prisma.QueryMode.insensitive } },
-            { description: { contains: search, mode: Prisma.QueryMode.insensitive } },
-          ],
-        }
-        : {}),
+    ...eventSearchFilter(search),
     ...(category ? { category } : {}),
     ...(sportKey ? { sportKey } : {}),
     ...(leagueKey ? { leagueKey } : {}),

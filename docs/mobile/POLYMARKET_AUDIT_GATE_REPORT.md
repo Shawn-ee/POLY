@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Search event route and backend pagination | Cycle JS | Pass for backend/data-contract scope | 0 for focused Search route and pagination contract | P1 server-side Search live/upcoming/saved filters; P1 richer ranking/facet metadata; P1 optional Android Search Load more proof if visual proof is required again | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-JS-search-event-pagination/cycle-JS-search-event-pagination.json`; tests: selected `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-JS-search-event-pagination.md` | `/api/events?search=` now covers teams, market text, and outcome text; Search server mode requests/appends backend pages and shows route failures instead of silently replacing them with fixtures. |
 | Home event list and backend pagination | Cycle JR | Pass for backend/data-contract scope | 0 for focused Home list pagination contract | P1 server-side pagination for Home live/today filters; P1 Search tab backend pagination; P1 optional Android Load more proof if visual proof is required again | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-JR-home-event-list-pagination/cycle-JR-home-event-pagination.json`; tests: selected `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-JR-home-event-list-pagination.md` | `/api/events` now supports cursor pages with compact mobile markets, and Home server mode requests/appends backend pages. |
 | Backend-driven Event Detail market profile and sell safety | Cycle JQ | Pass for backend/data-contract scope | 0 for focused contract scope | P1 real-provider replay across more World Cup profiles; P1 production-like HTTP order-route sell rejection proof; P1 broader provider-backed line-family availability | User product clarification on 2026-07-06: regulation markets can have Home/Tie/Away, knockout/penalty paths need separate advance options, and Event Detail Game Lines should be backend-driven | Route proof: `docs/mobile/harness/cycle-JQ-backend-event-market-cashout-safety/cycle-JQ-market-rule-profiles.json`; tests: `src/__tests__/mobile-event-market-rules-contract.test.ts`, selected `src/server/services/__tests__/phase7_kalshi_model.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/positionCloseService.test.ts`; audit: `mobile/docs/audits/cycle-JQ-backend-event-market-cashout-safety.md` | Backend/mobile rule detection no longer treats team names like `Advance Home` as advance-market semantics. Proof covers regulation 90-minute draw plus spread/totals availability, and knockout profile with separate `to_advance` plus regulation draw availability. Backend sell guard rejects no-position/oversell and mobile cashout blocks invalid full-position sell attempts. |
 | Period-safe retail line matching | Cycle ET | Pass for selected Android Totals and Team Total regression journey | 0 for selected period-safe resolver and Android regression path | P1 real provider-backed spread/totals/team-total route data; P1 route-backed loading/stale/unavailable breadth | Product steering from user on 2026-07-04; prior Polymarket reference remains support-only for simple retail flow | `docs/mobile/harness/cycle-ET-local-mvp-period-safe-line-family/cycle-ES-local-mvp-line-family-breadth-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-ET-local-mvp-period-safe-line-family/` and `docs/mobile/harness/cycle-ET-local-mvp-period-safe-line-family/` | Resolver now requires line-family backend markets to match selected line and period before using provider-backed route data. Focused tests reject wrong-period Totals and Team Total backend markets; tablet proof reran the Totals/Team Total simple-ticket path with orderbook hidden. |
@@ -132,6 +133,26 @@ Decision:
 
 - P0 failed: 0 for focused backend/data-contract scope.
 - Remaining P1: real-provider replay across more World Cup profiles, production-like HTTP order-route sell rejection proof, and broader provider-backed line-family availability.
+
+## Cycle JS
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for Search tab event route, query matching, and cursor pagination. This does not claim richer Search ranking/facets, server-side saved/status filters, or visual/device proof.
+
+Evidence:
+
+- Route proof: `docs/mobile/harness/cycle-JS-search-event-pagination/cycle-JS-search-event-pagination.json`.
+- Cycle audit: `mobile/docs/audits/cycle-JS-search-event-pagination.md`.
+- Focused mobile tests:
+  - `mobile/src/__tests__/api.test.ts`
+- Focused backend tests:
+  - selected Search event-list case in `src/__tests__/public.events.no-leak.test.ts`
+
+Decision:
+
+- P0 failed: 0 for focused Search route and pagination scope.
+- Remaining P1: server-side Search `live`/`upcoming`/`saved` filters, richer ranking/facet metadata, and optional Android Search Load more proof if visual proof is required again.
 
 ## Cycle JR
 

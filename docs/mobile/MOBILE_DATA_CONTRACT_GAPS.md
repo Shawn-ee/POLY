@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JS - Search Event Route and Pagination
+
+Closed or narrowed:
+
+- Search tab server market-data mode now uses `/api/events` with `search`, `limit`, `cursor`, and `includeMobileMarkets=1` instead of filtering only the already-loaded Home page.
+- `/api/events?search=` now matches event title/description, home/away team names, market title/description, and outcome name/label.
+- Search route pagination returns `nextCursor` plus `page.limit/page.nextCursor/page.hasMore`, and mobile appends de-duplicated backend Search pages.
+- Search route failures are visible as a Search unavailable state in server mode instead of silently replacing results with frontend fixtures.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Server-side Search filters for `live`, `upcoming`, and `saved`. Current Search status/saved filters still apply to the loaded backend page.
+- Dedicated Search ranking/facet metadata such as category counts, volume/liquidity ranking, and saved-state-aware discovery.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event`, `Market`, and `Outcome` fields support MVP Search query matching.
+
+Temporary mock/static data:
+
+- JS proof creates disposable backend event rows with the unique search token in market/outcome text. It does not add frontend-only search rows.
+
 ## Cycle JR - Home Event List and Pagination
 
 Closed or narrowed:

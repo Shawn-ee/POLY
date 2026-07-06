@@ -348,6 +348,32 @@ describe("public event API no-leak checks", () => {
     expectNoForbiddenKeys(body);
   });
 
+  test("GET /api/events search matches teams, markets, and outcomes for mobile Search", async () => {
+    mockPrisma.event.findMany.mockResolvedValue([
+      {
+        ...baseEvent,
+        markets: [{ status: "LIVE", title: "Clean sheet", referenceMetadata: null }],
+      },
+    ]);
+
+    const response = await listEvents(
+      new NextRequest("http://localhost/api/events?sportKey=soccer&leagueKey=world_cup&search=clean&limit=10"),
+    );
+
+    expect(response.status).toBe(200);
+    const findManyInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
+    expect(JSON.stringify(findManyInput.where)).toContain("homeTeamName");
+    expect(JSON.stringify(findManyInput.where)).toContain("awayTeamName");
+    expect(JSON.stringify(findManyInput.where)).toContain("markets");
+    expect(JSON.stringify(findManyInput.where)).toContain("outcomes");
+    expect(findManyInput).toEqual(expect.objectContaining({ take: 11 }));
+
+    const body = await response.json();
+    expect(body.events).toHaveLength(1);
+    expect(body.page).toEqual({ limit: 10, nextCursor: null, hasMore: false });
+    expectNoForbiddenKeys(body);
+  });
+
   test("GET /api/events/[slug] returns event detail without sensitive keys", async () => {
     mockPrisma.event.findUnique.mockResolvedValue({
       ...baseEvent,

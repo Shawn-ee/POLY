@@ -32,6 +32,10 @@ export function SearchScreen({
   events,
   openEvent,
   openTicket,
+  canLoadMoreEvents,
+  isLoadingEvents = false,
+  loadMoreEvents,
+  routeError,
   savedEventIds,
   toggleSavedEvent,
 }: {
@@ -42,6 +46,10 @@ export function SearchScreen({
   events: Event[];
   openEvent: (event: Event) => void;
   openTicket: (market: Market, outcome: Outcome, event?: Event) => void;
+  canLoadMoreEvents?: boolean;
+  isLoadingEvents?: boolean;
+  loadMoreEvents?: () => void;
+  routeError?: string | null;
   savedEventIds: Set<string>;
   toggleSavedEvent: (event: Event) => void;
 }) {
@@ -71,6 +79,11 @@ export function SearchScreen({
   });
   const emptyCopy = filter === "saved" ? t.noSavedMarkets : t.noResults;
   const resultLabel = locale === "zh" ? `${visibleEvents.length} \u4e2a\u7ed3\u679c` : `${visibleEvents.length} ${visibleEvents.length === 1 ? "result" : "results"}`;
+  const canLoadMore = Boolean(canLoadMoreEvents && loadMoreEvents);
+  const loadMoreSearchResults = () => {
+    if (!canLoadMore || isLoadingEvents) return;
+    loadMoreEvents?.();
+  };
   const filters: Array<[SearchFilter, string]> = [
     ["all", t.searchAll],
     ["live", t.searchLive],
@@ -168,8 +181,10 @@ export function SearchScreen({
             </Pressable>
           ))}
         </View>
-        {visibleEvents.length === 0 ? (
-          <Text style={styles.empty}>{emptyCopy}</Text>
+        {routeError ? (
+          <Text accessibilityLabel="search-route-error" style={styles.empty} testID="search-route-error">{routeError}</Text>
+        ) : visibleEvents.length === 0 ? (
+          <Text style={styles.empty}>{isLoadingEvents ? (locale === "zh" ? "\u52a0\u8f7d\u4e2d" : "Loading") : emptyCopy}</Text>
         ) : (
           <View style={styles.resultList}>
             {visibleEvents.map((event) => {
@@ -227,6 +242,18 @@ export function SearchScreen({
               );
             })}
           </View>
+        )}
+        {canLoadMore && (
+          <Pressable
+            accessibilityLabel={`search-load-more-results visible-${visibleEvents.length}-next-10`}
+            onPress={loadMoreSearchResults}
+            style={styles.loadMoreButton}
+            testID="search-load-more-results"
+          >
+            <Text style={styles.loadMoreText}>
+              {isLoadingEvents ? (locale === "zh" ? "\u52a0\u8f7d\u4e2d" : "Loading") : (locale === "zh" ? "\u52a0\u8f7d\u66f4\u591a" : "Load 10 more")}
+            </Text>
+          </Pressable>
         )}
       </ScrollView>
       <Pressable
@@ -357,5 +384,7 @@ const styles = StyleSheet.create({
   sheetChipActive: { backgroundColor: "#12345f", borderColor: "#1d9bf0" },
   sheetChipText: { color: "#8ea0b8", fontWeight: "900" },
   sheetChipTextActive: { color: "#f8fafc" },
+  loadMoreButton: { minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: 12, borderRadius: 12, backgroundColor: "#101827", borderWidth: 1, borderColor: "#263247" },
+  loadMoreText: { color: "#dbeafe", fontSize: 15, fontWeight: "900" },
   empty: { color: "#94a3b8", textAlign: "center", marginTop: 30, fontWeight: "800" },
 });

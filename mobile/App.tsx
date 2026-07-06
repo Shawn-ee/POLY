@@ -59,6 +59,7 @@ const MARKET_DATA_MODE: "mock" | "server" =
 const SMOKE_OPEN_SERVER_ORDER_PRICE = 1;
 const SMOKE_OPEN_SERVER_ORDER_AMOUNT = "1";
 const HOME_EVENT_PAGE_SIZE = 10;
+const SEARCH_EVENT_PAGE_SIZE = 10;
 const SAVED_EVENTS_STORAGE_KEY = "holiwyn.savedEventIds.v1";
 const LANGUAGE_STORAGE_KEY = "holiwyn.language.v1";
 const PORTFOLIO_STORAGE_KEY = "holiwyn.portfolio.v1";
@@ -330,6 +331,10 @@ export default function App() {
   const [events, setEvents] = useState<Event[]>(worldCupEvents);
   const [eventNextCursor, setEventNextCursor] = useState<string | null>(null);
   const [isLoadingMoreEvents, setIsLoadingMoreEvents] = useState(false);
+  const [searchEvents, setSearchEvents] = useState<Event[]>([]);
+  const [searchNextCursor, setSearchNextCursor] = useState<string | null>(null);
+  const [isLoadingSearchEvents, setIsLoadingSearchEvents] = useState(false);
+  const [searchEventError, setSearchEventError] = useState<string | null>(null);
   const [savedEventIds, setSavedEventIds] = useState<Set<string>>(() => new Set());
   const [savedEventIdsHydrated, setSavedEventIdsHydrated] = useState(false);
   const [forceAccountSignedIn, setForceAccountSignedIn] = useState(false);
@@ -981,9 +986,81 @@ export default function App() {
       });
   }, [eventNextCursor, isLoadingMoreEvents, loadBackendWorldCup]);
 
+  const loadBackendSearchEvents = useCallback(async (search: string, cursor: string | null = null, append = false) => {
+    try {
+      const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search });
+      const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
+      const summaryEvents = payload.events
+        .map((event) => normalizeEventSummary(event, event.markets ?? []))
+        .filter((event) => event.markets.length > 0);
+      const details = await Promise.all(
+        payload.events
+          .filter((event) => !event.markets?.length)
+          .slice(0, Math.max(0, 8 - summaryEvents.length))
+          .map(async (event) => {
+          try {
+            return normalizeEventDetail(await api.getEvent(event.slug));
+          } catch {
+            return null;
+          }
+        }),
+      );
+      const normalized = [
+        ...summaryEvents,
+        ...details.filter((event): event is Event => Boolean(event)),
+      ];
+      if (!mounted.current) return;
+      if (ORDER_MODE !== "server") {
+        setSearchEvents((current) => append ? appendUniqueEvents(current, normalized) : normalized);
+        setSearchNextCursor(nextCursor);
+        setSearchEventError(null);
+        return;
+      }
+      const quotedEvents = await Promise.all(
+        normalized.map(async (event) => {
+          const quotesByMarketId = await loadMarketQuotesById(api, event.markets.map((market) => market.id));
+          return applyTicketQuotesToEvent(event, quotesByMarketId);
+        }),
+      );
+      if (!mounted.current) return;
+      setSearchEvents((current) => append ? appendUniqueEvents(current, quotedEvents) : quotedEvents);
+      setSearchNextCursor(nextCursor);
+      setSearchEventError(null);
+    } catch {
+      if (!mounted.current) return;
+      if (!append) {
+        setSearchEvents([]);
+        setSearchNextCursor(null);
+      }
+      setSearchEventError("Search is unavailable. Try again.");
+    }
+  }, [api]);
+
+  const loadMoreBackendSearchEvents = useCallback(() => {
+    if (MARKET_DATA_MODE !== "server" || !searchNextCursor || isLoadingSearchEvents) return;
+    setIsLoadingSearchEvents(true);
+    loadBackendSearchEvents(query, searchNextCursor, true)
+      .finally(() => {
+        if (mounted.current) setIsLoadingSearchEvents(false);
+      });
+  }, [isLoadingSearchEvents, loadBackendSearchEvents, query, searchNextCursor]);
+
   useEffect(() => {
     loadBackendWorldCup();
   }, [loadBackendWorldCup]);
+
+  useEffect(() => {
+    if (MARKET_DATA_MODE !== "server" || mainTab !== "search") return undefined;
+    let cancelled = false;
+    setIsLoadingSearchEvents(true);
+    loadBackendSearchEvents(query)
+      .finally(() => {
+        if (!cancelled && mounted.current) setIsLoadingSearchEvents(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [loadBackendSearchEvents, mainTab, query]);
 
   useEffect(() => {
     if (ORDER_MODE !== "server") return undefined;
@@ -1543,9 +1620,13 @@ export default function App() {
                 t={t}
                 query={query}
                 setQuery={setQuery}
-                events={filteredEvents}
+                events={MARKET_DATA_MODE === "server" ? searchEvents : filteredEvents}
                 openEvent={openEventDetail}
                 openTicket={openTicket}
+                canLoadMoreEvents={MARKET_DATA_MODE === "server" ? Boolean(searchNextCursor) : undefined}
+                isLoadingEvents={MARKET_DATA_MODE === "server" ? isLoadingSearchEvents : false}
+                loadMoreEvents={MARKET_DATA_MODE === "server" ? loadMoreBackendSearchEvents : undefined}
+                routeError={MARKET_DATA_MODE === "server" ? searchEventError : null}
                 savedEventIds={savedEventIds}
                 toggleSavedEvent={toggleSavedEvent}
               />
