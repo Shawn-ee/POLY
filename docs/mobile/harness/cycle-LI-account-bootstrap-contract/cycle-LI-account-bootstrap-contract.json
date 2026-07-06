@@ -1,0 +1,112 @@
+{
+  "cycle": "LI",
+  "gate": "account-bootstrap-contract",
+  "generatedAt": "2026-07-06T10:16:39.830Z",
+  "routes": [
+    "/api/account/balance",
+    "/api/account/profile",
+    "/api/account/navigation"
+  ],
+  "assertions": {
+    "allAccountRoutesRequiredForSyncedStatus": true,
+    "partialAccountFailuresShowVisibleError": true,
+    "successfulPartialAccountDataStillApplies": true,
+    "failedAccountRoutesDoNotInventData": true
+  },
+  "cases": {
+    "allSucceeded": {
+      "status": "synced",
+      "balanceStatus": "synced",
+      "profileStatus": "synced",
+      "navigationStatus": "synced",
+      "balance": {
+        "availableUSDC": 140.86,
+        "lockedUSDC": 10,
+        "totalUSDC": 150.86,
+        "updatedAt": "2026-07-06T08:00:00.000Z"
+      },
+      "profile": {
+        "id": "user-1",
+        "username": "grouchypike7067",
+        "displayName": "grouchypike7067",
+        "email": null,
+        "image": null,
+        "walletAddress": null,
+        "hasWalletLinked": false,
+        "hasGoogleLinked": false
+      },
+      "navigation": {
+        "source": "account-navigation-route",
+        "generatedAt": "2026-07-06T08:00:00.000Z",
+        "items": [
+          {
+            "id": "leaderboard",
+            "label": "Leaderboard",
+            "icon": "trophy-outline",
+            "kind": "placeholder",
+            "enabled": false,
+            "status": "unavailable",
+            "destination": null,
+            "reason": "Leaderboard is not enabled."
+          }
+        ]
+      }
+    },
+    "profileFailed": {
+      "status": "error",
+      "balanceStatus": "synced",
+      "profileStatus": "error",
+      "navigationStatus": "synced",
+      "balance": {
+        "availableUSDC": 140.86,
+        "lockedUSDC": 10,
+        "totalUSDC": 150.86,
+        "updatedAt": "2026-07-06T08:00:00.000Z"
+      },
+      "navigation": {
+        "source": "account-navigation-route",
+        "generatedAt": "2026-07-06T08:00:00.000Z",
+        "items": [
+          {
+            "id": "leaderboard",
+            "label": "Leaderboard",
+            "icon": "trophy-outline",
+            "kind": "placeholder",
+            "enabled": false,
+            "status": "unavailable",
+            "destination": null,
+            "reason": "Leaderboard is not enabled."
+          }
+        ]
+      }
+    },
+    "navigationFailed": {
+      "status": "error",
+      "balanceStatus": "synced",
+      "profileStatus": "synced",
+      "navigationStatus": "error",
+      "balance": {
+        "availableUSDC": 140.86,
+        "lockedUSDC": 10,
+        "totalUSDC": 150.86,
+        "updatedAt": "2026-07-06T08:00:00.000Z"
+      },
+      "profile": {
+        "id": "user-1",
+        "username": "grouchypike7067",
+        "displayName": "grouchypike7067",
+        "email": null,
+        "image": null,
+        "walletAddress": null,
+        "hasWalletLinked": false,
+        "hasGoogleLinked": false
+      }
+    },
+    "allFailed": {
+      "status": "error",
+      "balanceStatus": "error",
+      "profileStatus": "error",
+      "navigationStatus": "error"
+    }
+  }
+}

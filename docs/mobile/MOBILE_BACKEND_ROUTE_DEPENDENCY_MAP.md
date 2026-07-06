@@ -2205,3 +2205,16 @@ Cycle LH implementation notes:
 - Home, Live, Search, and Futures server discovery now use `loadMarketQuoteStateById`.
 - Discovery event and market-list hydration applies quote-failure availability instead of silently keeping stale/local probabilities.
 - The existing ticket submit guard blocks quote-failed discovery markets before `/api/orders`.
+
+## Cycle LI - Account Bootstrap Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account balance/profile/menu bootstrap | `/api/account/balance`, `/api/account/profile`, `/api/account/navigation` | GET | Mobile API key with `account:read` or session user | None | Balance USDC fields, account display name/sign-in state, navigation item metadata, and visible account data sync status | `User`, `UserBalance`, account navigation metadata service | Mock/offline mode keeps local account defaults. Server-mode bootstrap now reports visible error on partial route failure while applying successful data. | No P0 gap for focused Account bootstrap contract. |
+| Account visible error handling | Same account routes | GET | Same account read auth | None | `account-data-sync` status row and menu source labels | Same account models/services | Local defaults remain only where route data failed. | Per-route retry controls remain optional P2. |
+
+Cycle LI implementation notes:
+
+- Added `resolveAccountBootstrapResults` to require balance, profile, and navigation success for a fully synced Account state.
+- Account bootstrap applies successful partial data but sets visible `accountDataStatus=error` when any route fails.
+- Account screen now shows account data sync state separately from profile preferences sync state.

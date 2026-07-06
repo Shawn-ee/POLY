@@ -45,11 +45,16 @@ type AccountCopy = {
   profileSynced: string;
   profileSyncError: string;
   profileSyncFallback: string;
+  accountDataSyncing: string;
+  accountDataSynced: string;
+  accountDataSyncError: string;
+  accountDataSyncFallback: string;
   security: string;
   mockOnly: string;
 };
 
 type ProfileSyncStatus = "hidden" | "syncing" | "synced" | "error";
+type AccountDataStatus = "hidden" | "syncing" | "synced" | "error";
 
 export function AccountScreen({
   t,
@@ -70,6 +75,7 @@ export function AccountScreen({
   tradingMode,
   menuItems,
   menuSource,
+  accountDataStatus,
 }: {
   t: AccountCopy;
   balance: number;
@@ -89,6 +95,7 @@ export function AccountScreen({
   tradingMode: "mock" | "server";
   menuItems: AccountNavigationItemResult[];
   menuSource: string;
+  accountDataStatus: AccountDataStatus;
 }) {
   const [signedIn, setSignedIn] = useState(false);
 
@@ -120,6 +127,14 @@ export function AccountScreen({
         ? t.profileSynced
         : profileSyncStatus === "error"
           ? t.profileSyncError
+          : "";
+  const accountDataCopy =
+    accountDataStatus === "syncing"
+      ? t.accountDataSyncing
+      : accountDataStatus === "synced"
+        ? t.accountDataSynced
+        : accountDataStatus === "error"
+          ? t.accountDataSyncError
           : "";
   const iconColors: Record<string, string> = {
     leaderboard: "#fbbf24",
@@ -193,6 +208,13 @@ export function AccountScreen({
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t.preferences}</Text>
+        {accountDataStatus !== "hidden" && (
+          <View accessibilityLabel={`account-data-sync status-${accountDataStatus} source-${menuSource}`} testID="account-data-sync" style={styles.row}>
+            <Ionicons name={accountDataStatus === "error" ? "cloud-offline-outline" : "cloud-done-outline"} size={20} color={accountDataStatus === "error" ? "#fbbf24" : "#93c5fd"} />
+            <Text style={styles.rowText}>{accountDataCopy}</Text>
+          </View>
+        )}
+        {accountDataStatus === "error" && <Text style={styles.syncFallback}>{t.accountDataSyncFallback}</Text>}
         {profileSyncStatus !== "hidden" && (
           <View accessibilityLabel="account-profile-sync" testID="account-profile-sync" style={styles.row}>
             <Ionicons name={profileSyncStatus === "error" ? "cloud-offline-outline" : "cloud-done-outline"} size={20} color={profileSyncStatus === "error" ? "#fbbf24" : "#93c5fd"} />

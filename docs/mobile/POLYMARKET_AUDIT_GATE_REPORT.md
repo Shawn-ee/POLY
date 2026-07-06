@@ -4436,3 +4436,38 @@ Decision:
 - Pass/fail: Pass for focused discovery quote failure contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional retry copy/action for quote refresh failures.
+
+## Cycle LI - Account Bootstrap Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure visible Account balance/profile/navigation bootstrap uses backend routes in server mode and exposes partial route failures instead of silently falling back.
+
+Reference Audit Agent: Backend/data-contract loop. Account visual redesign is out of scope.
+
+Implementation Agent: Added account bootstrap result resolver, app wiring, Account data sync UI row, tests, and proof.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LI-account-bootstrap-contract.md`
+- `docs/mobile/harness/cycle-LI-account-bootstrap-contract/cycle-LI-account-bootstrap-contract.json`
+- `scripts/prove_mobile_account_bootstrap_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LI-P0-01 | P0 | Pass | All three account routes are required for `accountDataStatus=synced`. | N/A |
+| LI-P0-02 | P0 | Pass | Partial account route failure returns visible `accountDataStatus=error`. | N/A |
+| LI-P0-03 | P0 | Pass | Successful partial data remains usable. | N/A |
+| LI-P0-04 | P0 | Pass | Failed account routes do not invent data. | N/A |
+| LI-P0-05 | P0 | Pass | Account UI exposes `account-data-sync` separately from preferences sync. | N/A |
+| LI-P2-01 | P2 | Open | No per-route retry controls for balance/profile/navigation failures. | Optional later copy/action pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused Account bootstrap contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional per-route retry copy/action.

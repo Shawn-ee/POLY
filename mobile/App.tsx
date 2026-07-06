@@ -36,6 +36,7 @@ import { OrderMode, submitTicketOrder } from "./src/services/orderService";
 import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity } from "./src/services/openOrderService";
 import { closePositionOnServer } from "./src/services/positionCloseService";
 import { loadAccountBalance } from "./src/services/accountBalanceService";
+import { resolveAccountBootstrapResults, type AccountBootstrapStatus } from "./src/services/accountBootstrapService";
 import { loadAccountNavigation, type AccountNavigationItemResult } from "./src/services/accountNavigationService";
 import { loadAccountProfile } from "./src/services/accountProfileService";
 import { loadEventDetailForCard } from "./src/services/eventDetailHydrationService";
@@ -341,6 +342,9 @@ export default function App() {
   const [accountProfileName, setAccountProfileName] = useState("Holiwyn Demo");
   const [accountMenuItems, setAccountMenuItems] = useState<AccountNavigationItemResult[]>(defaultAccountMenuItems);
   const [accountMenuSource, setAccountMenuSource] = useState("local-fallback");
+  const [accountDataStatus, setAccountDataStatus] = useState<AccountBootstrapStatus>(
+    ORDER_MODE === "server" && DEFAULT_API_KEY.length > 0 ? "syncing" : "hidden",
+  );
   const [positions, setPositions] = useState<Position[]>([]);
   const [latestOrder, setLatestOrder] = useState<OrderConfirmation | null>(null);
   const [openOrders, setOpenOrders] = useState<OpenOrder[]>([]);
@@ -1268,21 +1272,27 @@ export default function App() {
   useEffect(() => {
     if (ORDER_MODE !== "server" || runtimeApiKey.length === 0) return undefined;
     let cancelled = false;
-    loadAccountBalance(api).then((accountBalance) => {
-      if (!cancelled && mounted.current) setBalance(accountBalance.availableUSDC);
-    }).catch(() => undefined);
-    loadAccountProfile(api).then((profile) => {
-      if (!cancelled && mounted.current) {
-        setAccountProfileName(profile.displayName);
+    setAccountDataStatus("syncing");
+    Promise.allSettled([
+      loadAccountBalance(api),
+      loadAccountProfile(api),
+      loadAccountNavigation(api),
+    ]).then((results) => {
+      if (cancelled || !mounted.current) return;
+      const accountState = resolveAccountBootstrapResults(results[0], results[1], results[2]);
+      setAccountDataStatus(accountState.status);
+      if (accountState.balance) setBalance(accountState.balance.availableUSDC);
+      if (accountState.profile) {
+        setAccountProfileName(accountState.profile.displayName);
         setForceAccountSignedIn(true);
       }
-    }).catch(() => undefined);
-    loadAccountNavigation(api).then((navigation) => {
-      if (!cancelled && mounted.current) {
-        setAccountMenuItems(navigation.items);
-        setAccountMenuSource(navigation.source);
+      if (accountState.navigation) {
+        setAccountMenuItems(accountState.navigation.items);
+        setAccountMenuSource(accountState.navigation.source);
+      } else {
+        setAccountMenuSource("account-navigation-error");
       }
-    }).catch(() => undefined);
+    });
     setPortfolioSyncStatus("syncing");
     loadServerPortfolioState(api).then((serverState) => {
       if (!cancelled && mounted.current) {
@@ -1832,6 +1842,7 @@ export default function App() {
                 ticketDefaultSide={ticketDefaults.side}
                 ticketDefaultSlippage={ticketDefaults.slippage}
                 profileSyncStatus={profilePreferencesSyncStatus}
+                accountDataStatus={accountDataStatus}
                 menuItems={accountMenuItems}
                 menuSource={accountMenuSource}
                 savedMarketCount={savedEventIds.size}

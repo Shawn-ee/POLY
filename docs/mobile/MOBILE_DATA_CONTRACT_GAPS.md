@@ -4550,6 +4550,35 @@ Future migration concern:
 
 - A ticket-specific quote/eligibility endpoint can eventually replace per-market quote hydration for final swipe readiness.
 
+## Cycle LI - Account Bootstrap Contract
+
+Closed or narrowed:
+
+- Account bootstrap now treats `/api/account/balance`, `/api/account/profile`, and `/api/account/navigation` as distinct required reads for a fully synced Account state.
+- Mobile preserves successful partial account data but exposes a visible Account data error when any route fails.
+- Account data sync status is separate from profile preference sync status, so account-route failures no longer masquerade as normal local fallback.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No P0 field gap for focused Account bootstrap status.
+- Optional per-route retry/copy could distinguish balance, profile, and menu failures more precisely.
+
+Schema mismatch:
+
+- No schema migration was required. Existing account routes provide the needed data.
+
+Route mismatch:
+
+- `/api/account/balance`, `/api/account/profile`, and `/api/account/navigation` are enough for the focused visible Account bootstrap contract.
+
+Temporary mock/static data:
+
+- Mock/offline Account defaults remain outside server mode. Server-mode failed routes are now reflected in visible account data status.
+
+Future migration concern:
+
+- If account actions become enabled, route-owned action metadata should include destination permissions and retry/error policy per row.
+
 ## Cycle LA - Cashout/Sell Safety Contract
 
 Closed or narrowed:
