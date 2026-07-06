@@ -2,6 +2,25 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NI - Event Detail Period Market Support Contract
+
+Closed or narrowed:
+
+- Route-backed Event Detail now rejects first-half or second-half winner market rows whose period is not declared in backend `event.supportedMarketTypes`.
+- Route-backed Game Lines period winner rows require both a matching backend market and matching backend-declared period support before rendering.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail period market support contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/mobile/events/:slug/live-detail` `supportedMarketTypes`, `marketType`, and `period` fields support this contract.
+
+Temporary mock/static data:
+
+- Local/mock Event Detail fallback first-half/second-half rows remain unchanged. Server-mode route-backed Event Detail requires backend-supported period markets.
+
 ## Cycle NH - Event Detail Supported Line Family Contract
 
 Closed or narrowed:

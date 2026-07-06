@@ -76,6 +76,22 @@ const lineFamilyForRouteMarket = (market: Record<string, unknown>) => {
   return null;
 };
 
+const periodWinnerTypeForRouteMarket = (market: Record<string, unknown>) => {
+  const period = normalizeKey(market.period);
+  if (period !== "first-half" && period !== "second-half") return null;
+
+  const key = [
+    market.marketType,
+    market.marketGroupId,
+    market.title,
+  ].map(normalizeKey).join(" ");
+  const isWinner =
+    /(^|[\s-])(moneyline|winner|match-winner-1x2)([\s-]|$)/.test(key) ||
+    key.includes("winner");
+  if (!isWinner) return null;
+  return period;
+};
+
 function assertEventDetailOutcomeShape(outcome: unknown, marketId: string): asserts outcome is Outcome {
   if (!isRecord(outcome)) {
     throw new Error(`Event detail route returned malformed outcome for market ${marketId}.`);
@@ -139,6 +155,10 @@ function assertEventDetailMarketShape(market: unknown, eventSupportedMarketTypes
   const lineFamily = lineFamilyForRouteMarket(market);
   if (lineFamily && !eventSupportedMarketTypes.includes(lineFamily)) {
     throw new Error(`Event detail route returned market ${marketId} for unsupported line family ${lineFamily}.`);
+  }
+  const periodWinnerType = periodWinnerTypeForRouteMarket(market);
+  if (periodWinnerType && !eventSupportedMarketTypes.includes(periodWinnerType)) {
+    throw new Error(`Event detail route returned market ${marketId} for unsupported period market ${periodWinnerType}.`);
   }
   market.outcomes.forEach((outcome) => assertEventDetailOutcomeShape(outcome, marketId));
 }

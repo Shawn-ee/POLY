@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NI - Event Detail Period Market Support Contract
+
+Cycle NI hardens route-backed Event Detail first-half and second-half winner market availability before rendering visible period rows:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NI-event-detail-period-market-support-contract/cycle-NI-event-detail-period-market-support-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_period_market_support_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail route-backed first-half/second-half winner availability | `/api/mobile/events/:slug/live-detail` through Event Detail hydration | GET | Public/mobile route | Event slug | `event.supportedMarketTypes`, period winner market type, period, outcomes; route-backed period winner rows require declared first-half/second-half support and matching backend market | `Event`, listed public `Market`, `Outcome`, backend market-rule/profile derivation | Local/mock Event Detail still allows fallback period winner rows. Route-backed Event Detail rejects undeclared period winner markets and does not render period rows without matching backend support. | None for focused Event Detail period market support contract. P2 optional disabled-row explanation copy. |
+
 ## Cycle NH - Event Detail Supported Line Family Contract
 
 Cycle NH hardens route-backed Event Detail Game Lines market-family availability before rendering visible line groups:

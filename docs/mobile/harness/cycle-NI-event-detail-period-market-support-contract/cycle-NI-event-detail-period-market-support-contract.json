@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle NI",
+  "feature": "Event Detail period market support contract",
+  "generatedAt": "2026-07-06T13:48:45.997Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "contract": {
+    "validPayload": "route-backed first-half/second-half winner markets must be declared in event.supportedMarketTypes and backed by a matching backend market.",
+    "malformedPayload": "a period winner market for an undeclared period is rejected before Event Detail applies the payload.",
+    "localPayload": "non-route-backed/local Event Detail may still use fallback period winner fixtures."
+  },
+  "assertions": {
+    "routeRejectsUnsupportedFirstHalfWinner": true,
+    "routeAcceptsDeclaredFirstHalfWinner": true,
+    "routeBackedUiRequiresDeclaredFirstHalf": true,
+    "routeBackedUiRequiresBackendPeriodMarket": true,
+    "localUiFallbackUnaffected": true
+  }
+}

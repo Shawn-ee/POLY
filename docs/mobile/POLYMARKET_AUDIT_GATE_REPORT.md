@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NI
+
+Gate status: Pass
+
+Scope: Event Detail period market support contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NI-event-detail-period-market-support-contract/cycle-NI-event-detail-period-market-support-contract.json`
+- Focused tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NI-event-detail-period-market-support-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Route-backed Event Detail first-half/second-half winner rows render only when backend declares the period support and returns a matching backend market; the route validator rejects undeclared period winner markets.
+
 ## Cycle NH
 
 Gate status: Pass

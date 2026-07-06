@@ -184,6 +184,58 @@ describe("event detail route shape service", () => {
     expect(() => assertEventDetailRoutePayloadShape(payload)).not.toThrow();
   });
 
+  test("rejects route-backed period winner markets missing from supported market types", () => {
+    const payload = detailPayload() as any;
+    payload.event.supportedMarketTypes = ["regulation_90"];
+    payload.markets.push({
+      id: "first-half-winner",
+      title: "1st Half Winner",
+      description: null,
+      status: "LIVE",
+      marketGroupTitle: "1st Half Winner",
+      marketType: "moneyline",
+      period: "first-half",
+      line: null,
+      propCategory: null,
+      liquidity: "1000.50",
+      outcomes: [
+        { id: "home", name: "Home", label: "Home", side: "home", price: 0.36, bestBid: null, bestAsk: null, isTradable: true },
+        { id: "draw", name: "Tie", label: "Tie", side: "draw", price: 0.31, bestBid: null, bestAsk: null, isTradable: true },
+        { id: "away", name: "Away", label: "Away", side: "away", price: 0.33, bestBid: null, bestAsk: null, isTradable: true },
+      ],
+      event: null,
+      rulesText: null,
+    });
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("unsupported period market first-half");
+  });
+
+  test("accepts route-backed period winner markets declared by supported market types", () => {
+    const payload = detailPayload() as any;
+    payload.event.supportedMarketTypes = ["regulation_90", "second-half"];
+    payload.markets.push({
+      id: "second-half-winner",
+      title: "2nd Half Winner",
+      description: null,
+      status: "LIVE",
+      marketGroupTitle: "2nd Half Winner",
+      marketType: "match_winner_1x2",
+      period: "second-half",
+      line: null,
+      propCategory: null,
+      liquidity: "1000.50",
+      outcomes: [
+        { id: "home", name: "Home", label: "Home", side: "home", price: 0.36, bestBid: null, bestAsk: null, isTradable: true },
+        { id: "draw", name: "Tie", label: "Tie", side: "draw", price: 0.31, bestBid: null, bestAsk: null, isTradable: true },
+        { id: "away", name: "Away", label: "Away", side: "away", price: 0.33, bestBid: null, bestAsk: null, isTradable: true },
+      ],
+      event: null,
+      rulesText: null,
+    });
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).not.toThrow();
+  });
+
   test("rejects negative live scores before Event Detail applies", () => {
     const payload = detailPayload();
     payload.event.homeScore = -1;
