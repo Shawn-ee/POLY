@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LD - Account Preferences Response Contract
+
+Closed or narrowed:
+
+- Mobile Account preferences normalization now validates route response fields before applying visible state.
+- Invalid `locale`, `ticketDefaultSide`, `ticketDefaultAmount`, or `savedEventIds` now fail clearly instead of drifting into language, saved-market filters, saved count, or Trade Ticket defaults.
+- The LD proof verifies default GET, saved PUT echo, persisted GET reload, and malformed response rejection through the same mobile normalizer.
+- Missing `ticketDefaultSlippage` remains a documented legacy compatibility path that defaults to `1%`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Account preferences response contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `UserProfilePreference.preferences` JSONB stores the current preferences envelope, and the route parser already requires canonical save payloads.
+
+Temporary mock/static data:
+
+- Mock/local mode continues to use AsyncStorage. Server-mode malformed preference payloads now produce an error sync state instead of applying partial mock fallback values.
+
 ## Cycle LC - Trade Ticket Availability Submit Contract
 
 Closed or narrowed:

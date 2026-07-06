@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle LD - Account Preferences Response Contract
+
+Cycle LD hardens the mobile response-shape contract for visible Account preferences that feed language, saved markets, and Trade Ticket defaults:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-LD-account-preferences-response-contract/cycle-LD-account-preferences-response-contract.json`.
+- Proof script: `scripts/prove_mobile_account_preferences_response_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account preferences response normalization | `/api/profile/preferences` | GET | Canonical API key/session with `account:read` | None | `preferences.locale`, `ticketDefaultAmount`, `ticketDefaultSide`, `ticketDefaultSlippage`, `savedEventIds`; mobile validates locale, side, amount, and saved ids before applying visible state | `UserProfilePreference`, `User`, canonical auth/API usage | Mock/local mode still uses AsyncStorage. Server-mode malformed preference payloads now fail clearly instead of partially applying bad visible state. | None for focused response-shape validation. |
+| Account preferences save echo and persisted reload | `/api/profile/preferences` | PUT then GET | Canonical API key/session with `account:write` for PUT and `account:read` for GET | Same preferences envelope including slippage and saved event ids | Saved route echo and persisted GET normalize to the same mobile state used by Account saved count, Home/Search saved filters, language, and Trade Ticket defaults | `UserProfilePreference.preferences` JSONB row keyed by user | Local fallback remains when server preference sync is unavailable. Missing slippage remains a deliberate legacy compatibility default of `1%`. | P1: richer retry/conflict UI if account preference save fails mid-session. |
+
 ## Cycle LC - Trade Ticket Availability Submit Contract
 
 Cycle LC makes backend-provided market availability part of the Trade Ticket submit contract, not only a visual disabled state:

@@ -550,3 +550,10 @@ For every UI element or interaction, answer:
 - LC closes the focused P0 gap where a stale handler could call the server order path for a route-backed market whose backend availability was `suspended` or `unavailable`.
 - Harness proof passes for backend-shaped compact market availability normalization, unavailable/suspended zero API calls, clear backend-reason errors, and ready-market submit success.
 - Remaining P1: production active provider breadth/freshness; backend `/api/orders` remains the final safety layer for stale client state.
+
+## Cycle LD Gap Tracker Update
+
+- PM-GAP-108 is opened and verified for Account preferences response-shape safety.
+- LD closes the focused P0 data-contract gap where malformed server preference fields could be partially applied to visible language, saved-market filters, saved count, or Trade Ticket defaults.
+- Harness proof passes for default GET normalization, saved PUT echo normalization, persisted GET reload, and malformed field rejection before apply.
+- Remaining P1: richer retry/conflict UI if preference save fails mid-session.

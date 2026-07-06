@@ -18,12 +18,42 @@ export const toProfilePreferencesPayload = (preferences: LocalProfilePreferences
   savedEventIds: [...preferences.savedEventIds],
 });
 
+const requirePreferenceString = (value: unknown, field: string) => {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw new Error(`Profile preferences response was missing ${field}.`);
+  }
+  return value.trim();
+};
+
+const requireLocale = (value: unknown): Locale => {
+  if (value !== "en" && value !== "zh") {
+    throw new Error("Profile preferences response had invalid locale.");
+  }
+  return value;
+};
+
+const requireTicketSide = (value: unknown): "buy" | "sell" => {
+  if (value === "BUY") return "buy";
+  if (value === "SELL") return "sell";
+  throw new Error("Profile preferences response had invalid ticketDefaultSide.");
+};
+
+const requireSavedEventIds = (value: unknown) => {
+  if (!Array.isArray(value) || value.some((id) => typeof id !== "string")) {
+    throw new Error("Profile preferences response had invalid savedEventIds.");
+  }
+  return [...value];
+};
+
 export const fromProfilePreferencesPayload = (preferences: ProfilePreferences): LocalProfilePreferences => ({
-  locale: preferences.locale,
-  ticketDefaultAmount: preferences.ticketDefaultAmount,
-  ticketDefaultSide: preferences.ticketDefaultSide === "SELL" ? "sell" : "buy",
-  ticketDefaultSlippage: preferences.ticketDefaultSlippage ?? "1%",
-  savedEventIds: [...preferences.savedEventIds],
+  locale: requireLocale(preferences.locale),
+  ticketDefaultAmount: requirePreferenceString(preferences.ticketDefaultAmount, "ticketDefaultAmount"),
+  ticketDefaultSide: requireTicketSide(preferences.ticketDefaultSide),
+  ticketDefaultSlippage:
+    typeof preferences.ticketDefaultSlippage === "string" && preferences.ticketDefaultSlippage.trim()
+      ? preferences.ticketDefaultSlippage.trim()
+      : "1%",
+  savedEventIds: requireSavedEventIds(preferences.savedEventIds),
 });
 
 const requirePreferences = (response: { preferences?: ProfilePreferences }) => {

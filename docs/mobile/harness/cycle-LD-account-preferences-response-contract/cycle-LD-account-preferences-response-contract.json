@@ -1,0 +1,90 @@
+{
+  "cycle": "LD",
+  "gate": "account-preferences-response-contract",
+  "generatedAt": "2026-07-06T09:55:12.150Z",
+  "route": "/api/profile/preferences",
+  "auth": "canonical API key with account:read and account:write",
+  "assertions": {
+    "defaultRoutePayloadNormalizesToMobileState": true,
+    "savedRoutePayloadNormalizesToVisibleMobileState": true,
+    "persistedRoutePayloadMatchesSavedMobileState": true,
+    "malformedPreferenceFieldsRejectedBeforeApply": true
+  },
+  "defaultMobile": {
+    "locale": "en",
+    "ticketDefaultAmount": "100",
+    "ticketDefaultSide": "buy",
+    "ticketDefaultSlippage": "1%",
+    "savedEventIds": []
+  },
+  "savedMobile": {
+    "locale": "zh",
+    "ticketDefaultAmount": "250",
+    "ticketDefaultSide": "sell",
+    "ticketDefaultSlippage": "2%",
+    "savedEventIds": [
+      "world-cup-winner",
+      "mexico-ecuador"
+    ]
+  },
+  "persistedMobile": {
+    "locale": "zh",
+    "ticketDefaultAmount": "250",
+    "ticketDefaultSide": "sell",
+    "ticketDefaultSlippage": "2%",
+    "savedEventIds": [
+      "world-cup-winner",
+      "mexico-ecuador"
+    ]
+  },
+  "invalidResponseChecks": [
+    {
+      "name": "invalid-locale",
+      "payload": {
+        "locale": "fr",
+        "ticketDefaultAmount": "250",
+        "ticketDefaultSide": "SELL",
+        "ticketDefaultSlippage": "2%",
+        "savedEventIds": [
+          "world-cup-winner",
+          "mexico-ecuador"
+        ]
+      },
+      "expected": "Profile preferences response had invalid locale.",
+      "rejected": true,
+      "message": "Profile preferences response had invalid locale."
+    },
+    {
+      "name": "invalid-side",
+      "payload": {
+        "locale": "zh",
+        "ticketDefaultAmount": "250",
+        "ticketDefaultSide": "MAYBE",
+        "ticketDefaultSlippage": "2%",
+        "savedEventIds": [
+          "world-cup-winner",
+          "mexico-ecuador"
+        ]
+      },
+      "expected": "Profile preferences response had invalid ticketDefaultSide.",
+      "rejected": true,
+      "message": "Profile preferences response had invalid ticketDefaultSide."
+    },
+    {
+      "name": "invalid-saved-ids",
+      "payload": {
+        "locale": "zh",
+        "ticketDefaultAmount": "250",
+        "ticketDefaultSide": "SELL",
+        "ticketDefaultSlippage": "2%",
+        "savedEventIds": [
+          "world-cup-winner",
+          42
+        ]
+      },
+      "expected": "Profile preferences response had invalid savedEventIds.",
+      "rejected": true,
+      "message": "Profile preferences response had invalid savedEventIds."
+    }
+  ]
+}

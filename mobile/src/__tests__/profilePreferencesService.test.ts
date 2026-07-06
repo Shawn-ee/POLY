@@ -134,4 +134,46 @@ describe("Holiwyn profile preferences service", () => {
       "Profile preferences response was missing preferences.",
     );
   });
+
+  test("rejects invalid server preference fields before applying visible state", async () => {
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "fr" as "en",
+        ticketDefaultAmount: "100",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "1%",
+        savedEventIds: [],
+      }),
+    ).toThrow("Profile preferences response had invalid locale.");
+
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "1%",
+        savedEventIds: [],
+      }),
+    ).toThrow("Profile preferences response was missing ticketDefaultAmount.");
+
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "100",
+        ticketDefaultSide: "MAYBE" as "BUY",
+        ticketDefaultSlippage: "1%",
+        savedEventIds: [],
+      }),
+    ).toThrow("Profile preferences response had invalid ticketDefaultSide.");
+
+    expect(() =>
+      fromProfilePreferencesPayload({
+        locale: "en",
+        ticketDefaultAmount: "100",
+        ticketDefaultSide: "BUY",
+        ticketDefaultSlippage: "1%",
+        savedEventIds: ["mexico-ecuador", 42] as string[],
+      }),
+    ).toThrow("Profile preferences response had invalid savedEventIds.");
+  });
 });
