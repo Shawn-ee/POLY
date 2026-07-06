@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KB - Order Submit Selection Echo Contract
+
+Closed or narrowed:
+
+- Mobile server-mode Trade Ticket submit now requires backend selection echo for selected line/provider tickets before treating the submit as confirmed.
+- Missing `order.selection` is rejected for line-family/provider tickets instead of returning a locally reconstructed success.
+- Critical selected identity mismatch is rejected for market id, outcome id, family, line, period, contract side, provider market id, condition id, token id, and provider outcome label.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Production backend must continue returning `order.selection` for every selected line/provider submit path.
+- Immutable first-class selection snapshot columns for orders/fills/trades remain future hardening.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection` and canonical order response `order.selection` support the KB contract.
+
+Temporary mock/static data:
+
+- KB proof uses a fake `PolyApi.placeLimitOrder` response matrix to prove mobile server-mode acceptance/rejection behavior. It does not add frontend-only order rows.
+
 ## Cycle KA - Line Selector Backend Selection Contract
 
 Closed or narrowed:

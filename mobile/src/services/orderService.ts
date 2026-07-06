@@ -38,12 +38,14 @@ type ServerOrderResponse = {
     status?: string;
     size?: string | number | null;
     remaining?: string | number | null;
+    selection?: Partial<TicketSelection> | null;
   };
   fills?: Array<{ size?: string | number | null }>;
   id?: string;
   status?: string;
   size?: string | number | null;
   remaining?: string | number | null;
+  selection?: Partial<TicketSelection> | null;
 };
 
 const label = (value: { label?: string; title?: string; name?: string }) =>
@@ -138,6 +140,46 @@ const sharesFromAmount = (amount: number, probability: number) => {
   return amount / price;
 };
 
+const lineSelectionFamilies: Array<TicketSelection["marketType"]> = ["spread", "totals", "team-total"];
+
+const selectionRequiresServerEcho = (selection: TicketSelection) =>
+  lineSelectionFamilies.includes(selection.marketType) ||
+  Boolean(selection.line || selection.period || selection.externalMarketId || selection.conditionId || selection.referenceTokenId);
+
+const criticalSelectionFields: Array<keyof TicketSelection> = [
+  "marketId",
+  "outcomeId",
+  "marketType",
+  "line",
+  "period",
+  "contractSide",
+  "externalMarketId",
+  "conditionId",
+  "referenceTokenId",
+  "referenceOutcomeLabel",
+];
+
+const matchingSelectionValue = (left: unknown, right: unknown) => {
+  if (left === undefined || left === null || left === "") return true;
+  return `${left}` === `${right ?? ""}`;
+};
+
+const validateServerSelectionEcho = (expected: TicketSelection, response: ServerOrderResponse): TicketSelection | undefined => {
+  const echoed = response.order?.selection ?? response.selection;
+  if (!selectionRequiresServerEcho(expected)) return echoed as TicketSelection | undefined;
+  if (!echoed || typeof echoed !== "object") {
+    throw new Error("Order submit did not confirm the selected market line.");
+  }
+  const mismatched = criticalSelectionFields.find((field) => !matchingSelectionValue(expected[field], echoed[field]));
+  if (mismatched) {
+    throw new Error(`Order submit changed selected market line (${mismatched}).`);
+  }
+  return {
+    ...expected,
+    ...echoed,
+  } as TicketSelection;
+};
+
 export const submitTicketOrder = async (input: TicketOrderInput): Promise<TicketOrderResult> => {
   if (input.amount <= 0) {
     throw new Error("Order amount must be greater than zero.");
@@ -147,6 +189,7 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
     return mockOrder(input);
   }
 
+  const expectedSelection = selectionForOrder(input);
   const orderInput = {
     marketId: input.market.id,
     outcomeId: input.outcome.id,
@@ -154,7 +197,7 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
     contractSide: contractSideForOrder(input).toUpperCase() as "YES" | "NO",
     price: (contractProbability(input) / 100).toFixed(2),
     size: sharesFromAmount(input.amount, contractProbability(input)).toFixed(2),
-    selection: selectionForOrder(input),
+    selection: expectedSelection,
   };
   const payload = await input.api.placeLimitOrder(orderInput);
   const response = payload && typeof payload === "object" ? (payload as ServerOrderResponse) : {};
@@ -162,6 +205,7 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
   if (!orderId) {
     throw new Error("Order submit was not confirmed by the server.");
   }
+  const confirmedSelection = validateServerSelectionEcho(expectedSelection, response);
   const size = numericField(response.order?.size ?? response.size);
   const remainingSize = numericField(response.order?.remaining ?? response.remaining);
   const status = response.order?.status ?? response.status;
@@ -171,6 +215,7 @@ export const submitTicketOrder = async (input: TicketOrderInput): Promise<Ticket
     id: orderId,
     mode: "server",
     status,
+    selection: confirmedSelection ?? expectedSelection,
     size,
     filledSize: filledSizeFromResponse(response),
     remainingSize,

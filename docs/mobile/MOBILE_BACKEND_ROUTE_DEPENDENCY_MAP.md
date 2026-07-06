@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KB - Order Submit Selection Echo Contract
+
+Cycle KB tightens Trade Ticket server-mode submit for backend-selected line/provider tickets:
+
+- Client proof: `docs/mobile/harness/cycle-KB-order-submit-selection-echo/cycle-KB-order-submit-selection-echo.json`.
+- Proof script: `scripts/prove_mobile_order_submit_selection_echo.ts`.
+- Focused mobile tests: `mobile/src/__tests__/orderService.test.ts` and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket selected line submit confirmation | `/api/orders` | POST | Canonical API key/session with `orders:write` | `marketId`, `outcomeId`, `side`, `contractSide`, `price`, `size`, and `selection` with line/period/provider identity | `order.id`, `order.selection.marketId`, `outcomeId`, `marketType`, `line`, `period`, `contractSide`, `externalMarketId`, `conditionId`, `referenceTokenId`, `referenceOutcomeLabel` | `ApiOrderRequest.requestBody.selection`, `Order`, `Market`, `Outcome` | Mock mode remains local. Server mode now rejects selected line/provider tickets if the backend response omits selection echo or changes critical selected identity. | P1: production backend should continue returning first-class `order.selection` for every selected line/provider ticket; immutable order/fill/trade selection columns remain future hardening. |
+
 ## Cycle KA - Line Selector Backend Selection Contract
 
 Cycle KA tightens Event Detail Game Lines line-selector identity so visible Totals/Team Total/Spread row tickets can use backend route-owned `markets[].selection` instead of frontend reconstruction:

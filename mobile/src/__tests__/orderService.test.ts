@@ -122,7 +122,20 @@ describe("ticket order service", () => {
   });
 
   test("carries Polymarket provider identity through the ticket order payload", async () => {
-    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-provider-order-1" } }));
+    const providerSelection = {
+      marketType: "future",
+      marketId: "world-cup-winner",
+      outcomeId: "france",
+      displayLabel: "France",
+      contractSide: "yes",
+      referenceSource: "polymarket",
+      externalSlug: "world-cup-2026-france-winner",
+      externalMarketId: "gamma-market-france",
+      conditionId: "condition-france",
+      referenceTokenId: "token-france",
+      referenceOutcomeLabel: "France",
+    };
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-provider-order-1", selection: providerSelection } }));
     const api = { placeLimitOrder } as unknown as PolyApi;
 
     const result = await submitTicketOrder({
@@ -195,9 +208,6 @@ describe("ticket order service", () => {
   });
 
   test("includes selected line metadata in server-mode line market orders", async () => {
-    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-line-order-1" } }));
-    const api = { placeLimitOrder } as unknown as PolyApi;
-
     const lineMarket = {
       id: "mexico-ecuador-spread-2.5-1H",
       title: "Spread MEX -2.5 1H",
@@ -218,6 +228,14 @@ describe("ticket order service", () => {
       period: "1st Half",
       displayLabel: "MEX -2.5 1H",
     };
+    const expectedSelection = {
+      ...selection,
+      marketId: "mexico-ecuador-spread-2.5-1H",
+      outcomeId: "mexico-ecuador-spread-2.5-1H-yes",
+      contractSide: "yes",
+    };
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-line-order-1", selection: expectedSelection } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
 
     const result = await submitTicketOrder({
       mode: "server",
@@ -237,25 +255,12 @@ describe("ticket order service", () => {
       contractSide: "YES",
       price: "0.03",
       size: "1000.00",
-      selection: {
-        ...selection,
-        marketId: "mexico-ecuador-spread-2.5-1H",
-        outcomeId: "mexico-ecuador-spread-2.5-1H-yes",
-        contractSide: "yes",
-      },
+      selection: expectedSelection,
     });
-    expect(result.selection).toEqual({
-      ...selection,
-      marketId: "mexico-ecuador-spread-2.5-1H",
-      outcomeId: "mexico-ecuador-spread-2.5-1H-yes",
-      contractSide: "yes",
-    });
+    expect(result.selection).toEqual(expectedSelection);
   });
 
   test("preserves Book-staged limit fields in server-mode order selection", async () => {
-    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-book-limit-order-1" } }));
-    const api = { placeLimitOrder } as unknown as PolyApi;
-
     const selection = {
       marketType: "totals" as const,
       line: "3.5",
@@ -266,6 +271,14 @@ describe("ticket order service", () => {
       limitSide: "ask" as const,
       limitShares: 125.5,
     };
+    const expectedSelection = {
+      ...selection,
+      marketId: "mexico-ecuador-total-3.5-2H",
+      outcomeId: "mexico-ecuador-total-3.5-2H-over",
+      contractSide: "yes",
+    };
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-book-limit-order-1", selection: expectedSelection } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
 
     const result = await submitTicketOrder({
       mode: "server",
@@ -293,19 +306,99 @@ describe("ticket order service", () => {
     expect(placeLimitOrder).toHaveBeenCalledWith(
       expect.objectContaining({
         selection: expect.objectContaining({
-          ...selection,
-          marketId: "mexico-ecuador-total-3.5-2H",
-          outcomeId: "mexico-ecuador-total-3.5-2H-over",
-          contractSide: "yes",
+          ...expectedSelection,
         }),
       }),
     );
     expect(result.selection).toMatchObject({
-      ...selection,
-      marketId: "mexico-ecuador-total-3.5-2H",
-      outcomeId: "mexico-ecuador-total-3.5-2H-over",
-      contractSide: "yes",
+      ...expectedSelection,
     });
+  });
+
+  test("rejects selected line server submit when backend omits selection echo", async () => {
+    const placeLimitOrder = vi.fn(async () => ({ order: { id: "server-line-order-missing-selection" } }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        event,
+        market: {
+          id: "mexico-ecuador-total-2.5-1H",
+          title: "Total 2.5 1H",
+          zhTitle: "Total 2.5 1H",
+          type: "game-line" as const,
+          outcomes: [],
+        },
+        outcome: {
+          id: "mexico-ecuador-total-2.5-1H-over",
+          label: "Over 2.5 1H",
+          zhLabel: "Over 2.5 1H",
+          probability: 52,
+          color: "#0a8f61",
+        },
+        selection: {
+          marketType: "totals",
+          line: "2.5",
+          period: "1st Half",
+          displayLabel: "Over 2.5 1H",
+          referenceTokenId: "token-over-25-1h",
+        },
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Order submit did not confirm the selected market line.");
+  });
+
+  test("rejects selected line server submit when backend changes provider token", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-line-order-token-mismatch",
+        selection: {
+          marketType: "totals",
+          marketId: "mexico-ecuador-total-2.5-1H",
+          outcomeId: "mexico-ecuador-total-2.5-1H-over",
+          line: "2.5",
+          period: "1st Half",
+          displayLabel: "Over 2.5 1H",
+          contractSide: "yes",
+          referenceTokenId: "wrong-token",
+        },
+      },
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        event,
+        market: {
+          id: "mexico-ecuador-total-2.5-1H",
+          title: "Total 2.5 1H",
+          zhTitle: "Total 2.5 1H",
+          type: "game-line" as const,
+          outcomes: [],
+        },
+        outcome: {
+          id: "mexico-ecuador-total-2.5-1H-over",
+          label: "Over 2.5 1H",
+          zhLabel: "Over 2.5 1H",
+          probability: 52,
+          color: "#0a8f61",
+        },
+        selection: {
+          marketType: "totals",
+          line: "2.5",
+          period: "1st Half",
+          displayLabel: "Over 2.5 1H",
+          referenceTokenId: "token-over-25-1h",
+        },
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Order submit changed selected market line (referenceTokenId).");
   });
 
   test("uses top-level server order id fallback when canonical response omits nested order id", async () => {

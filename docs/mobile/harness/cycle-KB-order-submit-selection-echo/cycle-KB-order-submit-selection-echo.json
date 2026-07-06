@@ -1,0 +1,11 @@
+{
+  "cycle": "Cycle KB",
+  "generatedAt": "2026-07-06T07:02:57.639Z",
+  "status": "pass",
+  "checks": {
+    "matchingSelectionEchoAccepted": true,
+    "returnedSelectionPreservedProviderToken": "token-cycle-kb-total-over",
+    "missingSelectionEchoBlocked": "Order submit did not confirm the selected market line.",
+    "changedProviderTokenBlocked": "Order submit changed selected market line (referenceTokenId)."
+  }
+}
