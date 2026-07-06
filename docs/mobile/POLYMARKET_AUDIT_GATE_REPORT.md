@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Route-backed order submit selection echo | Cycle KC | Pass for backend/data-contract scope | 0 for focused route-backed selected Totals line submit echo scope | P1 spread/team-total route breadth; P1 filled/canceled selected-line lifecycle breadth; P1 immutable first-class selection snapshots | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KC-route-order-submit-selection-echo/cycle-KC-route-order-submit-selection-echo.json`; tests: `mobile/src/__tests__/orderService.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`; audit: `mobile/docs/audits/cycle-KC-route-order-submit-selection-echo.md` | Actual `/api/orders` response is accepted by mobile `submitTicketOrder` guard for a selected Totals line only because the route echoes matching line/provider `order.selection`; `/api/portfolio` preserves the same open-order selection. |
 | Order submit selection echo contract | Cycle KB | Pass for backend/data-contract scope | 0 for focused selected line/provider submit confirmation scope | P1 production route breadth for every selected line/provider path; P1 immutable first-class selection snapshots | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Client proof: `docs/mobile/harness/cycle-KB-order-submit-selection-echo/cycle-KB-order-submit-selection-echo.json`; tests: `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-KB-order-submit-selection-echo.md` | Mobile server mode now rejects selected line/provider ticket submits when `/api/orders` confirms only an id but omits or changes critical `order.selection` identity. |
 | Line selector backend selection contract | Cycle KA | Pass for backend/data-contract scope | 0 for focused Game Lines selector identity scope | P1 broader real-provider line-family replay; P1 immutable first-class line selection snapshots | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/adapter proof: `docs/mobile/harness/cycle-KA-line-selector-backend-selection/cycle-KA-line-selector-backend-selection.json`; tests: `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/eventDetailLineTicketService.test.ts`, `src/__tests__/mobile-live-event-detail.test.ts`; audit: `mobile/docs/audits/cycle-KA-line-selector-backend-selection.md` | Mobile now preserves `/api/mobile/events/:slug/live-detail` `markets[].selection` and uses it to build line-ticket metadata for selected Totals/Team Total/Spread rows instead of relying on frontend-only reconstruction. |
 | Account preferences contract | Cycle JZ | Pass for backend/data-contract scope | 0 for focused Account preference load/save scope | P1 full server-authored account/session/menu/wallet destination metadata; P1 richer mobile retry/conflict state for sync failures | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-JZ-account-preferences-contract/cycle-JZ-account-preferences-contract.json`; tests: `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`, `src/__tests__/profile.preferences.route.test.ts`; audit: `mobile/docs/audits/cycle-JZ-account-preferences-contract.md` | `/api/profile/preferences` supports canonical default load, save, persisted reload, and invalid payload rejection. The proof covers AccountScreen-visible locale, ticket defaults, slippage, and saved market count. Mobile now reports malformed preference responses clearly. |
@@ -120,6 +121,29 @@ Fail the feature when:
 | Trade ticket | Cycle AG | Pass | 0 | P1 binary NO/share contract semantics; P1 production auth/location eligibility gates | `docs/mobile/reference/screenshots/cycle-AG-polymarket-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-amount.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-trade.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/harness/cycle-current-holiwyn-event-detail-ticket-details.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade` | Focused pass only. First view is now sparse and settings opens advanced controls. |
 | Trade ticket surface | Cycle AI | Pass | 0 | P1 production auth/location eligibility gate; P2 native motion polish | `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-start.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-france-ticket.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-after-france-row-tap.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/screenshots/cycle-current-holiwyn-future-list-buy-no-ticket.png`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade`; `cmd /c npm.cmd run smoke:tablet:future-list-buy-no` | Logged-in Polymarket World Cup selection opened a tall location-verification sheet; Holiwyn now uses a taller dimmed fake-token ticket with fixed swipe-up submit rail. |
 | Game page compact scrolled header | Cycle AJ | Pass | 0 | P1 phone visual density/sticky tab polish; P1 backend market/live data; P1 Player Props reference scope | `docs/mobile/reference/screenshots/cycle-AJ-polymarket-live-tab.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-top.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-lines-mid.png` | `docs/mobile/screenshots/cycle-current-holiwyn-game-page-full-markets.png`; `docs/mobile/harness/cycle-current-holiwyn-game-page-full-markets.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-full-page` | Logged-in Polymarket keeps compact match context when scrolled into Game Lines; Holiwyn now shows a compact match header in that state and full game-page smoke passed. |
+
+## Cycle KC
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for actual `/api/orders` route echo consumed by mobile `submitTicketOrder` for selected line/provider tickets.
+
+Evidence:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KC-route-order-submit-selection-echo/cycle-KC-route-order-submit-selection-echo.json`.
+- Cycle audit: `mobile/docs/audits/cycle-KC-route-order-submit-selection-echo.md`.
+- Focused mobile tests:
+  - `mobile/src/__tests__/orderService.test.ts`
+- Focused backend tests:
+  - `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`
+- Proof script:
+  - `scripts/prove_mobile_route_order_submit_selection_echo.ts`
+
+Decision:
+
+- Pass for focused backend/data-contract scope.
+- Actual `/api/orders` route response satisfies the mobile selected line/provider selection echo guard for the proved Totals line path.
+- Remaining P1: spread/team-total route breadth, filled/canceled lifecycle breadth, and immutable first-class selection snapshots.
 
 ## Cycle KB
 

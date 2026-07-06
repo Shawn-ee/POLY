@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KC - Route-Backed Order Submit Selection Echo
+
+Closed or narrowed:
+
+- The real `/api/orders` route response satisfies the Cycle KB mobile selected-line guard for a route-backed Totals line ticket.
+- The proof goes through mobile `submitTicketOrder`, a route-backed `PolyApi.placeLimitOrder` shim, canonical auth, internal trading gate, and `/api/portfolio`.
+- `/api/portfolio` open orders preserve the same line, period, provider market id, and provider token returned by `/api/orders`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Repeat route-backed selection echo proof across spread and team-total families.
+- Broader filled/canceled lifecycle breadth for selected line/provider tickets after route submit.
+- Immutable first-class selection snapshot columns for orders/fills/trades remain future hardening.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection` and canonical route response `order.selection` support the KC contract.
+
+Temporary mock/static data:
+
+- KC proof creates disposable backend user, API key, event, Totals market, outcomes, quote snapshots, order, and open-order state. It does not add frontend-only ticket/order rows.
+
 ## Cycle KB - Order Submit Selection Echo Contract
 
 Closed or narrowed:

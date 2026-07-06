@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KC - Route-Backed Order Submit Selection Echo
+
+Cycle KC proves the actual backend route satisfies the stricter Cycle KB mobile guard for selected line/provider tickets:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KC-route-order-submit-selection-echo/cycle-KC-route-order-submit-selection-echo.json`.
+- Proof script: `scripts/prove_mobile_route_order_submit_selection_echo.ts`.
+- Focused tests: `mobile/src/__tests__/orderService.test.ts`, `src/server/services/__tests__/canonical_order_submission.phase5.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Route-backed selected line submit | `/api/orders` | POST | Canonical API key/session with `orders:write`; internal trading beta enabled in local proof | Totals line ticket with `selection.marketId`, `outcomeId`, `marketType=totals`, `line=2.5`, `period=first-half`, provider market/condition/token ids, and limit metadata | `order.id`, `order.status`, `order.selection.*`; consumed by mobile `submitTicketOrder` guard | `ApiOrderRequest`, `Order`, `UserBalance`, `Market`, `Outcome`, provider quote snapshots | Mock mode remains local. Server mode now accepts route-backed selected tickets only when `/api/orders` echoes critical selected identity. | P1: repeat route-backed proof across spread and team-total families plus filled/canceled lifecycle breadth. |
+| Post-submit open-order echo | `/api/portfolio` | GET | Canonical API key/session with `account:read` | None | `openOrders[].selection.line`, `period`, `externalMarketId`, `referenceTokenId` | `Order`, `ApiOrderRequest`, `Market`, `Outcome` | Mock Portfolio path unchanged. Server Portfolio uses backend open-order echo. | P1: immutable first-class order selection snapshot columns remain future hardening. |
+
 ## Cycle KB - Order Submit Selection Echo Contract
 
 Cycle KB tightens Trade Ticket server-mode submit for backend-selected line/provider tickets:

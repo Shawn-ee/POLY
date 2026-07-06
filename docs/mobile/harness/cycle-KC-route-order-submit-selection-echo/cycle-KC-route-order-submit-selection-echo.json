@@ -1,0 +1,48 @@
+{
+  "pass": true,
+  "cycle": "Cycle KC",
+  "createdAt": "2026-07-06T07:06:11.715Z",
+  "routes": {
+    "submit": "/api/orders",
+    "portfolio": "/api/portfolio"
+  },
+  "mobileGuard": {
+    "submitAcceptedRouteEcho": true,
+    "id": "1649d401-6cbe-4a12-a082-c5587fdb6f75",
+    "mode": "server",
+    "selection": {
+      "marketId": "8534bf9c-7abe-4931-b89e-352d7078c745",
+      "outcomeId": "23b1746c-70f6-4ae3-a461-2afcd7d2105a",
+      "marketType": "totals",
+      "line": "2.5",
+      "period": "first-half",
+      "externalMarketId": "gamma-kc-total-048f5e52",
+      "conditionId": "condition-kc-total-048f5e52",
+      "referenceTokenId": "token-kc-over-048f5e52",
+      "referenceOutcomeLabel": "Over 2.5 first half"
+    }
+  },
+  "routeEcho": {
+    "orderId": "1649d401-6cbe-4a12-a082-c5587fdb6f75",
+    "status": "OPEN",
+    "selection": {
+      "marketId": "8534bf9c-7abe-4931-b89e-352d7078c745",
+      "outcomeId": "23b1746c-70f6-4ae3-a461-2afcd7d2105a",
+      "line": "2.5",
+      "period": "first-half",
+      "externalMarketId": "gamma-kc-total-048f5e52",
+      "conditionId": "condition-kc-total-048f5e52",
+      "referenceTokenId": "token-kc-over-048f5e52"
+    }
+  },
+  "portfolioOpenOrder": {
+    "id": "1649d401-6cbe-4a12-a082-c5587fdb6f75",
+    "status": "OPEN",
+    "selection": {
+      "line": "2.5",
+      "period": "first-half",
+      "externalMarketId": "gamma-kc-total-048f5e52",
+      "referenceTokenId": "token-kc-over-048f5e52"
+    }
+  }
+}
