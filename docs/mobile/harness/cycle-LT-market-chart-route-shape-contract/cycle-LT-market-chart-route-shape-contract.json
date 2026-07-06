@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle LT",
+  "feature": "Market chart route shape contract",
+  "generatedAt": "2026-07-06T11:03:04.985Z",
+  "route": "/api/markets/:id/chart",
+  "contract": {
+    "validPayload": "valid Event Detail and Futures chart route payloads apply visible probability history",
+    "malformedPayload": "wrong market, wrong range, and malformed probabilities reject before visible chart state applies"
+  },
+  "assertions": {
+    "validEventDetailChartApplies": true,
+    "validFutureChartApplies": true,
+    "malformedProbabilityRejects": true,
+    "wrongMarketRejects": true,
+    "wrongRangeRejects": true
+  }
+}

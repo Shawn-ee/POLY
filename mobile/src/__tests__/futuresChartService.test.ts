@@ -53,6 +53,25 @@ describe("futures chart service", () => {
     ]);
   });
 
+  test("rejects malformed future chart route payloads before visible chart apply", async () => {
+    const getMarketChart = vi.fn(async () => ({
+      marketId: "other-market",
+      source: "market-outcome-snapshot",
+      range: "1H" as const,
+      ranges: futureChartRanges,
+      generatedAt: "2026-07-06T08:00:00.000Z",
+      lastUpdated: "2026-07-06T07:59:00.000Z",
+      emptyState: null,
+      outcomes: [{ id: "france", name: "France" }],
+      history: [
+        { outcomeId: "france", timestamp: "2026-07-06T07:58:00.000Z", price: 0.39, probability: 39 },
+      ],
+      series: {},
+    }));
+
+    await expect(loadFutureChartState({ getMarketChart } as unknown as PolyApi, market, "1H")).rejects.toThrow(/requested market world-cup-winner/);
+  });
+
   test("marks loading, empty, and error states for visible futures chart proof", () => {
     expect(applyFutureChartLoadingToMarket(market, "MAX")).toMatchObject({
       chartHistoryStatus: "loading",

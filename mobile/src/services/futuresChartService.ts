@@ -1,6 +1,7 @@
 import type { PolyApi } from "../api";
 import type { EventChartPoint, MarketChartRange } from "../types";
 import type { Market } from "../mocks/worldCup";
+import { assertMarketChartRoutePayloadShape } from "./marketChartRouteShapeService";
 
 export const futureChartRanges: MarketChartRange[] = ["1H", "1D", "1W", "1M", "MAX"];
 
@@ -28,6 +29,7 @@ export const loadFutureChartState = async (
   range: MarketChartRange,
 ): Promise<FutureChartLoadResult> => {
   const chart = await api.getMarketChart(market.id, range);
+  assertMarketChartRoutePayloadShape(chart, market.id, range);
   const chartHistory = futureChartHistoryFromMarketChart(chart);
   return {
     status: chartHistory.length > 0 ? "ready" : "empty",

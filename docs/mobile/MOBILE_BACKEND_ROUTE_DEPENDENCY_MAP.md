@@ -2345,3 +2345,16 @@ Cycle LS implementation notes:
 - `loadTicketQuotes` now validates the quote route envelope and quote rows before converting odds.
 - Required quote numeric fields must be finite, non-negative numbers or numeric strings, or `null`; optional size fields may be omitted.
 - Wrong-market quote payloads and malformed numeric fields reject. Bulk quote loading classifies those markets in `failedMarketIds`, so existing availability guards mark them unavailable instead of applying fallback odds.
+
+## Cycle LT - Market Chart Route Shape Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail chart route apply | `/api/markets/:id/chart?range=1D|1W` | GET | Public viewing | Path market id and selected chart range | `marketId`, `range`, `ranges[]`, `generatedAt`, `lastUpdated`, `emptyState`, `outcomes[]`, `history[].outcomeId/timestamp/price/probability` | `Market`, `Outcome`, `MarketOutcomeSnapshot`, provider history source | Embedded/local chart history remains fallback. Server-mode chart route now validates before applying visible history. | P2 optional chart-specific retry copy. |
+| Home Futures chart route apply | `/api/markets/:id/chart?range=1H|1D|1W|1M|MAX` | GET | Public viewing | Path market id and visible futures chart range | Same chart route fields as Event Detail | `Market`, `Outcome`, `MarketOutcomeSnapshot`, provider history source | Local futures chart remains fallback if route fails. Server-mode futures chart route validates before applying visible history. | P2 optional chart-specific retry copy. |
+
+Cycle LT implementation notes:
+
+- Added shared `assertMarketChartRoutePayloadShape` and applied it to Event Detail and Futures chart loaders.
+- The validator rejects wrong-market payloads, wrong-range payloads, malformed ranges, malformed identity fields, invalid `emptyState`, and non-finite/out-of-range chart history numbers.
+- Malformed chart route payloads reject before visible chart state is applied.

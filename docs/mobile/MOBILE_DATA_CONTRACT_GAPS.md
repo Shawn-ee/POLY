@@ -4550,6 +4550,35 @@ Future migration concern:
 
 - If the quote route adds visible spread, source, or freshness metadata, validate those fields before rendering or using them for submit decisions.
 
+## Cycle LT - Market Chart Route Shape Contract
+
+Closed or narrowed:
+
+- Event Detail and Home Futures server-mode chart loaders now validate `/api/markets/:id/chart` payloads before applying visible chart history.
+- The shared validator requires matching `marketId`, matching selected range, valid range options, generated/last-updated metadata, valid empty state, outcome identities, and finite chart history price/probability points.
+- Wrong-market, wrong-range, and malformed history payloads reject instead of becoming visible chart state.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for market chart route-shape validation.
+- P2: optional chart-specific retry/error copy.
+
+Schema mismatch:
+
+- No schema migration was required. The existing market chart route contract already carries the fields needed by visible Event Detail and Futures chart loaders.
+
+Route mismatch:
+
+- No focused route mismatch remains. Server-mode Event Detail and Futures chart loaders validate the backend route before visible state is applied.
+
+Temporary mock/static data:
+
+- Embedded/local chart history remains fallback/error-path behavior, but malformed server-mode route chart payloads are no longer applied as route-backed visible history.
+
+Future migration concern:
+
+- If selected-line chart switching becomes product scope, validate the selected `markets[].selection.chart` target before requesting/applying the chart route.
+
 ## Cycle LF - Portfolio Position Availability Contract
 
 Closed or narrowed:
