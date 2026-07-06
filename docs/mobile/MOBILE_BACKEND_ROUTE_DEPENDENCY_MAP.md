@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MX - Portfolio Value History Total Contract
+
+Cycle MX hardens Portfolio value-history point totals before visible chart state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MX-portfolio-value-history-total-contract/cycle-MX-portfolio-value-history-total-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_value_history_total_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioValueHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio value-history chart total consistency | `/api/portfolio/value-history?range=<range>` through `PolyApi.getPortfolioValueHistory()` | GET | Canonical API key/session with portfolio read access | Selected range | Point `value`, `cash`, `positionsValue`, and `pnl`; `value` must equal `cash + positionsValue` within currency tolerance; `pnl` may be negative | Wallet balance snapshots, position valuation snapshots, portfolio history projection | Mock/local Portfolio remains unchanged. Server-mode inconsistent point totals reject before visible chart state applies. | None for focused Portfolio value-history total contract. P2 optional total mismatch copy. |
+
 ## Cycle MW - Quote Price Bounds Contract
 
 Cycle MW hardens quote route price fields before visible ticket/card odds apply:

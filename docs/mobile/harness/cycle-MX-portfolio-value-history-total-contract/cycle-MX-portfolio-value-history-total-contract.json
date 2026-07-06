@@ -1,0 +1,17 @@
+{
+  "cycle": "Cycle MX",
+  "feature": "Portfolio value history total consistency contract",
+  "generatedAt": "2026-07-06T13:05:28.823Z",
+  "route": "/api/portfolio/value-history",
+  "contract": {
+    "validPayload": "Portfolio value-history point value must equal cash plus positionsValue within currency tolerance before visible chart state applies.",
+    "malformedPayload": "inconsistent value/cash/positionsValue totals reject before visible Portfolio chart state applies.",
+    "allowedLoss": "point pnl remains allowed to be negative."
+  },
+  "assertions": {
+    "exactTotalAccepted": true,
+    "currencyToleranceAccepted": true,
+    "inconsistentTotalRejects": true,
+    "negativePnlRemainsAllowed": true
+  }
+}

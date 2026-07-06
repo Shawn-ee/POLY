@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MX - Portfolio Value History Total Contract
+
+Closed or narrowed:
+
+- Portfolio value-history route validation now rejects points where `value` does not match `cash + positionsValue` within currency tolerance.
+- Visible Portfolio chart state no longer accepts internally inconsistent total/cash/position value points.
+- Negative point `pnl` remains allowed.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio value-history total contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio/value-history` `value`, `cash`, and `positionsValue` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio remains unchanged. Server-mode inconsistent point totals reject before visible chart state applies.
+
 ## Cycle MW - Quote Price Bounds Contract
 
 Closed or narrowed:

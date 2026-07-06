@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle MX
+
+Gate status: Pass
+
+Scope: Portfolio value-history total consistency contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-MX-portfolio-value-history-total-contract/cycle-MX-portfolio-value-history-total-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioValueHistoryService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-MX-portfolio-value-history-total-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio value-history route rejects points where total value does not match cash plus positions value before visible chart state applies.
+
 ## Cycle MW
 
 Gate status: Pass
@@ -118,6 +132,7 @@ Decision: pass for focused backend/data-contract scope. Server-mode Event Detail
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Portfolio value history total contract | Cycle MX | Pass for backend/data-contract scope | 0 for focused Portfolio value-history total scope | P2 optional Portfolio value-history-specific total mismatch copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MX-portfolio-value-history-total-contract/cycle-MX-portfolio-value-history-total-contract.json`; tests: `mobile/src/__tests__/portfolioValueHistoryService.test.ts`; audit: `mobile/docs/audits/cycle-MX-portfolio-value-history-total-contract.md` | Server-mode Portfolio value-history route now rejects points where total value does not match cash plus positions value before visible chart state applies. |
 | Quote price bounds contract | Cycle MW | Pass for backend/data-contract scope | 0 for focused quote price bounds scope | P2 optional quote-specific retry/error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MW-quote-price-bounds-contract/cycle-MW-quote-price-bounds-contract.json`; tests: `mobile/src/__tests__/quoteService.test.ts`; audit: `mobile/docs/audits/cycle-MW-quote-price-bounds-contract.md` | Server-mode quote routes now reject above-one price fields before visible ticket/card odds apply while preserving large depth sizes and failed-market guard behavior. |
 | Market chart price bounds contract | Cycle MV | Pass for backend/data-contract scope | 0 for focused chart price bounds scope | P2 optional field-specific chart price error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MV-market-chart-price-bounds-contract/cycle-MV-market-chart-price-bounds-contract.json`; tests: `mobile/src/__tests__/marketChartRouteShapeService.test.ts`, `mobile/src/__tests__/marketChartService.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`; audit: `mobile/docs/audits/cycle-MV-market-chart-price-bounds-contract.md` | Server-mode Event Detail/Futures chart routes now reject negative and above-one history prices before visible chart state applies. |
 | Portfolio open order lifecycle contract | Cycle MU | Pass for backend/data-contract scope | 0 for focused Portfolio open-order lifecycle scope | P2 optional field-specific Portfolio open-order lifecycle error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-MU-portfolio-open-order-lifecycle-contract/cycle-MU-portfolio-open-order-lifecycle-contract.json`; tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`; audit: `mobile/docs/audits/cycle-MU-portfolio-open-order-lifecycle-contract.md` | Server-mode Portfolio snapshot now rejects open orders where returned remaining shares exceed original order size before visible Orders state applies. |

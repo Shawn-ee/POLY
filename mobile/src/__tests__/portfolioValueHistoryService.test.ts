@@ -64,4 +64,24 @@ describe("portfolio value history service", () => {
     await expect(loadPortfolioValueHistory({ getPortfolioValueHistory: invalidEmptyState })).rejects.toThrow("invalid emptyState");
     await expect(loadPortfolioValueHistory({ getPortfolioValueHistory: negativeValue })).rejects.toThrow("invalid point");
   });
+
+  test("accepts value history point totals within currency tolerance", async () => {
+    const getPortfolioValueHistory = vi.fn(async () => ({
+      ...validHistory,
+      points: [{ ...validHistory.points[0], value: 140.87, cash: 40.86, positionsValue: 100 }],
+    }));
+
+    await expect(loadPortfolioValueHistory({ getPortfolioValueHistory })).resolves.toMatchObject({
+      points: [{ value: 140.87, cash: 40.86, positionsValue: 100 }],
+    });
+  });
+
+  test("rejects inconsistent value history point totals before visible chart state", async () => {
+    const getPortfolioValueHistory = vi.fn(async () => ({
+      ...validHistory,
+      points: [{ ...validHistory.points[0], value: 150, cash: 40.86, positionsValue: 100 }],
+    }));
+
+    await expect(loadPortfolioValueHistory({ getPortfolioValueHistory })).rejects.toThrow("inconsistent point total");
+  });
 });

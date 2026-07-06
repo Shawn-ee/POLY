@@ -13,6 +13,9 @@ const isNonNegativeNumber = (value: unknown): value is number =>
 
 const isNullableString = (value: unknown) => value === null || typeof value === "string";
 
+const totalsMatch = (value: number, cash: number, positionsValue: number) =>
+  Math.abs(value - (cash + positionsValue)) <= 0.01;
+
 export async function loadPortfolioValueHistory({
   getPortfolioValueHistory,
   range = "1D",
@@ -53,6 +56,9 @@ export async function loadPortfolioValueHistory({
       !isNumber(point.pnl)
     ) {
       throw new Error("Malformed portfolio value history: invalid point.");
+    }
+    if (!totalsMatch(point.value, point.cash, point.positionsValue)) {
+      throw new Error("Malformed portfolio value history: inconsistent point total.");
     }
   }
   return history;
