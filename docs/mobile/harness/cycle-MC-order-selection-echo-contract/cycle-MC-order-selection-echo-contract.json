@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle MC",
+  "feature": "Order submit selection echo contract",
+  "generatedAt": "2026-07-06T11:46:21.859Z",
+  "route": "/api/orders",
+  "contract": {
+    "legacyConfirmation": "server responses that only confirm order id remain accepted and use the mobile request selection",
+    "validSelectionEcho": "valid backend selection echoes are preserved for visible order state",
+    "malformedSelectionEcho": "malformed echoed selection fields reject before visible order state applies"
+  },
+  "assertions": {
+    "idOnlyLegacySubmitRemainsAccepted": true,
+    "validFutureSelectionEchoPreserved": true,
+    "validLineSelectionEchoPreserved": true,
+    "malformedFutureEchoRejects": true,
+    "malformedLineEchoRejects": true
+  }
+}

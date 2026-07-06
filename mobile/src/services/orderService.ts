@@ -1,6 +1,7 @@
 import { PolyApi } from "../api";
 import type { BinaryContractSide, TicketSelection } from "../components/TradeTicket";
 import type { Event, Market, Outcome } from "../mocks/worldCup";
+import { portfolioSelectionFromBackend } from "./portfolioSelectionService";
 
 export type OrderMode = "mock" | "server";
 
@@ -183,17 +184,23 @@ const matchingSelectionValue = (left: unknown, right: unknown) => {
 
 const validateServerSelectionEcho = (expected: TicketSelection, response: ServerOrderResponse): TicketSelection | undefined => {
   const echoed = response.order?.selection ?? response.selection;
-  if (!selectionRequiresServerEcho(expected)) return echoed as TicketSelection | undefined;
+  if (!selectionRequiresServerEcho(expected)) {
+    return portfolioSelectionFromBackend(echoed, "order.selection", "Order submit selection response");
+  }
   if (!echoed || typeof echoed !== "object") {
     throw new Error("Order submit did not confirm the selected market line.");
   }
-  const mismatched = criticalSelectionFields.find((field) => !matchingSelectionValue(expected[field], echoed[field]));
+  const confirmedEcho = portfolioSelectionFromBackend(echoed, "order.selection", "Order submit selection response");
+  if (!confirmedEcho) {
+    throw new Error("Order submit did not confirm the selected market line.");
+  }
+  const mismatched = criticalSelectionFields.find((field) => !matchingSelectionValue(expected[field], confirmedEcho[field]));
   if (mismatched) {
     throw new Error(`Order submit changed selected market line (${mismatched}).`);
   }
   return {
     ...expected,
-    ...echoed,
+    ...confirmedEcho,
   } as TicketSelection;
 };
 

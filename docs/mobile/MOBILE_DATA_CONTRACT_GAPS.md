@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MC - Order Selection Echo Contract
+
+Closed or narrowed:
+
+- Server-mode Trade Ticket order submit now validates any backend selection echo before applying visible submitted-order state.
+- Id-only legacy submit confirmations remain accepted and use the mobile request selection.
+- Line-market submits still require a backend echo and still reject changed critical fields.
+- Malformed echoed selection labels, market types, contract sides, limit sides, and limit numbers now reject clearly.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused order selection echo contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing order response selection snapshots support this contract when present.
+
+Temporary mock/static data:
+
+- Mock/local order mode remains unchanged. Server-mode malformed order selection echoes no longer leak into visible order state.
+
 ## Cycle MB - Portfolio Selection Identity Contract
 
 Closed or narrowed:

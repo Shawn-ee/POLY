@@ -58,4 +58,10 @@ describe("portfolio selection route shape contract", () => {
       "Portfolio selection response had invalid openOrders[].selection.limitShares.",
     );
   });
+
+  test("uses a custom route error prefix when provided", () => {
+    expect(() => portfolioSelectionFromBackend({ ...validSelection, limitPrice: -0.01 }, "order.selection", "Order submit selection response")).toThrow(
+      "Order submit selection response had invalid order.selection.limitPrice.",
+    );
+  });
 });

@@ -484,6 +484,82 @@ describe("ticket order service", () => {
     });
   });
 
+  test("rejects malformed non-line selection echo before applying server order state", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-order-bad-selection",
+        selection: {
+          marketType: "future",
+          marketId: "world-cup-winner",
+          outcomeId: "france",
+          displayLabel: "",
+          contractSide: "yes",
+        },
+      },
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        market,
+        outcome,
+        side: "buy",
+        amount: 50,
+      }),
+    ).rejects.toThrow("Order submit selection response had invalid order.selection.displayLabel.");
+  });
+
+  test("rejects malformed selected-line echo fields before applying server order state", async () => {
+    const placeLimitOrder = vi.fn(async () => ({
+      order: {
+        id: "server-line-order-bad-limit",
+        selection: {
+          marketType: "totals",
+          marketId: "mexico-ecuador-total-2.5-1H",
+          outcomeId: "mexico-ecuador-total-2.5-1H-over",
+          line: "2.5",
+          period: "1st Half",
+          displayLabel: "Over 2.5 1H",
+          contractSide: "yes",
+          limitPrice: -0.01,
+        },
+      },
+    }));
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      submitTicketOrder({
+        mode: "server",
+        api,
+        event,
+        market: {
+          id: "mexico-ecuador-total-2.5-1H",
+          title: "Total 2.5 1H",
+          zhTitle: "Total 2.5 1H",
+          type: "game-line" as const,
+          outcomes: [],
+        },
+        outcome: {
+          id: "mexico-ecuador-total-2.5-1H-over",
+          label: "Over 2.5 1H",
+          zhLabel: "Over 2.5 1H",
+          probability: 52,
+          color: "#0a8f61",
+        },
+        selection: {
+          marketType: "totals",
+          line: "2.5",
+          period: "1st Half",
+          displayLabel: "Over 2.5 1H",
+        },
+        side: "buy",
+        amount: 25,
+      }),
+    ).rejects.toThrow("Order submit selection response had invalid order.selection.limitPrice.");
+  });
+
   test("derives filled size from size minus remaining when fills are omitted", async () => {
     const placeLimitOrder = vi.fn(async () => ({
       order: {

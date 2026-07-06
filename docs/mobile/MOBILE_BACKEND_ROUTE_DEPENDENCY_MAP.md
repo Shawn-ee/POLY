@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MC - Order Selection Echo Contract
+
+Cycle MC hardens Trade Ticket order submit selection echoes before visible submitted-order state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MC-order-selection-echo-contract/cycle-MC-order-selection-echo-contract.json`.
+- Proof script: `scripts/prove_mobile_order_selection_echo_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSelectionService.test.ts`, `mobile/src/__tests__/orderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trade Ticket order submit selection echo | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Order body with selected market/outcome, side, contract side, price, size, and `selection` snapshot | Nested `order.id` or top-level `id`; optional `order.selection`/top-level `selection` must have valid selected-market identity when present; line-market submits still require an echo that matches critical selected fields | `Order`, `ApiOrderRequest`, `Market`, `Outcome`, selection snapshot serializers | Mock order mode remains local. Server-mode id-only legacy confirmations remain accepted, but malformed selection echoes reject before visible order state applies. | None for focused order selection echo contract. P2 optional route-specific Trade Ticket error copy. |
+
 ## Cycle MB - Portfolio Selection Identity Contract
 
 Cycle MB hardens Portfolio selection identity so visible positions, open orders, recent trades, and canceled order rows cannot silently downgrade malformed backend market data:
