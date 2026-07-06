@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Cancel route shape contract | Cycle LW | Pass for backend/data-contract scope | 0 for focused cancel route-shape scope | P2 optional richer cancel-race copy/action | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LW-cancel-route-shape-contract/cycle-LW-cancel-route-shape-contract.json`; tests: `mobile/src/__tests__/cancelOrderRouteShapeService.test.ts`, `mobile/src/__tests__/openOrderService.test.ts`; audit: `mobile/docs/audits/cycle-LW-cancel-route-shape-contract.md` | Portfolio server-mode cancel now validates `/api/orders/:id` response identity and `CANCELED` status before visible cancel confirmation. |
 | Event Detail route shape contract | Cycle LV | Pass for backend/data-contract scope | 0 for focused Event Detail route-shape scope | P2 optional Event Detail route-specific retry/error copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LV-event-detail-route-shape-contract/cycle-LV-event-detail-route-shape-contract.json`; tests: `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`; audit: `mobile/docs/audits/cycle-LV-event-detail-route-shape-contract.md` | Event Detail hydration now validates backend game rule fields, supported market types, market rows, and outcome quote fields before visible route-backed detail state is applied. |
 | Orderbook route shape contract | Cycle LU | Pass for backend/data-contract scope | 0 for focused orderbook route-shape scope | P2 optional depth-specific retry copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LU-orderbook-route-shape-contract/cycle-LU-orderbook-route-shape-contract.json`; tests: `mobile/src/__tests__/orderbookRouteShapeService.test.ts`, `mobile/src/__tests__/marketDepthService.test.ts`; audit: `mobile/docs/audits/cycle-LU-orderbook-route-shape-contract.md` | Event Detail selected-market depth now validates `/api/orderbook/:marketId/book` identity, availability, empty-state, and level arrays before visible route-backed depth is applied. |
 | Market chart route shape contract | Cycle LT | Pass for backend/data-contract scope | 0 for focused chart route-shape scope | P2 optional chart-specific retry copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LT-market-chart-route-shape-contract/cycle-LT-market-chart-route-shape-contract.json`; tests: `mobile/src/__tests__/marketChartRouteShapeService.test.ts`, `mobile/src/__tests__/marketChartService.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`; audit: `mobile/docs/audits/cycle-LT-market-chart-route-shape-contract.md` | Event Detail and Futures chart loaders now validate `/api/markets/:id/chart` identity/range/history shape before visible chart state is applied. |
@@ -95,6 +96,40 @@ Fail the feature when:
 | Current live event detail visible provider behavior and structural parity | Cycle EG integrated | Partial; PM-GAP-084 remains open | 4 P0 status/provider-lifecycle proof areas remain | P1 fresh S23 recapture, broader real provider-backed family breadth, visible provider refresh lifecycle; P2 density/chart/orderbook/status polish | Reused stale/reference-only DQ-C Samsung S23 official Polymarket evidence; gate: `docs/mobile/audits/cycle-eg-c-live-event-visible-provider-gate.md` | Backend refresh lifecycle proof: `docs/mobile/harness/cycle-EG-A-provider-refresh-lifecycle.json`; Samsung tablet visible proof: `docs/mobile/harness/cycle-EG-B-visible-live-parity/cycle-EG-B-visible-live-parity-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EG-B-visible-live-parity/` and `docs/mobile/harness/cycle-EG-B-visible-live-parity/` | EG materially closes chart, line-selector, Book ladder, and ticket carry-through gaps for the selected Mexico/Ecuador Spread path. It remains partial because the Android run used contract-shaped fallback data and did not visibly prove ready/stale/refreshing/unavailable provider lifecycle states tied to the backend route in one run. |
 | Current live game page Book-origin snapshot durability after metadata drift | Cycle EF integrated | Pass for selected EF proof; PM-GAP-083 verified for selected path | 0 for selected EF gate | P1 repeat across real provider-backed line families, provider-refresh drift regression, official production history recapture; P2 Portfolio/history visual clarity | Reused EE/ED checked-in proof and DQ-C Polymarket reference; gate: `docs/mobile/audits/cycle-ef-c-snapshot-durability-gate.md` | Backend proof: `docs/mobile/harness/cycle-EF-A-snapshot-durability.json`; Samsung tablet proof: `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/cycle-EF-snapshot-durability-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EF-integrated-snapshot-durability/` and `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/` | Integrated proof mutates current market/outcome/provider metadata after order/fill creation, then proves backend and Android Portfolio/activity still render order-time/fill-time selected Book identity with no fallback/default reconstruction and explicit fake-token labels. |
 | Current live game page Book-origin open/cancel/fill status and selection snapshots | Cycle EE integrated | Pass for selected PM-GAP-082 gate | 0 for selected EE gate | P1 real provider-backed line-family status matrix, official production confirmation/cancel/fill recapture, durability checks after metadata changes; P2 Portfolio/history visual status polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook and location-gated ticket reference; ED/DX/DO/Portfolio checked-in lifecycle baselines; gate: `docs/mobile/audits/cycle-ee-c-book-order-status-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EE-integrated-book-order-status/cycle-EE-book-order-status-proof.json`; backend snapshot proof: `docs/mobile/harness/cycle-EE-A-book-order-status-snapshots.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EE-integrated-book-order-status/` and `docs/mobile/harness/cycle-EE-integrated-book-order-status/` | EE integrated proof shows the same Book-origin selected identity through open order, cancel/canceled status, filled position, recent activity/history, guarded backend selection snapshots, visible fake-token status labels, and no-fallback assertions. |
+
+## Cycle LW
+
+Gate status: Pass
+
+Lead Agent target: Ensure Portfolio server-mode cancel confirms only the same canceled order from `/api/orders/:id`.
+
+Reference Audit Agent: Backend/data-contract loop. Manual UI review is no longer required every cycle.
+
+Implementation Agent: Added cancel route-shape validation, wired server cancel through it, added focused tests, and generated harness proof.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LW-cancel-route-shape-contract.md`
+- `docs/mobile/harness/cycle-LW-cancel-route-shape-contract/cycle-LW-cancel-route-shape-contract.json`
+- `scripts/prove_mobile_cancel_route_shape_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LW-P0-01 | P0 | Pass | Same-order `CANCELED` response confirms server cancel. | N/A |
+| LW-P0-02 | P0 | Pass | Wrong-order cancel response rejects before visible confirm. | N/A |
+| LW-P0-03 | P0 | Pass | Non-canceled status rejects before visible confirm. | N/A |
+| LW-P0-04 | P0 | Pass | Malformed payload rejects before visible confirm. | N/A |
+| LW-P2-01 | P2 | Open | No richer inline cancel-race copy/action. | Optional later copy/action pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused cancel route shape contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional richer inline cancel-race copy/action.
 
 ## Cycle LV
 

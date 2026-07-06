@@ -1,5 +1,6 @@
 import type { PolyApi } from "../api";
 import type { OpenOrder, PortfolioActivity } from "../components/Portfolio";
+import { assertCancelOrderRoutePayloadShape } from "./cancelOrderRouteShapeService";
 import type { OrderMode } from "./orderService";
 
 export const openOrderCanceledActivity = (order: OpenOrder, timestamp: string): PortfolioActivity => ({
@@ -36,7 +37,9 @@ export const cancelOpenOrderOnServer = async ({
     return;
   }
   const response = await api.cancelOrder(order.id);
-  if (response.order?.id !== order.id || response.order?.status !== "CANCELED") {
+  try {
+    assertCancelOrderRoutePayloadShape(response, order.id);
+  } catch {
     throw new Error("Order cancel was not confirmed by the server.");
   }
 };

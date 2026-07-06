@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle LW - Cancel Route Shape Contract
+
+Cycle LW hardens the visible Portfolio cancel flow so server-mode cancel is confirmed only by the exact backend route shape the UI needs:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-LW-cancel-route-shape-contract/cycle-LW-cancel-route-shape-contract.json`.
+- Proof script: `scripts/prove_mobile_cancel_route_shape_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/cancelOrderRouteShapeService.test.ts`, `mobile/src/__tests__/openOrderService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio open-order cancel confirmation | `/api/orders/:id` through `PolyApi.cancelOrder()` | DELETE | Canonical API key/session with `orders:write` | None | `order.id` must match the visible open order id; `order.status` must be `CANCELED`; malformed, wrong-order, or non-canceled responses reject before visible cancel confirm | `Order`, order ownership/session auth, canonical cancel route | Mock mode remains optimistic. Server mode still waits for route confirmation and then refreshes Portfolio/history. | None for the focused cancel route-shape contract. P2 optional cancel-race copy/action. |
+
 ## Cycle LV - Event Detail Route Shape Contract
 
 Cycle LV hardens Event Detail hydration so visible game rules and market rows cannot be applied from malformed backend detail payloads:

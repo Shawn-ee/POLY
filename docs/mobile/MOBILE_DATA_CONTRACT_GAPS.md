@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LW - Cancel Route Shape Contract
+
+Closed or narrowed:
+
+- Server-mode Portfolio cancel now validates the `DELETE /api/orders/:id` response shape before treating cancel as confirmed.
+- Wrong order ids, non-`CANCELED` statuses, malformed payloads, or missing `order` objects reject through the existing cancel failure path.
+- Mock-mode cancel remains optimistic; server-mode cancel still waits for backend confirmation and refreshes Portfolio/history after success.
+- LW proof verifies valid same-order cancel, wrong-order rejection, non-canceled status rejection, and malformed payload rejection.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cancel route-shape contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing canonical cancel response `{ order: { id, status } }` supports the visible Portfolio cancel contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio cancel behavior remains unchanged. Server-mode cancel does not fall back to local optimistic confirmation.
+
 ## Cycle LV - Event Detail Route Shape Contract
 
 Closed or narrowed:

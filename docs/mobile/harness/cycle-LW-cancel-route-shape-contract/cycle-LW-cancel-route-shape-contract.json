@@ -1,0 +1,27 @@
+{
+  "cycle": "Cycle LW",
+  "feature": "Cancel route shape contract",
+  "generatedAt": "2026-07-06T11:21:18.986Z",
+  "route": "/api/orders/:id",
+  "contract": {
+    "validPayload": "server cancel is confirmed only by the same order id with status CANCELED",
+    "malformedPayload": "wrong order, non-canceled status, or malformed payload rejects before Portfolio treats cancel as confirmed"
+  },
+  "assertions": {
+    "sameOrderCanceledConfirmationAccepted": true,
+    "wrongOrderRejected": true,
+    "nonCanceledStatusRejected": true,
+    "malformedPayloadRejected": true
+  },
+  "order": {
+    "id": "server-open-order-lw",
+    "title": "LW cancel proof",
+    "outcome": "YES",
+    "side": "buy",
+    "status": "OPEN",
+    "price": 0.44,
+    "remaining": 50,
+    "remainingShares": 50,
+    "orderValue": 22
+  }
+}

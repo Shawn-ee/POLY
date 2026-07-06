@@ -69,4 +69,13 @@ describe("open order service", () => {
       "Order cancel was not confirmed by the server.",
     );
   });
+
+  test("rejects server-mode cancel when the backend returns a malformed payload", async () => {
+    const cancelOrder = vi.fn(async () => ({ order: null }));
+    const api = { cancelOrder } as unknown as PolyApi;
+
+    await expect(cancelOpenOrderOnServer({ mode: "server", api, order })).rejects.toThrow(
+      "Order cancel was not confirmed by the server.",
+    );
+  });
 });
