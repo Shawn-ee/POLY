@@ -1,0 +1,18 @@
+{
+  "cycle": "Cycle LR",
+  "feature": "Home Search Futures event list route shape contract",
+  "generatedAt": "2026-07-06T10:53:23.690Z",
+  "route": "/api/events?includeMobileMarkets=1",
+  "contract": {
+    "sharedValidator": "Home, Search, Live, and Futures route pages validate compact event-list shape before normalization",
+    "malformedPayload": "missing market arrays, malformed cursor metadata, and malformed numeric quote fields reject before visible state applies"
+  },
+  "assertions": {
+    "validHomePageAccepted": true,
+    "validSearchPageAccepted": true,
+    "validFuturesPageAccepted": true,
+    "missingMarketsRejects": true,
+    "malformedCursorRejects": true,
+    "malformedQuoteRejects": true
+  }
+}

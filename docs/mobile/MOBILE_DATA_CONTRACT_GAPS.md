@@ -4492,6 +4492,35 @@ Future migration concern:
 
 - If compact Live events add new visible fields, add validator coverage for those fields before rendering them.
 
+## Cycle LR - Event List Route Shape Contract
+
+Closed or narrowed:
+
+- Home, Search, Live, and Futures server-mode event-list responses now share `assertEventListRoutePayloadShape`.
+- The shared validator requires event identity/title/status/timing, compact market arrays, compact outcome identity/labels/tradability, finite outcome price/quote fields, and well-shaped cursor/page metadata.
+- Home/Search/Futures no longer normalize `/api/events` payloads before route shape validation, preventing fallback-derived cards or pagination state when the route payload is malformed.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for Home/Search/Futures event-list route-shape validation.
+- P2: optional surface-specific retry/error copy for Home/Futures malformed route payloads.
+
+Schema mismatch:
+
+- No schema migration was required. The existing compact `/api/events?includeMobileMarkets=1` response already contains the fields needed by visible event-list cards.
+
+Route mismatch:
+
+- No focused route mismatch remains. Home, Search, Live, and Futures all validate the same compact event-list contract before visible state is applied.
+
+Temporary mock/static data:
+
+- Local/offline Home, Search, Live, and Futures data remain local-only fallback behavior and are not used to accept malformed server-mode route pages.
+
+Future migration concern:
+
+- If event-list cards expose additional backend-owned fields, add validator coverage in `eventListRouteShapeService` before rendering them.
+
 ## Cycle LF - Portfolio Position Availability Contract
 
 Closed or narrowed:

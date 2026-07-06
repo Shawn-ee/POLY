@@ -40,6 +40,7 @@ import { resolveAccountBootstrapResults, type AccountBootstrapStatus } from "./s
 import { loadAccountNavigation, type AccountNavigationItemResult } from "./src/services/accountNavigationService";
 import { loadAccountProfile } from "./src/services/accountProfileService";
 import { loadEventDetailForCard } from "./src/services/eventDetailHydrationService";
+import { assertEventListRoutePayloadShape } from "./src/services/eventListRouteShapeService";
 import { loadLiveEventFeed } from "./src/services/liveEventFeedService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
 import { applyServerPortfolioState } from "./src/services/portfolioStateApplyService";
@@ -991,6 +992,7 @@ export default function App() {
         return;
       }
       const payload = await api.listWorldCupEvents({ limit: HOME_EVENT_PAGE_SIZE, cursor, statusGroup: homeStatusGroup, eventIds: homeSavedEventIds });
+      assertEventListRoutePayloadShape(payload);
       const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
@@ -1091,6 +1093,7 @@ export default function App() {
         return;
       }
       const payload = await api.listWorldCupEvents({ limit: SEARCH_EVENT_PAGE_SIZE, cursor, search, statusGroup, eventIds: searchSavedEventIds, sortBy });
+      assertEventListRoutePayloadShape(payload);
       const nextCursor = payload.nextCursor ?? payload.page?.nextCursor ?? null;
       const summaryEvents = payload.events
         .map((event) => normalizeEventSummary(event, event.markets ?? []))
@@ -1183,6 +1186,7 @@ export default function App() {
     api.listWorldCupEvents({ limit: 10, marketType: "future" })
       .then(async (payload) => {
         if (cancelled || !mounted.current) return;
+        assertEventListRoutePayloadShape(payload);
         const backendFutures = payload.events
           .flatMap((event) => event.markets ?? [])
           .map(normalizeMarket)

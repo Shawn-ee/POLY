@@ -2319,3 +2319,17 @@ Cycle LQ implementation notes:
 - `loadLiveEventFeed` validates the backend page, event, market, outcome, cursor, and page metadata shape before applying route data.
 - Outcome `price`, `bestBid`, `bestAsk`, `bestBidSize`, and `bestAskSize` must be finite numeric values or null/blank.
 - Malformed Live route payloads reject before the Live tab can render partial cards or fallback-derived odds.
+
+## Cycle LR - Event List Route Shape Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home event list apply | `/api/events?includeMobileMarkets=1` | GET | Public viewing | Query params: sport/league filters, optional status/saved ids, limit, cursor | `events[]`, compact `markets[]`, compact `outcomes[]`, outcome prices/quotes/tradability, `nextCursor`, `page` | `Event`, `Market`, `Outcome`; compact mobile event list read model | Local/offline Home remains local. Server mode validates route shape before normalizing Home cards. | P2 optional Home-specific retry/error copy. |
+| Search event list apply | `/api/events?includeMobileMarkets=1&search=...` | GET | Public viewing | Query params: search, saved ids, status group, sort, limit, cursor | `events[]`, compact `markets[]`, compact `outcomes[]`, outcome prices/quotes/tradability, `nextCursor`, `page` | `Event`, `Market`, `Outcome`; compact mobile event list read model | Search server failures show existing unavailable copy. Server mode validates route shape before applying results. | P2 optional field-level Search error copy. |
+| Home futures list apply | `/api/events?marketType=future&includeMobileMarkets=1` | GET | Public viewing | Query params: `marketType=future`, limit | Futures/outright compact `markets[]` and outcome price/quote fields | `Event`, `Market`, `Outcome`; future/outright market filter | Local futures remain local if the route is unavailable. Malformed server payload is ignored instead of applied. | P2 optional futures-specific error copy. |
+
+Cycle LR implementation notes:
+
+- Added shared `assertEventListRoutePayloadShape` and applied it to Home, Search, Live, and Futures event-list route responses.
+- The validator rejects missing event market arrays, malformed page cursors, and non-finite outcome price/quote fields before normalization.
+- This prevents Home/Search/Futures from applying fallback odds or partial route cards when `/api/events` returns malformed compact mobile data.
