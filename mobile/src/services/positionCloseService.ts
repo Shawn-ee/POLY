@@ -11,7 +11,7 @@ export type ClosePositionInput = {
 
 const hasAvailableShares = (position: Position) => {
   const shares = typeof position.shares === "number" ? position.shares : undefined;
-  return Boolean(shares && shares > 0);
+  return Boolean(shares && Number.isFinite(shares) && shares > 0);
 };
 
 const closePrice = (position: Position) => {
@@ -39,7 +39,7 @@ export const cashOutEstimate = (position: Position) => {
 
 const closeSize = (position: Position) => {
   const shares = typeof position.shares === "number" ? position.shares : undefined;
-  return shares && shares > 0 ? shares.toFixed(2) : undefined;
+  return shares && Number.isFinite(shares) && shares > 0 ? shares.toFixed(2) : undefined;
 };
 
 export const closePositionOnServer = async ({ mode, api, position }: ClosePositionInput): Promise<void> => {

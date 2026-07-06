@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NX
+
+Gate status: Pass
+
+Scope: Cashout finite shares contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NX-cashout-finite-shares-contract/cycle-NX-cashout-finite-shares-contract.json`
+- Focused tests: `mobile/src/__tests__/positionCloseService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NX-cashout-finite-shares-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode cashout rejects zero, `NaN`, and infinite shares before deriving the full-position SELL size or calling `/api/orders`.
+
 ## Cycle NW
 
 Gate status: Pass

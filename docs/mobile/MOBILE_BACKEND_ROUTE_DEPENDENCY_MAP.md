@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NX - Cashout Finite Shares Contract
+
+Cycle NX hardens server-mode cashout share quantities before deriving the full-position SELL order size:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NX-cashout-finite-shares-contract/cycle-NX-cashout-finite-shares-contract.json`.
+- Proof script: `scripts/prove_mobile_cashout_finite_shares_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/positionCloseService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio full-position cashout finite shares | `/api/orders` through `PolyApi.placeLimitOrder()` | POST | Canonical API key/session with `orders:write` | Market id, outcome id, side `SELL`, bounded current price, and finite positive full-position shares | Returned order id/status/lifecycle after full-position size guard passes | `Order`, `Position`, matching/reservation service | Mock/local Portfolio remains unchanged. Server-mode zero, NaN, or infinite shares reject before route call. | None for focused cashout finite-shares contract. P2 optional invalid-position copy. |
+
 ## Cycle NW - Trade Ticket Order Amount Contract
 
 Cycle NW hardens Trade Ticket order amount before server-mode submit:

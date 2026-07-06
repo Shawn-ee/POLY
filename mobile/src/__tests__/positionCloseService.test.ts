@@ -24,6 +24,8 @@ describe("position close service", () => {
     expect(canCashOutPosition(position)).toBe(true);
     expect(canCashOutPosition({ ...position, shares: 0 })).toBe(false);
     expect(canCashOutPosition({ ...position, shares: undefined })).toBe(false);
+    expect(canCashOutPosition({ ...position, shares: Number.NaN })).toBe(false);
+    expect(canCashOutPosition({ ...position, shares: Number.POSITIVE_INFINITY })).toBe(false);
     expect(canCashOutPosition({ ...position, currentPrice: undefined })).toBe(false);
     expect(canCashOutPosition({ ...position, currentPrice: 1.01 })).toBe(false);
     expect(canCashOutPosition({ ...position, mode: "mock", shares: undefined })).toBe(true);
@@ -121,6 +123,33 @@ describe("position close service", () => {
         position: {
           ...position,
           shares: 0,
+        },
+      }),
+    ).rejects.toThrow("Cash out requires an open position with available shares.");
+    expect(placeLimitOrder).not.toHaveBeenCalled();
+  });
+
+  test("rejects server cashout with non-finite shares before calling the API", async () => {
+    const placeLimitOrder = vi.fn();
+    const api = { placeLimitOrder } as unknown as PolyApi;
+
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position: {
+          ...position,
+          shares: Number.POSITIVE_INFINITY,
+        },
+      }),
+    ).rejects.toThrow("Cash out requires an open position with available shares.");
+    await expect(
+      closePositionOnServer({
+        mode: "server",
+        api,
+        position: {
+          ...position,
+          shares: Number.NaN,
         },
       }),
     ).rejects.toThrow("Cash out requires an open position with available shares.");

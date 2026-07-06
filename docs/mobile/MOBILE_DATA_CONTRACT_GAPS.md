@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NX - Cashout Finite Shares Contract
+
+Closed or narrowed:
+
+- Server-mode cashout now requires finite positive position shares before deriving the full-position SELL order size.
+- Zero, `NaN`, or infinite shares reject before `/api/orders` is called.
+- Existing full-size backend confirmation still verifies the server accepted the same full-position size.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cashout finite-shares contract.
+
+Schema mismatch:
+
+- No schema migration was made. This cycle guards mobile cashout requests before the existing `/api/orders` route.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio behavior remains unchanged. Server-mode malformed position share quantities reject before route call.
+
 ## Cycle NW - Trade Ticket Order Amount Contract
 
 Closed or narrowed:
