@@ -96,6 +96,23 @@ describe("market depth service", () => {
     expect(hydrated.orderbookAvailability?.status).toBe("suspended");
   });
 
+  test("rejects malformed orderbook depth before applying route-backed rows", async () => {
+    const event = worldCupEvents.find((item) => item.status === "live")!;
+    const getOrderbook = vi.fn(async () => ({
+      marketId: "france-argentina-live",
+      outcomeId: null,
+      generatedAt: "2026-06-15T12:00:00.000Z",
+      emptyState: null,
+      levels: [
+        { outcomeId: "australia", side: "bid" as const, price: 0.4, shares: -120, total: 48 },
+      ],
+      bids: [],
+      asks: [],
+    }));
+
+    await expect(loadMarketDepthState({ getOrderbook } as unknown as PolyApi, event)).rejects.toThrow(/malformed levels shares/);
+  });
+
   test("preserves explicit empty and error states", () => {
     const event = worldCupEvents.find((item) => item.status === "live")!;
     const empty = applyDepthStateToEvent(event, {

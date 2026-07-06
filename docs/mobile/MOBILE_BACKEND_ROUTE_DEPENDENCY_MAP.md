@@ -2358,3 +2358,15 @@ Cycle LT implementation notes:
 - Added shared `assertMarketChartRoutePayloadShape` and applied it to Event Detail and Futures chart loaders.
 - The validator rejects wrong-market payloads, wrong-range payloads, malformed ranges, malformed identity fields, invalid `emptyState`, and non-finite/out-of-range chart history numbers.
 - Malformed chart route payloads reject before visible chart state is applied.
+
+## Cycle LU - Orderbook Route Shape Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail selected-market depth apply | `/api/orderbook/:marketId/book?maxLevels=24` | GET | Public viewing | Path market id and max levels | `marketId`, `outcomeId`, `generatedAt`, `availability`, `emptyState`, `levels[]`, `bids[]`, `asks[]`; level `outcomeId/side/price/shares/total`; bid/ask `outcomeId/price/size` | `Market`, `Outcome`, local orderbook rows, provider depth snapshots, provider quote snapshots | Embedded/local depth remains fallback. Server-mode selected depth validates route shape before applying visible depth. | P2 optional depth-specific retry copy. |
+
+Cycle LU implementation notes:
+
+- Added shared `assertOrderbookRoutePayloadShape` and applied it to Event Detail depth loading.
+- The validator rejects wrong-market payloads, malformed availability state, malformed empty state, malformed level arrays, and non-finite/negative price/share/total values.
+- Malformed depth payloads reject before route-backed rows are written into visible market depth state.

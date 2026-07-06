@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle LU",
+  "feature": "Orderbook route shape contract",
+  "generatedAt": "2026-07-06T11:07:31.769Z",
+  "route": "/api/orderbook/:marketId/book",
+  "contract": {
+    "validPayload": "valid selected-market orderbook payloads apply visible route-backed depth",
+    "malformedPayload": "wrong market, malformed levels, and malformed availability reject before visible depth applies"
+  },
+  "assertions": {
+    "validDepthApplies": true,
+    "wrongMarketRejects": true,
+    "malformedLevelRejects": true,
+    "malformedAvailabilityRejects": true
+  }
+}

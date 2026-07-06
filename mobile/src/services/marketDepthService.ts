@@ -1,6 +1,7 @@
 import type { PolyApi } from "../api";
 import type { OrderbookAvailability, OrderbookBookLevel } from "../types";
 import type { Event, Market } from "../mocks/worldCup";
+import { assertOrderbookRoutePayloadShape } from "./orderbookRouteShapeService";
 
 export type MarketDepthLoadResult = {
   status: "ready" | "empty";
@@ -22,6 +23,7 @@ export const loadMarketDepthState = async (api: PolyApi, event: Event, marketId?
     return { status: "empty", marketId: null, lastUpdated: null, emptyState: "no-depth", levels: [] };
   }
   const book = await api.getOrderbook(market.id, { maxLevels: 24 });
+  assertOrderbookRoutePayloadShape(book, market.id);
   return {
     status: book.levels.length > 0 ? "ready" : "empty",
     marketId: book.marketId,

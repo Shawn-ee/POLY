@@ -4579,6 +4579,35 @@ Future migration concern:
 
 - If selected-line chart switching becomes product scope, validate the selected `markets[].selection.chart` target before requesting/applying the chart route.
 
+## Cycle LU - Orderbook Route Shape Contract
+
+Closed or narrowed:
+
+- Event Detail selected-market depth now validates `/api/orderbook/:marketId/book` payloads before applying visible route-backed depth.
+- The validator requires matching `marketId`, generated time, valid empty state, valid availability metadata, and finite/non-negative depth level values.
+- Wrong-market, malformed availability, and malformed level payloads reject instead of becoming visible route-backed depth rows.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for selected orderbook route-shape validation.
+- P2: optional depth-specific retry/error copy.
+
+Schema mismatch:
+
+- No schema migration was required. The existing orderbook route response already carries selected-market identity, availability, and level arrays used by the mobile UI.
+
+Route mismatch:
+
+- No focused route mismatch remains. Server-mode Event Detail depth loading validates the selected orderbook route before visible state is applied.
+
+Temporary mock/static data:
+
+- Embedded/local depth remains fallback/error-path behavior, but malformed server-mode orderbook route payloads are no longer applied as route-backed visible depth.
+
+Future migration concern:
+
+- If Book/debug UI becomes primary again, validate additional route-owned selector/identity fields before rendering them as selectable controls.
+
 ## Cycle LF - Portfolio Position Availability Contract
 
 Closed or narrowed:
