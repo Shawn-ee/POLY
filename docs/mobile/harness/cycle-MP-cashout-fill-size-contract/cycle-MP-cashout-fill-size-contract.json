@@ -1,0 +1,16 @@
+{
+  "cycle": "Cycle MP",
+  "feature": "Cashout fill size contract",
+  "generatedAt": "2026-07-06T12:32:25.707Z",
+  "route": "/api/orders via server-mode cashout",
+  "contract": {
+    "validPayload": "Cashout confirmation total fill size must be less than or equal to order size when both are returned",
+    "malformedPayload": "fill total above order size rejects before Portfolio refresh treats cashout as accepted"
+  },
+  "assertions": {
+    "partialFillTotalAccepted": true,
+    "fullFillTotalAccepted": true,
+    "nestedFillTotalAboveSizeRejects": true,
+    "topLevelFillTotalAboveSizeRejects": true
+  }
+}

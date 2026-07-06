@@ -60,4 +60,14 @@ describe("position close route shape service", () => {
       },
     }, 500)).toThrow("remaining size above order size");
   });
+
+  test("rejects close confirmations with filled size above order size", () => {
+    expect(() => assertPositionCloseOrderResponseShape({
+      order: {
+        id: "close-order-1",
+        size: "500.00",
+      },
+      fills: [{ size: "250.50" }, { size: "250.00" }],
+    }, 500)).toThrow("filled size above order size");
+  });
 });

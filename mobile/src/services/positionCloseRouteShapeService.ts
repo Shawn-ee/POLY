@@ -43,11 +43,15 @@ export function assertPositionCloseOrderResponseShape(payload: unknown, expected
     if (!Array.isArray(payload.fills)) {
       throw new Error("Cash out order response had invalid fills.");
     }
+    let filledSize = 0;
     payload.fills.forEach((fill, index) => {
       if (!isRecord(fill)) {
         throw new Error("Cash out order response had invalid fills.");
       }
-      optionalFiniteNumber(fill.size, `fills[${index}].size`);
+      filledSize += optionalFiniteNumber(fill.size, `fills[${index}].size`) ?? 0;
     });
+    if (confirmedSize !== undefined && filledSize > confirmedSize) {
+      throw new Error("Cash out order response had filled size above order size.");
+    }
   }
 }

@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MP - Cashout Fill Size Contract
+
+Closed or narrowed:
+
+- Server-mode cashout confirmation validation now rejects lifecycle payloads where total `fills[].size` exceeds returned order `size`.
+- The check applies to nested `order.size` and legacy top-level `size`.
+- Impossible overfilled confirmations no longer allow Portfolio refresh to treat cashout as accepted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused cashout fill size contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/orders` confirmation order and fill fields support this contract when returned.
+
+Temporary mock/static data:
+
+- Mock/local cashout remains unchanged. Server-mode impossible fill lifecycle rejects before Portfolio refresh.
+
 ## Cycle MO - Cashout Remaining Size Contract
 
 Closed or narrowed:
