@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MZ - Portfolio History Price Bounds Contract
+
+Cycle MZ hardens Portfolio history/activity price fields before visible History state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MZ-portfolio-history-price-bounds-contract/cycle-MZ-portfolio-history-price-bounds-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_history_price_bounds_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioHistoryService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio history activity price bounds | `/api/portfolio/history` through `PolyApi.getPortfolioHistory()` | GET | Canonical API key/session with portfolio read access | None beyond authenticated request | Canceled order `price` and recent trade execution price derived from `cost / shares`; both must be contract prices from `0` to `1` | `Order`, `Trade`, `Market`, `Outcome`, settlement/history read models | Mock/local Portfolio history remains unchanged. Server-mode invalid history activity prices reject before visible History state applies. | None for focused Portfolio history price bounds contract. P2 optional Portfolio History-specific malformed price copy. |
+
 ## Cycle MY - Portfolio Position Price Bounds Contract
 
 Cycle MY hardens Portfolio position price fields before visible Portfolio rows and cashout state apply:

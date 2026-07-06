@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MZ - Portfolio History Price Bounds Contract
+
+Closed or narrowed:
+
+- Portfolio history validation now rejects canceled order `price` values outside the contract price range `0` to `1`.
+- Recent trade activity now rejects inferred execution prices above `1` before visible History state applies.
+- Recent trades with nonzero cost and zero shares now reject instead of displaying a misleading zero-probability activity row.
+- Negative resolved-market P/L remains allowed.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio history price bounds contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/portfolio/history` canceled order and recent trade fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio history remains unchanged. Server-mode invalid history prices reject before visible History state applies.
+
 ## Cycle MY - Portfolio Position Price Bounds Contract
 
 Closed or narrowed:

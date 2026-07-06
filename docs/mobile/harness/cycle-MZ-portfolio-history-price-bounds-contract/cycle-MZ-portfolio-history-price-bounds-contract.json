@@ -1,0 +1,19 @@
+{
+  "cycle": "Cycle MZ",
+  "feature": "Portfolio history price bounds contract",
+  "generatedAt": "2026-07-06T13:13:19.814Z",
+  "route": "/api/portfolio/history",
+  "contract": {
+    "validPayload": "Canceled order price and recent trade execution price must be probability prices from 0 to 1.",
+    "malformedPayload": "above-one history activity prices reject before visible Portfolio history state applies.",
+    "allowedLoss": "resolved realized P/L remains allowed to be negative."
+  },
+  "assertions": {
+    "validHistoryPricesAccepted": true,
+    "priceOneAccepted": true,
+    "canceledOrderPriceAboveOneRejects": true,
+    "recentTradeExecutionPriceAboveOneRejects": true,
+    "nonzeroCostWithoutSharesRejects": true,
+    "negativeResolvedPnlRemainsAllowed": true
+  }
+}

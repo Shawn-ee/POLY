@@ -39,6 +39,28 @@ const requireNonNegativeNumber = (value: unknown, field: string) => {
   return parsed;
 };
 
+const requireProbabilityNumber = (value: unknown, field: string) => {
+  const parsed = requireNonNegativeNumber(value, field);
+  if (parsed > 1) {
+    throw new Error(`Portfolio history response had invalid ${field}.`);
+  }
+  return parsed;
+};
+
+const requireExecutionPrice = (cost: number, shares: number) => {
+  if (shares === 0) {
+    if (cost > 0) {
+      throw new Error("Portfolio history response had invalid recentTrades[].cost.");
+    }
+    return 0;
+  }
+  const executionPrice = cost / shares;
+  if (executionPrice > 1) {
+    throw new Error("Portfolio history response had invalid recentTrades[].cost.");
+  }
+  return executionPrice;
+};
+
 export const portfolioHistoryToActivity = (history: Awaited<ReturnType<PolyApi["getPortfolioHistory"]>>["history"]): PortfolioActivity[] =>
   history.map((item) => {
     const payout = requireNonNegativeNumber(item.winningsTokens, "history[].winningsTokens") + requireNonNegativeNumber(item.refundsTokens, "history[].refundsTokens");
@@ -55,24 +77,28 @@ export const portfolioHistoryToActivity = (history: Awaited<ReturnType<PolyApi["
   });
 
 export const canceledOrdersToActivity = (orders: PortfolioCanceledOrderItem[] = []): PortfolioActivity[] =>
-  orders.map((order) => ({
-    id: `canceled-order-${order.id}`,
-    action: "canceled",
-    title: order.market.title,
-    outcome: order.outcome.name,
-    selection: portfolioSelectionFromBackend(order.selection, "canceledOrders[].selection"),
-    amount: requireNonNegativeNumber(order.remaining, "canceledOrders[].remaining") * requireNonNegativeNumber(order.price, "canceledOrders[].price"),
-    shares: requireNonNegativeNumber(order.remaining, "canceledOrders[].remaining"),
-    side: order.side === "SELL" ? "sell" : "buy",
-    probability: Math.round(requireNonNegativeNumber(order.price, "canceledOrders[].price") * 100),
-    timestamp: formatHistoryTimestamp(order.canceledAt),
-  }));
+  orders.map((order) => {
+    const remaining = requireNonNegativeNumber(order.remaining, "canceledOrders[].remaining");
+    const price = requireProbabilityNumber(order.price, "canceledOrders[].price");
+    return {
+      id: `canceled-order-${order.id}`,
+      action: "canceled",
+      title: order.market.title,
+      outcome: order.outcome.name,
+      selection: portfolioSelectionFromBackend(order.selection, "canceledOrders[].selection"),
+      amount: remaining * price,
+      shares: remaining,
+      side: order.side === "SELL" ? "sell" : "buy",
+      probability: Math.round(price * 100),
+      timestamp: formatHistoryTimestamp(order.canceledAt),
+    };
+  });
 
 export const recentTradesToActivity = (trades: PortfolioRecentTradeItem[] = []): PortfolioActivity[] =>
   trades.map((trade) => {
     const shares = requireNonNegativeNumber(trade.shares, "recentTrades[].shares");
     const cost = requireNonNegativeNumber(trade.cost, "recentTrades[].cost");
-    const executionPrice = shares > 0 ? cost / shares : 0;
+    const executionPrice = requireExecutionPrice(cost, shares);
     return {
       id: `trade-${trade.id}`,
       action: trade.side === "SELL" ? "sold" : "opened",

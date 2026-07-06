@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle MZ
+
+Gate status: Pass
+
+Scope: Portfolio history price bounds contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-MZ-portfolio-history-price-bounds-contract/cycle-MZ-portfolio-history-price-bounds-contract.json`
+- Focused tests: `mobile/src/__tests__/portfolioHistoryService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-MZ-portfolio-history-price-bounds-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode Portfolio history rejects canceled order prices and inferred recent trade execution prices outside `0` to `1` before visible History state applies.
+
 ## Cycle MY
 
 Gate status: Pass
