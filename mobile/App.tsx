@@ -38,6 +38,7 @@ import { closePositionOnServer } from "./src/services/positionCloseService";
 import { loadAccountBalance } from "./src/services/accountBalanceService";
 import { loadAccountNavigation, type AccountNavigationItemResult } from "./src/services/accountNavigationService";
 import { loadAccountProfile } from "./src/services/accountProfileService";
+import { loadEventDetailForCard } from "./src/services/eventDetailHydrationService";
 import { loadLiveEventFeed } from "./src/services/liveEventFeedService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
 import { applyServerPortfolioState } from "./src/services/portfolioStateApplyService";
@@ -1688,8 +1689,7 @@ export default function App() {
     setEventDetailForcedSide(null);
     setSelectedEvent(event);
     if (MARKET_DATA_MODE !== "server") return;
-    api.getEvent(event.id)
-      .then((detail) => normalizeEventDetail(detail))
+    loadEventDetailForCard(api, event)
       .then((hydrated) => {
         if (!hydrated || !mounted.current) return;
         setSelectedEvent((current) => current?.id === event.id ? hydrated : current);

@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KW - Event Detail Hydration Key Contract
+
+Closed or narrowed:
+
+- Mobile normalized event summaries now preserve backend `slug` as `event.backendSlug`.
+- Server-mode Event Detail hydration from a discovery card uses `event.backendSlug` before falling back to local fixture `event.id`.
+- Route/mobile proof verifies `/api/mobile/events/:slug/live-detail` succeeds by slug and fails by database id, so the client route key is now explicit.
+- Proof also verifies hydrated Event Detail preserves backend market rules for a regulation 90-minute draw market: `marketProfile=regulation_90`, `resultMode=can_draw`, `gameRules.allowDraw=true`, and Home/Tie/Away outcomes.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail hydration key/rules contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Event.slug`, `Market`, and `Outcome` fields support this contract.
+
+Temporary mock/static data:
+
+- Local fixtures without `backendSlug` continue to hydrate by local `event.id` in non-server/fallback paths.
+
 ## Cycle KV - Live Tab Pagination Contract
 
 Closed or narrowed:

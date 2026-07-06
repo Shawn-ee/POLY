@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KW - Event Detail Hydration Key Contract
+
+Cycle KW makes Home/Live/Search card-open Event Detail hydration explicitly use the backend event slug required by `/api/mobile/events/:slug/live-detail`:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KW-event-detail-hydration-contract/cycle-KW-event-detail-hydration-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_hydration_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail hydration from discovery card | `/api/mobile/events/:slug/live-detail` through `PolyApi.getEvent()` | GET | Public/mobile route | Backend event slug | Summary `events[].slug` is preserved as mobile `event.backendSlug`; detail response fields include `event.marketProfile`, `event.resultMode`, `event.gameRules`, `event.supportedMarketTypes`, compact `markets[]`, and outcome `side` including draw where provided | `Event.slug`, `Event.status`, listed public `Market`, active `Outcome`; live-detail route is slug-addressed | Local fixtures fall back to `event.id` when no backend slug exists. Server-mode route-backed events use `backendSlug` for hydration. | None for the focused Event Detail hydration key/rules contract. |
+
 ## Cycle KV - Live Tab Pagination Contract
 
 Cycle KV wires the visible Live tab load-more affordance to backend cursor pagination in server mode:

@@ -116,6 +116,7 @@ export type EventMetrics = {
 
 export type Event = {
   id: string;
+  backendSlug?: string;
   title: string;
   zhTitle: string;
   league: string;

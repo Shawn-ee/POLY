@@ -1,0 +1,50 @@
+{
+  "pass": true,
+  "cycle": "Cycle KW",
+  "createdAt": "2026-07-06T09:04:46.852Z",
+  "route": "/api/mobile/events/:slug/live-detail",
+  "seeded": {
+    "eventId": "76948317-3869-4de2-9cd6-64f505bcf59b",
+    "slug": "mobile-kw-live-regulation-667e9c73"
+  },
+  "summaryRoute": {
+    "query": {
+      "sportKey": "soccer",
+      "leagueKey": "world_cup",
+      "search": "667e9c73",
+      "includeMobileMarkets": "1",
+      "statusGroup": "live",
+      "limit": "1"
+    },
+    "eventId": "76948317-3869-4de2-9cd6-64f505bcf59b",
+    "slug": "mobile-kw-live-regulation-667e9c73",
+    "normalizedId": "mobile-kw-live-regulation-667e9c73",
+    "normalizedBackendSlug": "mobile-kw-live-regulation-667e9c73"
+  },
+  "detailRoute": {
+    "slugStatus": 200,
+    "idStatus": 404,
+    "requestedKeys": [
+      "mobile-kw-live-regulation-667e9c73"
+    ]
+  },
+  "hydratedDetail": {
+    "id": "mobile-kw-live-regulation-667e9c73",
+    "backendSlug": "mobile-kw-live-regulation-667e9c73",
+    "marketProfile": "regulation_90",
+    "resultMode": "can_draw",
+    "gameRules": {
+      "allowDraw": true,
+      "includesOvertime": false,
+      "description": "Regulation market can settle as draw."
+    },
+    "supportedMarketTypes": [
+      "regulation_90"
+    ],
+    "outcomeSides": [
+      "home",
+      "draw",
+      "away"
+    ]
+  }
+}

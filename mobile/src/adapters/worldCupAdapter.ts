@@ -281,6 +281,7 @@ export const normalizeEventSummary = (event: BackendEventSummary, markets: Backe
   const title = isGenericFixtureTitle(event.title) && isFuturesBundle ? "World Cup futures" : event.title;
   return {
     id: event.slug || event.id,
+    backendSlug: event.slug || event.id,
     title,
     zhTitle: isGenericFixtureTitle(event.title) && isFuturesBundle ? "世界杯期货" : zhPassthrough(title),
     league: asTitleCase(event.leagueKey, "World Cup"),
