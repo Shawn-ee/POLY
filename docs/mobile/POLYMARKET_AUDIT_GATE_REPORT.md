@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Mobile event status group contract | Cycle LM | Pass for backend/data-contract scope | 0 for focused status-group scope | P2 optional user-local timezone semantics for Today | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LM-mobile-event-status-group-contract/cycle-LM-mobile-event-status-group-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LM-mobile-event-status-group-contract.md` | `/api/events?statusGroup=live` now includes `liveStatus=in_progress`; `statusGroup=upcoming` now excludes live/today/terminal events instead of meaning only not-live. |
 | Mobile event listed-market filter contract | Cycle LL | Pass for backend/data-contract scope | 0 for focused pre-pagination listed-market scope | Existing provider metric/ranking P1s remain outside this focused contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md` | `/api/events` now requires at least one public listed market in the event query before pagination, preventing no-market events from consuming visible mobile page slots or killing next cursor. |
 | Sorted mobile event cursor contract | Cycle LK | Pass for backend/data-contract scope | 0 for focused sorted cursor scope | None for focused sorted mobile event cursor contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md` | `/api/events?includeMobileMarkets=1&sortBy=popular/live` now rejects sorted cursors outside the backend-filtered result set instead of restarting at page one and duplicating visible discovery cards. |
 | Portfolio partial sync contract | Cycle LE | Pass for backend/data-contract scope | 0 for focused partial-sync status scope | P1 granular UI copy for snapshot-vs-history partial failures | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LE-portfolio-partial-sync-contract/cycle-LE-portfolio-partial-sync-contract.json`; tests: `mobile/src/__tests__/portfolioSyncService.test.ts`; audit: `mobile/docs/audits/cycle-LE-portfolio-partial-sync-contract.md` | Portfolio server mode now reports full `synced` only when both `/api/portfolio` and `/api/portfolio/history` succeed; partial failures show visible error while preserving successful partial data. |
@@ -4574,3 +4575,37 @@ Decision:
 - Pass/fail: Pass for focused mobile event listed-market filter contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: existing provider metric/ranking breadth remains tracked separately.
+
+## Cycle LM - Mobile Event Status Group Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure visible Home, Live, and Search event status filters use backend-owned status semantics that do not leak terminal events into Upcoming.
+
+Reference Audit Agent: Backend/data-contract loop. Manual visual review is not required for this route contract.
+
+Implementation Agent: Added shared event status group filter service, wired `/api/events`, tightened focused route tests, and generated harness proof.
+
+Audit Gate Agent: Proof script, focused backend tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LM-mobile-event-status-group-contract.md`
+- `docs/mobile/harness/cycle-LM-mobile-event-status-group-contract/cycle-LM-mobile-event-status-group-contract.json`
+- `scripts/prove_mobile_event_status_group_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LM-P0-01 | P0 | Pass | Live group includes `status=live` and `liveStatus=live/in_progress`. | N/A |
+| LM-P0-02 | P0 | Pass | Today group preserves UTC current-day filtering. | N/A |
+| LM-P0-03 | P0 | Pass | Upcoming includes scheduled/upcoming statuses and future start times. | N/A |
+| LM-P0-04 | P0 | Pass | Upcoming excludes live, today, and terminal statuses. | N/A |
+| LM-P2-01 | P2 | Open | Today still uses UTC day boundaries. | Optional user-local timezone cycle if product requires it. |
+
+Decision:
+
+- Pass/fail: Pass for focused mobile event status group contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional user-local timezone semantics for Today.

@@ -1,0 +1,127 @@
+{
+  "cycle": "Cycle LM",
+  "feature": "Mobile event status group contract",
+  "generatedAt": "2026-07-06T10:31:19.001Z",
+  "route": "/api/events?statusGroup=live|today|upcoming",
+  "contract": {
+    "live": "status=live or liveStatus=live/in_progress",
+    "today": "status=today or startTime inside current UTC day",
+    "upcoming": "scheduled/upcoming or future startTime, excluding live/today/terminal events"
+  },
+  "samples": {
+    "now": "2026-07-06T12:00:00.000Z",
+    "liveFilter": {
+      "OR": [
+        {
+          "status": {
+            "in": [
+              "live",
+              "LIVE"
+            ]
+          }
+        },
+        {
+          "liveStatus": {
+            "in": [
+              "live",
+              "LIVE",
+              "in_progress",
+              "IN_PROGRESS"
+            ]
+          }
+        }
+      ]
+    },
+    "todayFilter": {
+      "OR": [
+        {
+          "status": {
+            "in": [
+              "today",
+              "TODAY"
+            ]
+          }
+        },
+        {
+          "startTime": {
+            "gte": "2026-07-06T00:00:00.000Z",
+            "lt": "2026-07-07T00:00:00.000Z"
+          }
+        }
+      ]
+    },
+    "upcomingFilter": {
+      "AND": [
+        {
+          "NOT": {
+            "OR": [
+              {
+                "status": {
+                  "in": [
+                    "live",
+                    "LIVE",
+                    "today",
+                    "TODAY",
+                    "closed",
+                    "CLOSED",
+                    "ended",
+                    "ENDED",
+                    "finished",
+                    "FINISHED",
+                    "complete",
+                    "COMPLETE",
+                    "completed",
+                    "COMPLETED",
+                    "resolved",
+                    "RESOLVED",
+                    "settled",
+                    "SETTLED",
+                    "canceled",
+                    "CANCELED",
+                    "cancelled",
+                    "CANCELLED"
+                  ]
+                }
+              },
+              {
+                "liveStatus": {
+                  "in": [
+                    "live",
+                    "LIVE",
+                    "in_progress",
+                    "IN_PROGRESS"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "OR": [
+            {
+              "status": {
+                "in": [
+                  "upcoming",
+                  "UPCOMING",
+                  "scheduled",
+                  "SCHEDULED"
+                ]
+              }
+            },
+            {
+              "startTime": {
+                "gt": "2026-07-06T12:00:00.000Z"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "assertions": {
+    "liveGroupIncludesStatusAndLiveStatus": true,
+    "todayGroupUsesUtcDayWindow": true,
+    "upcomingGroupIncludesScheduledOrFuture": true,
+    "upcomingGroupExcludesLiveTodayAndTerminal": true
+  }
+}

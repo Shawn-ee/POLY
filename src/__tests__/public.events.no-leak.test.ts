@@ -417,6 +417,8 @@ describe("public event API no-leak checks", () => {
     expect(liveResponse.status).toBe(200);
     const liveInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
     expect(JSON.stringify(liveInput.where)).toContain("live");
+    expect(JSON.stringify(liveInput.where)).toContain("liveStatus");
+    expect(JSON.stringify(liveInput.where)).toContain("in_progress");
     expect(liveInput).toEqual(expect.objectContaining({ take: 11 }));
 
     mockPrisma.event.findMany.mockClear();
@@ -435,6 +437,10 @@ describe("public event API no-leak checks", () => {
     const upcomingInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
     expect(JSON.stringify(upcomingInput.where)).toContain("NOT");
     expect(JSON.stringify(upcomingInput.where)).toContain("live");
+    expect(JSON.stringify(upcomingInput.where)).toContain("scheduled");
+    expect(JSON.stringify(upcomingInput.where)).toContain("closed");
+    expect(JSON.stringify(upcomingInput.where)).toContain("resolved");
+    expect(JSON.stringify(upcomingInput.where)).toContain("canceled");
 
     const body = await upcomingResponse.json();
     expect(body.events).toHaveLength(1);

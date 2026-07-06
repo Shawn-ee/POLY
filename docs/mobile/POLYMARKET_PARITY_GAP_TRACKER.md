@@ -16,6 +16,7 @@ Rule: a feature cannot be marked complete while it has unresolved P0 gaps. P1/P2
 
 | Feature | P0 open | P1 open | P2 open | Latest status | Evidence |
 | --- | ---: | ---: | ---: | --- | --- |
+| Mobile event status group contract | 0 for focused backend/data-contract scope | 0 | 1 | Cycle LM verifies `/api/events?statusGroup=live|today|upcoming` uses backend-owned status semantics: live includes `liveStatus=in_progress`, today uses the UTC day window, and upcoming excludes live/today/terminal events. Remaining P2 work is optional user-local timezone semantics for Today. | Harness proof: `docs/mobile/harness/cycle-LM-mobile-event-status-group-contract/cycle-LM-mobile-event-status-group-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LM-mobile-event-status-group-contract.md` |
 | Mobile event listed-market filter contract | 0 for focused backend/data-contract scope | 0 | 0 | Cycle LL verifies `/api/events` filters for public listed markets before pagination so no-market events cannot consume visible mobile page slots or hide a valid next cursor. | Harness proof: `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md` |
 | Sorted mobile event cursor contract | 0 for focused backend/data-contract scope | 0 | 0 | Cycle LK verifies sorted Home/Search-style mobile event pages reject stale or filtered-out cursors instead of restarting at page one and duplicating visible cards. | Harness proof: `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md` |
 | Portfolio cancel no-optimistic server contract | 0 for focused backend/data-contract scope | 0 | 1 | Cycle LJ verifies server-mode Portfolio cancel no longer removes visible open orders or appends canceled activity until `/api/orders/:id` confirms the same order as `CANCELED`; mock mode remains optimistic. Remaining P2 work is optional cancel-race copy/action. | Harness proof: `docs/mobile/harness/cycle-LJ-cancel-no-optimistic-server-contract/cycle-LJ-cancel-no-optimistic-server-contract.json`; tests: `mobile/src/__tests__/openOrderService.test.ts`; audit: `mobile/docs/audits/cycle-LJ-cancel-no-optimistic-server-contract.md` |
@@ -585,3 +586,10 @@ For every UI element or interaction, answer:
 - LL closes the focused P0 data-contract gap where no-market events could consume backend page slots before mobile post-filtering.
 - Harness proof passes for default listed-market filtering, futures alias filtering, future/outright market filtering, and pre-pagination event filter wiring.
 - Remaining P1/P2: existing provider metric/ranking breadth remains tracked by prior discovery metric cycles.
+
+## Cycle LM Gap Tracker Update
+
+- PM-GAP-112 is opened and verified for mobile event status group semantics.
+- LM closes the focused P0 data-contract gap where Upcoming could include terminal non-live events and Live could miss events represented only by `liveStatus=in_progress`.
+- Harness proof passes for live status/liveStatus matching, UTC Today window, scheduled/future Upcoming inclusion, and live/today/terminal Upcoming exclusion.
+- Remaining P2: optional user-local timezone semantics for Today if product requires it.

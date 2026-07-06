@@ -4695,6 +4695,35 @@ Future migration concern:
 
 - If mobile needs to show event shells without markets, that should be a separate backend field/UX contract rather than falling through the tradable-event list.
 
+## Cycle LM - Mobile Event Status Group Contract
+
+Closed or narrowed:
+
+- `/api/events?statusGroup=live` now treats `liveStatus=live|in_progress` as live, not only `status=live`.
+- `/api/events?statusGroup=upcoming` no longer means every non-live status; it excludes live, today, closed, ended, resolved, settled, canceled, and related terminal statuses.
+- Upcoming still includes scheduled/upcoming statuses and future-starting events.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for visible Home/Search/Live status grouping.
+- P2: Today currently uses UTC day boundaries rather than a user-local timezone contract.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `Event.status`, `Event.liveStatus`, and `Event.startTime` fields carry the contract.
+
+Route mismatch:
+
+- No mismatch for the focused flow. Mobile already sends `statusGroup`; the backend now returns a status group that matches the visible filter semantics.
+
+Temporary mock/static data:
+
+- Local/offline status filtering remains unchanged and outside server-mode route correctness.
+
+Future migration concern:
+
+- If product wants user-local Today semantics, add timezone input or user profile timezone to the route contract and prove it separately.
+
 ## Cycle LB - Event Detail Line Availability Contract
 
 Closed or narrowed:

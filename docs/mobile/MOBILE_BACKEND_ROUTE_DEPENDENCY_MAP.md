@@ -2255,3 +2255,17 @@ Cycle LL implementation notes:
 - `/api/events` now applies `markets.some({ visibility: PUBLIC, isListed: true })` in the event `where` clause before pagination.
 - `marketType=future|futures|outright` also applies the future/outright market type constraint before pagination.
 - Post-fetch filtering remains a defensive last check, not the primary page contract.
+
+## Cycle LM - Mobile Event Status Group Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home Live and Live tab feed | `/api/events?statusGroup=live&includeMobileMarkets=1` | GET | Public viewing | Query params: sport/league filters, optional limit/cursor | Live `events[]`, compact `markets[]`, `nextCursor`, `page` | `Event.status`, `Event.liveStatus`, listed `Market` rows | Local/offline feed remains unchanged. Server mode now treats `liveStatus=in_progress` as live. | No focused P0 gap. |
+| Search Upcoming filter | `/api/events?statusGroup=upcoming&includeMobileMarkets=1` | GET | Public viewing | Query params: search, optional sort/saved ids, limit/cursor | Upcoming `events[]`, compact `markets[]`, `nextCursor`, `page` | `Event.status`, `Event.liveStatus`, `Event.startTime`, listed `Market` rows | Local/offline Search remains unchanged. Server mode now excludes live/today/terminal events from Upcoming. | P2 optional user-local timezone semantics for Today. |
+| Home Today filter | `/api/events?statusGroup=today&includeMobileMarkets=1` | GET | Public viewing | Query params: sport/league filters, optional limit/cursor | Today `events[]`, compact `markets[]`, `nextCursor`, `page` | `Event.status`, `Event.startTime`, listed `Market` rows | Local/offline Home remains unchanged. | P2 optional user-local timezone semantics; current contract is UTC day. |
+
+Cycle LM implementation notes:
+
+- `statusGroup=live` now matches `Event.status=live` or `Event.liveStatus=live|in_progress`.
+- `statusGroup=upcoming` now requires scheduled/upcoming status or future `startTime`, while excluding live, today, closed, ended, resolved, settled, canceled, and related terminal statuses.
+- `statusGroup=today` remains backend-owned UTC-day filtering.

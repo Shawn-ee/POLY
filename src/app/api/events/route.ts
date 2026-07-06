@@ -6,6 +6,7 @@ import { marketReadInclude, serializeMarketReadModel } from "@/server/services/m
 import { selectCompactLiveMarkets } from "@/server/services/mobileLiveEventDetail";
 import { resolveSortedMobilePageStart } from "@/server/services/mobileEventPagination";
 import { eventMarketTypeFilter, listedMarketWhere } from "@/server/services/mobileEventListFilters";
+import { eventStatusGroupFilter } from "@/server/services/mobileEventStatusFilters";
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
@@ -152,25 +153,6 @@ const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
 
 const eventIdsFilter = (eventIds: string[]): Prisma.EventWhereInput =>
   eventIds.length ? { id: { in: eventIds } } : {};
-
-const eventStatusGroupFilter = (statusGroup: string): Prisma.EventWhereInput =>
-  statusGroup === "live"
-    ? { status: { in: ["live", "LIVE"] } }
-    : statusGroup === "today"
-      ? {
-          OR: [
-            { status: { in: ["today", "TODAY"] } },
-            {
-              startTime: {
-                gte: new Date(new Date().setUTCHours(0, 0, 0, 0)),
-                lt: new Date(new Date().setUTCHours(24, 0, 0, 0)),
-              },
-            },
-          ],
-        }
-    : statusGroup === "upcoming"
-      ? { NOT: { status: { in: ["live", "LIVE"] } } }
-      : {};
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
