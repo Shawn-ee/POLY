@@ -2242,3 +2242,16 @@ Cycle LK implementation notes:
 - Sorted mobile event pages now require the cursor id to exist inside the filtered and sorted backend result set.
 - Valid sorted cursors start after the cursor event.
 - Stale or filtered-out sorted cursors return `400` with `Invalid event cursor for filtered mobile page.` instead of duplicating page one.
+
+## Cycle LL - Mobile Event Listed Market Filter Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home/Search/Live event list visibility | `/api/events?...&includeMobileMarkets=1` | GET | Public viewing | Query params: sport/league filters, optional search/status/saved ids, market type, sort, limit, cursor | `events[]`, compact `markets[]`, metrics, `nextCursor`, `page` | `Event`, `Market`, `Outcome`; public listed market filter | Local/offline discovery is unchanged. Server mode now receives only events with at least one listed public market. | No focused P0 gap. Existing provider metric/ranking breadth remains separate P1 work if required. |
+| Home futures event list visibility | `/api/events?marketType=future&includeMobileMarkets=1` | GET | Public viewing | Query params include `marketType=future` | Futures/outright events and compact futures markets | `Event`, `Market`, `Outcome`; `Market.marketType` future/outright aliases | Local/offline futures fallback is unchanged. | No focused P0 gap. Fuller production futures catalog breadth remains tracked separately. |
+
+Cycle LL implementation notes:
+
+- `/api/events` now applies `markets.some({ visibility: PUBLIC, isListed: true })` in the event `where` clause before pagination.
+- `marketType=future|futures|outright` also applies the future/outright market type constraint before pagination.
+- Post-fetch filtering remains a defensive last check, not the primary page contract.

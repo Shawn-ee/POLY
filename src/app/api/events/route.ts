@@ -5,6 +5,7 @@ import { serializeEventSummary } from "@/server/services/eventReadModel";
 import { marketReadInclude, serializeMarketReadModel } from "@/server/services/marketReadModel";
 import { selectCompactLiveMarkets } from "@/server/services/mobileLiveEventDetail";
 import { resolveSortedMobilePageStart } from "@/server/services/mobileEventPagination";
+import { eventMarketTypeFilter, listedMarketWhere } from "@/server/services/mobileEventListFilters";
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
@@ -151,36 +152,6 @@ const eventSearchFilter = (search: string): Prisma.EventWhereInput =>
 
 const eventIdsFilter = (eventIds: string[]): Prisma.EventWhereInput =>
   eventIds.length ? { id: { in: eventIds } } : {};
-
-const marketTypeAliases = (value: string) => {
-  const normalized = value.trim().toLowerCase();
-  if (normalized === "future" || normalized === "futures" || normalized === "outright") return ["future", "outright"];
-  return normalized ? [normalized] : [];
-};
-
-const listedMarketWhere = (marketType: string): Prisma.MarketWhereInput => {
-  const aliases = marketTypeAliases(marketType);
-  return {
-    visibility: "PUBLIC",
-    isListed: true,
-    ...(aliases.length ? { marketType: { in: aliases } } : {}),
-  };
-};
-
-const eventMarketTypeFilter = (marketType: string): Prisma.EventWhereInput => {
-  const aliases = marketTypeAliases(marketType);
-  return aliases.length
-    ? {
-        markets: {
-          some: {
-            visibility: "PUBLIC",
-            isListed: true,
-            marketType: { in: aliases },
-          },
-        },
-      }
-    : {};
-};
 
 const eventStatusGroupFilter = (statusGroup: string): Prisma.EventWhereInput =>
   statusGroup === "live"

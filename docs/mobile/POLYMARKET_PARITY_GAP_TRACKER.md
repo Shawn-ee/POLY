@@ -16,6 +16,7 @@ Rule: a feature cannot be marked complete while it has unresolved P0 gaps. P1/P2
 
 | Feature | P0 open | P1 open | P2 open | Latest status | Evidence |
 | --- | ---: | ---: | ---: | --- | --- |
+| Mobile event listed-market filter contract | 0 for focused backend/data-contract scope | 0 | 0 | Cycle LL verifies `/api/events` filters for public listed markets before pagination so no-market events cannot consume visible mobile page slots or hide a valid next cursor. | Harness proof: `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md` |
 | Sorted mobile event cursor contract | 0 for focused backend/data-contract scope | 0 | 0 | Cycle LK verifies sorted Home/Search-style mobile event pages reject stale or filtered-out cursors instead of restarting at page one and duplicating visible cards. | Harness proof: `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md` |
 | Portfolio cancel no-optimistic server contract | 0 for focused backend/data-contract scope | 0 | 1 | Cycle LJ verifies server-mode Portfolio cancel no longer removes visible open orders or appends canceled activity until `/api/orders/:id` confirms the same order as `CANCELED`; mock mode remains optimistic. Remaining P2 work is optional cancel-race copy/action. | Harness proof: `docs/mobile/harness/cycle-LJ-cancel-no-optimistic-server-contract/cycle-LJ-cancel-no-optimistic-server-contract.json`; tests: `mobile/src/__tests__/openOrderService.test.ts`; audit: `mobile/docs/audits/cycle-LJ-cancel-no-optimistic-server-contract.md` |
 | Account bootstrap contract | 0 for focused backend/data-contract scope | 0 | 1 | Cycle LI verifies Account server mode treats `/api/account/balance`, `/api/account/profile`, and `/api/account/navigation` as required for fully synced Account state, preserves successful partial data, and exposes visible account data error when any route fails. Remaining P2 work is optional per-route retry copy/action. | Harness proof: `docs/mobile/harness/cycle-LI-account-bootstrap-contract/cycle-LI-account-bootstrap-contract.json`; tests: `mobile/src/__tests__/accountBootstrapService.test.ts`, `mobile/src/__tests__/accountBalanceService.test.ts`, `mobile/src/__tests__/accountProfileService.test.ts`, `mobile/src/__tests__/accountNavigationService.test.ts`; audit: `mobile/docs/audits/cycle-LI-account-bootstrap-contract.md` |
@@ -577,3 +578,10 @@ For every UI element or interaction, answer:
 - LK closes the focused P0 data-contract gap where `/api/events?includeMobileMarkets=1&sortBy=popular|live` could accept a globally valid but filtered-out cursor and restart from page one.
 - Harness proof passes for first page, valid cursor advance, filtered-out cursor rejection, and stable mobile error copy.
 - Remaining P1/P2: none for this focused backend/data contract.
+
+## Cycle LL Gap Tracker Update
+
+- PM-GAP-111 is opened and verified for mobile event listed-market pre-pagination filtering.
+- LL closes the focused P0 data-contract gap where no-market events could consume backend page slots before mobile post-filtering.
+- Harness proof passes for default listed-market filtering, futures alias filtering, future/outright market filtering, and pre-pagination event filter wiring.
+- Remaining P1/P2: existing provider metric/ranking breadth remains tracked by prior discovery metric cycles.

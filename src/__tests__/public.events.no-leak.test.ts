@@ -233,6 +233,14 @@ describe("public event API no-leak checks", () => {
         where: expect.objectContaining({
           AND: expect.arrayContaining([
             expect.objectContaining({
+              markets: {
+                some: {
+                  visibility: "PUBLIC",
+                  isListed: true,
+                },
+              },
+            }),
+            expect.objectContaining({
               category: "sports",
               sportKey: "soccer",
               leagueKey: "world_cup",
@@ -277,6 +285,17 @@ describe("public event API no-leak checks", () => {
     );
 
     expect(response.status).toBe(200);
+    const findManyInput = mockPrisma.event.findMany.mock.calls[0]?.[0] as any;
+    expect(findManyInput.where.AND).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        markets: {
+          some: {
+            visibility: "PUBLIC",
+            isListed: true,
+          },
+        },
+      }),
+    ]));
     const body = await response.json();
     expectOnlyKeys(body, ["events", "nextCursor", "page"]);
     expect(body.events).toHaveLength(1);

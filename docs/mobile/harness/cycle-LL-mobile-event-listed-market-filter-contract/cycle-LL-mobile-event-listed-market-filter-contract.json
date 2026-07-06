@@ -1,0 +1,55 @@
+{
+  "cycle": "Cycle LL",
+  "feature": "Mobile event listed-market filter contract",
+  "generatedAt": "2026-07-06T10:27:44.640Z",
+  "route": "/api/events",
+  "contract": {
+    "defaultDiscovery": "event query requires at least one PUBLIC listed market before pagination",
+    "futuresDiscovery": "future/futures/outright filter requires at least one PUBLIC listed future or outright market before pagination",
+    "visiblePageSafety": "mobile does not rely on post-fetch filtering to discard no-market events"
+  },
+  "samples": {
+    "defaultMarketWhere": {
+      "visibility": "PUBLIC",
+      "isListed": true
+    },
+    "futureMarketWhere": {
+      "visibility": "PUBLIC",
+      "isListed": true,
+      "marketType": {
+        "in": [
+          "future",
+          "outright"
+        ]
+      }
+    },
+    "defaultEventFilter": {
+      "markets": {
+        "some": {
+          "visibility": "PUBLIC",
+          "isListed": true
+        }
+      }
+    },
+    "futureEventFilter": {
+      "markets": {
+        "some": {
+          "visibility": "PUBLIC",
+          "isListed": true,
+          "marketType": {
+            "in": [
+              "future",
+              "outright"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "assertions": {
+    "defaultEventPagesRequirePublicListedMarkets": true,
+    "futuresAliasesAreBackendOwned": true,
+    "futurePagesRequirePublicListedFutureOrOutrightMarkets": true,
+    "eventFilterRunsBeforePagination": true
+  }
+}

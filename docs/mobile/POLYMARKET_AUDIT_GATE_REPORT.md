@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Mobile event listed-market filter contract | Cycle LL | Pass for backend/data-contract scope | 0 for focused pre-pagination listed-market scope | Existing provider metric/ranking P1s remain outside this focused contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md` | `/api/events` now requires at least one public listed market in the event query before pagination, preventing no-market events from consuming visible mobile page slots or killing next cursor. |
 | Sorted mobile event cursor contract | Cycle LK | Pass for backend/data-contract scope | 0 for focused sorted cursor scope | None for focused sorted mobile event cursor contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LK-sorted-event-cursor-contract/cycle-LK-sorted-event-cursor-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LK-sorted-event-cursor-contract.md` | `/api/events?includeMobileMarkets=1&sortBy=popular/live` now rejects sorted cursors outside the backend-filtered result set instead of restarting at page one and duplicating visible discovery cards. |
 | Portfolio partial sync contract | Cycle LE | Pass for backend/data-contract scope | 0 for focused partial-sync status scope | P1 granular UI copy for snapshot-vs-history partial failures | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LE-portfolio-partial-sync-contract/cycle-LE-portfolio-partial-sync-contract.json`; tests: `mobile/src/__tests__/portfolioSyncService.test.ts`; audit: `mobile/docs/audits/cycle-LE-portfolio-partial-sync-contract.md` | Portfolio server mode now reports full `synced` only when both `/api/portfolio` and `/api/portfolio/history` succeed; partial failures show visible error while preserving successful partial data. |
 | Account preferences response contract | Cycle LD | Pass for backend/data-contract scope | 0 for focused preference response-shape scope | P1 richer retry/conflict UI if preference save fails mid-session | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LD-account-preferences-response-contract/cycle-LD-account-preferences-response-contract.json`; tests: `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-LD-account-preferences-response-contract.md` | Account preferences GET/PUT payloads are validated by mobile before visible language, saved markets, and Trade Ticket defaults are applied; malformed route-shaped fields fail clearly. |
@@ -4540,3 +4541,36 @@ Decision:
 - Pass/fail: Pass for focused sorted mobile event cursor contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: none for this focused route/data contract.
+
+## Cycle LL - Mobile Event Listed Market Filter Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure visible event list pages only paginate events that have backend-visible public listed markets.
+
+Reference Audit Agent: Backend/data-contract loop. Manual visual review is not required for this route contract.
+
+Implementation Agent: Added shared listed-market filter service, wired `/api/events` to filter before pagination, added focused route tests, and generated harness proof.
+
+Audit Gate Agent: Proof script, focused backend tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md`
+- `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`
+- `scripts/prove_mobile_event_list_listed_market_filter_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LL-P0-01 | P0 | Pass | Default event pages require at least one public listed market. | N/A |
+| LL-P0-02 | P0 | Pass | Futures aliases are backend-owned and constrained to future/outright markets. | N/A |
+| LL-P0-03 | P0 | Pass | Futures event pages require public listed future/outright markets before pagination. | N/A |
+| LL-P0-04 | P0 | Pass | The event query filters before pagination rather than relying only on post-fetch filtering. | N/A |
+
+Decision:
+
+- Pass/fail: Pass for focused mobile event listed-market filter contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: existing provider metric/ranking breadth remains tracked separately.

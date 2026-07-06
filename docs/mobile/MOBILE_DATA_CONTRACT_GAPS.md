@@ -4666,6 +4666,35 @@ Future migration concern:
 
 - If sorted discovery can exceed the current `MAX_LIMIT` route window, replace in-memory sorted pagination with a persisted ranking cursor or database-orderable ranking key.
 
+## Cycle LL - Mobile Event Listed Market Filter Contract
+
+Closed or narrowed:
+
+- `/api/events` now filters events by at least one public listed market before pagination.
+- Mobile discovery pages no longer depend on post-fetch filtering to discard no-market events that already consumed a page slot.
+- Futures discovery applies the backend-owned `future|outright` alias filter before pagination as well.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for event list visibility filtering.
+- Existing P1 provider metric/ranking breadth and fuller futures catalog breadth remain tracked by prior cycles.
+
+Schema mismatch:
+
+- No schema migration was required. Existing `Market.visibility`, `Market.isListed`, and `Market.marketType` fields carry the contract.
+
+Route mismatch:
+
+- No mismatch for the focused flow. The event route query now matches the mobile render contract: visible pages contain only events that can expose at least one backend-listed compact market.
+
+Temporary mock/static data:
+
+- Local/offline discovery fallback is unchanged and remains outside server-mode backend pagination.
+
+Future migration concern:
+
+- If mobile needs to show event shells without markets, that should be a separate backend field/UX contract rather than falling through the tradable-event list.
+
 ## Cycle LB - Event Detail Line Availability Contract
 
 Closed or narrowed:
