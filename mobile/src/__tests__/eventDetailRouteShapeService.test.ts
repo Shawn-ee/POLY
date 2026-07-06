@@ -85,6 +85,34 @@ describe("event detail route shape service", () => {
     expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed marketProfile");
   });
 
+  test("rejects missing backend game rules before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    delete payload.event.gameRules;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed gameRules");
+  });
+
+  test("rejects missing market profile before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    delete payload.event.marketProfile;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed marketProfile");
+  });
+
+  test("rejects missing result mode before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    delete payload.event.resultMode;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed resultMode");
+  });
+
+  test("rejects missing supported market types before Event Detail applies", () => {
+    const payload = detailPayload() as any;
+    delete payload.event.supportedMarketTypes;
+
+    expect(() => assertEventDetailRoutePayloadShape(payload)).toThrow("malformed supportedMarketTypes");
+  });
+
   test("rejects inconsistent draw rules before Event Detail applies", () => {
     const payload = detailPayload() as any;
     payload.event.resultMode = "no_draw";

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MN - Event Detail Required Rules Contract
+
+Cycle MN requires backend-owned Event Detail game-rule fields before route-backed game page state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MN-event-detail-required-rules-contract/cycle-MN-event-detail-required-rules-contract.json`.
+- Proof script: `scripts/prove_mobile_event_detail_required_rules_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventDetailRouteShapeService.test.ts`, `mobile/src/__tests__/eventDetailHydrationService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Event Detail required game-rule metadata | `/api/mobile/events/:slug/live-detail` | GET | Public/mobile route | Event slug | Required `marketProfile`, `resultMode`, `gameRules`, and `supportedMarketTypes`; values remain subject to Cycle MJ consistency checks | `Event`, listed public `Market`, backend market-rule/profile derivation | Mock/local detail remains unchanged. Server-mode missing rule fields reject before frontend market selection can infer game structure. | None for focused Event Detail required rules contract. P2 optional missing-rule-field error copy. |
+
 ## Cycle MM - Cashout Price Bounds Contract
 
 Cycle MM bounds server-mode cashout current price to the binary contract price range before submit:

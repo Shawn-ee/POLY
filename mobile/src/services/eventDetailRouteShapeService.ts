@@ -106,36 +106,32 @@ function assertEventDetailMarketShape(market: unknown): asserts market is Market
 }
 
 function assertEventRulesShape(event: Record<string, unknown>, eventId: string) {
-  if (event.marketProfile !== undefined && !isMarketProfile(event.marketProfile)) {
+  if (!isMarketProfile(event.marketProfile)) {
     throw new Error(`Event detail route returned event ${eventId} with malformed marketProfile.`);
   }
-  if (event.resultMode !== undefined && !isResultMode(event.resultMode)) {
+  if (!isResultMode(event.resultMode)) {
     throw new Error(`Event detail route returned event ${eventId} with malformed resultMode.`);
   }
-  if (event.gameRules !== undefined) {
-    if (!isRecord(event.gameRules)) {
-      throw new Error(`Event detail route returned event ${eventId} with malformed gameRules.`);
-    }
-    if (typeof event.gameRules.allowDraw !== "boolean" || typeof event.gameRules.includesOvertime !== "boolean") {
-      throw new Error(`Event detail route returned event ${eventId} with malformed game rule booleans.`);
-    }
-    if (typeof event.gameRules.description !== "string" || !event.gameRules.description.trim()) {
-      throw new Error(`Event detail route returned event ${eventId} without game rule description.`);
-    }
-    if (event.resultMode === "can_draw" && event.gameRules.allowDraw !== true) {
-      throw new Error(`Event detail route returned event ${eventId} with inconsistent draw rules.`);
-    }
-    if (event.resultMode === "no_draw" && event.gameRules.allowDraw !== false) {
-      throw new Error(`Event detail route returned event ${eventId} with inconsistent draw rules.`);
-    }
+  if (!isRecord(event.gameRules)) {
+    throw new Error(`Event detail route returned event ${eventId} with malformed gameRules.`);
   }
-  if (event.supportedMarketTypes !== undefined) {
-    if (!Array.isArray(event.supportedMarketTypes) || event.supportedMarketTypes.some((item) => !isSupportedMarketType(item))) {
-      throw new Error(`Event detail route returned event ${eventId} with malformed supportedMarketTypes.`);
-    }
-    if (event.marketProfile !== undefined && !event.supportedMarketTypes.includes(event.marketProfile)) {
-      throw new Error(`Event detail route returned event ${eventId} with unsupported marketProfile.`);
-    }
+  if (typeof event.gameRules.allowDraw !== "boolean" || typeof event.gameRules.includesOvertime !== "boolean") {
+    throw new Error(`Event detail route returned event ${eventId} with malformed game rule booleans.`);
+  }
+  if (typeof event.gameRules.description !== "string" || !event.gameRules.description.trim()) {
+    throw new Error(`Event detail route returned event ${eventId} without game rule description.`);
+  }
+  if (event.resultMode === "can_draw" && event.gameRules.allowDraw !== true) {
+    throw new Error(`Event detail route returned event ${eventId} with inconsistent draw rules.`);
+  }
+  if (event.resultMode === "no_draw" && event.gameRules.allowDraw !== false) {
+    throw new Error(`Event detail route returned event ${eventId} with inconsistent draw rules.`);
+  }
+  if (!Array.isArray(event.supportedMarketTypes) || event.supportedMarketTypes.some((item) => !isSupportedMarketType(item))) {
+    throw new Error(`Event detail route returned event ${eventId} with malformed supportedMarketTypes.`);
+  }
+  if (!event.supportedMarketTypes.includes(event.marketProfile)) {
+    throw new Error(`Event detail route returned event ${eventId} with unsupported marketProfile.`);
   }
 }
 

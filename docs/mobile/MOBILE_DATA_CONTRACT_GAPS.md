@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MN - Event Detail Required Rules Contract
+
+Closed or narrowed:
+
+- Event Detail route validation now rejects payloads missing `marketProfile`, `resultMode`, `gameRules`, or `supportedMarketTypes`.
+- Frontend Event Detail hydration no longer accepts route-backed payloads that omit backend game-structure metadata.
+- Existing rule consistency checks continue to reject contradictory draw/profile metadata after required-field validation.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Event Detail required rules contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing Event Detail rule fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Event Detail remains unchanged. Server-mode missing rule fields reject before visible game page state applies.
+
 ## Cycle MM - Cashout Price Bounds Contract
 
 Closed or narrowed:
