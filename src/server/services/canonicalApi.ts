@@ -299,6 +299,93 @@ export const getCanonicalAccountProfile = async (userId: string) => {
   };
 };
 
+export const getCanonicalAccountNavigation = async () => ({
+  source: "account-navigation-route" as const,
+  generatedAt: new Date(),
+  items: [
+    {
+      id: "leaderboard",
+      label: "Leaderboard",
+      icon: "trophy-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "Leaderboard is not enabled for the internal MVP.",
+    },
+    {
+      id: "rewards",
+      label: "Rewards",
+      icon: "gift-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "Rewards are not enabled for the internal MVP.",
+    },
+    {
+      id: "apis",
+      label: "APIs",
+      icon: "code-slash-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "API management is not exposed in the mobile MVP.",
+    },
+    {
+      id: "accuracy",
+      label: "Accuracy",
+      icon: "analytics-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "Accuracy analytics are not enabled for the internal MVP.",
+    },
+    {
+      id: "status",
+      label: "Status",
+      icon: "pulse-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "System status navigation is not enabled in mobile.",
+    },
+    {
+      id: "documentation",
+      label: "Documentation",
+      icon: "document-text-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "Documentation navigation is not enabled in mobile.",
+    },
+    {
+      id: "help-center",
+      label: "Help Center",
+      icon: "help-circle-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "Help Center navigation is not enabled in mobile.",
+    },
+    {
+      id: "terms",
+      label: "Terms of Use",
+      icon: "reader-outline",
+      kind: "placeholder",
+      enabled: false,
+      status: "unavailable",
+      destination: null,
+      reason: "Terms navigation is not enabled in mobile.",
+    },
+  ],
+});
+
 export const listCanonicalPositions = async (params: {
   userId: string;
   marketId?: string | null;

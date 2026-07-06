@@ -15,6 +15,7 @@ export type CanonicalRateLimitRouteId =
   | "fills:list"
   | "account:profile"
   | "account:balance"
+  | "account:navigation"
   | "account:positions"
   | "account:ledger"
   | "account:preferences";
@@ -37,6 +38,7 @@ export const CANONICAL_RATE_LIMITS: Record<CanonicalRateLimitRouteId, CanonicalR
   "fills:list": { windowMs: 60_000, max: 120 },
   "account:profile": { windowMs: 60_000, max: 120 },
   "account:balance": { windowMs: 60_000, max: 120 },
+  "account:navigation": { windowMs: 60_000, max: 120 },
   "account:positions": { windowMs: 60_000, max: 120 },
   "account:ledger": { windowMs: 60_000, max: 120 },
   "account:preferences": { windowMs: 60_000, max: 120 },

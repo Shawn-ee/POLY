@@ -1,8 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { ComponentProps } from "react";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { money } from "../presentation/formatters";
+import type { AccountNavigationItemResult } from "../services/accountNavigationService";
 
 const ACCOUNT_SESSION_STORAGE_KEY = "holiwyn.accountSignedIn.v1";
 
@@ -66,6 +68,8 @@ export function AccountScreen({
   totalExposure,
   portfolioValue,
   tradingMode,
+  menuItems,
+  menuSource,
 }: {
   t: AccountCopy;
   balance: number;
@@ -83,6 +87,8 @@ export function AccountScreen({
   totalExposure: number;
   portfolioValue: number;
   tradingMode: "mock" | "server";
+  menuItems: AccountNavigationItemResult[];
+  menuSource: string;
 }) {
   const [signedIn, setSignedIn] = useState(false);
 
@@ -115,16 +121,16 @@ export function AccountScreen({
         : profileSyncStatus === "error"
           ? t.profileSyncError
           : "";
-  const accountMenuItems = [
-    ["trophy-outline", "Leaderboard", "#fbbf24"],
-    ["gift-outline", "Rewards", "#22c55e"],
-    ["code-slash-outline", "APIs", "#ec4899"],
-    ["analytics-outline", "Accuracy", "#93c5fd"],
-    ["pulse-outline", "Status", "#93c5fd"],
-    ["document-text-outline", "Documentation", "#93c5fd"],
-    ["help-circle-outline", "Help Center", "#93c5fd"],
-    ["reader-outline", "Terms of Use", "#93c5fd"],
-  ] as const;
+  const iconColors: Record<string, string> = {
+    leaderboard: "#fbbf24",
+    rewards: "#22c55e",
+    apis: "#ec4899",
+    accuracy: "#93c5fd",
+    status: "#93c5fd",
+    documentation: "#93c5fd",
+    "help-center": "#93c5fd",
+    terms: "#93c5fd",
+  };
 
   return (
     <ScrollView accessibilityLabel="account-screen" testID="account-screen" style={styles.content} contentContainerStyle={styles.scrollPad}>
@@ -150,10 +156,17 @@ export function AccountScreen({
       )}
 
       <View accessibilityLabel="account-more-menu" testID="account-more-menu" style={styles.moreMenu}>
-        {accountMenuItems.map(([icon, text, color]) => (
-          <Pressable accessibilityLabel={`account-menu-${text.toLowerCase().replaceAll(" ", "-")}`} key={text} style={styles.menuRow} testID={`account-menu-${text.toLowerCase().replaceAll(" ", "-")}`}>
-            <Ionicons name={icon} size={23} color={color} />
-            <Text style={styles.menuText}>{text}</Text>
+        {menuItems.map((item) => (
+          <Pressable
+            accessibilityLabel={`account-menu-${item.id} status-${item.status} ${item.enabled ? "enabled" : "disabled"} source-${menuSource}`}
+            disabled={!item.enabled}
+            key={item.id}
+            style={[styles.menuRow, !item.enabled && styles.menuRowDisabled]}
+            testID={`account-menu-${item.id}`}
+          >
+            <Ionicons name={item.icon as ComponentProps<typeof Ionicons>["name"]} size={23} color={iconColors[item.id] ?? "#93c5fd"} />
+            <Text style={styles.menuText}>{item.label}</Text>
+            {!item.enabled && <Text style={styles.menuStatus}>Soon</Text>}
             <Ionicons name="chevron-forward" size={18} color="#64748b" />
           </Pressable>
         ))}
@@ -292,6 +305,8 @@ const styles = StyleSheet.create({
   moreMenu: { marginTop: 14, paddingVertical: 6, borderRadius: 14, backgroundColor: "#101827", borderWidth: 1, borderColor: "#263247" },
   menuRow: { minHeight: 54, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", gap: 12 },
   menuText: { flex: 1, color: "#e5e7eb", fontSize: 17, fontWeight: "900" },
+  menuRowDisabled: { opacity: 0.62 },
+  menuStatus: { color: "#64748b", fontSize: 12, fontWeight: "900", textTransform: "uppercase" },
   menuValue: { color: "#94a3b8", fontSize: 15, fontWeight: "900" },
   balanceCard: { marginTop: 14, padding: 16, borderRadius: 14, backgroundColor: "#0f1f35", borderWidth: 1, borderColor: "#28456b", flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   cardLabel: { color: "#93c5fd", fontWeight: "900" },

@@ -436,6 +436,23 @@ export type AccountProfile = {
   createdAt?: string;
 };
 
+export type AccountNavigationItem = {
+  id: string;
+  label: string;
+  icon: string;
+  kind: "internal" | "external" | "placeholder";
+  enabled: boolean;
+  status: "available" | "unavailable";
+  destination: string | null;
+  reason?: string | null;
+};
+
+export type AccountNavigation = {
+  source: "account-navigation-route" | string;
+  generatedAt: string;
+  items: AccountNavigationItem[];
+};
+
 export type ProfilePreferences = {
   locale: "en" | "zh";
   ticketDefaultAmount: string;

@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KM - Account Navigation Contract
+
+Cycle KM wires visible Account menu rows to backend-owned metadata so unsupported destinations are disabled instead of pretending to be functional mobile buttons:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KM-account-navigation-contract/cycle-KM-account-navigation-contract.json`.
+- Proof script: `scripts/prove_mobile_account_navigation_contract.ts`.
+- Focused validation: route proof, `mobile/src/__tests__/accountNavigationService.test.ts`, `mobile/src/__tests__/api.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Account visible menu rows | `/api/account/navigation` | GET | Canonical API key/session with `account:read` | None | `source`, `generatedAt`, `items[].id`, `label`, `icon`, `kind`, `enabled`, `status`, `destination`, `reason` | Canonical auth, API usage/rate-limit; no product tables required because rows are server-authored MVP placeholders | Mock/standalone mode keeps the same disabled local fallback rows. Server mode replaces them with backend route rows when sync succeeds. | P1: real destinations/actions for enabled Account menu entries when those products are intentionally in scope. |
+
 ## Cycle KL - Search Saved Filter
 
 Cycle KL wires the visible Search Saved filter to backend event ids instead of filtering only the current client page:

@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KM - Account Navigation Contract
+
+Closed or narrowed:
+
+- Backend now exposes canonical `GET /api/account/navigation` with `account:read` auth for visible Account menu metadata.
+- Mobile now has `PolyApi.getAccountNavigation()` and `loadAccountNavigation()` for backend-owned Account menu rows.
+- Server-mode app startup loads backend menu metadata and disables unsupported placeholder rows instead of leaving every row as a generic tappable button.
+- Route proof verifies the backend returns all visible Account menu rows with `kind=placeholder`, `enabled=false`, `status=unavailable`, and reason text.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Real destinations/actions for Account menu items remain future work and should be added only when those products are intentionally in scope.
+- Richer Account-specific sync/error copy remains future work.
+
+Schema mismatch:
+
+- No schema migration was made. Canonical auth, API usage/rate limits, and server-authored static metadata support the KM contract.
+
+Temporary mock/static data:
+
+- Standalone/mock mode keeps the same disabled local fallback rows. Server mode replaces them with the backend route payload when available.
+- KM proof creates a disposable backend user and API key. It does not add frontend-only menu products or destinations.
+
 ## Cycle KL - Search Saved Filter
 
 Closed or narrowed:

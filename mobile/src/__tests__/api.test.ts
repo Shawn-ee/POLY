@@ -113,6 +113,36 @@ describe("Holiwyn mobile API client", () => {
     expect(profile.displayName).toBe("grouchypike7067");
   });
 
+  test("loads account navigation with auth headers", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse({
+        source: "account-navigation-route",
+        generatedAt: "2026-07-06T08:00:00.000Z",
+        items: [
+          {
+            id: "leaderboard",
+            label: "Leaderboard",
+            icon: "trophy-outline",
+            kind: "placeholder",
+            enabled: false,
+            status: "unavailable",
+            destination: null,
+            reason: "Leaderboard is not enabled.",
+          },
+        ],
+      }),
+    );
+    vi.stubGlobal("fetch", fetchImpl);
+
+    const navigation = await new PolyApi("https://api.example.test", "pk_live_test.secret").getAccountNavigation();
+
+    const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    const headers = init.headers as Headers;
+    expect(url).toBe("https://api.example.test/api/account/navigation");
+    expect(headers.get("Authorization")).toBe("Bearer pk_live_test.secret");
+    expect(navigation.items[0].enabled).toBe(false);
+  });
+
   test("loads range-aware market chart history", async () => {
     const fetchImpl = vi.fn(async () =>
       jsonResponse({

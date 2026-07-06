@@ -1,0 +1,62 @@
+{
+  "pass": true,
+  "cycle": "Cycle KM",
+  "createdAt": "2026-07-06T08:01:11.864Z",
+  "routes": {
+    "accountNavigation": "/api/account/navigation"
+  },
+  "account": {
+    "auth": "canonical API key with account:read",
+    "userId": "3198446c-b067-4a80-8bda-4bd5a556c913",
+    "username": "mobile_km_navigation_3ba65338"
+  },
+  "routeNavigation": {
+    "source": "account-navigation-route",
+    "generatedAt": "2026-07-06T08:01:11.851Z",
+    "itemCount": 8,
+    "disabledItemIds": [
+      "leaderboard",
+      "rewards",
+      "apis",
+      "accuracy",
+      "status",
+      "documentation",
+      "help-center",
+      "terms"
+    ],
+    "unavailableItemIds": [
+      "leaderboard",
+      "rewards",
+      "apis",
+      "accuracy",
+      "status",
+      "documentation",
+      "help-center",
+      "terms"
+    ]
+  },
+  "mobileNavigation": {
+    "source": "account-navigation-route",
+    "itemCount": 8,
+    "disabledItemIds": [
+      "leaderboard",
+      "rewards",
+      "apis",
+      "accuracy",
+      "status",
+      "documentation",
+      "help-center",
+      "terms"
+    ],
+    "placeholderItemIds": [
+      "leaderboard",
+      "rewards",
+      "apis",
+      "accuracy",
+      "status",
+      "documentation",
+      "help-center",
+      "terms"
+    ]
+  }
+}

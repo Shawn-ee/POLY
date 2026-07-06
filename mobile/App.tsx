@@ -36,6 +36,7 @@ import { OrderMode, submitTicketOrder } from "./src/services/orderService";
 import { appendUniqueActivity, cancelOpenOrderOnServer, openOrderCanceledActivity } from "./src/services/openOrderService";
 import { closePositionOnServer } from "./src/services/positionCloseService";
 import { loadAccountBalance } from "./src/services/accountBalanceService";
+import { loadAccountNavigation, type AccountNavigationItemResult } from "./src/services/accountNavigationService";
 import { loadAccountProfile } from "./src/services/accountProfileService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
 import { applyServerPortfolioState } from "./src/services/portfolioStateApplyService";
@@ -62,6 +63,17 @@ const SMOKE_OPEN_SERVER_ORDER_PRICE = 1;
 const SMOKE_OPEN_SERVER_ORDER_AMOUNT = "1";
 const HOME_EVENT_PAGE_SIZE = 10;
 const SEARCH_EVENT_PAGE_SIZE = 10;
+
+const defaultAccountMenuItems: AccountNavigationItemResult[] = [
+  { id: "leaderboard", label: "Leaderboard", icon: "trophy-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "Leaderboard is not enabled for the internal MVP." },
+  { id: "rewards", label: "Rewards", icon: "gift-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "Rewards are not enabled for the internal MVP." },
+  { id: "apis", label: "APIs", icon: "code-slash-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "API management is not exposed in the mobile MVP." },
+  { id: "accuracy", label: "Accuracy", icon: "analytics-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "Accuracy analytics are not enabled for the internal MVP." },
+  { id: "status", label: "Status", icon: "pulse-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "System status navigation is not enabled in mobile." },
+  { id: "documentation", label: "Documentation", icon: "document-text-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "Documentation navigation is not enabled in mobile." },
+  { id: "help-center", label: "Help Center", icon: "help-circle-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "Help Center navigation is not enabled in mobile." },
+  { id: "terms", label: "Terms of Use", icon: "reader-outline", kind: "placeholder", enabled: false, status: "unavailable", destination: null, reason: "Terms navigation is not enabled in mobile." },
+];
 const SAVED_EVENTS_STORAGE_KEY = "holiwyn.savedEventIds.v1";
 const LANGUAGE_STORAGE_KEY = "holiwyn.language.v1";
 const PORTFOLIO_STORAGE_KEY = "holiwyn.portfolio.v1";
@@ -322,6 +334,8 @@ export default function App() {
   const [forceOrderFailure, setForceOrderFailure] = useState(false);
   const [balance, setBalance] = useState(10000);
   const [accountProfileName, setAccountProfileName] = useState("Holiwyn Demo");
+  const [accountMenuItems, setAccountMenuItems] = useState<AccountNavigationItemResult[]>(defaultAccountMenuItems);
+  const [accountMenuSource, setAccountMenuSource] = useState("local-fallback");
   const [positions, setPositions] = useState<Position[]>([]);
   const [latestOrder, setLatestOrder] = useState<OrderConfirmation | null>(null);
   const [openOrders, setOpenOrders] = useState<OpenOrder[]>([]);
@@ -1150,6 +1164,12 @@ export default function App() {
         setForceAccountSignedIn(true);
       }
     }).catch(() => undefined);
+    loadAccountNavigation(api).then((navigation) => {
+      if (!cancelled && mounted.current) {
+        setAccountMenuItems(navigation.items);
+        setAccountMenuSource(navigation.source);
+      }
+    }).catch(() => undefined);
     setPortfolioSyncStatus("syncing");
     loadServerPortfolioState(api).then((serverState) => {
       if (!cancelled && mounted.current) applyServerState(serverState);
@@ -1695,6 +1715,8 @@ export default function App() {
                 ticketDefaultSide={ticketDefaults.side}
                 ticketDefaultSlippage={ticketDefaults.slippage}
                 profileSyncStatus={profilePreferencesSyncStatus}
+                menuItems={accountMenuItems}
+                menuSource={accountMenuSource}
                 savedMarketCount={savedEventIds.size}
                 openPositionCount={positions.length}
                 openOrderCount={openOrders.length}
