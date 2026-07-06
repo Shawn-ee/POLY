@@ -33,5 +33,8 @@ export const cancelOpenOrderOnServer = async ({
   if (mode !== "server") {
     return;
   }
-  await api.cancelOrder(order.id);
+  const response = await api.cancelOrder(order.id);
+  if (response.order?.id !== order.id || response.order?.status !== "CANCELED") {
+    throw new Error("Order cancel was not confirmed by the server.");
+  }
 };

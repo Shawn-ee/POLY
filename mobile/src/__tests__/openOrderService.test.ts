@@ -55,4 +55,13 @@ describe("open order service", () => {
 
     expect(cancelOrder).toHaveBeenCalledWith("server-open-order-1");
   });
+
+  test("rejects server-mode cancel when the backend does not confirm the same canceled order", async () => {
+    const cancelOrder = vi.fn(async () => ({ order: { id: order.id, status: "OPEN" } }));
+    const api = { cancelOrder } as unknown as PolyApi;
+
+    await expect(cancelOpenOrderOnServer({ mode: "server", api, order })).rejects.toThrow(
+      "Order cancel was not confirmed by the server.",
+    );
+  });
 });

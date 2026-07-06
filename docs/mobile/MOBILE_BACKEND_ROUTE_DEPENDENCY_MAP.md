@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JW - Portfolio Open-Order Cancel Flow
+
+Cycle JW tightens the visible Portfolio open-order cancel contract:
+
+- Route proof: `docs/mobile/harness/cycle-JW-portfolio-cancel-flow/cycle-JW-portfolio-cancel-flow.json`.
+- Proof script: `scripts/prove_mobile_portfolio_cancel_flow.ts`.
+- Focused mobile tests: `mobile/src/__tests__/openOrderService.test.ts`, `mobile/src/__tests__/api.test.ts`, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio open-order cancel | `/api/orders/:id` | DELETE | Canonical API key/session with `orders:write` | None | `order.id`, `order.status=CANCELED`, `order.clientOrderId`, `order.canceledByApiKeyId`, unlocked `balance` | `Order`, `UserBalance`, `ApiOrderRequest`, `ApiCredential`, `Market`, optional `Position` for SELL cancel | Mock mode keeps local cancel behavior and does not call backend. Server mode requires a matching canceled order confirmation. | P1: richer mobile inline error copy/state if cancel fails because order was already filled/canceled by another actor. |
+| Portfolio post-cancel refresh/history | `/api/portfolio` and `/api/portfolio/history` | GET | Canonical API key/session with `account:read` | None | Open order removed from `openOrders`; canceled order appears in `canceledOrders[]` with `selection.contractSide`, provider token, and limit metadata | `Order`, `ApiOrderRequest`, `Market`, `Outcome`, `UserBalance` | Mock mode appends local canceled activity once. Server mode relies on route refresh and rejects malformed cancel confirmation. | P1: durable first-class order/trade selection snapshots remain future hardening. |
+
 ## Cycle JV - Portfolio History Contract-Side Snapshot
 
 Cycle JV tightens the visible Portfolio history/activity contract for canceled orders and recent trades:

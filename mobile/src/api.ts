@@ -1,5 +1,14 @@
 import type { EventDetail, EventSummary, Market, MarketChart, MarketChartRange, OrderbookBook, PortfolioCanceledOrderItem, PortfolioHistoryItem, PortfolioRecentTradeItem, PortfolioSnapshot, ProfilePreferences, Quote } from "./types";
 
+export type CancelOrderResponse = {
+  order?: {
+    id?: string;
+    status?: string;
+  };
+  balance?: unknown;
+  position?: unknown;
+};
+
 const trimSlash = (value: string) => value.replace(/\/+$/, "");
 const REQUEST_TIMEOUT_MS = 3500;
 
@@ -138,7 +147,7 @@ export class PolyApi {
   }
 
   cancelOrder(orderId: string) {
-    return this.request(`/api/orders/${encodeURIComponent(orderId)}`, {
+    return this.request<CancelOrderResponse>(`/api/orders/${encodeURIComponent(orderId)}`, {
       method: "DELETE",
     });
   }

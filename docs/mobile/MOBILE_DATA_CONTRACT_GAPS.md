@@ -2,6 +2,28 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JW - Portfolio Open-Order Cancel Flow
+
+Closed or narrowed:
+
+- Mobile server-mode cancel now requires the backend to confirm the same order id with `status=CANCELED` before treating cancel as successful.
+- `/api/orders/:id` route proof cancels a seeded open BUY order through canonical `orders:write` auth, verifies locked USDC is released, and verifies a repeated cancel returns a clear rejection.
+- `/api/portfolio` post-cancel proof verifies the canceled order no longer appears in `openOrders`.
+- `/api/portfolio/history` proof verifies the canceled activity preserves `selection.contractSide=no`, provider token, and limit metadata.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Better mobile-visible transient state/error copy for races where an order fills or is canceled before the user taps Cancel.
+- First-class immutable selection snapshots remain future hardening for order/trade/fill lifecycle durability.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `Order`, `UserBalance`, `ApiOrderRequest`, `Market`, `Outcome`, and `ApiCredential` fields support the JW contract.
+
+Temporary mock/static data:
+
+- JW proof creates disposable backend account, market, open order, request snapshot, and API key rows. It does not add frontend-only open-order rows.
+
 ## Cycle JV - Portfolio History Contract-Side Snapshot
 
 Closed or narrowed:

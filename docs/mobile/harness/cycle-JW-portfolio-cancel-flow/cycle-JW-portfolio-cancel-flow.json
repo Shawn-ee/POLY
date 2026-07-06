@@ -1,0 +1,36 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:39:42.572Z",
+  "cancelRoute": "/api/orders/:id",
+  "portfolioRoute": "/api/portfolio",
+  "historyRoute": "/api/portfolio/history",
+  "auth": "canonical API key with orders:write and account:read",
+  "order": {
+    "id": "2a7be2a9-a405-4fca-a2d9-3b47b8190765",
+    "cancelStatus": "CANCELED",
+    "type": "LIMIT",
+    "clientOrderId": "mobile-jw-client-9f723613",
+    "canceledByApiKeyId": "pk_live_bb7c644f4280b2cb"
+  },
+  "preCancelOpenOrder": {
+    "id": "2a7be2a9-a405-4fca-a2d9-3b47b8190765",
+    "contractSide": "no",
+    "referenceTokenId": "token-jw-no-9f723613"
+  },
+  "postCancel": {
+    "openOrderRemoved": true,
+    "lockedUSDC": "0",
+    "availableUSDC": "107.6"
+  },
+  "canceledActivity": {
+    "id": "2a7be2a9-a405-4fca-a2d9-3b47b8190765",
+    "side": "BUY",
+    "contractSide": "no",
+    "referenceTokenId": "token-jw-no-9f723613",
+    "limitSide": "bid"
+  },
+  "repeatedCancel": {
+    "status": 400,
+    "message": "Order cannot be canceled"
+  }
+}
