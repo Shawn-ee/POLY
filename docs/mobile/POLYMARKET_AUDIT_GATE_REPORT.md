@@ -4401,3 +4401,38 @@ Decision:
 - Pass/fail: Pass for focused Event Detail quote failure contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional retry copy/action for quote refresh failures.
+
+## Cycle LH - Discovery Quote Failure Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure Home, Live, Search, and Futures server discovery do not silently keep stale/local prices when quote refresh fails for visible markets.
+
+Reference Audit Agent: Backend/data-contract loop. Manual visual review is not required for this service-level contract.
+
+Implementation Agent: Reused stateful quote batching across discovery hydration paths and added market-list quote failure application.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LH-discovery-quote-failure-contract.md`
+- `docs/mobile/harness/cycle-LH-discovery-quote-failure-contract/cycle-LH-discovery-quote-failure-contract.json`
+- `scripts/prove_mobile_discovery_quote_failure_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LH-P0-01 | P0 | Pass | Home/Live/Search discovery hydration uses quote failure state. | N/A |
+| LH-P0-02 | P0 | Pass | Futures discovery hydration uses quote failure state. | N/A |
+| LH-P0-03 | P0 | Pass | Successful discovery quote responses still update market prices. | N/A |
+| LH-P0-04 | P0 | Pass | Failed discovery quote markets are marked unavailable. | N/A |
+| LH-P0-05 | P0 | Pass | Existing ticket submit guard blocks quote-failed discovery markets. | N/A |
+| LH-P2-01 | P2 | Open | No dedicated visible retry action for quote refresh failures on discovery cards. | Optional later copy/action pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused discovery quote failure contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional retry copy/action for quote refresh failures.

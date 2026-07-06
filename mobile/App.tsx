@@ -51,11 +51,9 @@ import { applyFutureChartErrorToMarket, applyFutureChartLoadingToMarket, applyFu
 import { applyMarketDepthErrorToEvent, applyMarketDepthLoadingToEvent, applyDepthStateToEvent, loadMarketDepthState } from "./src/services/marketDepthService";
 import {
   applyTicketQuoteToOutcome,
-  applyTicketQuotesToEvent,
-  applyTicketQuotesToMarkets,
   applyMarketQuoteStateToEvent,
+  applyMarketQuoteStateToMarkets,
   loadMarketQuoteStateById,
-  loadMarketQuotesById,
   loadTicketQuotes,
 } from "./src/services/quoteService";
 import type { MarketChartRange, PortfolioValueHistory } from "./src/types";
@@ -1017,8 +1015,8 @@ export default function App() {
         }
         const quotedEvents = await Promise.all(
           normalized.map(async (event) => {
-            const quotesByMarketId = await loadMarketQuotesById(api, event.markets.map((market) => market.id));
-            return applyTicketQuotesToEvent(event, quotesByMarketId);
+            const quoteState = await loadMarketQuoteStateById(api, event.markets.map((market) => market.id));
+            return applyMarketQuoteStateToEvent(event, quoteState);
           }),
         );
         if (mounted.current) {
@@ -1053,8 +1051,8 @@ export default function App() {
     }
     const quotedEvents = await Promise.all(
       feed.events.map(async (event) => {
-        const quotesByMarketId = await loadMarketQuotesById(api, event.markets.map((market) => market.id));
-        return applyTicketQuotesToEvent(event, quotesByMarketId);
+        const quoteState = await loadMarketQuoteStateById(api, event.markets.map((market) => market.id));
+        return applyMarketQuoteStateToEvent(event, quoteState);
       }),
     );
     if (mounted.current) {
@@ -1118,8 +1116,8 @@ export default function App() {
       }
       const quotedEvents = await Promise.all(
         normalized.map(async (event) => {
-          const quotesByMarketId = await loadMarketQuotesById(api, event.markets.map((market) => market.id));
-          return applyTicketQuotesToEvent(event, quotesByMarketId);
+          const quoteState = await loadMarketQuoteStateById(api, event.markets.map((market) => market.id));
+          return applyMarketQuoteStateToEvent(event, quoteState);
         }),
       );
       if (!mounted.current) return;
@@ -1186,9 +1184,9 @@ export default function App() {
           .map(normalizeMarket)
           .filter((market) => market.type === "future" && market.outcomes.length > 0);
         if (backendFutures.length === 0) return;
-        const quotesByMarketId = await loadMarketQuotesById(api, backendFutures.map((market) => market.id));
+        const quoteState = await loadMarketQuoteStateById(api, backendFutures.map((market) => market.id));
         if (cancelled || !mounted.current) return;
-        setFutures(quotesByMarketId.size > 0 ? applyTicketQuotesToMarkets(backendFutures, quotesByMarketId) : backendFutures);
+        setFutures(applyMarketQuoteStateToMarkets(backendFutures, quoteState));
       })
       .catch(() => undefined);
     return () => {

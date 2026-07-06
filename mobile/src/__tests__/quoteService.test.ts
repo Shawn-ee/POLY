@@ -6,6 +6,7 @@ import {
   applyTicketQuotesToMarket,
   applyTicketQuotesToMarkets,
   applyMarketQuoteStateToEvent,
+  applyMarketQuoteStateToMarkets,
   loadMarketQuoteStateById,
   loadMarketQuotesById,
   loadTicketQuotes,
@@ -551,6 +552,39 @@ describe("quote service", () => {
 
     expect(quotedMarkets[0].outcomes[0].probability).toBe(39);
     expect(quotedMarkets[1]).toBe(markets[1]);
+  });
+
+  test("marks market lists unavailable when their quote route fails", () => {
+    const markets = [
+      {
+        id: "world-cup-winner",
+        availability: {
+          source: "events-route",
+          status: "ready" as const,
+          marketStatus: "LIVE",
+          lastUpdated: null,
+          stalenessSeconds: null,
+          staleAfterSeconds: 60,
+          isStale: false,
+          isSuspended: false,
+          isDelayed: false,
+          reason: "Market accepts orders.",
+        },
+        outcomes: [{ id: "france", label: "France", probability: 34 }],
+      },
+    ];
+
+    const quotedMarkets = applyMarketQuoteStateToMarkets(markets, {
+      quotesByMarketId: new Map(),
+      failedMarketIds: new Set(["world-cup-winner"]),
+    });
+
+    expect(quotedMarkets[0].availability).toMatchObject({
+      source: "market-quote-route",
+      status: "unavailable",
+      marketStatus: "LIVE",
+      reason: "Market quote route failed.",
+    });
   });
 
   test("keeps the original market list when no market quotes match", () => {

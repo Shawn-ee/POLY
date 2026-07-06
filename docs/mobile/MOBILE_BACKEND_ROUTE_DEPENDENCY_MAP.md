@@ -2192,3 +2192,16 @@ Cycle LG implementation notes:
 - Added `loadMarketQuoteStateById` so quote batching returns both successful quotes and failed market ids.
 - Event Detail server quote refresh applies quote-failure availability to failed markets.
 - The existing ticket submit guard blocks `source=market-quote-route`, `status=unavailable` markets.
+
+## Cycle LH - Discovery Quote Failure Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home/Live/Search discovery quote hydration | `/api/events?includeMobileMarkets=1`, `/api/events?statusGroup=live&includeMobileMarkets=1`, `/api/events?search=...`, `/api/markets/:id/quote` | GET | Public market data | Event list filters plus market ids for quote refresh | Compact event markets, quote price/depth fields, and per-market quote failure state | `Event`, `Market`, `Outcome`, quote/read-model source behind quote route | Mock/offline mode still uses local markets. Server-mode discovery now marks quote-failed markets unavailable. | No P0 gap for focused discovery quote failure handling. |
+| Futures discovery quote hydration | `/api/events?marketType=future&includeMobileMarkets=1`, `/api/markets/:id/quote` | GET | Public market data | Future market filter and market ids for quote refresh | Future markets, quote price/depth fields, and per-market quote failure state | `Market`, `Outcome`, quote/read-model source behind quote route | Local fallback futures remain only outside server mode. Server-mode future quote failures are unavailable. | No focused P0 gap. |
+
+Cycle LH implementation notes:
+
+- Home, Live, Search, and Futures server discovery now use `loadMarketQuoteStateById`.
+- Discovery event and market-list hydration applies quote-failure availability instead of silently keeping stale/local probabilities.
+- The existing ticket submit guard blocks quote-failed discovery markets before `/api/orders`.

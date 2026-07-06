@@ -1,0 +1,109 @@
+{
+  "cycle": "LH",
+  "gate": "discovery-quote-failure-contract",
+  "generatedAt": "2026-07-06T10:12:43.381Z",
+  "routes": [
+    "/api/events?includeMobileMarkets=1",
+    "/api/events?statusGroup=live&includeMobileMarkets=1",
+    "/api/events?search=",
+    "/api/events?marketType=future&includeMobileMarkets=1",
+    "/api/markets/:id/quote",
+    "/api/orders"
+  ],
+  "assertions": {
+    "homeLiveSearchDiscoveryUseQuoteFailureState": true,
+    "futuresDiscoveryUsesQuoteFailureState": true,
+    "successfulDiscoveryQuotesStillUpdateMarkets": true,
+    "failedDiscoveryMarketsBecomeUnavailable": true,
+    "failedDiscoveryMarketsAreSubmitBlocked": true
+  },
+  "readyMarket": {
+    "id": "lh-discovery-ready",
+    "title": "Discovery ready",
+    "zhTitle": "Discovery ready",
+    "type": "game-line",
+    "availability": {
+      "source": "events-route",
+      "status": "ready",
+      "marketStatus": "LIVE",
+      "lastUpdated": null,
+      "stalenessSeconds": null,
+      "staleAfterSeconds": 60,
+      "isStale": false,
+      "isSuspended": false,
+      "isDelayed": false,
+      "reason": "Market accepts orders."
+    },
+    "outcomes": [
+      {
+        "id": "home",
+        "label": "Home",
+        "zhLabel": "Home",
+        "probability": 45,
+        "color": "#2563eb",
+        "bestBid": 44,
+        "bestAsk": 46,
+        "bestBidSize": null,
+        "bestAskSize": null
+      }
+    ]
+  },
+  "failedDiscoveryMarket": {
+    "id": "lh-discovery-failed",
+    "title": "Discovery failed",
+    "zhTitle": "Discovery failed",
+    "type": "game-line",
+    "availability": {
+      "source": "market-quote-route",
+      "status": "unavailable",
+      "marketStatus": "LIVE",
+      "lastUpdated": null,
+      "stalenessSeconds": null,
+      "staleAfterSeconds": 60,
+      "isStale": false,
+      "isSuspended": false,
+      "isDelayed": false,
+      "reason": "Market quote route failed."
+    },
+    "outcomes": [
+      {
+        "id": "away",
+        "label": "Away",
+        "zhLabel": "Away",
+        "probability": 60,
+        "color": "#f97316"
+      }
+    ]
+  },
+  "failedFutureMarket": {
+    "id": "lh-future-failed",
+    "title": "LH Future Failed",
+    "zhTitle": "LH Future Failed",
+    "type": "future",
+    "availability": {
+      "source": "market-quote-route",
+      "status": "unavailable",
+      "marketStatus": "LIVE",
+      "lastUpdated": null,
+      "stalenessSeconds": null,
+      "staleAfterSeconds": 60,
+      "isStale": false,
+      "isSuspended": false,
+      "isDelayed": false,
+      "reason": "Market quote route failed."
+    },
+    "outcomes": [
+      {
+        "id": "yes",
+        "label": "Yes",
+        "zhLabel": "Yes",
+        "probability": 25,
+        "color": "#2563eb"
+      }
+    ]
+  },
+  "blockReasons": {
+    "discovery": "Market quote route failed.",
+    "future": "Market quote route failed."
+  }
+}

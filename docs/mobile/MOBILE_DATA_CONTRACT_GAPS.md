@@ -4521,6 +4521,35 @@ Future migration concern:
 
 - A ticket-specific quote route could eventually return executable price, fees, slippage, and eligibility in one response. LG only closes per-market quote-route failure handling.
 
+## Cycle LH - Discovery Quote Failure Contract
+
+Closed or narrowed:
+
+- Home, Live, Search, and Futures server discovery now use quote batch state instead of silently skipping failed market quote calls.
+- Quote-failed discovery markets are marked `availability.status=unavailable` with `source=market-quote-route`.
+- Existing server-mode ticket submit guards block quote-failed discovery markets before stale guessed prices can be submitted.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No P0 field gap for focused discovery quote failure handling.
+- Optional card-level retry/status copy remains a P2 polish gap.
+
+Schema mismatch:
+
+- No schema migration was required. This uses the existing market availability shape and `/api/markets/:id/quote`.
+
+Route mismatch:
+
+- Existing discovery routes plus `/api/markets/:id/quote` and `/api/orders` are sufficient for this focused contract.
+
+Temporary mock/static data:
+
+- Mock/offline Home/Futures markets still use local probabilities. Server-mode quote failures are no longer silently treated as successful local data.
+
+Future migration concern:
+
+- A ticket-specific quote/eligibility endpoint can eventually replace per-market quote hydration for final swipe readiness.
+
 ## Cycle LA - Cashout/Sell Safety Contract
 
 Closed or narrowed:

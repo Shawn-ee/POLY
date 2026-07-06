@@ -267,3 +267,20 @@ export const applyTicketQuotesToMarkets = <
 
   return changed ? quotedMarkets : markets;
 };
+
+export const applyMarketQuoteStateToMarkets = <
+  TOutcome extends QuoteableOutcome,
+  TMarket extends { id: string; outcomes: TOutcome[]; availability?: AvailabilityState },
+>(
+  markets: TMarket[],
+  state: MarketQuoteState,
+): TMarket[] => {
+  let changed = false;
+  const quotedMarkets = markets.map((market) => {
+    const quotedMarket = applyMarketQuoteStateToMarket(market, state);
+    if (quotedMarket !== market) changed = true;
+    return quotedMarket;
+  });
+
+  return changed ? quotedMarkets : markets;
+};
