@@ -38,21 +38,27 @@ describe("portfolio sync service", () => {
   test("returns synced state with snapshot and history when both server reads succeed", () => {
     expect(resolvePortfolioSyncResults(fulfilled(snapshot), fulfilled(activities))).toEqual({
       syncStatus: "synced",
+      snapshotStatus: "synced",
+      historyStatus: "synced",
       snapshot,
       activities,
     });
   });
 
-  test("keeps Portfolio synced when snapshot succeeds and history fails", () => {
+  test("surfaces error state when snapshot succeeds and history fails while keeping snapshot data", () => {
     expect(resolvePortfolioSyncResults(fulfilled(snapshot), rejected())).toEqual({
-      syncStatus: "synced",
+      syncStatus: "error",
+      snapshotStatus: "synced",
+      historyStatus: "error",
       snapshot,
     });
   });
 
-  test("keeps Portfolio synced when history succeeds and snapshot fails", () => {
+  test("surfaces error state when history succeeds and snapshot fails while keeping activity data", () => {
     expect(resolvePortfolioSyncResults(rejected(), fulfilled(activities))).toEqual({
-      syncStatus: "synced",
+      syncStatus: "error",
+      snapshotStatus: "error",
+      historyStatus: "synced",
       activities,
     });
   });
@@ -60,6 +66,8 @@ describe("portfolio sync service", () => {
   test("returns error only when both Portfolio server reads fail", () => {
     expect(resolvePortfolioSyncResults(rejected<PortfolioSnapshotResult>(), rejected<PortfolioActivity[]>())).toEqual({
       syncStatus: "error",
+      snapshotStatus: "error",
+      historyStatus: "error",
     });
   });
 });

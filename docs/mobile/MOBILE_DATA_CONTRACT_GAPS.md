@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LE - Portfolio Partial Sync Contract
+
+Closed or narrowed:
+
+- Portfolio server sync now treats `/api/portfolio` and `/api/portfolio/history` as separate required reads for a fully synced visible state.
+- If either route fails, visible `syncStatus` is `error` instead of `synced`.
+- Successful partial data is still applied: snapshot data can update balance/positions/open orders when history fails, and history data can update activity when snapshot fails.
+- Both-route failure does not invent Portfolio data.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Portfolio partial sync contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing Portfolio snapshot and history routes already provide separate data contracts; LE changes mobile aggregation semantics.
+
+Temporary mock/static data:
+
+- Mock/local Portfolio state remains unchanged. Server-mode partial failures no longer masquerade as fully synced state.
+
 ## Cycle LD - Account Preferences Response Contract
 
 Closed or narrowed:

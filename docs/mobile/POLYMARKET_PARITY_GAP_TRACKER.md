@@ -557,3 +557,10 @@ For every UI element or interaction, answer:
 - LD closes the focused P0 data-contract gap where malformed server preference fields could be partially applied to visible language, saved-market filters, saved count, or Trade Ticket defaults.
 - Harness proof passes for default GET normalization, saved PUT echo normalization, persisted GET reload, and malformed field rejection before apply.
 - Remaining P1: richer retry/conflict UI if preference save fails mid-session.
+
+## Cycle LE Gap Tracker Update
+
+- PM-GAP-109 is opened and verified for Portfolio partial-sync visibility.
+- LE closes the focused P0 data-contract gap where Portfolio could report `synced` after only one of `/api/portfolio` or `/api/portfolio/history` succeeded.
+- Harness proof passes for both-route success, snapshot-only success, history-only success, and both-route failure, with successful partial data preserved but visible sync status set to error unless both routes pass.
+- Remaining P1: granular UI copy for snapshot-vs-history partial failures if product wants separate messages.

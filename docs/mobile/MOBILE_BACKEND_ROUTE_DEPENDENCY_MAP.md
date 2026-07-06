@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle LE - Portfolio Partial Sync Contract
+
+Cycle LE tightens visible Portfolio sync status for the two backend routes that feed the Portfolio screen:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-LE-portfolio-partial-sync-contract/cycle-LE-portfolio-partial-sync-contract.json`.
+- Proof script: `scripts/prove_mobile_portfolio_partial_sync_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/portfolioSyncService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio snapshot/history combined sync state | `/api/portfolio` and `/api/portfolio/history` | GET + GET | Canonical API key/session with `account:read` | None | Snapshot balance/positions/open orders and history activities; mobile now reports visible `syncStatus=error` unless both routes succeed, while preserving successful partial data | `UserBalance`, `Position`, `Order`, `Trade`, `Fill`, `ApiOrderRequest`, `Market`, `Outcome` | Mock/local Portfolio state remains unchanged. Server-mode partial failures no longer show full synced status or invent missing data. | P1: more granular UI copy for snapshot-vs-history partial failures if product wants separate banners. |
+
 ## Cycle LD - Account Preferences Response Contract
 
 Cycle LD hardens the mobile response-shape contract for visible Account preferences that feed language, saved markets, and Trade Ticket defaults:

@@ -42,6 +42,8 @@ describe("portfolio state apply service", () => {
     expect(
       applyServerPortfolioState(current, {
         syncStatus: "synced",
+        snapshotStatus: "synced",
+        historyStatus: "error",
         snapshot: {
           balance: 10000,
           positions: [],
@@ -67,7 +69,9 @@ describe("portfolio state apply service", () => {
 
     expect(
       applyServerPortfolioState(current, {
-        syncStatus: "synced",
+        syncStatus: "error",
+        snapshotStatus: "error",
+        historyStatus: "synced",
         activities: [serverActivity],
       }),
     ).toEqual({

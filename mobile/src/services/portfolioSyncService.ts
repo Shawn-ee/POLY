@@ -5,6 +5,8 @@ import { loadPortfolioSnapshot, PortfolioSnapshotResult } from "./portfolioSnaps
 
 export type ServerPortfolioState = {
   syncStatus: Extract<PortfolioSyncStatus, "synced" | "error">;
+  snapshotStatus: "synced" | "error";
+  historyStatus: "synced" | "error";
   snapshot?: PortfolioSnapshotResult;
   activities?: PortfolioActivity[];
 };
@@ -15,8 +17,12 @@ export const resolvePortfolioSyncResults = (
 ): ServerPortfolioState => {
   const snapshot = snapshotResult.status === "fulfilled" ? snapshotResult.value : undefined;
   const activities = historyResult.status === "fulfilled" ? historyResult.value : undefined;
+  const snapshotStatus = snapshot ? "synced" : "error";
+  const historyStatus = activities ? "synced" : "error";
   return {
-    syncStatus: snapshot || activities ? "synced" : "error",
+    syncStatus: snapshot && activities ? "synced" : "error",
+    snapshotStatus,
+    historyStatus,
     ...(snapshot ? { snapshot } : {}),
     ...(activities ? { activities } : {}),
   };

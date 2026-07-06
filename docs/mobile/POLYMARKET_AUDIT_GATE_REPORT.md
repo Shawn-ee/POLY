@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Portfolio partial sync contract | Cycle LE | Pass for backend/data-contract scope | 0 for focused partial-sync status scope | P1 granular UI copy for snapshot-vs-history partial failures | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LE-portfolio-partial-sync-contract/cycle-LE-portfolio-partial-sync-contract.json`; tests: `mobile/src/__tests__/portfolioSyncService.test.ts`; audit: `mobile/docs/audits/cycle-LE-portfolio-partial-sync-contract.md` | Portfolio server mode now reports full `synced` only when both `/api/portfolio` and `/api/portfolio/history` succeed; partial failures show visible error while preserving successful partial data. |
 | Account preferences response contract | Cycle LD | Pass for backend/data-contract scope | 0 for focused preference response-shape scope | P1 richer retry/conflict UI if preference save fails mid-session | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LD-account-preferences-response-contract/cycle-LD-account-preferences-response-contract.json`; tests: `mobile/src/__tests__/profilePreferencesService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-LD-account-preferences-response-contract.md` | Account preferences GET/PUT payloads are validated by mobile before visible language, saved markets, and Trade Ticket defaults are applied; malformed route-shaped fields fail clearly. |
 | Trade Ticket availability submit contract | Cycle LC | Pass for backend/data-contract scope | 0 for focused blocked-market submit scope | P1 production active provider breadth/freshness | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LC-trade-ticket-availability-submit-contract/cycle-LC-trade-ticket-availability-submit-contract.json`; tests: `mobile/src/__tests__/orderService.test.ts`; audit: `mobile/docs/audits/cycle-LC-trade-ticket-availability-submit-contract.md` | Trade Ticket submit now consumes backend `market.availability` as an executable guard: `suspended`/`unavailable` markets stop before `/api/orders`; ready warning-free markets still submit normally. |
 | Event Detail line availability contract | Cycle LB | Pass for backend/data-contract scope | 0 for focused backend-driven line/period availability scope | P1 production active provider breadth/liquidity | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-LB-event-detail-line-availability-contract/cycle-LB-event-detail-line-availability-contract.json`; tests: `mobile/src/__tests__/eventDetailLineAvailabilityService.test.ts`, `mobile/src/__tests__/eventDetailLineTicketService.test.ts`, `mobile/src/__tests__/eventDetailMarketProfileService.test.ts`; audit: `mobile/docs/audits/cycle-LB-event-detail-line-availability-contract.md` | Route-backed Event Detail line controls now derive Spread/Totals/Team Total lines and periods from backend markets instead of static frontend defaults. |
@@ -82,6 +83,37 @@ Fail the feature when:
 | Current live event detail visible provider behavior and structural parity | Cycle EG integrated | Partial; PM-GAP-084 remains open | 4 P0 status/provider-lifecycle proof areas remain | P1 fresh S23 recapture, broader real provider-backed family breadth, visible provider refresh lifecycle; P2 density/chart/orderbook/status polish | Reused stale/reference-only DQ-C Samsung S23 official Polymarket evidence; gate: `docs/mobile/audits/cycle-eg-c-live-event-visible-provider-gate.md` | Backend refresh lifecycle proof: `docs/mobile/harness/cycle-EG-A-provider-refresh-lifecycle.json`; Samsung tablet visible proof: `docs/mobile/harness/cycle-EG-B-visible-live-parity/cycle-EG-B-visible-live-parity-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EG-B-visible-live-parity/` and `docs/mobile/harness/cycle-EG-B-visible-live-parity/` | EG materially closes chart, line-selector, Book ladder, and ticket carry-through gaps for the selected Mexico/Ecuador Spread path. It remains partial because the Android run used contract-shaped fallback data and did not visibly prove ready/stale/refreshing/unavailable provider lifecycle states tied to the backend route in one run. |
 | Current live game page Book-origin snapshot durability after metadata drift | Cycle EF integrated | Pass for selected EF proof; PM-GAP-083 verified for selected path | 0 for selected EF gate | P1 repeat across real provider-backed line families, provider-refresh drift regression, official production history recapture; P2 Portfolio/history visual clarity | Reused EE/ED checked-in proof and DQ-C Polymarket reference; gate: `docs/mobile/audits/cycle-ef-c-snapshot-durability-gate.md` | Backend proof: `docs/mobile/harness/cycle-EF-A-snapshot-durability.json`; Samsung tablet proof: `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/cycle-EF-snapshot-durability-proof.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EF-integrated-snapshot-durability/` and `docs/mobile/harness/cycle-EF-integrated-snapshot-durability/` | Integrated proof mutates current market/outcome/provider metadata after order/fill creation, then proves backend and Android Portfolio/activity still render order-time/fill-time selected Book identity with no fallback/default reconstruction and explicit fake-token labels. |
 | Current live game page Book-origin open/cancel/fill status and selection snapshots | Cycle EE integrated | Pass for selected PM-GAP-082 gate | 0 for selected EE gate | P1 real provider-backed line-family status matrix, official production confirmation/cancel/fill recapture, durability checks after metadata changes; P2 Portfolio/history visual status polish | Reused DQ-C Samsung S23 official Polymarket Book/orderbook and location-gated ticket reference; ED/DX/DO/Portfolio checked-in lifecycle baselines; gate: `docs/mobile/audits/cycle-ee-c-book-order-status-gate.md` | Samsung tablet proof: `docs/mobile/harness/cycle-EE-integrated-book-order-status/cycle-EE-book-order-status-proof.json`; backend snapshot proof: `docs/mobile/harness/cycle-EE-A-book-order-status-snapshots.json`; screenshots/XML under `docs/mobile/screenshots/cycle-EE-integrated-book-order-status/` and `docs/mobile/harness/cycle-EE-integrated-book-order-status/` | EE integrated proof shows the same Book-origin selected identity through open order, cancel/canceled status, filled position, recent activity/history, guarded backend selection snapshots, visible fake-token status labels, and no-fallback assertions. |
+
+## Cycle LE
+
+Gate status: Pass
+
+Scope:
+
+- Portfolio sync aggregation across `/api/portfolio` and `/api/portfolio/history`.
+- Partial route failure visibility without discarding successful partial data.
+
+Evidence:
+
+- `docs/mobile/harness/cycle-LE-portfolio-partial-sync-contract/cycle-LE-portfolio-partial-sync-contract.json`
+- `mobile/docs/audits/cycle-LE-portfolio-partial-sync-contract.md`
+- `mobile/src/__tests__/portfolioSyncService.test.ts`
+
+Criteria:
+
+| Criterion | Result | Evidence |
+| --- | --- | --- |
+| Full synced status requires both Portfolio routes to succeed | Pass | LE proof `bothRoutesRequiredForSyncedStatus=true` |
+| Snapshot route failure shows visible error even when history succeeds | Pass | LE proof `partialSnapshotFailureShowsVisibleError=true` |
+| History route failure shows visible error even when snapshot succeeds | Pass | LE proof `partialHistoryFailureShowsVisibleError=true` |
+| Successful partial data is still applied | Pass | LE proof `successfulPartialDataStillApplied=true` |
+| Both-route failure does not invent Portfolio data | Pass | LE proof `bothFailuresDoNotInventData=true` |
+
+Decision:
+
+- Pass/fail: Pass for focused Portfolio partial sync contract.
+- Unresolved P0 gaps: 0 for focused partial-sync status scope.
+- Remaining P1/P2 gaps: granular UI copy for snapshot-vs-history partial failures.
 
 ## Cycle LD
 

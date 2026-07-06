@@ -1,0 +1,112 @@
+{
+  "cycle": "LE",
+  "gate": "portfolio-partial-sync-contract",
+  "generatedAt": "2026-07-06T09:59:07.806Z",
+  "routes": [
+    "/api/portfolio",
+    "/api/portfolio/history"
+  ],
+  "assertions": {
+    "bothRoutesRequiredForSyncedStatus": true,
+    "partialSnapshotFailureShowsVisibleError": true,
+    "partialHistoryFailureShowsVisibleError": true,
+    "successfulPartialDataStillApplied": true,
+    "bothFailuresDoNotInventData": true
+  },
+  "cases": {
+    "bothSucceeded": {
+      "syncStatus": "synced",
+      "snapshotStatus": "synced",
+      "historyStatus": "synced",
+      "snapshot": {
+        "balance": 10000,
+        "positions": [
+          {
+            "id": "server-proof-position",
+            "mode": "server",
+            "title": "LE Portfolio snapshot",
+            "outcome": "Home",
+            "side": "buy",
+            "amount": 100,
+            "probability": 50,
+            "shares": 200,
+            "currentPrice": 0.5
+          }
+        ],
+        "openOrders": [
+          {
+            "id": "server-proof-open-order",
+            "title": "LE Portfolio order",
+            "outcome": "Away",
+            "side": "buy",
+            "status": "OPEN",
+            "price": 0.4,
+            "remaining": 25
+          }
+        ]
+      },
+      "activities": [
+        {
+          "id": "server-proof-activity",
+          "action": "opened",
+          "title": "LE Portfolio activity",
+          "outcome": "Home",
+          "amount": 25,
+          "timestamp": "Jul 6, 4:56 AM"
+        }
+      ]
+    },
+    "historyFailed": {
+      "syncStatus": "error",
+      "snapshotStatus": "synced",
+      "historyStatus": "error",
+      "snapshot": {
+        "balance": 10000,
+        "positions": [
+          {
+            "id": "server-proof-position",
+            "mode": "server",
+            "title": "LE Portfolio snapshot",
+            "outcome": "Home",
+            "side": "buy",
+            "amount": 100,
+            "probability": 50,
+            "shares": 200,
+            "currentPrice": 0.5
+          }
+        ],
+        "openOrders": [
+          {
+            "id": "server-proof-open-order",
+            "title": "LE Portfolio order",
+            "outcome": "Away",
+            "side": "buy",
+            "status": "OPEN",
+            "price": 0.4,
+            "remaining": 25
+          }
+        ]
+      }
+    },
+    "snapshotFailed": {
+      "syncStatus": "error",
+      "snapshotStatus": "error",
+      "historyStatus": "synced",
+      "activities": [
+        {
+          "id": "server-proof-activity",
+          "action": "opened",
+          "title": "LE Portfolio activity",
+          "outcome": "Home",
+          "amount": 25,
+          "timestamp": "Jul 6, 4:56 AM"
+        }
+      ]
+    },
+    "bothFailed": {
+      "syncStatus": "error",
+      "snapshotStatus": "error",
+      "historyStatus": "error"
+    }
+  }
+}
