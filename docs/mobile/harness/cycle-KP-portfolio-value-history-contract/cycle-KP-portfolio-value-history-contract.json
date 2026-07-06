@@ -1,0 +1,41 @@
+{
+  "pass": true,
+  "cycle": "Cycle KP",
+  "createdAt": "2026-07-06T08:23:16.024Z",
+  "route": "/api/portfolio/value-history",
+  "account": {
+    "userId": "c15b13bc-ff02-4722-870d-c5588c2b9f5f",
+    "auth": "canonical API key with account:read"
+  },
+  "seeded": {
+    "marketId": "eb36b8d9-f854-469f-8ae6-5e2c1cbc2aab",
+    "outcomeId": "551affec-9b93-48aa-be02-76d390a860a1",
+    "shares": 100,
+    "cash": 40.86,
+    "latestPrice": 1
+  },
+  "routeHistory": {
+    "source": "portfolio-value-history-route",
+    "status": "ready",
+    "range": "1D",
+    "pointCount": 6,
+    "latest": {
+      "timestamp": "2026-07-06T08:23:16.006Z",
+      "value": 140.86,
+      "cash": 40.86,
+      "positionsValue": 100,
+      "pnl": 20
+    }
+  },
+  "mobileHistory": {
+    "source": "portfolio-value-history-route",
+    "status": "ready",
+    "range": "1D",
+    "pointCount": 6,
+    "latestValue": 140.86
+  },
+  "mobileBehavior": {
+    "portfolioRouteClient": "PolyApi.getPortfolioValueHistory(range)",
+    "portfolioScreenSourceMarker": "portfolio-value-history-source-portfolio-value-history-route"
+  }
+}

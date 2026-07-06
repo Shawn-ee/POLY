@@ -26,6 +26,33 @@ describe("Holiwyn mobile API client", () => {
     expect(headers.get("Accept")).toBe("application/json");
   });
 
+  test("loads portfolio value history with range and auth headers", async () => {
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse({
+        range: "1W",
+        ranges: ["1D", "1W", "1M", "All"],
+        source: "portfolio-value-history-route",
+        status: "ready",
+        generatedAt: "2026-07-06T08:00:00.000Z",
+        lastUpdated: "2026-07-06T08:00:00.000Z",
+        emptyState: null,
+        points: [{ timestamp: "2026-07-06T08:00:00.000Z", value: 140.86, cash: 40.86, positionsValue: 100, pnl: 0.07 }],
+      }),
+    );
+    vi.stubGlobal("fetch", fetchImpl);
+
+    const history = await new PolyApi("https://api.example.test", "pk_live_test.secret").getPortfolioValueHistory("1W");
+
+    const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    const headers = init.headers as Headers;
+    const parsedUrl = new URL(url);
+    expect(`${parsedUrl.origin}${parsedUrl.pathname}`).toBe("https://api.example.test/api/portfolio/value-history");
+    expect(parsedUrl.searchParams.get("range")).toBe("1W");
+    expect(headers.get("Authorization")).toBe("Bearer pk_live_test.secret");
+    expect(history.source).toBe("portfolio-value-history-route");
+    expect(history.points[0].value).toBe(140.86);
+  });
+
   test("places canonical limit orders with idempotency and auth headers", async () => {
     vi.spyOn(Date, "now").mockReturnValue(12345);
     const fetchImpl = vi.fn(async () => jsonResponse({ order: { id: "order-1" } }));

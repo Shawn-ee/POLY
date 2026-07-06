@@ -1,4 +1,4 @@
-import type { AccountBalance, AccountNavigation, AccountProfile, EventDetail, EventSummary, Market, MarketChart, MarketChartRange, OrderbookBook, PortfolioCanceledOrderItem, PortfolioHistoryItem, PortfolioRecentTradeItem, PortfolioSnapshot, ProfilePreferences, Quote } from "./types";
+import type { AccountBalance, AccountNavigation, AccountProfile, EventDetail, EventSummary, Market, MarketChart, MarketChartRange, OrderbookBook, PortfolioCanceledOrderItem, PortfolioHistoryItem, PortfolioRecentTradeItem, PortfolioSnapshot, PortfolioValueHistory, PortfolioValueHistoryRange, ProfilePreferences, Quote } from "./types";
 
 export type CancelOrderResponse = {
   order?: {
@@ -123,6 +123,11 @@ export class PolyApi {
 
   getPortfolio() {
     return this.request<PortfolioSnapshot>(`/api/portfolio`);
+  }
+
+  getPortfolioValueHistory(range: PortfolioValueHistoryRange = "1D") {
+    const params = new URLSearchParams({ range });
+    return this.request<PortfolioValueHistory>(`/api/portfolio/value-history?${params.toString()}`);
   }
 
   getAccountBalance() {

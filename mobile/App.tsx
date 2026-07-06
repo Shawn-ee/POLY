@@ -41,6 +41,7 @@ import { loadAccountProfile } from "./src/services/accountProfileService";
 import { serverBackendOnlyPortfolioFixture, serverClosedPortfolioFixture, serverHydratedPortfolioFixture } from "./src/services/portfolioFixtureService";
 import { applyServerPortfolioState } from "./src/services/portfolioStateApplyService";
 import { loadServerPortfolioState } from "./src/services/portfolioSyncService";
+import { loadPortfolioValueHistory } from "./src/services/portfolioValueHistoryService";
 import { resolvePositionTradeTarget } from "./src/services/positionTradeTargetService";
 import { loadProfilePreferences, saveProfilePreferences } from "./src/services/profilePreferencesService";
 import { applyChartErrorToEvent, applyChartLoadingToEvent, applyChartStateToEvent, loadMarketChartState } from "./src/services/marketChartService";
@@ -53,6 +54,7 @@ import {
   loadMarketQuotesById,
   loadTicketQuotes,
 } from "./src/services/quoteService";
+import type { PortfolioValueHistory } from "./src/types";
 
 const DEFAULT_API_BASE = process.env.EXPO_PUBLIC_API_BASE_URL || "http://10.0.2.2:3000";
 const DEFAULT_API_KEY = process.env.EXPO_PUBLIC_API_KEY || "";
@@ -341,6 +343,7 @@ export default function App() {
   const [latestOrder, setLatestOrder] = useState<OrderConfirmation | null>(null);
   const [openOrders, setOpenOrders] = useState<OpenOrder[]>([]);
   const [activities, setActivities] = useState<PortfolioActivity[]>([]);
+  const [portfolioValueHistory, setPortfolioValueHistory] = useState<PortfolioValueHistory | null>(null);
   const [portfolioHydrated, setPortfolioHydrated] = useState(false);
   const [ticketDefaults, setTicketDefaults] = useState<TicketDefaults>({ amount: "100", side: "buy", slippage: "1%" });
   const [ticketDefaultsHydrated, setTicketDefaultsHydrated] = useState(false);
@@ -1148,12 +1151,25 @@ export default function App() {
     );
   }, []);
 
+  const refreshPortfolioValueHistory = useCallback((portfolioApi = api) =>
+    loadPortfolioValueHistory({
+      getPortfolioValueHistory: (range) => portfolioApi.getPortfolioValueHistory(range),
+      range: "1D",
+    })
+      .then((history) => {
+        if (mounted.current) setPortfolioValueHistory(history);
+      })
+      .catch(() => {
+        if (mounted.current) setPortfolioValueHistory(null);
+      }), [api]);
+
   const refreshServerPortfolio = useCallback(async () => {
     setPortfolioSyncStatus("syncing");
     const serverState = await loadServerPortfolioState(api);
     if (!mounted.current) return;
     applyServerState(serverState);
-  }, [api, applyServerState]);
+    await refreshPortfolioValueHistory(api);
+  }, [api, applyServerState, refreshPortfolioValueHistory]);
 
   useEffect(() => {
     if (ORDER_MODE !== "server" || runtimeApiKey.length === 0) return undefined;
@@ -1175,14 +1191,17 @@ export default function App() {
     }).catch(() => undefined);
     setPortfolioSyncStatus("syncing");
     loadServerPortfolioState(api).then((serverState) => {
-      if (!cancelled && mounted.current) applyServerState(serverState);
+      if (!cancelled && mounted.current) {
+        applyServerState(serverState);
+        refreshPortfolioValueHistory(api);
+      }
     }).catch(() => {
       if (!cancelled && mounted.current) setPortfolioSyncStatus("error");
     });
     return () => {
       cancelled = true;
     };
-  }, [api, applyServerState, runtimeApiKey]);
+  }, [api, applyServerState, refreshPortfolioValueHistory, runtimeApiKey]);
 
   useEffect(() => {
     if (forcedRuntimePortfolioSyncNonce === 0 || ORDER_MODE !== "server" || runtimeApiKey.length === 0) return undefined;
@@ -1192,13 +1211,14 @@ export default function App() {
     loadServerPortfolioState(runtimeApi).then((serverState) => {
       if (cancelled || !mounted.current) return;
       applyServerState(serverState);
+      refreshPortfolioValueHistory(runtimeApi);
     }).catch(() => {
       if (!cancelled && mounted.current) setPortfolioSyncStatus("error");
     });
     return () => {
       cancelled = true;
     };
-  }, [applyServerState, forcedRuntimePortfolioSyncNonce, runtimeApiKey]);
+  }, [applyServerState, forcedRuntimePortfolioSyncNonce, refreshPortfolioValueHistory, runtimeApiKey]);
 
   useEffect(() => {
     if (!selectedEvent) return undefined;
@@ -1681,6 +1701,7 @@ export default function App() {
                   latestOrder={latestOrder}
                   openOrders={openOrders}
                   activities={activities}
+                  valueHistory={portfolioValueHistory}
                   syncStatus={portfolioSyncStatus}
                   closePosition={closePosition}
                   openPositionTrade={openPositionTrade}

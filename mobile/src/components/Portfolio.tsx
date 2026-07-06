@@ -16,6 +16,7 @@ import {
 } from "../services/openOrderEconomicsService";
 import type { OrderMode } from "../services/orderService";
 import type { BinaryContractSide, TicketSelection } from "./TradeTicket";
+import type { PortfolioValueHistory } from "../types";
 
 export type Position = {
   id: string;
@@ -243,6 +244,7 @@ export function Portfolio({
   latestOrder,
   openOrders,
   activities,
+  valueHistory,
   syncStatus,
   closePosition,
   openPositionTrade,
@@ -255,6 +257,7 @@ export function Portfolio({
   latestOrder: OrderConfirmation | null;
   openOrders: OpenOrder[];
   activities: PortfolioActivity[];
+  valueHistory?: PortfolioValueHistory | null;
   syncStatus: PortfolioSyncStatus;
   closePosition: (position: Position) => void;
   openPositionTrade: (position: Position, side: "buy" | "sell") => void;
@@ -265,6 +268,7 @@ export function Portfolio({
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
   const closedActivityCount = activities.filter((activity) => activity.action === "closed").length;
   const latestActivity = activities[0];
+  const latestValuePoint = valueHistory?.points.at(-1);
   const detailCopy = portfolioDetailCopy[locale];
   const syncTitle =
     syncStatus === "syncing"
@@ -378,6 +382,22 @@ export function Portfolio({
           <View style={styles.syncTextBlock}>
             <Text style={styles.syncTitle}>{syncTitle}</Text>
             {syncStatus === "error" && <Text style={styles.syncBody}>{t.portfolioSyncFallback}</Text>}
+          </View>
+        </View>
+      )}
+      {valueHistory && (
+        <View
+          accessibilityLabel={`portfolio-value-history portfolio-value-history-source-${valueHistory.source} portfolio-value-history-status-${valueHistory.status} portfolio-value-history-range-${valueHistory.range} portfolio-value-history-points-${valueHistory.points.length}`}
+          style={styles.valueHistoryCard}
+          testID="portfolio-value-history"
+        >
+          <View>
+            <Text style={styles.valueHistoryLabel}>Value history</Text>
+            <Text style={styles.valueHistoryMeta}>{valueHistory.range} - {valueHistory.status}</Text>
+          </View>
+          <View style={styles.valueHistoryRight}>
+            <Text style={styles.valueHistoryValue}>{latestValuePoint ? money(latestValuePoint.value) : "--"}</Text>
+            <Text style={styles.valueHistoryMeta}>{valueHistory.points.length} points</Text>
           </View>
         </View>
       )}
@@ -711,6 +731,11 @@ const styles = StyleSheet.create({
   syncTextBlock: { flex: 1 },
   syncTitle: { color: "#f8fafc", fontWeight: "900" },
   syncBody: { color: "#94a3b8", fontSize: 12, fontWeight: "700", marginTop: 3 },
+  valueHistoryCard: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 12, padding: 12, borderRadius: 12, backgroundColor: "#0b1220", borderWidth: 1, borderColor: "#263247", marginTop: 12 },
+  valueHistoryLabel: { color: "#f8fafc", fontWeight: "900" },
+  valueHistoryRight: { alignItems: "flex-end" },
+  valueHistoryValue: { color: "#dbeafe", fontWeight: "900" },
+  valueHistoryMeta: { color: "#94a3b8", fontSize: 11, fontWeight: "800", marginTop: 3 },
   countGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 12 },
   countTile: { flexGrow: 1, flexBasis: "48%", minHeight: 72, justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 10, borderRadius: 12, backgroundColor: "#0b1220", borderWidth: 1, borderColor: "#263247" },
   positionCountLabel: { color: "#94a3b8", fontSize: 11, fontWeight: "900" },

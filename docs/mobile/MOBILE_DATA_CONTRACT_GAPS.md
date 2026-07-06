@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KP - Portfolio Value History Contract
+
+Closed or narrowed:
+
+- Mobile now has `PolyApi.getPortfolioValueHistory(range)` for `/api/portfolio/value-history`.
+- Mobile validates portfolio value-history route responses before exposing them to Portfolio.
+- Server-mode Portfolio sync loads the value-history route after portfolio snapshot refresh.
+- Portfolio exposes a compact backend-source marker with route source, status, range, point count, and latest value.
+- Route/mobile proof verifies canonical auth, route points, mobile validation, and latest value derived from backend balance, position, and snapshots.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Rich Portfolio chart/range controls remain future visual work and are intentionally not added in this backend-wiring cycle.
+- Longer-term provider breadth depends on `MarketOutcomeSnapshot` coverage for every visible held position.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `UserBalance`, `Position`, and `MarketOutcomeSnapshot` support the route contract.
+
+Temporary mock/static data:
+
+- Mock mode keeps local Portfolio behavior. Server mode uses `/api/portfolio/value-history?range=1D` and exposes `portfolio-value-history-source-portfolio-value-history-route`.
+
 ## Cycle KO - Search Sort Contract
 
 Closed or narrowed:

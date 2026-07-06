@@ -73,6 +73,27 @@ export type MarketChart = {
   series: Record<string, Array<{ ts: string; price: number }>>;
 };
 
+export type PortfolioValueHistoryRange = "1D" | "1W" | "1M" | "All";
+
+export type PortfolioValueHistoryPoint = {
+  timestamp: string;
+  value: number;
+  cash: number;
+  positionsValue: number;
+  pnl: number;
+};
+
+export type PortfolioValueHistory = {
+  range: PortfolioValueHistoryRange;
+  ranges: PortfolioValueHistoryRange[];
+  source: "portfolio-value-history-route" | string;
+  status: "ready" | "empty";
+  generatedAt: string;
+  lastUpdated: string | null;
+  emptyState: "no-history" | null;
+  points: PortfolioValueHistoryPoint[];
+};
+
 export type MarketSelection = {
   selectorKey?: string | null;
   marketId?: string | null;
