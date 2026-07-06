@@ -1,0 +1,24 @@
+{
+  "cycle": "Cycle NS",
+  "feature": "Event list pagination contract",
+  "generatedAt": "2026-07-06T14:21:39.621Z",
+  "route": "/api/events",
+  "surfaces": [
+    "Home",
+    "Search",
+    "Live",
+    "Futures"
+  ],
+  "contract": {
+    "validPayload": "event-list page metadata must use a positive integer limit and provide a page nextCursor when hasMore is true.",
+    "malformedPayload": "impossible page limits or hasMore without a cursor reject before visible pagination state applies."
+  },
+  "assertions": {
+    "acceptsUsablePagination": true,
+    "acceptsFinalPageWithoutCursor": true,
+    "rejectsZeroLimit": true,
+    "rejectsNegativeLimit": true,
+    "rejectsFractionalLimit": true,
+    "rejectsHasMoreWithoutCursor": true
+  }
+}

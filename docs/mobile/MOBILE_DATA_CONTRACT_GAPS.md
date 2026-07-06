@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle NS - Event List Pagination Contract
+
+Closed or narrowed:
+
+- Server-mode event-list page metadata now requires positive integer `page.limit`.
+- Server-mode `page.hasMore=true` now requires a non-empty `page.nextCursor`.
+- Final pages may still use `page.nextCursor=null` when `page.hasMore=false`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused event-list pagination contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/events` `page.limit`, `page.nextCursor`, and `page.hasMore` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local event-list behavior remains unchanged. Server-mode malformed pagination metadata rejects before visible page state applies.
+
 ## Cycle NR - Portfolio Position Shares Contract
 
 Closed or narrowed:

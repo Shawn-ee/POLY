@@ -111,7 +111,12 @@ export function assertEventListRoutePayloadShape(payload: unknown): asserts payl
     if (!isRecord(payload.page)) {
       throw new Error("Event list route returned malformed page metadata.");
     }
-    if (typeof payload.page.limit !== "number" || !Number.isFinite(payload.page.limit)) {
+    if (
+      typeof payload.page.limit !== "number" ||
+      !Number.isFinite(payload.page.limit) ||
+      !Number.isInteger(payload.page.limit) ||
+      payload.page.limit <= 0
+    ) {
       throw new Error("Event list route returned malformed page limit.");
     }
     if (!isNullableString(payload.page.nextCursor)) {
@@ -119,6 +124,9 @@ export function assertEventListRoutePayloadShape(payload: unknown): asserts payl
     }
     if (typeof payload.page.hasMore !== "boolean") {
       throw new Error("Event list route returned malformed page hasMore.");
+    }
+    if (payload.page.hasMore && (typeof payload.page.nextCursor !== "string" || !payload.page.nextCursor.trim())) {
+      throw new Error("Event list route returned hasMore without page nextCursor.");
     }
   }
 }

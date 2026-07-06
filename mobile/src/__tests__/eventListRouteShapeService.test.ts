@@ -67,6 +67,28 @@ describe("event list route shape service", () => {
     expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/malformed page nextCursor/);
   });
 
+  test("rejects non-positive page limits before pagination state is applied", () => {
+    const payload = eventListPayload();
+    payload.page.limit = 0;
+
+    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/malformed page limit/);
+  });
+
+  test("rejects fractional page limits before pagination state is applied", () => {
+    const payload = eventListPayload();
+    payload.page.limit = 10.5;
+
+    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/malformed page limit/);
+  });
+
+  test("rejects hasMore without page nextCursor before pagination state is applied", () => {
+    const payload = eventListPayload();
+    (payload.page as { nextCursor: string | null }).nextCursor = null;
+    payload.page.hasMore = true;
+
+    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/hasMore without page nextCursor/);
+  });
+
   test("rejects malformed outcome numeric fields before fallback odds", () => {
     const payload = eventListPayload();
     (payload.events[0].markets[0].outcomes[0] as { bestBid: unknown }).bestBid = "bad-bid";

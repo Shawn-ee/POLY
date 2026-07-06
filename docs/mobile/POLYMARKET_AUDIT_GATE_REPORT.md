@@ -16,6 +16,20 @@ Fail the feature when:
 - Visual hierarchy is clearly worse or confusing.
 - Lead Agent claims readiness before Audit Gate pass.
 
+## Cycle NS
+
+Gate status: Pass
+
+Scope: Event list pagination contract.
+
+Evidence:
+
+- Mobile proof: `docs/mobile/harness/cycle-NS-event-list-pagination-contract/cycle-NS-event-list-pagination-contract.json`
+- Focused tests: `mobile/src/__tests__/eventListRouteShapeService.test.ts`
+- Audit file: `mobile/docs/audits/cycle-NS-event-list-pagination-contract.md`
+
+Decision: pass for focused backend/data-contract scope. Server-mode event-list pagination requires a positive integer limit and a page cursor when `hasMore=true` before visible Home/Search/Live/Futures pagination state applies.
+
 ## Cycle NR
 
 Gate status: Pass

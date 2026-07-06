@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle NS - Event List Pagination Contract
+
+Cycle NS hardens Home/Search/Live/Futures event-list pagination metadata before visible page state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-NS-event-list-pagination-contract/cycle-NS-event-list-pagination-contract.json`.
+- Proof script: `scripts/prove_mobile_event_list_pagination_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventListRouteShapeService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home/Search/Live/Futures pagination metadata | `/api/events` through event-list loaders | GET | Public/mobile route, optional user context | Cursor/status/search/filter params depending on surface | `page.limit`, `page.nextCursor`, `page.hasMore`, top-level `nextCursor`; visible pagination requires positive integer limit and a cursor when `hasMore=true` | `Event`, listed public `Market`, `Outcome`, event-list pagination projection | Mock/local event lists remain unchanged. Server-mode impossible pagination metadata rejects before visible page state applies. | None for focused event-list pagination contract. P2 optional pagination retry/error copy. |
+
 ## Cycle NR - Portfolio Position Shares Contract
 
 Cycle NR hardens Portfolio position share quantities before visible position state applies:
