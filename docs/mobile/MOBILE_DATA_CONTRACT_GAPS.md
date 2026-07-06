@@ -2,6 +2,29 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle KS - Home Futures Metrics Contract
+
+Closed or narrowed:
+
+- Mobile futures metrics now use a dedicated service instead of local formulas in the component.
+- Visible futures market volume remains unknown (`--`) when backend does not provide it.
+- Visible futures market liquidity comes from backend `market.liquidity` when available.
+- Visible futures outcome volume remains unknown instead of being derived from probability/rank.
+- Route/mobile proof verifies a backend futures route payload with no provider volume stays unknown through mobile normalization and metrics mapping.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- Provider-sourced futures volume/open-interest fields remain future backend work.
+- Per-outcome futures volume remains unavailable until a provider/data model supplies it.
+
+Schema mismatch:
+
+- No schema migration was made. Existing compact market `liquidity` is used when available; volume is intentionally not invented.
+
+Temporary mock/static data:
+
+- Mock/offline futures rows remain available, but shared futures metrics no longer synthesize volume from outcome count, rank, or probability.
+
 ## Cycle KR - Home Futures Chart Contract
 
 Closed or narrowed:

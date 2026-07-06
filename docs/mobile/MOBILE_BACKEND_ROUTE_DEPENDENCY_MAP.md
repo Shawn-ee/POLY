@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle KS - Home Futures Metrics Contract
+
+Cycle KS removes frontend-invented futures volume/liquidity metrics from the visible Home futures module:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KS-home-futures-metrics-contract/cycle-KS-home-futures-metrics-contract.json`.
+- Proof script: `scripts/prove_mobile_home_futures_metrics_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/futuresMetricsService.test.ts`, root typecheck, and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home futures visible volume/liquidity metrics | `/api/events?sportKey=soccer&leagueKey=world_cup&includeMobileMarkets=1&marketType=future` | GET | Public/mobile route | None | compact `events[].markets[].liquidity`; unavailable futures `volume` remains `null`/`--` instead of probability-derived | `Event`, listed public `Market`, active `Outcome`, orderbook quote/depth helpers when available | Mock/offline mode still has local futures rows, but shared metric rendering does not synthesize futures volume from outcome count/probability. | P1: provider-sourced futures volume/open-interest fields when those become part of the backend contract. |
+
 ## Cycle KR - Home Futures Chart Contract
 
 Cycle KR wires the visible Home futures chart/range controls to backend market chart history in server mode:

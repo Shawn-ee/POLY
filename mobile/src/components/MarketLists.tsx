@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Event, Locale, Market, Outcome } from "../mocks/worldCup";
 import { label, money } from "../presentation/formatters";
 import { futureChartRanges } from "../services/futuresChartService";
+import { futureMarketStats, futureOutcomeVolume } from "../services/futuresMetricsService";
 import type { MarketChartRange } from "../types";
 
 type MarketStatsCopy = {
@@ -17,11 +18,6 @@ const marketCardStats = (event: Event) => {
     liquidity: 4200 + event.markets.length * 950,
   };
 };
-
-const futureCardStats = (market: Market) => ({
-  volume: 12200 + market.outcomes.length * 2400,
-  liquidity: 7600 + market.outcomes.length * 1350,
-});
 
 const futureOutcomeFlags: Record<string, string> = {
   argentina: "🇦🇷",
@@ -47,11 +43,7 @@ const futureOutcomeFlags: Record<string, string> = {
   usa: "🇺🇸",
 };
 
-const futureOutcomeVolume = (market: Market, outcome: Outcome) => {
-  const rank = market.outcomes.findIndex((candidate) => candidate.id === outcome.id);
-  return Math.round(72000000 + outcome.probability * 520000 + Math.max(0, 4 - rank) * 3600000);
-};
-
+const metricText = (value: number | null) => value == null ? "--" : money(value);
 const cents = (probability: number) => `${probability.toFixed(1)}¢`;
 const latestProbabilityForOutcome = (market: Market, outcome: Outcome) => {
   const points = market.chartHistory?.filter((point) => point.outcomeId === outcome.id) ?? [];
@@ -162,7 +154,7 @@ export function FutureList({
   return (
     <View style={styles.eventList}>
       {futures.map((market) => {
-        const stats = futureCardStats(market);
+        const stats = futureMarketStats(market);
         const isExpanded = expandedMarketIds[market.id] ?? false;
         const hiddenOutcomeCount = Math.max(0, market.outcomes.length - 3);
         const visibleOutcomes = isExpanded ? market.outcomes : market.outcomes.slice(0, 3);
@@ -178,10 +170,10 @@ export function FutureList({
             {statsCopy && (
               <View style={styles.statsRow}>
                 <Text style={styles.statsText}>
-                  {statsCopy.volume}: {money(stats.volume)}
+                  {statsCopy.volume}: {metricText(stats.volume)}
                 </Text>
                 <Text style={styles.statsText}>
-                  {statsCopy.liquidity}: {money(stats.liquidity)}
+                  {statsCopy.liquidity}: {metricText(stats.liquidity)}
                 </Text>
               </View>
             )}
@@ -218,7 +210,7 @@ export function FutureList({
                 <Text style={styles.futureChartWatermark}>Holiwyn</Text>
               </View>
               <View style={styles.futureChartMeta}>
-                <Text style={styles.futureChartVolume}>🏆 {money(stats.volume)} Vol.</Text>
+                <Text style={styles.futureChartVolume}>🏆 {metricText(stats.volume)} Vol.</Text>
                 <View style={styles.futureRangeRow}>
                   {futureChartRanges.map((range) => (
                     <Pressable
@@ -241,7 +233,7 @@ export function FutureList({
                     <Text style={styles.futureFlag}>{futureOutcomeFlags[outcome.id] ?? "🏆"}</Text>
                     <View style={styles.futureOutcomeText}>
                       <Text style={styles.futureOutcomeName}>{label(locale, outcome)}</Text>
-                      <Text style={styles.futureOutcomeVolume}>{money(futureOutcomeVolume(market, outcome))} Vol.</Text>
+                      <Text style={styles.futureOutcomeVolume}>{metricText(futureOutcomeVolume(market, outcome))} Vol.</Text>
                     </View>
                   </View>
                   <Text style={styles.futureOutcomeProbability}>{outcome.probability}%</Text>

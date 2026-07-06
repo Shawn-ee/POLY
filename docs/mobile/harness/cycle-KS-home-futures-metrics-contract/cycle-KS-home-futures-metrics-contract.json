@@ -1,0 +1,33 @@
+{
+  "pass": true,
+  "cycle": "Cycle KS",
+  "createdAt": "2026-07-06T08:44:55.083Z",
+  "route": "/api/events",
+  "query": {
+    "sportKey": "soccer",
+    "leagueKey": "world_cup",
+    "search": "ec784153",
+    "includeMobileMarkets": "1",
+    "marketType": "future",
+    "limit": "10"
+  },
+  "seeded": {
+    "event": {
+      "id": "299e99ab-d77e-4f3e-aeab-0cafa989b8ed",
+      "slug": "mobile-ks-futures-metrics-ec784153"
+    }
+  },
+  "backendMarket": {
+    "id": "a64c2f57-1807-46c5-a924-456385ac3429",
+    "marketType": "future",
+    "liquidity": null
+  },
+  "mobileFuturesMetrics": {
+    "marketId": "a64c2f57-1807-46c5-a924-456385ac3429",
+    "volume": null,
+    "liquidity": null,
+    "source": "unavailable",
+    "firstOutcomeVolume": null,
+    "noFrontendSyntheticVolume": true
+  }
+}

@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Home futures metrics contract | Cycle KS | Pass for backend/data-contract scope | 0 for focused Home futures visible metrics scope | P1 provider-sourced futures volume/open-interest fields | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KS-home-futures-metrics-contract/cycle-KS-home-futures-metrics-contract.json`; tests: `mobile/src/__tests__/futuresMetricsService.test.ts`; audit: `mobile/docs/audits/cycle-KS-home-futures-metrics-contract.md` | Home futures no longer derive visible volume/liquidity from outcome count, rank, or probability. Liquidity uses backend `market.liquidity` when present; unavailable volume renders as unknown. |
 | Home futures chart contract | Cycle KR | Pass for backend/data-contract scope | 0 for focused Home futures chart route scope | P1 provider-backed futures volume/open-interest metrics beyond price history | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KR-home-futures-chart-contract/cycle-KR-home-futures-chart-contract.json`; tests: `src/__tests__/public.market-chart.no-leak.test.ts`, `mobile/src/__tests__/futuresChartService.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-KR-home-futures-chart-contract.md` | Home futures chart/range controls now load `/api/markets/:id/chart?range=<selected>` in server mode, including the visible `1H` range, and expose route source/status/range/point-count on the chart harness label. |
 | Home futures contract | Cycle KQ | Pass for backend/data-contract scope | 0 for focused Home futures route scope | P1 fuller production futures catalog breadth and provider-backed futures chart/history metrics | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KQ-home-futures-contract/cycle-KQ-home-futures-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`, `mobile/src/__tests__/worldCupAdapter.test.ts`; audit: `mobile/docs/audits/cycle-KQ-home-futures-contract.md` | Home futures server mode now calls `/api/events?marketType=future&includeMobileMarkets=1`; backend filters listed public futures/outrights and mobile normalizes World Cup Winner markets as futures instead of game-line rows. |
 | Portfolio value history contract | Cycle KP | Pass for backend/data-contract scope | 0 for focused Portfolio value-history route scope | P1 richer Portfolio chart/range controls when visual redesign is allowed | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route/mobile proof: `docs/mobile/harness/cycle-KP-portfolio-value-history-contract/cycle-KP-portfolio-value-history-contract.json`; tests: `src/__tests__/portfolio.value-history.route.test.ts`, `mobile/src/__tests__/api.test.ts`, `mobile/src/__tests__/portfolioValueHistoryService.test.ts`; audit: `mobile/docs/audits/cycle-KP-portfolio-value-history-contract.md` | Server-mode Portfolio now calls `/api/portfolio/value-history`, validates the route payload, and exposes route source/status/range/point-count in the visible Portfolio screen without redesigning the layout. |
@@ -136,6 +137,28 @@ Fail the feature when:
 | Trade ticket | Cycle AG | Pass | 0 | P1 binary NO/share contract semantics; P1 production auth/location eligibility gates | `docs/mobile/reference/screenshots/cycle-AG-polymarket-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-open.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-amount.png`; `docs/mobile/reference/screenshots/cycle-AG-polymarket-web-ticket-trade.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/harness/cycle-current-holiwyn-event-detail-ticket-details.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade` | Focused pass only. First view is now sparse and settings opens advanced controls. |
 | Trade ticket surface | Cycle AI | Pass | 0 | P1 production auth/location eligibility gate; P2 native motion polish | `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-start.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-logged-in-france-ticket.png`; `docs/mobile/reference/screenshots/cycle-AI-polymarket-after-france-row-tap.png` | `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket.png`; `docs/mobile/screenshots/cycle-current-holiwyn-event-detail-ticket-amount.png`; `docs/mobile/screenshots/cycle-current-holiwyn-future-list-buy-no-ticket.png`; `cmd /c npm.cmd run smoke:tablet:event-detail-trade`; `cmd /c npm.cmd run smoke:tablet:future-list-buy-no` | Logged-in Polymarket World Cup selection opened a tall location-verification sheet; Holiwyn now uses a taller dimmed fake-token ticket with fixed swipe-up submit rail. |
 | Game page compact scrolled header | Cycle AJ | Pass | 0 | P1 phone visual density/sticky tab polish; P1 backend market/live data; P1 Player Props reference scope | `docs/mobile/reference/screenshots/cycle-AJ-polymarket-live-tab.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-top.png`; `docs/mobile/reference/screenshots/cycle-AJ-polymarket-game-lines-mid.png` | `docs/mobile/screenshots/cycle-current-holiwyn-game-page-full-markets.png`; `docs/mobile/harness/cycle-current-holiwyn-game-page-full-markets.xml`; `cmd /c npm.cmd run smoke:tablet:event-detail-full-page` | Logged-in Polymarket keeps compact match context when scrolled into Game Lines; Holiwyn now shows a compact match header in that state and full game-page smoke passed. |
+
+## Cycle KS
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for visible Home futures metrics.
+
+Evidence:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-KS-home-futures-metrics-contract/cycle-KS-home-futures-metrics-contract.json`.
+- Cycle audit: `mobile/docs/audits/cycle-KS-home-futures-metrics-contract.md`.
+- Focused tests:
+  - `mobile/src/__tests__/futuresMetricsService.test.ts`
+- Proof script:
+  - `scripts/prove_mobile_home_futures_metrics_contract.ts`
+
+Decision:
+
+- Pass for focused backend/data-contract scope.
+- Mobile futures metrics no longer synthesize market volume, market liquidity, or outcome volume from outcome count, rank, or probability.
+- Backend `market.liquidity` is used when available; unavailable futures volume is displayed as unknown.
+- Remaining P1: provider-sourced futures volume/open-interest fields.
 
 ## Cycle KR
 
