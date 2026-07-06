@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Portfolio route shape validation contract | Cycle LO | Pass for backend/data-contract scope | 0 for focused Portfolio route-shape scope | P2 optional route-specific retry copy | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Mobile proof: `docs/mobile/harness/cycle-LO-portfolio-route-shape-validation-contract/cycle-LO-portfolio-route-shape-validation-contract.json`; tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`, `mobile/src/__tests__/portfolioHistoryService.test.ts`, `mobile/src/__tests__/portfolioSyncService.test.ts`; audit: `mobile/docs/audits/cycle-LO-portfolio-route-shape-validation-contract.md` | Server-mode Portfolio now rejects malformed `/api/portfolio` and `/api/portfolio/history` shapes before applying visible state/activity, causing sync error instead of false synced UI. |
 | Mobile saved event identity filter contract | Cycle LN | Pass for backend/data-contract scope | 0 for focused saved id/slug scope | P1 first-class saved/followed route if saved state outgrows profile preferences | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LN-mobile-saved-event-identity-filter-contract/cycle-LN-mobile-saved-event-identity-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LN-mobile-saved-event-identity-filter-contract.md` | `/api/events?eventIds=...` now matches both `Event.id` and `Event.slug`, aligning backend Saved filters with mobile's normalized event identity. |
 | Mobile event status group contract | Cycle LM | Pass for backend/data-contract scope | 0 for focused status-group scope | P2 optional user-local timezone semantics for Today | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LM-mobile-event-status-group-contract/cycle-LM-mobile-event-status-group-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LM-mobile-event-status-group-contract.md` | `/api/events?statusGroup=live` now includes `liveStatus=in_progress`; `statusGroup=upcoming` now excludes live/today/terminal events instead of meaning only not-live. |
 | Mobile event listed-market filter contract | Cycle LL | Pass for backend/data-contract scope | 0 for focused pre-pagination listed-market scope | Existing provider metric/ranking P1s remain outside this focused contract | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-LL-mobile-event-listed-market-filter-contract/cycle-LL-mobile-event-listed-market-filter-contract.json`; tests: `src/__tests__/public.events.no-leak.test.ts`; audit: `mobile/docs/audits/cycle-LL-mobile-event-listed-market-filter-contract.md` | `/api/events` now requires at least one public listed market in the event query before pagination, preventing no-market events from consuming visible mobile page slots or killing next cursor. |
@@ -4644,3 +4645,38 @@ Decision:
 - Pass/fail: Pass for focused mobile saved event identity filter contract.
 - Unresolved P0 gaps: 0 for selected feature.
 - Remaining P1/P2 gaps: optional first-class saved/followed route.
+
+## Cycle LO - Portfolio Route Shape Validation Contract
+
+Gate status: Pass
+
+Lead Agent target: Ensure server-mode Portfolio does not apply malformed snapshot/history route payloads as synced visible state.
+
+Reference Audit Agent: Backend/data-contract loop. Portfolio visual redesign is out of scope.
+
+Implementation Agent: Added route-shape guards for Portfolio snapshot and history loaders, focused tests, and harness proof.
+
+Audit Gate Agent: Proof script, focused mobile tests, root typecheck, mobile typecheck, audit gate, and diff hygiene.
+
+Holiwyn evidence:
+
+- `mobile/docs/audits/cycle-LO-portfolio-route-shape-validation-contract.md`
+- `docs/mobile/harness/cycle-LO-portfolio-route-shape-validation-contract/cycle-LO-portfolio-route-shape-validation-contract.json`
+- `scripts/prove_mobile_portfolio_route_shape_validation_contract.ts`
+
+Criteria results:
+
+| Criterion ID | Priority | Result | Evidence | Fix if failed |
+| --- | --- | --- | --- | --- |
+| LO-P0-01 | P0 | Pass | Malformed snapshot arrays reject before apply. | N/A |
+| LO-P0-02 | P0 | Pass | Malformed snapshot numeric fields reject before apply. | N/A |
+| LO-P0-03 | P0 | Pass | Malformed history arrays reject before activity apply. | N/A |
+| LO-P0-04 | P0 | Pass | Malformed history numeric fields reject before activity apply. | N/A |
+| LO-P0-05 | P0 | Pass | Rejected loaders make Portfolio sync state `error`, not `synced`. | N/A |
+| LO-P2-01 | P2 | Open | No route-specific Portfolio retry copy. | Optional later copy/action pass. |
+
+Decision:
+
+- Pass/fail: Pass for focused Portfolio route shape validation contract.
+- Unresolved P0 gaps: 0 for selected feature.
+- Remaining P1/P2 gaps: optional route-specific retry copy/action.

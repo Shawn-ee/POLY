@@ -4753,6 +4753,35 @@ Future migration concern:
 
 - If backend-owned saved state becomes canonical, replace client-sent ids with an authenticated saved-list route and keep this id/slug compatibility only as import/backfill support.
 
+## Cycle LO - Portfolio Route Shape Validation Contract
+
+Closed or narrowed:
+
+- Mobile now validates `/api/portfolio` required arrays and required numeric fields before applying visible Portfolio snapshot state.
+- Mobile now validates `/api/portfolio/history` required arrays and activity numeric fields before applying visible Portfolio activity.
+- Malformed snapshot/history route payloads reject into existing Portfolio partial-sync error handling instead of reporting `synced`.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- No focused P0 field gap remains for Portfolio route-shape validation.
+- P2: richer route-specific retry/error copy remains optional.
+
+Schema mismatch:
+
+- No schema migration was required. Existing route response fields carry the contract; mobile now validates them before use.
+
+Route mismatch:
+
+- No mismatch for the focused flow. The frontend consumes backend routes in server mode and rejects malformed payloads rather than inventing fallback rows.
+
+Temporary mock/static data:
+
+- Mock/offline Portfolio remains local-only by design and is not used for server-mode malformed route payloads.
+
+Future migration concern:
+
+- If Portfolio response shapes expand, add validator coverage before applying new visible fields.
+
 ## Cycle LB - Event Detail Line Availability Contract
 
 Closed or narrowed:

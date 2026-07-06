@@ -1,0 +1,19 @@
+{
+  "cycle": "Cycle LO",
+  "feature": "Portfolio route shape validation contract",
+  "generatedAt": "2026-07-06T10:38:47.046Z",
+  "routes": [
+    "/api/portfolio",
+    "/api/portfolio/history"
+  ],
+  "contract": {
+    "snapshot": "required arrays and numeric fields must validate before applying Portfolio state",
+    "history": "required arrays and numeric activity fields must validate before applying Portfolio activity",
+    "sync": "malformed route payloads surface as Portfolio sync error, not synced state"
+  },
+  "assertions": {
+    "malformedSnapshotRejectsBeforeApply": true,
+    "malformedHistoryRejectsBeforeApply": true,
+    "malformedRoutesDoNotReportSynced": true
+  }
+}

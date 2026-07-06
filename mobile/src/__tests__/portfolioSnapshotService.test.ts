@@ -183,6 +183,32 @@ describe("portfolio snapshot service", () => {
     });
   });
 
+  test("rejects malformed snapshot route arrays before applying Portfolio state", async () => {
+    const getPortfolio = vi.fn(async () => ({
+      ...snapshot(),
+      positions: undefined,
+    }));
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid positions.");
+  });
+
+  test("rejects malformed snapshot numeric fields before applying Portfolio state", async () => {
+    const getPortfolio = vi.fn(async () =>
+      snapshot({
+        openOrders: [
+          {
+            ...snapshot().openOrders[0],
+            remaining: Number.NaN,
+          },
+        ],
+      }),
+    );
+    const api = { getPortfolio } as unknown as PolyApi;
+
+    await expect(loadPortfolioSnapshot(api)).rejects.toThrow("Portfolio snapshot response had invalid openOrders[].remaining.");
+  });
+
   test("preserves backend line selection labels for positions and open orders", async () => {
     const getPortfolio = vi.fn(async () =>
       snapshot({

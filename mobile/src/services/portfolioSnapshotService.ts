@@ -1,6 +1,7 @@
 import type { PolyApi } from "../api";
 import type { OpenOrder, Position } from "../components/Portfolio";
 import type { TicketSelection } from "../components/TradeTicket";
+import type { PortfolioOpenOrderItem, PortfolioPositionItem } from "../types";
 
 export type PortfolioSnapshotResult = {
   balance: number;
@@ -32,6 +33,21 @@ const toDepthSize = (value: number | string | null | undefined) => {
   const parsed = typeof value === "string" ? Number(value) : value;
   if (!Number.isFinite(parsed) || parsed <= 0) return null;
   return parsed;
+};
+
+const requireFiniteNumber = (value: unknown, field: string) => {
+  const parsed = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`Portfolio snapshot response had invalid ${field}.`);
+  }
+  return parsed;
+};
+
+const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
+  if (!Array.isArray(value)) {
+    throw new Error(`Portfolio snapshot response had invalid ${field}.`);
+  }
+  return value as T[];
 };
 
 const knownMarketTypes: TicketSelection["marketType"][] = ["spread", "totals", "team-total", "winner", "prop", "future", "live"];
@@ -86,9 +102,11 @@ const selectionFromBackend = (
 
 export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnapshotResult> => {
   const snapshot = await api.getPortfolio();
+  const positions = requireArray<PortfolioPositionItem>(snapshot.positions, "positions");
+  const openOrders = requireArray<PortfolioOpenOrderItem>(snapshot.openOrders, "openOrders");
   return {
-    balance: snapshot.walletAvailableUSDC,
-    positions: snapshot.positions.map((position) => ({
+    balance: requireFiniteNumber(snapshot.walletAvailableUSDC, "walletAvailableUSDC"),
+    positions: positions.map((position) => ({
       id: `server-${position.market.id}-${position.outcome}`,
       mode: "server",
       marketId: position.market.id,
@@ -97,30 +115,30 @@ export const loadPortfolioSnapshot = async (api: PolyApi): Promise<PortfolioSnap
       outcome: position.outcome,
       selection: selectionFromBackend(position.selection),
       side: "buy",
-      amount: position.costBasisTokens,
-      probability: Math.round(position.avgCost * 100),
-      shares: position.shares,
-      currentPrice: position.currentPrice,
+      amount: requireFiniteNumber(position.costBasisTokens, "positions[].costBasisTokens"),
+      probability: Math.round(requireFiniteNumber(position.avgCost, "positions[].avgCost") * 100),
+      shares: requireFiniteNumber(position.shares, "positions[].shares"),
+      currentPrice: requireFiniteNumber(position.currentPrice, "positions[].currentPrice"),
       marketAvailability: position.market.availability,
       bestBid: toDepthProbability(position.bestBid),
       bestAsk: toDepthProbability(position.bestAsk),
       bestBidSize: toDepthSize(position.bestBidSize),
       bestAskSize: toDepthSize(position.bestAskSize),
-      currentValue: position.valueTokens,
-      pnl: position.pnlTokens,
+      currentValue: requireFiniteNumber(position.valueTokens, "positions[].valueTokens"),
+      pnl: requireFiniteNumber(position.pnlTokens, "positions[].pnlTokens"),
     })),
-    openOrders: snapshot.openOrders.map((order) => ({
+    openOrders: openOrders.map((order) => ({
       id: order.id,
       title: order.market.title,
       outcome: order.outcome.name,
       selection: selectionFromBackend(order.selection),
       side: order.side === "SELL" ? "sell" : "buy",
       status: order.status,
-      price: order.price,
-      remaining: order.remaining,
-      originalShares: order.size,
-      remainingShares: order.remaining,
-      orderValue: order.remaining * order.price,
+      price: requireFiniteNumber(order.price, "openOrders[].price"),
+      remaining: requireFiniteNumber(order.remaining, "openOrders[].remaining"),
+      originalShares: requireFiniteNumber(order.size, "openOrders[].size"),
+      remainingShares: requireFiniteNumber(order.remaining, "openOrders[].remaining"),
+      orderValue: requireFiniteNumber(order.remaining, "openOrders[].remaining") * requireFiniteNumber(order.price, "openOrders[].price"),
       placedAt: formatOpenOrderTimestamp(order.createdAt),
     })),
   };

@@ -2282,3 +2282,16 @@ Cycle LN implementation notes:
 - Mobile saves normalized event identity as `event.slug || event.id`.
 - `/api/events?eventIds=...` now matches each saved value against both `Event.id` and `Event.slug`.
 - This keeps existing profile-preference saved state compatible with backend-filtered Home/Search Saved pages.
+
+## Cycle LO - Portfolio Route Shape Validation Contract
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio snapshot apply | `/api/portfolio` | GET | Mobile API key/session with `account:read` | None | `walletAvailableUSDC`, `positions[]`, `positions[].shares/avgCost/currentPrice/valueTokens/costBasisTokens/pnlTokens`, `openOrders[]`, `openOrders[].price/size/remaining` | `UserBalance`, `Position`, `Order`, `Market`, `Outcome` | Mock/offline Portfolio remains local. Server mode now rejects malformed snapshot route shape before applying visible state. | P2 optional route-specific retry copy. |
+| Portfolio history/activity apply | `/api/portfolio/history` | GET | Mobile API key/session with `account:read` | None | `history[]`, `canceledOrders[]`, `recentTrades[]`, numeric amount/share/price fields | `Order`, `Trade`, `Market`, `Outcome`, settlement/history read models | Mock/offline activity remains local. Server mode now rejects malformed history route shape before applying visible activity. | P2 optional route-specific retry copy. |
+
+Cycle LO implementation notes:
+
+- `loadPortfolioSnapshot` validates required arrays and finite numeric fields before mapping server state.
+- `loadPortfolioHistoryActivities` validates required arrays and finite numeric fields before mapping activity rows.
+- Rejected snapshot/history loaders feed the existing partial-sync resolver, causing visible Portfolio sync error instead of false synced state.

@@ -1,7 +1,7 @@
 import type { PolyApi } from "../api";
 import type { PortfolioActivity } from "../components/Portfolio";
 import type { TicketSelection } from "../components/TradeTicket";
-import type { PortfolioCanceledOrderItem, PortfolioRecentTradeItem } from "../types";
+import type { PortfolioCanceledOrderItem, PortfolioHistoryItem, PortfolioRecentTradeItem } from "../types";
 
 const formatHistoryTimestamp = (value: string | null) => {
   if (!value) return undefined;
@@ -17,6 +17,21 @@ const formatHistoryTimestamp = (value: string | null) => {
 };
 
 const knownMarketTypes: TicketSelection["marketType"][] = ["spread", "totals", "team-total", "winner", "prop", "future", "live"];
+
+const requireArray = <T,>(value: T[] | unknown, field: string): T[] => {
+  if (!Array.isArray(value)) {
+    throw new Error(`Portfolio history response had invalid ${field}.`);
+  }
+  return value as T[];
+};
+
+const requireFiniteNumber = (value: unknown, field: string) => {
+  const parsed = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`Portfolio history response had invalid ${field}.`);
+  }
+  return parsed;
+};
 
 const selectionFromBackend = (
   selection?: {
@@ -68,14 +83,15 @@ const selectionFromBackend = (
 
 export const portfolioHistoryToActivity = (history: Awaited<ReturnType<PolyApi["getPortfolioHistory"]>>["history"]): PortfolioActivity[] =>
   history.map((item) => {
-    const payout = item.winningsTokens + item.refundsTokens;
+    const payout = requireFiniteNumber(item.winningsTokens, "history[].winningsTokens") + requireFiniteNumber(item.refundsTokens, "history[].refundsTokens");
+    const netInvested = requireFiniteNumber(item.netInvestedTokens, "history[].netInvestedTokens");
     return {
       id: `history-${item.market.id}`,
       action: "closed",
       title: item.market.title,
       outcome: item.resolvedOutcomeName ?? "Resolved",
-      amount: payout > 0 ? payout : item.netInvestedTokens,
-      entryAmount: item.netInvestedTokens,
+      amount: payout > 0 ? payout : netInvested,
+      entryAmount: netInvested,
       timestamp: formatHistoryTimestamp(item.market.resolveTime ?? item.market.createdAt),
     };
   });
@@ -87,24 +103,26 @@ export const canceledOrdersToActivity = (orders: PortfolioCanceledOrderItem[] = 
     title: order.market.title,
     outcome: order.outcome.name,
     selection: selectionFromBackend(order.selection),
-    amount: order.remaining * order.price,
-    shares: order.remaining,
+    amount: requireFiniteNumber(order.remaining, "canceledOrders[].remaining") * requireFiniteNumber(order.price, "canceledOrders[].price"),
+    shares: requireFiniteNumber(order.remaining, "canceledOrders[].remaining"),
     side: order.side === "SELL" ? "sell" : "buy",
-    probability: Math.round(order.price * 100),
+    probability: Math.round(requireFiniteNumber(order.price, "canceledOrders[].price") * 100),
     timestamp: formatHistoryTimestamp(order.canceledAt),
   }));
 
 export const recentTradesToActivity = (trades: PortfolioRecentTradeItem[] = []): PortfolioActivity[] =>
   trades.map((trade) => {
-    const executionPrice = trade.shares > 0 ? trade.cost / trade.shares : 0;
+    const shares = requireFiniteNumber(trade.shares, "recentTrades[].shares");
+    const cost = requireFiniteNumber(trade.cost, "recentTrades[].cost");
+    const executionPrice = shares > 0 ? cost / shares : 0;
     return {
       id: `trade-${trade.id}`,
       action: trade.side === "SELL" ? "sold" : "opened",
       title: trade.market.title,
       outcome: trade.outcome.name,
       selection: selectionFromBackend(trade.selection),
-      amount: trade.cost,
-      shares: trade.shares,
+      amount: cost,
+      shares,
       side: trade.side === "SELL" ? "sell" : "buy",
       probability: Math.round(executionPrice * 100),
       timestamp: formatHistoryTimestamp(trade.createdAt),
@@ -113,9 +131,12 @@ export const recentTradesToActivity = (trades: PortfolioRecentTradeItem[] = []):
 
 export const loadPortfolioHistoryActivities = async (api: PolyApi): Promise<PortfolioActivity[]> => {
   const payload = await api.getPortfolioHistory();
+  const history = requireArray<PortfolioHistoryItem>(payload.history, "history");
+  const recentTrades = requireArray<PortfolioRecentTradeItem>(payload.recentTrades ?? [], "recentTrades");
+  const canceledOrders = requireArray<PortfolioCanceledOrderItem>(payload.canceledOrders ?? [], "canceledOrders");
   return [
-    ...recentTradesToActivity(payload.recentTrades),
-    ...canceledOrdersToActivity(payload.canceledOrders),
-    ...portfolioHistoryToActivity(payload.history),
+    ...recentTradesToActivity(recentTrades),
+    ...canceledOrdersToActivity(canceledOrders),
+    ...portfolioHistoryToActivity(history),
   ];
 };

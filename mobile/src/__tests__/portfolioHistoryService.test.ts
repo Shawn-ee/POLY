@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { canceledOrdersToActivity, portfolioHistoryToActivity, recentTradesToActivity } from "../services/portfolioHistoryService";
+import { canceledOrdersToActivity, loadPortfolioHistoryActivities, portfolioHistoryToActivity, recentTradesToActivity } from "../services/portfolioHistoryService";
+import type { PolyApi } from "../api";
 import type { PortfolioHistoryItem } from "../types";
 
 const historyItem = (overrides: Partial<PortfolioHistoryItem> = {}): PortfolioHistoryItem => ({
@@ -162,6 +163,47 @@ describe("portfolio history activity mapping", () => {
         timestamp: "Jul 2, 1:12 AM",
       }),
     ]);
+  });
+
+  test("rejects malformed history arrays before applying Portfolio activity", async () => {
+    const getPortfolioHistory = async () => ({
+      history: undefined,
+      canceledOrders: [],
+      recentTrades: [],
+    });
+    const api = { getPortfolioHistory } as unknown as PolyApi;
+
+    await expect(loadPortfolioHistoryActivities(api)).rejects.toThrow("Portfolio history response had invalid history.");
+  });
+
+  test("rejects malformed history numeric fields before applying Portfolio activity", async () => {
+    const getPortfolioHistory = async () => ({
+      history: [],
+      canceledOrders: [
+        {
+          id: "bad-cancel",
+          market: {
+            id: "world-cup-winner",
+            title: "World Cup winner",
+            status: "LIVE",
+          },
+          outcome: {
+            id: "yes",
+            name: "YES",
+          },
+          side: "BUY",
+          status: "CANCELED",
+          price: Number.NaN,
+          size: 200,
+          remaining: 100,
+          canceledAt: "2026-07-02T05:55:00.000Z",
+        },
+      ],
+      recentTrades: [],
+    });
+    const api = { getPortfolioHistory } as unknown as PolyApi;
+
+    await expect(loadPortfolioHistoryActivities(api)).rejects.toThrow("Portfolio history response had invalid canceledOrders[].price.");
   });
 
   test("preserves line selection labels in backend order activity", () => {
