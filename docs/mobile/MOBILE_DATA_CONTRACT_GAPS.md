@@ -2,6 +2,26 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle LZ - Account Navigation Enabled Contract
+
+Closed or narrowed:
+
+- Account navigation menu items now require real booleans for `items[].enabled` before visible Account menu state applies.
+- Malformed enabled values such as strings or numbers reject instead of being coerced with JavaScript truthiness.
+- Rejection feeds the existing Account bootstrap partial-error path from Cycle LI.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused Account navigation enabled contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `/api/account/navigation` boolean `enabled` fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local Account navigation state remains unchanged.
+
 ## Cycle LY - Account Profile Boolean Contract
 
 Closed or narrowed:

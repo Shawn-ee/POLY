@@ -31,6 +31,7 @@ These apply to every page, feature, button, and interaction:
 
 | Feature | Criteria owner file | P0 status | P1/P2 status | Latest gate |
 | --- | --- | --- | --- | --- |
+| Account navigation enabled contract | `mobile/docs/audits/cycle-LZ-account-navigation-enabled-contract.md` | Pass for focused backend/data-contract scope. Server-mode Account navigation `enabled` fields must be real booleans before visible Account menu state applies. | P2 optional field-specific Account navigation error copy | Cycle LZ audit gate |
 | Account profile boolean contract | `mobile/docs/audits/cycle-LY-account-profile-boolean-contract.md` | Pass for focused backend/data-contract scope. Server-mode Account profile linked fields must be real booleans before visible Account state applies. | P2 optional field-specific Account profile error copy | Cycle LY audit gate |
 | Cashout submit confirmation contract | `mobile/docs/audits/cycle-LX-cashout-submit-confirmation-contract.md` | Pass for focused backend/data-contract scope. Server-mode cashout must submit full held shares and receive backend order confirmation before Portfolio refresh treats close as accepted. | P2 optional richer cashout submit error copy | Cycle LX audit gate |
 | Cancel route shape contract | `mobile/docs/audits/cycle-LW-cancel-route-shape-contract.md` | Pass for focused backend/data-contract scope. Server-mode Portfolio cancel must confirm the same visible order id with `CANCELED` status before visible cancel state is applied. | P2 optional richer inline cancel-race copy/action | Cycle LW audit gate |

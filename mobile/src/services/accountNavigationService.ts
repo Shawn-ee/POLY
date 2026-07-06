@@ -30,6 +30,13 @@ const requireString = (value: unknown, field: string) => {
 const optionalString = (value: unknown) =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
+const requireBoolean = (value: unknown, field: string) => {
+  if (typeof value !== "boolean") {
+    throw new Error(`Account navigation response was missing ${field}.`);
+  }
+  return value;
+};
+
 export const loadAccountNavigation = async (
   api: Pick<PolyApi, "getAccountNavigation">,
 ): Promise<AccountNavigationResult> => {
@@ -54,7 +61,7 @@ export const loadAccountNavigation = async (
       label: requireString(item.label, `items[${index}].label`),
       icon: requireString(item.icon, `items[${index}].icon`),
       kind: kind as AccountNavigationItemResult["kind"],
-      enabled: Boolean(item.enabled),
+      enabled: requireBoolean(item.enabled, `items[${index}].enabled`),
       status: status as AccountNavigationItemResult["status"],
       destination: optionalString(item.destination),
       reason: optionalString(item.reason),

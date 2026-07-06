@@ -1,0 +1,15 @@
+{
+  "cycle": "Cycle LZ",
+  "feature": "Account navigation enabled contract",
+  "generatedAt": "2026-07-06T11:32:14.190Z",
+  "route": "/api/account/navigation",
+  "contract": {
+    "validPayload": "navigation item enabled state must be a real boolean before visible Account menu state applies",
+    "malformedPayload": "string/number enabled values reject instead of being coerced into enabled/disabled UI state"
+  },
+  "assertions": {
+    "validBooleanEnabledApplies": true,
+    "stringEnabledRejects": true,
+    "numericEnabledRejects": true
+  }
+}

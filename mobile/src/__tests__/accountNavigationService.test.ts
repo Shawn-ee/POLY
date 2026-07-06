@@ -53,4 +53,27 @@ describe("Holiwyn account navigation service", () => {
       "Account navigation response was missing items[0].label.",
     );
   });
+
+  test("rejects malformed enabled state instead of coercing visible navigation", async () => {
+    const api = {
+      getAccountNavigation: async () => ({
+        source: "account-navigation-route",
+        generatedAt: "2026-07-06T08:00:00.000Z",
+        items: [{
+          id: "leaderboard",
+          label: "Leaderboard",
+          icon: "trophy-outline",
+          kind: "placeholder" as const,
+          enabled: "false",
+          status: "unavailable" as const,
+          destination: null,
+          reason: "Leaderboard is not enabled.",
+        }],
+      }),
+    };
+
+    await expect(loadAccountNavigation(api as unknown as Parameters<typeof loadAccountNavigation>[0])).rejects.toThrow(
+      "Account navigation response was missing items[0].enabled.",
+    );
+  });
 });
