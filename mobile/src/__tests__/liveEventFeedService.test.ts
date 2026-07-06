@@ -97,6 +97,6 @@ describe("live event feed service", () => {
     (payload.events[0].markets[0].outcomes[0] as { price: unknown }).price = "not-a-number";
     const listWorldCupEvents = vi.fn(async () => payload);
 
-    await expect(loadLiveEventFeed({ listWorldCupEvents }, 10)).rejects.toThrow(/non-numeric price/);
+    await expect(loadLiveEventFeed({ listWorldCupEvents }, 10)).rejects.toThrow(/invalid price/);
   });
 });

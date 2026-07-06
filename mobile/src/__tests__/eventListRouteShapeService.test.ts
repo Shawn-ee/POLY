@@ -71,6 +71,20 @@ describe("event list route shape service", () => {
     const payload = eventListPayload();
     (payload.events[0].markets[0].outcomes[0] as { bestBid: unknown }).bestBid = "bad-bid";
 
-    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/non-numeric bestBid/);
+    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/invalid bestBid/);
+  });
+
+  test("rejects negative outcome quote fields before frontend probability fallback", () => {
+    const payload = eventListPayload();
+    (payload.events[0].markets[0].outcomes[0] as { price: unknown }).price = "-0.01";
+
+    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/invalid price/);
+  });
+
+  test("rejects negative outcome depth sizes before visible card state", () => {
+    const payload = eventListPayload();
+    (payload.events[0].markets[0].outcomes[0] as unknown as { bestAskSize: unknown }).bestAskSize = -1;
+
+    expect(() => assertEventListRoutePayloadShape(payload)).toThrow(/invalid bestAskSize/);
   });
 });

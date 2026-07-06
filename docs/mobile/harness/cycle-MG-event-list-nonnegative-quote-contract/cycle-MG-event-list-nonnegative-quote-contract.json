@@ -1,0 +1,20 @@
+{
+  "cycle": "Cycle MG",
+  "feature": "Event list non-negative quote contract",
+  "generatedAt": "2026-07-06T11:59:56.245Z",
+  "routes": [
+    "/api/events?includeMobileMarkets=1",
+    "/api/events?statusGroup=live&includeMobileMarkets=1"
+  ],
+  "contract": {
+    "validPayload": "Home, Search, Live, and Futures event-list quote/depth fields must be finite non-negative when present",
+    "malformedPayload": "negative or malformed outcome quote/depth values reject before frontend probability fallback or visible card state applies"
+  },
+  "assertions": {
+    "validNonNegativeQuoteFieldsAccepted": true,
+    "negativePriceRejects": true,
+    "negativeBidRejects": true,
+    "negativeAskSizeRejects": true,
+    "malformedPriceRejects": true
+  }
+}

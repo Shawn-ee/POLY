@@ -5,10 +5,13 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const isNullableString = (value: unknown) => value === null || typeof value === "string";
 
-const isFiniteNumberLike = (value: unknown) => {
+const isFiniteNonNegativeNumberLike = (value: unknown) => {
   if (value === null || value === undefined || value === "") return true;
-  if (typeof value === "number") return Number.isFinite(value);
-  if (typeof value === "string") return Number.isFinite(Number(value));
+  if (typeof value === "number") return Number.isFinite(value) && value >= 0;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0;
+  }
   return false;
 };
 
@@ -26,8 +29,8 @@ const assertEventListOutcomeShape = (outcome: unknown, marketId: string): assert
     throw new Error(`Event list route returned outcome ${outcome.id} without tradability state.`);
   }
   for (const field of ["price", "bestBid", "bestAsk", "bestBidSize", "bestAskSize"] as const) {
-    if (!isFiniteNumberLike(outcome[field])) {
-      throw new Error(`Event list route returned non-numeric ${field} for outcome ${outcome.id}.`);
+    if (!isFiniteNonNegativeNumberLike(outcome[field])) {
+      throw new Error(`Event list route returned invalid ${field} for outcome ${outcome.id}.`);
     }
   }
 };

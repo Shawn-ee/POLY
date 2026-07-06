@@ -2,6 +2,18 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle MG - Event List Non-Negative Quote Contract
+
+Cycle MG hardens event-list quote/depth fields before Home, Search, Live, or Futures visible card state applies:
+
+- Route/mobile proof: `docs/mobile/harness/cycle-MG-event-list-nonnegative-quote-contract/cycle-MG-event-list-nonnegative-quote-contract.json`.
+- Proof script: `scripts/prove_mobile_event_list_nonnegative_quote_contract.ts`.
+- Focused validation: route/mobile proof, `mobile/src/__tests__/eventListRouteShapeService.test.ts`, `mobile/src/__tests__/liveEventFeedService.test.ts`, root typecheck, mobile typecheck, and audit gate.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home/Search/Live/Futures event-list quote fields | `/api/events?includeMobileMarkets=1` and filtered variants | GET | Public/mobile route | Query filters such as status group, saved ids, sort, market type, cursor | Outcome `price`, `bestBid`, `bestAsk`, `bestBidSize`, and `bestAskSize` must be finite non-negative number-like values when present | `Event`, listed public `Market`, active `Outcome`, quote/depth projection fields | Mock/local discovery remains unchanged. Server-mode negative or malformed quote/depth fields reject before frontend probability fallback or visible card state applies. | None for focused event-list non-negative quote contract. P2 optional surface-specific quote error copy. |
+
 ## Cycle MF - Portfolio History Economics Contract
 
 Cycle MF hardens visible Portfolio history/activity economics before server-mode activity state applies:

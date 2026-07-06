@@ -2,6 +2,25 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle MG - Event List Non-Negative Quote Contract
+
+Closed or narrowed:
+
+- Home/Search/Live/Futures event-list route validation now rejects negative outcome prices, bid/ask quotes, and depth sizes.
+- Malformed or negative quote/depth values no longer reach frontend probability fallback where they could be clamped into misleading visible card probabilities.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- None for the focused event-list non-negative quote contract.
+
+Schema mismatch:
+
+- No schema migration was made. Existing event-list outcome quote/depth fields support this contract.
+
+Temporary mock/static data:
+
+- Mock/local discovery remains unchanged. Server-mode malformed event-list quote/depth fields reject before visible card state applies.
+
 ## Cycle MF - Portfolio History Economics Contract
 
 Closed or narrowed:
