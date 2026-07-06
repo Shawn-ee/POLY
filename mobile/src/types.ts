@@ -223,6 +223,7 @@ export type PortfolioCanceledOrderItem = {
     period?: string;
     side?: string;
     displayLabel?: string;
+    contractSide?: "yes" | "no";
     referenceSource?: string;
     externalSlug?: string;
     externalMarketId?: string;
@@ -261,6 +262,7 @@ export type PortfolioRecentTradeItem = {
     period?: string;
     side?: string;
     displayLabel?: string;
+    contractSide?: "yes" | "no";
     referenceSource?: string;
     externalSlug?: string;
     externalMarketId?: string;
@@ -297,6 +299,7 @@ export type PortfolioPositionItem = {
     period?: string;
     side?: string;
     displayLabel?: string;
+    contractSide?: "yes" | "no";
     referenceSource?: string;
     externalSlug?: string;
     externalMarketId?: string;
@@ -340,6 +343,7 @@ export type PortfolioOpenOrderItem = {
     period?: string;
     side?: string;
     displayLabel?: string;
+    contractSide?: "yes" | "no";
     referenceSource?: string;
     externalSlug?: string;
     externalMarketId?: string;

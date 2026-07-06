@@ -20,6 +20,7 @@ Fail the feature when:
 
 | Feature | Cycle | Result | P0 failed | P1/P2 remaining | Reference evidence | Holiwyn evidence | Notes |
 | --- | --- | --- | ---: | --- | --- | --- | --- |
+| Portfolio contract-side snapshot | Cycle JU | Pass for backend/data-contract scope | 0 for focused positions/open-orders contract-side scope | P1 first-class immutable position/order selection columns; P1 resolved-history/canceled-order breadth in separate cycle; P1 optional Android Portfolio proof if visual proof is required again | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-JU-portfolio-contract-side-snapshot/cycle-JU-portfolio-contract-side-snapshot.json`; tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts`; audit: `mobile/docs/audits/cycle-JU-portfolio-contract-side-snapshot.md` | `/api/portfolio` and mobile snapshot mapping preserve `selection.contractSide=no` plus provider token and limit metadata for visible positions and open orders. |
 | Search status filter backend wiring | Cycle JT | Pass for backend/data-contract scope | 0 for focused Search Live/Upcoming filter route scope | P1 server-side saved filter integration; P1 richer ranking/facet metadata; P1 optional Android Search filter proof if visual proof is required again | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-JT-search-status-filters/cycle-JT-search-status-filters.json`; tests: selected `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-JT-search-status-filters.md` | `/api/events` now supports `statusGroup=live|upcoming`; Search server mode sends the selected visible status filter to the backend and appends filtered pages. |
 | Search event route and backend pagination | Cycle JS | Pass for backend/data-contract scope | 0 for focused Search route and pagination contract | P1 server-side saved filter integration; P1 richer ranking/facet metadata; P1 optional Android Search Load more proof if visual proof is required again | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-JS-search-event-pagination/cycle-JS-search-event-pagination.json`; tests: selected `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-JS-search-event-pagination.md` | `/api/events?search=` now covers teams, market text, and outcome text; Search server mode requests/appends backend pages and shows route failures instead of silently replacing them with fixtures. Cycle JT adds backend Live/Upcoming status filters. |
 | Home event list and backend pagination | Cycle JR | Pass for backend/data-contract scope | 0 for focused Home list pagination contract | P1 server-side pagination for Home live/today filters; P1 Search tab backend pagination; P1 optional Android Load more proof if visual proof is required again | Product decision on 2026-07-06: manual UI review is no longer required for every cycle; backend wiring and harness evidence are the priority | Route proof: `docs/mobile/harness/cycle-JR-home-event-list-pagination/cycle-JR-home-event-pagination.json`; tests: selected `src/__tests__/public.events.no-leak.test.ts`, `mobile/src/__tests__/api.test.ts`; audit: `mobile/docs/audits/cycle-JR-home-event-list-pagination.md` | `/api/events` now supports cursor pages with compact mobile markets, and Home server mode requests/appends backend pages. |
@@ -134,6 +135,26 @@ Decision:
 
 - P0 failed: 0 for focused backend/data-contract scope.
 - Remaining P1: real-provider replay across more World Cup profiles, production-like HTTP order-route sell rejection proof, and broader provider-backed line-family availability.
+
+## Cycle JU
+
+Gate status: Pass
+
+Scope: Backend/data-contract gate for Portfolio positions/open-orders `contractSide` preservation in server mode. This does not claim resolved-history/canceled-order breadth or visual/device proof.
+
+Evidence:
+
+- Route proof: `docs/mobile/harness/cycle-JU-portfolio-contract-side-snapshot/cycle-JU-portfolio-contract-side-snapshot.json`.
+- Cycle audit: `mobile/docs/audits/cycle-JU-portfolio-contract-side-snapshot.md`.
+- Focused mobile tests:
+  - `mobile/src/__tests__/portfolioSnapshotService.test.ts`
+- Route proof script:
+  - `scripts/prove_mobile_portfolio_contract_side_snapshot.ts`
+
+Decision:
+
+- P0 failed: 0 for focused Portfolio positions/open-orders contract-side scope.
+- Remaining P1: first-class immutable position/order selection columns, resolved-history/canceled-order breadth in a separate cycle, and optional Android Portfolio proof if visual proof is required again.
 
 ## Cycle JT
 

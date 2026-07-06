@@ -2,6 +2,27 @@
 
 Purpose: track fields, route mismatches, schema mismatches, ignored backend fields, temporary mock/static data, and future migration concerns discovered during mobile parity cycles.
 
+## Cycle JU - Portfolio Contract-Side Snapshot
+
+Closed or narrowed:
+
+- Mobile Portfolio snapshot types now include `selection.contractSide` for positions and open orders.
+- Mobile Portfolio snapshot mapping preserves backend `contractSide=no` so visible Portfolio rows can distinguish No contracts from Yes contracts.
+- `/api/portfolio` route proof reads a seeded No-side position and No-side open order through canonical `account:read` API-key auth and verifies contract side, provider token, and limit metadata.
+
+Fields Holiwyn still needs but backend does not fully provide:
+
+- First-class immutable `Position.selection` and `Order.selection` columns. Current route still derives from matching `ApiOrderRequest.requestBody.selection` or current market/outcome fallback.
+- Broader Portfolio route proof for resolved history and canceled orders remains separate from this focused positions/open-orders snapshot cycle.
+
+Schema mismatch:
+
+- No schema migration was made. Existing `ApiOrderRequest.requestBody.selection`, `Order`, `Position`, `Market`, and `Outcome` fields support the JU contract.
+
+Temporary mock/static data:
+
+- JU proof creates disposable backend account, market, position, open order, and API key rows. It does not add frontend-only Portfolio rows.
+
 ## Cycle JT - Search Status Filter Backend Wiring
 
 Closed or narrowed:

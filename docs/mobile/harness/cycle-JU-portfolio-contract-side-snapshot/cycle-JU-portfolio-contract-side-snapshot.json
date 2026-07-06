@@ -1,0 +1,23 @@
+{
+  "pass": true,
+  "createdAt": "2026-07-06T06:29:46.401Z",
+  "route": "/api/portfolio",
+  "auth": "canonical account:read API key",
+  "walletAvailableUSDC": 125.5,
+  "walletLockedUSDC": 14.5,
+  "position": {
+    "marketId": "a32bca34-a22a-4bb3-a6e5-4de808216eb1",
+    "outcomeId": "d7e8efa7-e886-4f74-8887-d40c68e670f7",
+    "contractSide": "no",
+    "displayLabel": "No JU Home +1.5",
+    "referenceTokenId": "token-ju-no-ad5b2187"
+  },
+  "openOrder": {
+    "id": "f642275f-f159-40ce-baf0-ee42b3f38378",
+    "side": "SELL",
+    "contractSide": "no",
+    "limitSide": "ask",
+    "limitPrice": 0.42,
+    "referenceTokenId": "token-ju-no-ad5b2187"
+  }
+}

@@ -2,6 +2,19 @@
 
 Purpose: document what the mobile app needs from backend routes, auth, request/response contracts, database models, and mock fallbacks for each feature cycle.
 
+## Cycle JU - Portfolio Contract-Side Snapshot
+
+Cycle JU tightens the visible Portfolio positions/open-orders contract for Yes/No side preservation:
+
+- Route proof: `docs/mobile/harness/cycle-JU-portfolio-contract-side-snapshot/cycle-JU-portfolio-contract-side-snapshot.json`.
+- Proof script: `scripts/prove_mobile_portfolio_contract_side_snapshot.ts`.
+- Focused mobile tests: `mobile/src/__tests__/portfolioSnapshotService.test.ts` and mobile typecheck.
+
+| Mobile feature | API endpoint used | Method | Auth requirement | Request body | Response fields consumed by mobile | Database tables/models implied | Mock fallback behavior | Missing backend support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Portfolio position contract side | `/api/portfolio` | GET | Session or canonical API key with `account:read` | None | `positions[].selection.contractSide`, `displayLabel`, provider token fields, pricing/value fields | `Position`, `Market`, `Outcome`, `ApiOrderRequest`, `UserBalance` | Mock mode keeps local Portfolio state. Server mode consumes the route snapshot. | P1: first-class immutable `Position.selection` column remains future hardening. |
+| Portfolio open-order contract side | `/api/portfolio` | GET | Session or canonical API key with `account:read` | None | `openOrders[].selection.contractSide`, limit side/price/shares, provider token fields | `Order`, `ApiOrderRequest`, `Market`, `Outcome`, `UserBalance` | Mock mode keeps local open-order state. Server mode consumes the route snapshot. | P1: first-class immutable `Order.selection` column remains future hardening. |
+
 ## Cycle JT - Search Status Filter Backend Wiring
 
 Cycle JT wires visible Search `Live` and `Upcoming` filters to backend route filters in server market-data mode:
